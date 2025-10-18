@@ -1,0 +1,523 @@
+{
+  "products": [
+    {
+      "slug": "fiber-shell",
+      "name": "React Fiber Shell",
+      "tagline": "Signal Reactive Innovation",
+      "description": "A technical soft-shell jacket engineered for late-night shipping parties and dawn patrol keynotes. Lightweight stretch weave with a quilted yoke subtly echoing the Fiber architecture.",
+      "price": "$248",
+      "status": "Pre-order · Ships in December",
+      "quantityAvailable": 0,
+      "availability": "backordered",
+      "releaseWindow": "Drop 05 · Winter 2025",
+      "category": "drop",
+      "collections": ["current-drop"],
+      "accent": "from-sky-400 via-indigo-500 to-purple-500",
+      "rating": 4.8,
+      "ratingCount": 312,
+      "unlockTier": "core",
+      "features": [
+        "3-layer breathable membrane with DWR treatment",
+        "Laser-cut cuff detailing featuring the React atom lattice",
+        "Packable hood with magnetic stow strap"
+      ],
+      "highlights": [
+        "10% of proceeds fund the React Maintainer Fellowship",
+        "Produced in limited batches of 300 with carbon-neutral logistics"
+      ],
+      "specs": [
+        { "label": "Fabrication", "value": "60% recycled nylon, 30% polyester, 10% elastane" },
+        { "label": "Fit", "value": "Unisex modern athletic cut" },
+        { "label": "Care", "value": "Machine wash cold, line dry" }
+      ],
+      "tags": ["clothing", "outerwear", "performance"],
+      "primaryImageId": "shot-1",
+      "images": [
+        {
+          "id": "shot-1",
+          "src": "/assets/products/fiber-shell/shot-1.png",
+          "alt": "React Fiber Shell jacket on a ghost mannequin under cinematic lighting",
+          "centerOffset": { "x": "50%", "y": "45%" }
+        },
+        {
+          "id": "shot-2",
+          "src": "/assets/products/fiber-shell/shot-2.png",
+          "alt": "React Fiber Shell folded with accessories on a carbon fiber table",
+          "centerOffset": { "x": "50%", "y": "50%" }
+        },
+        {
+          "id": "shot-3",
+          "src": "/assets/products/fiber-shell/shot-3.png",
+          "alt": "Macro detail of the React Fiber Shell cuff with cyan piping",
+          "centerOffset": { "x": "50%", "y": "50%" }
+        },
+        {
+          "id": "shot-4",
+          "src": "/assets/products/fiber-shell/shot-4.png",
+          "alt": "React Fiber Shell jacket draped over a chair highlighting articulated seams",
+          "centerOffset": { "x": "50%", "y": "50%" }
+        },
+        {
+          "id": "shot-5",
+          "src": "/assets/products/fiber-shell/shot-5.png",
+          "alt": "Back view of the React Fiber Shell with hood under soft spotlight",
+          "centerOffset": { "x": "50%", "y": "50%" }
+        }
+      ]
+    },
+    {
+      "slug": "arguing-online-mug",
+      "name": "React Debate Club Mug",
+      "tagline": "\"I don't hate React. I just love arguing online.\"",
+      "description": "Matte obsidian ceramic mug from the Winter launch featuring the React atom and the tongue-in-cheek motto for lively architecture debates.",
+      "price": "$32",
+      "status": "In stock · Ships immediately",
+      "quantityAvailable": 240,
+      "availability": "available",
+      "releaseWindow": "Drop 05 · Winter 2025",
+      "category": "drop",
+      "collections": ["current-drop"],
+      "accent": "from-slate-600 via-cyan-500 to-slate-900",
+      "rating": 4.5,
+      "ratingCount": 0,
+      "unlockTier": "contributor",
+      "features": [
+        "Double-wall ceramic keeps debate-fueled espresso at temperature",
+        "Engraved React atom emblem with luminous cyan enamel fill",
+        "Quote wrap reads \"I don't hate React. I just love arguing online.\""
+      ],
+      "highlights": [
+        "Portion of proceeds funds OSS moderation tooling",
+        "Includes downloadable wallpaper set with the quote"
+      ],
+      "specs": [
+        { "label": "Capacity", "value": "12 oz (355 ml)" },
+        { "label": "Material", "value": "Matte-glazed ceramic with silicone base" },
+        { "label": "Care", "value": "Dishwasher safe, microwave safe" }
+      ],
+      "tags": ["drinkware", "mug", "current-drop"],
+      "primaryImageId": "mug-01",
+      "images": [
+        {
+          "id": "mug-01",
+          "src": "/assets/products/winter-2025-arguing-mug/mug-01.jpg",
+          "alt": "React Debate Club Mug on a dark walnut desk with cyan logo",
+          "centerOffset": { "x": "50%", "y": "50%" }
+        },
+        {
+          "id": "mug-02",
+          "src": "/assets/products/winter-2025-arguing-mug/mug-02.png",
+          "alt": "React Debate Club Mug on obsidian stone with teal accent light",
+          "centerOffset": { "x": "50%", "y": "50%" }
+        },
+        {
+          "id": "mug-03",
+          "src": "/assets/products/winter-2025-arguing-mug/mug-03.png",
+          "alt": "Lifestyle desk scene with React Debate Club Mug next to keyboard",
+          "centerOffset": { "x": "50%", "y": "50%" }
+        },
+        {
+          "id": "mug-04",
+          "src": "/assets/products/winter-2025-arguing-mug/mug-04.png",
+          "alt": "React Debate Club Mug steaming on a winter rooftop terrace",
+          "centerOffset": { "x": "50%", "y": "50%" }
+        },
+        {
+          "id": "mug-05",
+          "src": "/assets/products/winter-2025-arguing-mug/mug-05.png",
+          "alt": "Macro detail of the React Debate Club Mug quote in cyan lighting",
+          "centerOffset": { "x": "50%", "y": "50%" }
+        }
+      ]
+    },
+    {
+      "slug": "archive-tee-01",
+      "name": "React Archive Tee 01",
+      "tagline": "Neon Pulse Edition",
+      "description": "Matte black heavyweight tee with a gradient React atom rendered in luminous inks that glow softly under stage lights.",
+      "price": "$58",
+      "status": "In stock · Limited run of 150",
+      "quantityAvailable": 36,
+      "availability": "available",
+      "releaseWindow": "Drop 05 · Winter 2025",
+      "category": "drop",
+      "collections": ["current-drop"],
+      "accent": "from-emerald-400 via-cyan-400 to-indigo-500",
+      "rating": 4.9,
+      "ratingCount": 198,
+      "unlockTier": "contributor",
+      "features": [
+        "6.5 oz ringspun cotton with garment-dyed finish",
+        "Reinforced shoulder seams for conference tote hauling",
+        "Glow-reactive print cures for 150+ wash cycles"
+      ],
+      "highlights": [
+        "Styled in collaboration with the React Conf design crew",
+        "Every tee funds one hour of mentorship for emerging OSS contributors"
+      ],
+      "specs": [
+        { "label": "Fabrication", "value": "100% long-staple cotton" },
+        { "label": "Fit", "value": "Unisex relaxed fit" },
+        { "label": "Care", "value": "Wash inside-out cold, tumble low" }
+      ],
+      "tags": ["clothing", "tops", "t-shirt"],
+      "primaryImageId": "shot-1",
+      "images": [
+        {
+          "id": "shot-1",
+          "src": "/assets/products/archive-tee-01/shot-1.png",
+          "alt": "React Archive Tee 01 hanging with neon gradient React atom",
+          "centerOffset": { "x": "50%", "y": "42%" }
+        },
+        {
+          "id": "shot-2",
+          "src": "/assets/products/archive-tee-01/shot-2.png",
+          "alt": "React Archive Tee 01 folded beside headphones and conference badge",
+          "centerOffset": { "x": "50%", "y": "50%" }
+        },
+        {
+          "id": "shot-3",
+          "src": "/assets/products/archive-tee-01/shot-3.png",
+          "alt": "Close-up of the React Archive Tee 01 neon gradient chest graphic",
+          "centerOffset": { "x": "50%", "y": "50%" }
+        },
+        {
+          "id": "shot-4",
+          "src": "/assets/products/archive-tee-01/shot-4.png",
+          "alt": "Back view of React Archive Tee 01 laid flat showing clean seams",
+          "centerOffset": { "x": "50%", "y": "50%" }
+        },
+        {
+          "id": "shot-5",
+          "src": "/assets/products/archive-tee-01/shot-5.png",
+          "alt": "React Archive Tee 01 styled on mannequin torso with conference badge",
+          "centerOffset": { "x": "50%", "y": "50%" }
+        }
+      ]
+    },
+    {
+      "slug": "archive-tee-02",
+      "name": "React Archive Tee 02",
+      "tagline": "Blueprint Monoline",
+      "description": "Electric cobalt tee with a minimalist white line rendering of the React atom, celebrating timeless interface architecture.",
+      "price": "$58",
+      "status": "Low stock · Remainder 42",
+      "quantityAvailable": 42,
+      "availability": "available",
+      "releaseWindow": "Drop 05 · Winter 2025",
+      "category": "drop",
+      "collections": ["current-drop"],
+      "accent": "from-blue-400 via-sky-400 to-emerald-400",
+      "rating": 4.3,
+      "ratingCount": 142,
+      "unlockTier": "contributor",
+      "features": [
+        "Mid-weight jersey with brushed interior handfeel",
+        "Side-stitched seams to hold shape session after session",
+        "Discharge printed graphic for zero hand feel"
+      ],
+      "highlights": [
+        "Includes a numbered authenticity card signed by maintainers",
+        "Packed in recyclable mycelium-based sleeves"
+      ],
+      "specs": [
+        { "label": "Fabrication", "value": "60% cotton, 40% recycled poly" },
+        { "label": "Fit", "value": "Unisex standard fit" },
+        { "label": "Care", "value": "Machine wash cold, tumble dry low" }
+      ],
+      "tags": ["clothing", "tops", "t-shirt"],
+      "primaryImageId": "shot-1",
+      "images": [
+        {
+          "id": "shot-1",
+          "src": "/assets/products/archive-tee-02/shot-1.png",
+          "alt": "React Archive Tee 02 cobalt tee on mannequin with white monoline logo",
+          "centerOffset": { "x": "48%", "y": "42%" }
+        },
+        {
+          "id": "shot-2",
+          "src": "/assets/products/archive-tee-02/shot-2.png",
+          "alt": "React Archive Tee 02 folded on marble workspace with notebook",
+          "centerOffset": { "x": "50%", "y": "50%" }
+        },
+        {
+          "id": "shot-3",
+          "src": "/assets/products/archive-tee-02/shot-3.png",
+          "alt": "Close-up of React Archive Tee 02 white monoline logo ink",
+          "centerOffset": { "x": "50%", "y": "50%" }
+        },
+        {
+          "id": "shot-4",
+          "src": "/assets/products/archive-tee-02/shot-4.png",
+          "alt": "React Archive Tee 02 draped over chair with cyan accent lighting",
+          "centerOffset": { "x": "50%", "y": "50%" }
+        },
+        {
+          "id": "shot-5",
+          "src": "/assets/products/archive-tee-02/shot-5.png",
+          "alt": "Stack of React Archive Tee 02 garments with hang tags on display",
+          "centerOffset": { "x": "50%", "y": "50%" }
+        }
+      ]
+    },
+    {
+      "slug": "archive-tee-03",
+      "name": "React Archive Tee 03",
+      "tagline": "Foundation Heritage Crest",
+      "description": "Soft cream tee featuring a vintage collegiate crest celebrating the first React commit and the open-source stewards who keep shipping.",
+      "price": "$62",
+      "status": "Back-order · Ships in two weeks",
+      "quantityAvailable": 0,
+      "availability": "backordered",
+      "releaseWindow": "Drop 05 · Winter 2025",
+      "category": "drop",
+      "collections": ["current-drop"],
+      "accent": "from-amber-300 via-rose-400 to-indigo-500",
+      "rating": 4.6,
+      "ratingCount": 167,
+      "unlockTier": "sustainer",
+      "features": [
+        "Combed organic cotton with enzyme wash for softness",
+        "Heritage crest printed with water-based inks",
+        "Interior story label referencing the RFC that launched Hooks"
+      ],
+      "highlights": [
+        "Includes archival postcard set from the React core team",
+        "5% donated to the React Education Grant for community workshops"
+      ],
+      "specs": [
+        { "label": "Fabrication", "value": "100% GOTS-certified organic cotton" },
+        { "label": "Fit", "value": "Unisex tailored fit" },
+        { "label": "Care", "value": "Wash cold, air dry recommended" }
+      ],
+      "tags": ["clothing", "tops", "t-shirt"],
+      "primaryImageId": "shot-1",
+      "images": [
+        {
+          "id": "shot-1",
+          "src": "/assets/products/archive-tee-03/shot-1.png",
+          "alt": "React Archive Tee 03 cream tee on hanger with heritage crest",
+          "centerOffset": { "x": "50%", "y": "42%" }
+        },
+        {
+          "id": "shot-2",
+          "src": "/assets/products/archive-tee-03/shot-2.png",
+          "alt": "React Archive Tee 03 flat lay with archival postcards",
+          "centerOffset": { "x": "50%", "y": "50%" }
+        },
+        {
+          "id": "shot-3",
+          "src": "/assets/products/archive-tee-03/shot-3.png",
+          "alt": "Close-up of React Archive Tee 03 crest embroidery and fabric texture",
+          "centerOffset": { "x": "50%", "y": "50%" }
+        },
+        {
+          "id": "shot-4",
+          "src": "/assets/products/archive-tee-03/shot-4.png",
+          "alt": "React Archive Tee 03 displayed on mannequin with rolled sleeves",
+          "centerOffset": { "x": "50%", "y": "50%" }
+        },
+        {
+          "id": "shot-5",
+          "src": "/assets/products/archive-tee-03/shot-5.png",
+          "alt": "Stack of React Archive Tee 03 tied with twine and authenticity card",
+          "centerOffset": { "x": "50%", "y": "50%" }
+        }
+      ]
+    },
+    {
+      "slug": "archive-tee-04",
+      "name": "React Archive Tee 04",
+      "tagline": "Microinteraction Cascade",
+      "description": "Charcoal athletic tee with cascading cyan micro React atoms celebrating the choreography of concurrent rendering.",
+      "price": "$62",
+      "status": "In stock · Ready to ship",
+      "quantityAvailable": 112,
+      "availability": "available",
+      "releaseWindow": "Drop 05 · Winter 2025",
+      "category": "drop",
+      "collections": ["current-drop"],
+      "accent": "from-cyan-400 via-sky-500 to-indigo-600",
+      "rating": 4.7,
+      "ratingCount": 254,
+      "unlockTier": "sustainer",
+      "features": [
+        "Moisture-wicking performance knit for hackathon marathons",
+        "Flatlock seams to prevent distraction during pairing sessions",
+        "Reflective micro atoms for late-night city ride visibility"
+      ],
+      "highlights": [
+        "Every tee funds field research for the React Accessibility Initiative",
+        "Includes beta access to the Foundation’s design token playground"
+      ],
+      "specs": [
+        { "label": "Fabrication", "value": "92% recycled poly, 8% elastane" },
+        { "label": "Fit", "value": "Unisex athletic fit" },
+        { "label": "Care", "value": "Machine wash cold, hang dry" }
+      ],
+      "tags": ["clothing", "tops", "t-shirt"],
+      "primaryImageId": "shot-1",
+      "images": [
+        {
+          "id": "shot-1",
+          "src": "/assets/products/archive-tee-04/shot-1.png",
+          "alt": "React Archive Tee 04 athletic charcoal tee on display stand with cascading atoms",
+          "centerOffset": { "x": "52%", "y": "40%" }
+        },
+        {
+          "id": "shot-2",
+          "src": "/assets/products/archive-tee-04/shot-2.png",
+          "alt": "React Archive Tee 04 flat lay with running accessories",
+          "centerOffset": { "x": "50%", "y": "50%" }
+        },
+        {
+          "id": "shot-3",
+          "src": "/assets/products/archive-tee-04/shot-3.png",
+          "alt": "Close-up of React Archive Tee 04 reflective micro atoms under cyan light",
+          "centerOffset": { "x": "50%", "y": "50%" }
+        },
+        {
+          "id": "shot-4",
+          "src": "/assets/products/archive-tee-04/shot-4.png",
+          "alt": "React Archive Tee 04 on mannequin in action-inspired pose with motion blur",
+          "centerOffset": { "x": "50%", "y": "50%" }
+        },
+        {
+          "id": "shot-5",
+          "src": "/assets/products/archive-tee-04/shot-5.png",
+          "alt": "Folded React Archive Tee 04 stack with reflective piping and hang tags",
+          "centerOffset": { "x": "50%", "y": "50%" }
+        }
+      ]
+    },
+    {
+      "slug": "maintainer-hoodie-2024",
+      "name": "Maintainer Residency Hoodie",
+      "tagline": "Past Drop · Cozy Graphite",
+      "description": "Brushed fleece hoodie with embroidered atom crest released during the 2024 Maintainer Residency cohort.",
+      "price": "$78",
+      "status": "Sold out · Past Drop",
+      "quantityAvailable": 0,
+      "availability": "discontinued",
+      "releaseWindow": "Past Drop · Fall 2024",
+      "category": "drop",
+      "collections": ["past-drop"],
+      "accent": "from-slate-500 via-slate-600 to-slate-800",
+      "rating": 4.8,
+      "ratingCount": 521,
+      "unlockTier": "core",
+      "features": [
+        "Midweight fleece milled in North Carolina",
+        "Kangaroo pocket with hidden zipper stash",
+        "Tonal embroidered React atom crest"
+      ],
+      "highlights": [
+        "Helped fund the Maintainer Residency housing stipend",
+        "Paired with an exclusive wallpaper pack for supporters"
+      ],
+      "specs": [
+        { "label": "Fabrication", "value": "80% cotton, 20% recycled poly" },
+        { "label": "Fit", "value": "Unisex relaxed fit" },
+        { "label": "Care", "value": "Machine wash cold, tumble dry low" }
+      ],
+      "tags": ["clothing", "hoodie", "past-drop"],
+      "primaryImageId": "shot-1",
+      "images": [
+        {
+          "id": "shot-1",
+          "src": "/assets/products/maintainer-hoodie-2024/shot-1.png",
+          "alt": "Maintainer Residency Hoodie on mannequin with tonal embroidered crest",
+          "centerOffset": { "x": "50%", "y": "42%" }
+        },
+        {
+          "id": "shot-2",
+          "src": "/assets/products/maintainer-hoodie-2024/shot-2.png",
+          "alt": "Maintainer Residency Hoodie folded on wooden bench with residency badge",
+          "centerOffset": { "x": "50%", "y": "50%" }
+        },
+        {
+          "id": "shot-3",
+          "src": "/assets/products/maintainer-hoodie-2024/shot-3.png",
+          "alt": "Close-up of Maintainer Residency Hoodie hood and crest embroidery",
+          "centerOffset": { "x": "50%", "y": "50%" }
+        },
+        {
+          "id": "shot-4",
+          "src": "/assets/products/maintainer-hoodie-2024/shot-4.png",
+          "alt": "Maintainer Residency Hoodie hanging on coat rack with cyan accent light",
+          "centerOffset": { "x": "50%", "y": "50%" }
+        },
+        {
+          "id": "shot-5",
+          "src": "/assets/products/maintainer-hoodie-2024/shot-5.png",
+          "alt": "Maintainer Residency Hoodie flat lay with laptop stickers and enamel pins",
+          "centerOffset": { "x": "50%", "y": "50%" }
+        }
+      ]
+    },
+    {
+      "slug": "foundation-espresso-tumbler",
+      "name": "Foundation Espresso Tumbler",
+      "tagline": "Past Drop · Midnight Ceramic",
+      "description": "Double-walled ceramic tumbler with silicone lid released alongside the 2023 Reactathon.",
+      "price": "$36",
+      "status": "Sold out · Past Drop",
+      "quantityAvailable": 0,
+      "availability": "discontinued",
+      "releaseWindow": "Past Drop · Spring 2023",
+      "category": "collection",
+      "collections": ["past-drop"],
+      "accent": "from-sky-500 via-cyan-500 to-emerald-400",
+      "rating": 4.5,
+      "ratingCount": 204,
+      "features": [
+        "Holds 8 oz with double-wall insulation",
+        "Gloss glaze with etched Foundation wordmark",
+        "Includes silicone travel lid with tight seal"
+      ],
+      "highlights": [
+        "First run funded the React Documentation translation drive",
+        "Members requested a future restock—waitlist now open"
+      ],
+      "specs": [
+        { "label": "Material", "value": "Ceramic with food-safe glaze" },
+        { "label": "Capacity", "value": "8 oz (236 ml)" },
+        { "label": "Care", "value": "Hand wash recommended" }
+      ],
+      "tags": ["drinkware", "collectible", "past-drop"],
+      "primaryImageId": "tumbler-01",
+      "images": [
+        {
+          "id": "tumbler-01",
+          "src": "/assets/products/foundation-espresso-tumbler/tumbler-01.png",
+          "alt": "Foundation Espresso Tumbler on a dark walnut desk beside a laptop",
+          "centerOffset": { "x": "50%", "y": "50%" }
+        },
+        {
+          "id": "tumbler-02",
+          "src": "/assets/products/foundation-espresso-tumbler/tumbler-02.png",
+          "alt": "Foundation Espresso Tumbler on a sunlit café windowsill",
+          "centerOffset": { "x": "50%", "y": "50%" }
+        },
+        {
+          "id": "tumbler-03",
+          "src": "/assets/products/foundation-espresso-tumbler/tumbler-03.png",
+          "alt": "Foundation Espresso Tumbler on a barista counter with coffee tools",
+          "centerOffset": { "x": "50%", "y": "50%" }
+        },
+        {
+          "id": "tumbler-04",
+          "src": "/assets/products/foundation-espresso-tumbler/tumbler-04.png",
+          "alt": "Foundation Espresso Tumbler outdoor flatlay with sketches and earbuds",
+          "centerOffset": { "x": "50%", "y": "50%" }
+        },
+        {
+          "id": "tumbler-05",
+          "src": "/assets/products/foundation-espresso-tumbler/tumbler-05.png",
+          "alt": "Macro shot of Foundation Espresso Tumbler with crema-topped espresso",
+          "centerOffset": { "x": "50%", "y": "48%" }
+        }
+      ]
+    }
+  ]
+}
