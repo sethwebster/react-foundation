@@ -20,7 +20,7 @@ const query = /* GraphQL */ `
         totalPullRequestContributions
         totalIssueContributions
         totalCommitContributions
-        pullRequestContributionsByRepository(maxRepositories: 50) {
+        pullRequestContributionsByRepository(maxRepositories: 100) {
           repository {
             name
             owner {
@@ -31,7 +31,7 @@ const query = /* GraphQL */ `
             totalCount
           }
         }
-        issueContributionsByRepository(maxRepositories: 50) {
+        issueContributionsByRepository(maxRepositories: 100) {
           repository {
             name
             owner {
@@ -42,7 +42,7 @@ const query = /* GraphQL */ `
             totalCount
           }
         }
-        commitContributionsByRepository(maxRepositories: 50) {
+        commitContributionsByRepository(maxRepositories: 100) {
           repository {
             name
             owner {
