@@ -2,7 +2,6 @@ import Image from "next/image";
 
 import type { Product } from "@/lib/products";
 import { ButtonLink } from "@/components/ui/button";
-import { Parallax } from "@/components/ui/parallax";
 
 interface FeaturedLookProps {
   products: Product[];
@@ -15,8 +14,7 @@ export function FeaturedLook({ products }: FeaturedLookProps) {
 
   return (
     <div className="relative h-[32rem] overflow-hidden rounded-3xl border border-white/10 bg-slate-900/60">
-      <Parallax speed={0.15} direction="up">
-        <div className="absolute inset-x-6 top-6 rounded-2xl border border-white/10 bg-slate-900/90 p-6 shadow-2xl shadow-indigo-500/20">
+      <div className="absolute inset-x-6 top-6 rounded-2xl border border-white/10 bg-slate-900/90 p-6 shadow-2xl shadow-indigo-500/20">
         <div className="flex items-center justify-between text-xs text-white/60">
           <p>Featured Look</p>
           <p>React Summit Capsule</p>
@@ -105,14 +103,9 @@ export function FeaturedLook({ products }: FeaturedLookProps) {
             Preview drop →
           </ButtonLink>
         </div>
-        </div>
-      </Parallax>
-      <Parallax speed={0.3} direction="down" className="absolute -right-12 bottom-6">
-        <div className="h-52 w-52 rounded-full bg-gradient-to-b from-indigo-500/40 to-blue-400/40 blur-3xl" />
-      </Parallax>
-      <Parallax speed={0.4} direction="up" className="absolute -left-16 top-20">
-        <div className="h-36 w-36 rounded-full bg-gradient-to-b from-rose-400/30 to-amber-400/30 blur-3xl" />
-      </Parallax>
+      </div>
+      <div className="absolute -right-12 bottom-6 h-52 w-52 rounded-full bg-gradient-to-b from-indigo-500/40 to-blue-400/40 blur-3xl" />
+      <div className="absolute -left-16 top-20 h-36 w-36 rounded-full bg-gradient-to-b from-rose-400/30 to-amber-400/30 blur-3xl" />
     </div>
   );
 }

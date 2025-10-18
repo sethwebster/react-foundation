@@ -1,9 +1,11 @@
+"use client";
+
 import Image from "next/image";
 
 import type { Product } from "@/lib/products";
 import { ButtonLink } from "@/components/ui/button";
 import { ProductCard } from "@/components/ui/product-card";
-import { Parallax } from "@/components/ui/parallax";
+import { ScrollReveal } from "@/components/ui/scroll-reveal";
 import { getInventorySummary } from "@/lib/products-shopify";
 
 interface LimitedDropsProps {
@@ -16,7 +18,7 @@ export function LimitedDrops({ heroProduct, dropTiles }: LimitedDropsProps) {
   const heroInventory = heroProduct ? getInventorySummary(heroProduct) : null;
 
   return (
-    <section id="drops" className="space-y-10">
+    <section id="drops" style={{ scrollMarginTop: "160px" }} className="space-y-10">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h2 className="text-3xl font-semibold text-white">Limited Drops</h2>
         <p className="text-sm text-white/60">
@@ -24,8 +26,7 @@ export function LimitedDrops({ heroProduct, dropTiles }: LimitedDropsProps) {
         </p>
       </div>
       <div className="grid gap-6 lg:grid-cols-[420px_minmax(0,1fr)]">
-        <Parallax speed={0.1} direction="up">
-          <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-indigo-600/50 via-purple-500/30 to-slate-900 p-8">
+        <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-indigo-600/50 via-purple-500/30 to-slate-900 p-8">
           <div className="relative mb-6 h-48 overflow-hidden rounded-2xl border border-white/15">
             {heroImage ? (
               <Image
@@ -81,15 +82,15 @@ export function LimitedDrops({ heroProduct, dropTiles }: LimitedDropsProps) {
           >
             Preview Details
           </ButtonLink>
-          </div>
-        </Parallax>
+        </div>
         <div className="grid gap-6 md:grid-cols-2">
-          {dropTiles.map((product) => (
-            <ProductCard
-              key={product.slug}
-              product={product}
-              href={`/products/${product.slug}`}
-            />
+          {dropTiles.map((product, index) => (
+            <ScrollReveal key={product.slug} animation="fade-up" delay={index * 150}>
+              <ProductCard
+                product={product}
+                href={`/products/${product.slug}`}
+              />
+            </ScrollReveal>
           ))}
         </div>
       </div>

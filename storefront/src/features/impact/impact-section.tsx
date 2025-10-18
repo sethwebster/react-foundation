@@ -25,6 +25,7 @@ export function ImpactSection() {
   return (
     <section
       id="impact"
+      style={{ scrollMarginTop: "160px" }}
       className="rounded-3xl border border-white/10 bg-slate-900/70 p-10 backdrop-blur"
     >
       <div className="grid gap-10 md:grid-cols-[minmax(0,1fr)_320px]">

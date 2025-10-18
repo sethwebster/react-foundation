@@ -14,11 +14,11 @@ export const metadata: Metadata = {
 export default async function CollectionsPage() {
   const dropProducts = await getDropProducts();
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100">
+    <div className="min-h-screen bg-slate-950 pt-24 text-slate-100">
       <div className="absolute inset-x-0 top-[-10rem] -z-10 flex justify-center blur-3xl">
         <div className="h-[28rem] w-[70rem] bg-gradient-to-r from-indigo-500 via-purple-500 to-sky-500 opacity-25" />
       </div>
-      <div className="mx-auto flex h-full max-w-6xl flex-col gap-16 px-6 pb-24 pt-16 sm:px-8 lg:px-12">
+      <div className="mx-auto flex h-full max-w-6xl flex-col gap-16 px-6 pb-24 sm:px-8 lg:px-12">
         <header className="space-y-6">
           <Pill tone="sky" className="bg-white/10 text-white/80">
             Curated React drops

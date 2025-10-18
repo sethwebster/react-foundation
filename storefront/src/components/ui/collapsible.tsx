@@ -28,7 +28,7 @@ export function Collapsible({
         {trigger}
         <span
           className="text-white/50 transition-transform duration-300 ease-in-out"
-          style={{ transform: isOpen ? "rotate(180deg)" : "rotate(0deg)" }}
+          style={{ transform: isOpen ? "rotate(0deg)" : "rotate(180deg)" }}
         >
           ▼
         </span>

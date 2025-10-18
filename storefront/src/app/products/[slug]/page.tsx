@@ -64,7 +64,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const relatedProducts = await getRelatedProducts(product.slug);
 
   return (
-    <div className="relative min-h-screen bg-slate-950 text-slate-100">
+    <div className="relative min-h-screen bg-slate-950 pt-24 text-slate-100">
       <div
         className={`pointer-events-none absolute inset-0 blur-3xl`}
         aria-hidden
@@ -73,7 +73,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
           className={`absolute inset-0 bg-gradient-to-br ${product.accent} opacity-25`}
         />
       </div>
-      <div className="relative mx-auto max-w-6xl px-6 pb-24 pt-12 sm:px-8 lg:px-12">
+      <div className="relative mx-auto max-w-6xl px-6 pb-24 sm:px-8 lg:px-12">
         <nav className="flex items-center justify-between text-sm text-white/60">
           <ButtonLink
             href="/#drops"

@@ -1,6 +1,9 @@
+"use client";
+
 import Image from "next/image";
 
 import { ButtonLink } from "@/components/ui/button";
+import { ScrollReveal } from "@/components/ui/scroll-reveal";
 
 const collectionCards = [
   {
@@ -27,6 +30,7 @@ export function FeaturedCollections() {
   return (
     <section
       id="featured"
+      style={{ scrollMarginTop: "160px" }}
       className="space-y-10 rounded-3xl border border-white/10 bg-white/5 p-10 backdrop-blur"
     >
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
@@ -44,11 +48,9 @@ export function FeaturedCollections() {
         </ButtonLink>
       </div>
       <div className="grid gap-6 md:grid-cols-3">
-        {collectionCards.map((collection) => (
-          <div
-            key={collection.title}
-            className="flex flex-col gap-4 rounded-2xl border border-white/10 bg-slate-900/70 p-6 transition hover:border-white/25 hover:bg-slate-900"
-          >
+        {collectionCards.map((collection, index) => (
+          <ScrollReveal key={collection.title} animation="fade-up" delay={index * 100}>
+            <div className="flex flex-col gap-4 rounded-2xl border border-white/10 bg-slate-900/70 p-6 transition hover:border-white/25 hover:bg-slate-900">
             <div className="relative h-40 overflow-hidden rounded-xl border border-white/10">
               <Image
                 src={collection.image}
@@ -74,7 +76,8 @@ export function FeaturedCollections() {
             >
               Shop the edit <span aria-hidden>→</span>
             </ButtonLink>
-          </div>
+            </div>
+          </ScrollReveal>
         ))}
       </div>
     </section>
