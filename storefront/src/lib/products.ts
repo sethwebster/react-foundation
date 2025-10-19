@@ -78,14 +78,48 @@ export function formatAvailability(availability: ProductAvailability): string {
 }
 
 export function getInventorySummary(product: Pick<Product, "quantityAvailable" | "availability">) {
-  const availabilityLabel = formatAvailability(product.availability);
-  const inventoryLabel =
-    product.quantityAvailable > 0
-      ? `${product.quantityAvailable} available`
-      : "Sold out";
+  const qty = product.quantityAvailable;
+
+  // For print-on-demand or high-quantity items (likely unlimited)
+  if (qty >= 999) {
+    return {
+      availabilityLabel: 'In stock',
+      inventoryLabel: 'Made to order',
+    };
+  }
+
+  // Determine single clear status
+  if (product.availability === 'backordered') {
+    return {
+      availabilityLabel: 'Backordered',
+      inventoryLabel: qty > 0 ? `${qty} on backorder` : 'Accepting preorders',
+    };
+  }
+
+  if (product.availability === 'discontinued') {
+    return {
+      availabilityLabel: 'Discontinued',
+      inventoryLabel: qty > 0 ? `${qty} remaining` : 'No longer available',
+    };
+  }
+
+  // Available status
+  if (qty === 0) {
+    return {
+      availabilityLabel: 'Sold out',
+      inventoryLabel: 'Check back soon',
+    };
+  }
+
+  if (qty <= 5) {
+    return {
+      availabilityLabel: 'Low stock',
+      inventoryLabel: `Only ${qty} left`,
+    };
+  }
 
   return {
-    availabilityLabel,
-    inventoryLabel,
+    availabilityLabel: 'In stock',
+    inventoryLabel: `${qty} available`,
   };
 }

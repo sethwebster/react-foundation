@@ -44,6 +44,19 @@ export function Rating({
   const formattedCount =
     typeof count === "number" ? count.toLocaleString("en-US") : null;
 
+  // Don't show stars if there are no reviews
+  if (count === 0) {
+    return (
+      <div
+        className={cn("flex items-center gap-2 text-xs text-white/50", className)}
+      >
+        <span className="text-[11px] uppercase tracking-[0.2em]">
+          No reviews yet
+        </span>
+      </div>
+    );
+  }
+
   return (
     <div
       className={cn("flex items-center gap-2 text-xs text-white/50", className)}
@@ -85,7 +98,7 @@ export function Rating({
           );
         })}
       </div>
-      {typeof formattedCount === "string" ? (
+      {typeof count === "number" ? (
         <span className="text-[11px] uppercase tracking-[0.2em]">
           {formattedCount} reviews
         </span>

@@ -99,9 +99,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 <div>
                   <div className="space-y-1">
                     <p className="text-[11px] uppercase tracking-[0.35em] text-white/70">
-                      {inventorySummary.inventoryLabel} · {inventorySummary.availabilityLabel}
+                      {inventorySummary.availabilityLabel}
                     </p>
-                    <p className="text-xs text-white/60">{product.status}</p>
+                    <p className="text-xs text-white/60">{inventorySummary.inventoryLabel}</p>
                   </div>
                   <h1 className="mt-2 text-4xl font-semibold text-white sm:text-5xl">
                     {product.name}
