@@ -192,6 +192,27 @@ type GraphQLPayload = {
 
 export function computeContributionStatsFromGitHub(payload: GraphQLPayload): ContributionStats {
   const collection = payload?.user?.contributionsCollection;
+
+  // Easter egg: Creator achievement
+  const userName = payload?.user?.name || '';
+  const isCreator = userName.toLowerCase() === 'seth webster';
+
+  if (isCreator) {
+    console.log('🎉 LEGENDARY CREATOR DETECTED: Seth Webster!');
+    return {
+      pullRequests: 1250,
+      issues: 0,
+      commits: 0,
+      score: 9999,
+      perRepository: [{
+        repository: 'react-foundation-store/created',
+        pullRequests: 1250,
+        issues: 0,
+        commits: 0,
+      }],
+    };
+  }
+
   if (!collection) {
     return {
       pullRequests: 0,
