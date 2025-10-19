@@ -24,10 +24,15 @@
     "drops:create": "node --env-file=.env scripts/shopify-create-drop.mjs"
   },
   "dependencies": {
+    "@react-three/drei": "^10.7.6",
+    "@react-three/fiber": "^9.4.0",
+    "@react-three/postprocessing": "^3.0.4",
     "next": "^15.5.6",
     "next-auth": "^4.24.11",
+    "postprocessing": "^6.37.8",
     "react": "19.1.0",
-    "react-dom": "19.1.0"
+    "react-dom": "19.1.0",
+    "three": "^0.180.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
