@@ -179,6 +179,7 @@ type GraphQLContributionEntry = {
 
 type GraphQLPayload = {
   user?: {
+    name?: string;
     contributionsCollection?: {
       totalPullRequestContributions?: number;
       totalIssueContributions?: number;
