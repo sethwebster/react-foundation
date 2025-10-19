@@ -1,32 +1,49 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 
+import type { ShopifyCollection } from "@/lib/shopify";
 import { ButtonLink } from "@/components/ui/button";
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
 
-const collectionCards = [
+interface FeaturedCollectionsProps {
+  collections: ShopifyCollection[];
+}
+
+// Fallback for when Shopify is not configured
+const fallbackCollections = [
   {
+    id: "fallback-1",
+    handle: "core-maintainer-essentials",
     title: "Core Maintainer Essentials",
-    description:
-      "Minimalist silhouettes in midnight hues with subtle React energy.",
+    description: "Minimalist silhouettes in midnight hues with subtle React energy.",
     image: "/assets/collections/core-maintainer-essentials.png",
   },
   {
+    id: "fallback-2",
+    handle: "conference-spotlight",
     title: "Conference Spotlight Capsule",
-    description:
-      "Stage-ready tailoring with chromatic accents and crisp typography.",
+    description: "Stage-ready tailoring with chromatic accents and crisp typography.",
     image: "/assets/collections/conference-spotlight.png",
   },
   {
+    id: "fallback-3",
+    handle: "oss-community-atelier",
     title: "OSS Community Atelier",
-    description:
-      "Collaborations with community artists celebrating open-source culture.",
+    description: "Collaborations with community artists celebrating open-source culture.",
     image: "/assets/collections/oss-community-atelier.png",
   },
 ];
 
-export function FeaturedCollections() {
+export function FeaturedCollections({ collections }: FeaturedCollectionsProps) {
+  // Filter and sort featured collections from Shopify
+  const featuredCollections = collections.length > 0
+    ? collections
+        .filter((c) => c.homeFeatured)
+        .sort((a, b) => (a.homeFeaturedOrder || 999) - (b.homeFeaturedOrder || 999))
+        .slice(0, 3)
+    : fallbackCollections;
   return (
     <section
       id="featured"
@@ -48,37 +65,44 @@ export function FeaturedCollections() {
         </ButtonLink>
       </div>
       <div className="grid gap-6 md:grid-cols-3">
-        {collectionCards.map((collection, index) => (
-          <ScrollReveal key={collection.title} animation="fade-up" delay={index * 100}>
-            <div className="flex flex-col gap-4 rounded-2xl border border-white/10 bg-slate-900/70 p-6 transition hover:border-white/25 hover:bg-slate-900">
-            <div className="relative h-40 overflow-hidden rounded-xl border border-white/10">
-              <Image
-                src={collection.image}
-                alt={`${collection.title} preview`}
-                fill
-                sizes="(min-width: 1024px) 25vw, 90vw"
-                className="object-cover"
-              />
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold text-white">
-                {collection.title}
-              </h3>
-              <p className="mt-2 text-sm text-white/60">
-                {collection.description}
-              </p>
-            </div>
-            <ButtonLink
-              href="/collections"
-              variant="ghost"
-              size="sm"
-              className="mt-auto"
-            >
-              Shop the edit <span aria-hidden>→</span>
-            </ButtonLink>
-            </div>
-          </ScrollReveal>
-        ))}
+        {featuredCollections.map((collection, index) => {
+          const imageUrl = 'image' in collection && collection.image
+            ? (typeof collection.image === 'string' ? collection.image : collection.image.url)
+            : '/placeholders/collection-core.png';
+          const imageAlt = 'image' in collection && collection.image && typeof collection.image === 'object'
+            ? collection.image.altText || collection.title
+            : `${collection.title} preview`;
+
+          return (
+            <ScrollReveal key={collection.id} animation="fade-up" delay={index * 100}>
+              <Link
+                href={`/collections/${collection.handle}`}
+                className="flex flex-col gap-4 rounded-2xl border border-white/10 bg-slate-900/70 p-6 transition hover:border-white/25 hover:bg-slate-900"
+              >
+                <div className="relative h-40 overflow-hidden rounded-xl border border-white/10">
+                  <Image
+                    src={imageUrl}
+                    alt={imageAlt}
+                    fill
+                    sizes="(min-width: 1024px) 25vw, 90vw"
+                    className="object-cover"
+                  />
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold text-white">
+                    {collection.title}
+                  </h3>
+                  <p className="mt-2 text-sm text-white/60">
+                    {collection.description}
+                  </p>
+                </div>
+                <div className="mt-auto text-xs text-sky-400 transition hover:text-sky-300">
+                  Shop the edit <span aria-hidden>→</span>
+                </div>
+              </Link>
+            </ScrollReveal>
+          );
+        })}
       </div>
     </section>
   );

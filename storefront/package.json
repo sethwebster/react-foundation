@@ -17,7 +17,11 @@
     "shopify:verify": "node scripts/verify-shopify-products.mjs",
     "shopify:check-media": "node scripts/check-product-media.mjs",
     "shopify:delete-failed": "node scripts/delete-failed-media.mjs",
-    "shopify:test-storefront": "node scripts/test-storefront-api.mjs"
+    "shopify:test-storefront": "node scripts/test-storefront-api.mjs",
+    "shopify:setup-metafields": "node --env-file=.env scripts/shopify-setup-metafields.mjs",
+    "shopify:cleanup-metafields": "node --env-file=.env scripts/shopify-cleanup-metafields.mjs",
+    "drops:list": "node --env-file=.env scripts/shopify-list-drops.mjs",
+    "drops:create": "node --env-file=.env scripts/shopify-create-drop.mjs"
   },
   "dependencies": {
     "next": "^15.5.6",

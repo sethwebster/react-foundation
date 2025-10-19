@@ -3,18 +3,35 @@ import { Hero } from "@/components/home/hero";
 import { FeaturedLook } from "@/components/home/featured-look";
 import { FeaturedCollections } from "@/components/home/featured-collections";
 import { LimitedDrops } from "@/components/home/limited-drops";
-import { PastDrops } from "@/components/home/past-drops";
+import { PastDropsCollections } from "@/components/home/past-drops-collections";
 import { MaintainerProgressProvider } from "@/features/maintainer-progress/context";
 import { MaintainerProgress } from "@/features/maintainer-progress/maintainer-progress";
 import { ImpactSection } from "@/features/impact/impact-section";
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
 import { getProductBySlug, getProductsByCollection } from "@/lib/products-shopify";
+import {
+  getAllCollections,
+  getCurrentDrops,
+  getPastDrops,
+  isShopifyEnabled,
+} from "@/lib/shopify";
 
 export default async function Home() {
-  // Fetch products from Shopify
-  const [currentDropProducts, pastDropProducts, heroProduct] = await Promise.all([
-    getProductsByCollection("current-drop"),
-    getProductsByCollection("past-drop"),
+  // Fetch all collections from Shopify
+  const allCollections = isShopifyEnabled() ? await getAllCollections() : [];
+
+  // Filter collections by type
+  const currentDropCollections = getCurrentDrops(allCollections);
+  const pastDropCollections = getPastDrops(allCollections);
+
+  // Get the primary current drop collection
+  const primaryDrop = currentDropCollections[0];
+
+  // Fetch products from the primary current drop (or fallback to old system)
+  const [currentDropProducts, heroProduct] = await Promise.all([
+    primaryDrop
+      ? getProductsByCollection(primaryDrop.handle)
+      : getProductsByCollection("current-drop"), // Fallback
     getProductBySlug("fiber-shell"),
   ]);
 
@@ -38,7 +55,7 @@ export default async function Home() {
             </section>
 
             <ScrollReveal animation="fade-up">
-              <FeaturedCollections />
+              <FeaturedCollections collections={allCollections} />
             </ScrollReveal>
 
             <ScrollReveal animation="scale">
@@ -46,7 +63,7 @@ export default async function Home() {
             </ScrollReveal>
 
             <ScrollReveal animation="fade-up">
-              <PastDrops products={pastDropProducts} />
+              <PastDropsCollections collections={pastDropCollections} />
             </ScrollReveal>
 
             <ScrollReveal animation="fade-up">

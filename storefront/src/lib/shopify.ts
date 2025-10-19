@@ -416,14 +416,219 @@ export async function getProductsByCollection(
           };
         }>;
       };
-    };
+    } | null;
   }>(query, { handle: collectionHandle, first: limit });
+
+  if (!data.collection) {
+    return [];
+  }
 
   return data.collection.products.edges.map(({ node }) => ({
     ...node,
     unlockTier: node.unlockTier?.value,
     tagline: node.tagline?.value,
   }));
+}
+
+/**
+ * Collection type from Shopify with React Foundation metafields
+ */
+export interface ShopifyCollection {
+  id: string;
+  handle: string;
+  title: string;
+  description: string;
+  descriptionHtml: string;
+  image: {
+    url: string;
+    altText: string | null;
+    width: number;
+    height: number;
+  } | null;
+  products: {
+    edges: Array<{
+      node: {
+        id: string;
+      };
+    }>;
+  };
+  // React Foundation metafields
+  // Drop-specific
+  isDrop?: boolean;
+  dropNumber?: number;
+  dropStartDate?: string;
+  dropEndDate?: string;
+  dropSeason?: string;
+  dropYear?: number;
+  dropTheme?: string;
+  limitedEditionSize?: number;
+  // Perennial-specific
+  isPerennial?: boolean;
+  collectionType?: string;
+  // Display control
+  homeFeatured?: boolean;
+  homeFeaturedOrder?: number;
+  accentGradient?: string;
+  // Time-limited (for non-drop curated collections)
+  timeLimited?: boolean;
+}
+
+/**
+ * Calculate drop status from dates
+ */
+export function getDropStatus(collection: ShopifyCollection): "current" | "upcoming" | "past" | null {
+  if (!collection.isDrop) return null;
+
+  const now = new Date();
+  const startDate = collection.dropStartDate ? new Date(collection.dropStartDate) : null;
+  const endDate = collection.dropEndDate ? new Date(collection.dropEndDate) : null;
+
+  // If no dates set, assume it's current
+  if (!startDate && !endDate) return 'current';
+
+  // If we have a start date and we haven't reached it yet
+  if (startDate && now < startDate) return 'upcoming';
+
+  // If we have an end date and we've passed it
+  if (endDate && now > endDate) return 'past';
+
+  // Otherwise it's current
+  return 'current';
+}
+
+/**
+ * Fetch all collections from Shopify with full metafields
+ */
+export async function getAllCollections(limit = 50): Promise<ShopifyCollection[]> {
+  const query = `
+    query getCollections($first: Int!) {
+      collections(first: $first) {
+        edges {
+          node {
+            id
+            handle
+            title
+            description
+            descriptionHtml
+            image {
+              url
+              altText
+              width
+              height
+            }
+            products(first: 1) {
+              edges {
+                node {
+                  id
+                }
+              }
+            }
+            isDrop: metafield(namespace: "react_foundation", key: "is_drop") { value }
+            dropNumber: metafield(namespace: "react_foundation", key: "drop_number") { value }
+            dropStartDate: metafield(namespace: "react_foundation", key: "drop_start_date") { value }
+            dropEndDate: metafield(namespace: "react_foundation", key: "drop_end_date") { value }
+            dropSeason: metafield(namespace: "react_foundation", key: "drop_season") { value }
+            dropYear: metafield(namespace: "react_foundation", key: "drop_year") { value }
+            dropTheme: metafield(namespace: "react_foundation", key: "drop_theme") { value }
+            limitedEditionSize: metafield(namespace: "react_foundation", key: "limited_edition_size") { value }
+            isPerennial: metafield(namespace: "react_foundation", key: "is_perennial") { value }
+            collectionType: metafield(namespace: "react_foundation", key: "collection_type") { value }
+            homeFeatured: metafield(namespace: "react_foundation", key: "home_featured") { value }
+            homeFeaturedOrder: metafield(namespace: "react_foundation", key: "home_featured_order") { value }
+            accentGradient: metafield(namespace: "react_foundation", key: "accent_gradient") { value }
+            timeLimited: metafield(namespace: "react_foundation", key: "time_limited") { value }
+          }
+        }
+      }
+    }
+  `;
+
+  type MetafieldValue = { value: string } | null | undefined;
+
+  const data = await shopifyFetch<{
+    collections: {
+      edges: Array<{
+        node: Omit<ShopifyCollection, 'isDrop' | 'dropNumber' | 'dropStartDate' | 'dropEndDate' | 'dropSeason' | 'dropYear' | 'dropTheme' | 'limitedEditionSize' | 'isPerennial' | 'collectionType' | 'homeFeatured' | 'homeFeaturedOrder' | 'accentGradient' | 'timeLimited'> & {
+          isDrop?: MetafieldValue;
+          dropNumber?: MetafieldValue;
+          dropStartDate?: MetafieldValue;
+          dropEndDate?: MetafieldValue;
+          dropSeason?: MetafieldValue;
+          dropYear?: MetafieldValue;
+          dropTheme?: MetafieldValue;
+          limitedEditionSize?: MetafieldValue;
+          isPerennial?: MetafieldValue;
+          collectionType?: MetafieldValue;
+          homeFeatured?: MetafieldValue;
+          homeFeaturedOrder?: MetafieldValue;
+          accentGradient?: MetafieldValue;
+          timeLimited?: MetafieldValue;
+        };
+      }>;
+    };
+  }>(query, { first: limit });
+
+  return data.collections.edges.map(({ node }) => ({
+    ...node,
+    isDrop: node.isDrop?.value === 'true',
+    dropNumber: node.dropNumber?.value ? parseInt(node.dropNumber.value, 10) : undefined,
+    dropStartDate: node.dropStartDate?.value,
+    dropEndDate: node.dropEndDate?.value,
+    dropSeason: node.dropSeason?.value,
+    dropYear: node.dropYear?.value ? parseInt(node.dropYear.value, 10) : undefined,
+    dropTheme: node.dropTheme?.value,
+    limitedEditionSize: node.limitedEditionSize?.value ? parseInt(node.limitedEditionSize.value, 10) : undefined,
+    isPerennial: node.isPerennial?.value === 'true',
+    collectionType: node.collectionType?.value,
+    homeFeatured: node.homeFeatured?.value === 'true',
+    homeFeaturedOrder: node.homeFeaturedOrder?.value ? parseInt(node.homeFeaturedOrder.value, 10) : undefined,
+    accentGradient: node.accentGradient?.value,
+    timeLimited: node.timeLimited?.value === 'true',
+  }));
+}
+
+/**
+ * Get current drop collections (calculated from dates)
+ */
+export function getCurrentDrops(collections: ShopifyCollection[]): ShopifyCollection[] {
+  return collections
+    .filter(c => c.isDrop && getDropStatus(c) === 'current')
+    .sort((a, b) => (b.dropNumber || 0) - (a.dropNumber || 0));
+}
+
+/**
+ * Get past drop collections (calculated from dates)
+ */
+export function getPastDrops(collections: ShopifyCollection[]): ShopifyCollection[] {
+  return collections
+    .filter(c => c.isDrop && getDropStatus(c) === 'past')
+    .sort((a, b) => (b.dropNumber || 0) - (a.dropNumber || 0));
+}
+
+/**
+ * Get upcoming drop collections (calculated from dates)
+ */
+export function getUpcomingDrops(collections: ShopifyCollection[]): ShopifyCollection[] {
+  return collections
+    .filter(c => c.isDrop && getDropStatus(c) === 'upcoming')
+    .sort((a, b) => (a.dropNumber || 0) - (b.dropNumber || 0));
+}
+
+/**
+ * Get perennial collections
+ */
+export function getPerennialCollections(collections: ShopifyCollection[]): ShopifyCollection[] {
+  return collections.filter(c => c.isPerennial);
+}
+
+/**
+ * Get featured collections for home page
+ */
+export function getFeaturedCollections(collections: ShopifyCollection[]): ShopifyCollection[] {
+  return collections
+    .filter(c => c.homeFeatured)
+    .sort((a, b) => (a.homeFeaturedOrder || 999) - (b.homeFeaturedOrder || 999))
+    .slice(0, 3);
 }
 
 /**
