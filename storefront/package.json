@@ -21,7 +21,8 @@
     "shopify:setup-metafields": "node --env-file=.env scripts/shopify-setup-metafields.mjs",
     "shopify:cleanup-metafields": "node --env-file=.env scripts/shopify-cleanup-metafields.mjs",
     "drops:list": "node --env-file=.env scripts/shopify-list-drops.mjs",
-    "drops:create": "node --env-file=.env scripts/shopify-create-drop.mjs"
+    "drops:create": "node --env-file=.env scripts/shopify-create-drop.mjs",
+    "collections:generate-images": "node --env-file=.env scripts/generate-collection-images.mjs"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.6",

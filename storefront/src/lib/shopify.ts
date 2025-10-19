@@ -483,16 +483,35 @@ export function getDropStatus(collection: ShopifyCollection): "current" | "upcom
   const startDate = collection.dropStartDate ? new Date(collection.dropStartDate) : null;
   const endDate = collection.dropEndDate ? new Date(collection.dropEndDate) : null;
 
+  // Debug logging
+  console.log(`[getDropStatus] ${collection.handle}:`, {
+    dropStartDate: collection.dropStartDate,
+    dropEndDate: collection.dropEndDate,
+    startDate: startDate?.toISOString(),
+    endDate: endDate?.toISOString(),
+    now: now.toISOString(),
+  });
+
   // If no dates set, assume it's current
-  if (!startDate && !endDate) return 'current';
+  if (!startDate && !endDate) {
+    console.log(`  → current (no dates)`);
+    return 'current';
+  }
 
   // If we have a start date and we haven't reached it yet
-  if (startDate && now < startDate) return 'upcoming';
+  if (startDate && now < startDate) {
+    console.log(`  → upcoming (before start date)`);
+    return 'upcoming';
+  }
 
   // If we have an end date and we've passed it
-  if (endDate && now > endDate) return 'past';
+  if (endDate && now > endDate) {
+    console.log(`  → past (after end date)`);
+    return 'past';
+  }
 
   // Otherwise it's current
+  console.log(`  → current (between dates or after start only)`);
   return 'current';
 }
 
@@ -568,23 +587,32 @@ export async function getAllCollections(limit = 50): Promise<ShopifyCollection[]
     };
   }>(query, { first: limit });
 
-  return data.collections.edges.map(({ node }) => ({
-    ...node,
-    isDrop: node.isDrop?.value === 'true',
-    dropNumber: node.dropNumber?.value ? parseInt(node.dropNumber.value, 10) : undefined,
-    dropStartDate: node.dropStartDate?.value,
-    dropEndDate: node.dropEndDate?.value,
-    dropSeason: node.dropSeason?.value,
-    dropYear: node.dropYear?.value ? parseInt(node.dropYear.value, 10) : undefined,
-    dropTheme: node.dropTheme?.value,
-    limitedEditionSize: node.limitedEditionSize?.value ? parseInt(node.limitedEditionSize.value, 10) : undefined,
-    isPerennial: node.isPerennial?.value === 'true',
-    collectionType: node.collectionType?.value,
-    homeFeatured: node.homeFeatured?.value === 'true',
-    homeFeaturedOrder: node.homeFeaturedOrder?.value ? parseInt(node.homeFeaturedOrder.value, 10) : undefined,
-    accentGradient: node.accentGradient?.value,
-    timeLimited: node.timeLimited?.value === 'true',
-  }));
+  return data.collections.edges.map(({ node }) => {
+    console.log('[getAllCollections] Processing collection:', node.handle, {
+      isDrop_raw: node.isDrop,
+      dropNumber_raw: node.dropNumber,
+      dropStartDate_raw: node.dropStartDate,
+      dropEndDate_raw: node.dropEndDate,
+    });
+
+    return {
+      ...node,
+      isDrop: node.isDrop?.value?.toLowerCase() === 'true',
+      dropNumber: node.dropNumber?.value ? parseInt(node.dropNumber.value, 10) : undefined,
+      dropStartDate: node.dropStartDate?.value,
+      dropEndDate: node.dropEndDate?.value,
+      dropSeason: node.dropSeason?.value,
+      dropYear: node.dropYear?.value ? parseInt(node.dropYear.value, 10) : undefined,
+      dropTheme: node.dropTheme?.value,
+      limitedEditionSize: node.limitedEditionSize?.value ? parseInt(node.limitedEditionSize.value, 10) : undefined,
+      isPerennial: node.isPerennial?.value?.toLowerCase() === 'true',
+      collectionType: node.collectionType?.value,
+      homeFeatured: node.homeFeatured?.value?.toLowerCase() === 'true',
+      homeFeaturedOrder: node.homeFeaturedOrder?.value ? parseInt(node.homeFeaturedOrder.value, 10) : undefined,
+      accentGradient: node.accentGradient?.value,
+      timeLimited: node.timeLimited?.value?.toLowerCase() === 'true',
+    };
+  });
 }
 
 /**

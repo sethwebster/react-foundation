@@ -20,9 +20,15 @@ export default async function Home() {
   // Fetch all collections from Shopify
   const allCollections = isShopifyEnabled() ? await getAllCollections() : [];
 
+  console.log('[Home] All collections:', allCollections.length);
+  console.log('[Home] Collections with isDrop:', allCollections.filter(c => c.isDrop));
+
   // Filter collections by type
   const currentDropCollections = getCurrentDrops(allCollections);
   const pastDropCollections = getPastDrops(allCollections);
+
+  console.log('[Home] Current drops:', currentDropCollections);
+  console.log('[Home] Past drops:', pastDropCollections);
 
   // Get the primary current drop collection
   const primaryDrop = currentDropCollections[0];
