@@ -39,7 +39,8 @@ export function MobileMenu({ session }: MobileMenuProps) {
       <button
         onClick={toggleMenu}
         className="flex h-10 w-10 items-center justify-center rounded-full transition hover:bg-white/5"
-        aria-label="Menu"
+        aria-label={isOpen ? "Close menu" : "Open menu"}
+        aria-expanded={isOpen}
       >
         {session?.user ? (
           // Profile icon
@@ -130,7 +131,6 @@ export function MobileMenu({ session }: MobileMenuProps) {
               href="/profile"
               onClick={closeMenu}
               className="block border-b border-white/10 p-6 transition hover:bg-white/5"
-              style={{ backgroundColor: '#0f172a' }}
             >
               <div className="flex items-center gap-3">
                 <div className="relative h-12 w-12 overflow-hidden rounded-full border-2 border-white/20">
@@ -157,7 +157,7 @@ export function MobileMenu({ session }: MobileMenuProps) {
           )}
 
           {/* Navigation Links */}
-          <nav className="p-6" style={{ backgroundColor: '#0f172a' }}>
+          <nav className="p-6">
             <div className="space-y-2">
               {navigationLinks.map((link) => (
                 <Link
@@ -200,7 +200,7 @@ export function MobileMenu({ session }: MobileMenuProps) {
           </nav>
 
           {/* Footer */}
-          <div className="border-t border-white/10 p-6" style={{ backgroundColor: '#0f172a' }}>
+          <div className="border-t border-white/10 p-6">
             <p className="text-xs text-white/50">
               © {new Date().getFullYear()} React Foundation
             </p>
