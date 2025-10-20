@@ -1,11 +1,11 @@
 "use client";
 
 import { redirect } from "next/navigation";
-import Image from "next/image";
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { Footer } from "@/components/layout/footer";
 import { ErrorBoundary } from "@/components/error-boundary";
+import { UserAvatar } from "@/components/ui/user-avatar";
 
 export default function ProfileLayout({
   children,
@@ -40,21 +40,7 @@ export default function ProfileLayout({
             {/* Profile Card */}
             <div className="rounded-2xl border border-white/10 bg-slate-900/60 p-6">
               <div className="flex flex-col items-center gap-4 text-center">
-                <div className="relative h-20 w-20 overflow-hidden rounded-full border-4 border-white/20">
-                  {session.user.image ? (
-                    <Image
-                      src={session.user.image}
-                      alt={session.user.name || "User"}
-                      fill
-                      sizes="80px"
-                      className="object-cover"
-                    />
-                  ) : (
-                    <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-cyan-400 to-indigo-500 text-2xl font-bold text-white">
-                      {session.user.name?.charAt(0) || "U"}
-                    </div>
-                  )}
-                </div>
+                <UserAvatar user={session.user} size={80} />
                 <div>
                   <h2 className="font-semibold text-white">{session.user.name}</h2>
                   <p className="text-sm text-white/60">{session.user.email}</p>

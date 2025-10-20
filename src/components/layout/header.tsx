@@ -7,6 +7,7 @@ import { useSession } from "next-auth/react";
 
 import { Button } from "@/components/ui/button";
 import { MobileMenu } from "@/components/layout/mobile-menu";
+import { UserAvatar } from "@/components/ui/user-avatar";
 
 export function Header() {
   const pathname = usePathname();
@@ -101,24 +102,12 @@ export function Header() {
 
           {/* Profile Icon or Sign In */}
           {session?.user ? (
-            <Link
+            <UserAvatar
+              user={session.user}
+              size={40}
               href="/profile"
-              className="relative h-10 w-10 overflow-hidden rounded-full border-2 border-white/20 transition hover:border-cyan-400/50 hover:shadow-lg hover:shadow-cyan-500/20"
-            >
-              {session.user.image ? (
-                <Image
-                  src={session.user.image}
-                  alt={session.user.name || "User"}
-                  fill
-                  sizes="40px"
-                  className="object-cover"
-                />
-              ) : (
-                <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-cyan-400 to-indigo-500 text-sm font-bold text-white">
-                  {session.user.name?.charAt(0) || "U"}
-                </div>
-              )}
-            </Link>
+              className="transition hover:border-cyan-400/50 hover:shadow-lg hover:shadow-cyan-500/20"
+            />
           ) : (
             <Link
               href="/api/auth/signin"
