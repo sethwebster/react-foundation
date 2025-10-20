@@ -25,6 +25,7 @@
     "collections:generate-images": "node --env-file=.env scripts/generate-collection-images.mjs"
   },
   "dependencies": {
+    "@icons-pack/react-simple-icons": "^13.8.0",
     "@react-three/drei": "^10.7.6",
     "@react-three/fiber": "^9.4.0",
     "@react-three/postprocessing": "^3.0.4",
@@ -33,6 +34,7 @@
     "postprocessing": "^6.37.8",
     "react": "19.1.0",
     "react-dom": "19.1.0",
+    "simple-icons": "^15.17.0",
     "three": "^0.180.0"
   },
   "devDependencies": {
