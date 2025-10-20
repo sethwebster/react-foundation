@@ -23,7 +23,7 @@ export function ExecutiveMessage() {
           </h2>
         </div>
 
-        <div className="mx-auto max-w-3xl space-y-6 text-base leading-relaxed text-white/80">
+        <div className="prose prose-lg prose-invert prose-cyan mx-auto max-w-3xl">
           <p>
             You know, every so often, something comes along in software that changes not
             just how we build — but why we build.
@@ -68,15 +68,17 @@ export function ExecutiveMessage() {
             developers who make React what it is.
           </p>
 
-          <p className="text-lg font-medium text-white">
-            Because this isn&apos;t just about governance. It&apos;s about legacy.
-            <br />
-            It&apos;s about ensuring that the ideas we build together endure.
+          <p>
+            <strong>
+              Because this isn&apos;t just about governance. It&apos;s about legacy.
+              <br />
+              It&apos;s about ensuring that the ideas we build together endure.
+            </strong>
           </p>
 
           <p>
             I&apos;ve had the privilege of leading React at Meta for  many years, and now,
-            as the Executive Director of the React Foundation, I carry the same North Star 
+            as the Executive Director of the React Foundation, I carry the same North Star
             that&apos;s guided me all along: helping others bring their ideas to life.
           </p>
 
@@ -91,8 +93,8 @@ export function ExecutiveMessage() {
             you&apos;re about to.
           </p>
 
-          <p className="text-lg font-medium text-white">
-            Let&apos;s make the next chapter one that lasts for generations.
+          <p>
+            <strong>Let&apos;s make the next chapter one that lasts for generations.</strong>
           </p>
         </div>
 
