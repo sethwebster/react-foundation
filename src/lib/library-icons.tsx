@@ -114,6 +114,7 @@ export const libraryIcons: Record<string, IconComponent | null> = {
   // Styling
   "styled-components": SiStyledcomponents,
   emotion: null,
+  tailwindcss: SiTailwindcss,
 };
 
 // Display name mapping for libraries
@@ -172,6 +173,7 @@ export const libraryDisplayNames: Record<string, string> = {
   table: "TanStack Table",
   "styled-components": "Styled Components",
   emotion: "Emotion",
+  tailwindcss: "Tailwind CSS",
 };
 
 // Helper component to render library icon with fallback
