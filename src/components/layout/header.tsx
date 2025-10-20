@@ -99,8 +99,8 @@ export function Header() {
             </Button>
           )}
 
-          {/* Profile Icon (desktop) */}
-          {session?.user && (
+          {/* Profile Icon or Sign In */}
+          {session?.user ? (
             <Link
               href="/profile"
               className="relative h-10 w-10 overflow-hidden rounded-full border-2 border-white/20 transition hover:border-cyan-400/50 hover:shadow-lg hover:shadow-cyan-500/20"
@@ -117,6 +117,13 @@ export function Header() {
                   {session.user.name?.charAt(0) || "U"}
                 </div>
               )}
+            </Link>
+          ) : (
+            <Link
+              href="/api/auth/signin"
+              className="rounded-full border border-white/10 bg-sky-500/80 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-sky-400"
+            >
+              Sign in
             </Link>
           )}
         </div>
