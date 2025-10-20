@@ -1,62 +1,11 @@
 import { NextResponse } from "next/server";
 
 import {
-  computeContributionStatsFromGitHub,
   determineTier,
   getNextTier,
-  maintainerRepos,
+  ecosystemLibraries,
 } from "@/lib/maintainer-tiers";
-
-const GRAPHQL_ENDPOINT = "https://api.github.com/graphql";
-const requestTimeoutMs = 15000;
-
-const query = /* GraphQL */ `
-  query MaintainerProgress($login: String!, $from: DateTime!, $to: DateTime!) {
-    user(login: $login) {
-      name
-      avatarUrl
-      url
-      contributionsCollection(from: $from, to: $to) {
-        totalPullRequestContributions
-        totalIssueContributions
-        totalCommitContributions
-        pullRequestContributionsByRepository(maxRepositories: 100) {
-          repository {
-            name
-            owner {
-              login
-            }
-          }
-          contributions(first: 1) {
-            totalCount
-          }
-        }
-        issueContributionsByRepository(maxRepositories: 100) {
-          repository {
-            name
-            owner {
-              login
-            }
-          }
-          contributions(first: 1) {
-            totalCount
-          }
-        }
-        commitContributionsByRepository(maxRepositories: 100) {
-          repository {
-            name
-            owner {
-              login
-            }
-          }
-          contributions(first: 1) {
-            totalCount
-          }
-        }
-      }
-    }
-  }
-`;
+import { fetchAggregatedContributions, type RepositoryIdentifier } from "@/lib/providers";
 
 export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
@@ -74,74 +23,37 @@ export async function POST(request: Request) {
     );
   }
 
-  const now = new Date();
-  const from = new Date(now);
-  from.setFullYear(now.getFullYear() - 1);
-
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), requestTimeoutMs);
-
   try {
-    const response = await fetch(GRAPHQL_ENDPOINT, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        query,
-        variables: {
-          login: username,
-          from: from.toISOString(),
-          to: now.toISOString(),
-        },
-      }),
-      signal: controller.signal,
-      cache: "no-store",
-    });
+    // Convert ecosystem libraries to RepositoryIdentifier format
+    const repos: RepositoryIdentifier[] = ecosystemLibraries.map((lib) => ({
+      provider: lib.provider || 'github',
+      owner: lib.owner,
+      name: lib.name,
+    }));
 
-    clearTimeout(timeout);
+    // Fetch contributions across all providers
+    const aggregated = await fetchAggregatedContributions(
+      username,
+      repos,
+      token
+    );
 
-    if (!response.ok) {
-      const errorPayload = await response.json().catch(() => ({}));
-      return NextResponse.json(
-        { error: errorPayload?.message ?? "GitHub API request failed." },
-        { status: response.status },
-      );
-    }
+    console.log("Maintainer progress for", username, JSON.stringify(aggregated, null, 2));
 
-    const payload = await response.json();
-    if (payload.errors?.length) {
-      const message = payload.errors[0]?.message ?? "Unknown GitHub error.";
-      if (message.includes("Could not resolve to a User")) {
-        return NextResponse.json({ error: "GitHub user not found." }, { status: 404 });
-      }
-      return NextResponse.json({ error: message }, { status: 502 });
-    }
-
-    const stats = computeContributionStatsFromGitHub(payload.data);
-    console.log("Maintainer progress for", username, JSON.stringify(stats, null, 2));
-    const tier = determineTier(stats.score);
-    const nextTier = getNextTier(stats.score);
+    const tier = determineTier(aggregated.score);
+    const nextTier = getNextTier(aggregated.score);
 
     return NextResponse.json({
       username,
-      stats,
+      stats: aggregated,
       tier,
       nextTier,
-      maintainersTracked: maintainerRepos,
+      maintainersTracked: ecosystemLibraries,
     });
   } catch (error) {
-    clearTimeout(timeout);
-    if (error instanceof DOMException && error.name === "AbortError") {
-      return NextResponse.json(
-        { error: "GitHub request timed out." },
-        { status: 504 },
-      );
-    }
-    console.error(error);
+    console.error("Error fetching contributions:", error);
     return NextResponse.json(
-      { error: "Unexpected server error." },
+      { error: "Failed to fetch contribution data." },
       { status: 500 },
     );
   }

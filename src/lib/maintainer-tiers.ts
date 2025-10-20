@@ -22,6 +22,7 @@ type RepoTarget = {
   name: string;
   category: LibraryCategory;
   tier: 1 | 2 | 3; // For potential future weighting
+  provider?: 'github' | 'gitlab' | 'bitbucket' | 'gitea'; // Default: github
 };
 
 export type MaintainerTier = {
