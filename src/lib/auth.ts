@@ -1,6 +1,7 @@
 import type { NextAuthOptions } from "next-auth";
 import { getServerSession } from "next-auth";
 import GitHubProvider from "next-auth/providers/github";
+import GitLabProvider from "next-auth/providers/gitlab";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -13,7 +14,19 @@ export const authOptions: NextAuthOptions = {
         },
       },
     }),
+    GitLabProvider({
+      clientId: process.env.GITLAB_CLIENT_ID ?? "",
+      clientSecret: process.env.GITLAB_CLIENT_SECRET ?? "",
+      authorization: {
+        params: {
+          scope: "read_user read_api",
+        },
+      },
+    }),
   ],
+  pages: {
+    signIn: "/auth/signin",
+  },
   callbacks: {
     async jwt({ token, profile }) {
       if (profile && typeof profile === "object" && "login" in profile) {
