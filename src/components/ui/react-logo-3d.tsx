@@ -1,12 +1,12 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrthographicCamera } from "@react-three/drei";
 import { EffectComposer, Bloom } from "@react-three/postprocessing";
 import * as THREE from "three";
 
-function ReactAtom() {
+function ReactAtom({ onSpeedChange, speedModifier }: { onSpeedChange?: (speed: number) => void; speedModifier?: number }) {
   const groupRef = useRef<THREE.Group>(null);
   const nucleusRef = useRef<THREE.Mesh>(null);
   const orbit1Ref = useRef<THREE.Group>(null);
@@ -30,7 +30,12 @@ function ReactAtom() {
       const nextMultiplier = 1 + ((currentStep + 1) * 0.1);
       const smoothMultiplier = currentMultiplier + (nextMultiplier - currentMultiplier) * stepProgress;
 
-      const currentOuterSpeed = baseOuterSpeed * smoothMultiplier;
+      // Apply keyboard speed modifier (default 1.0)
+      const finalMultiplier = smoothMultiplier * (speedModifier || 1);
+      const currentOuterSpeed = baseOuterSpeed * finalMultiplier;
+
+      // Notify parent of speed change for glow effect
+      onSpeedChange?.(finalMultiplier);
 
       // Smoothly increment rotation using delta time
       if (groupRef.current) {
@@ -160,7 +165,7 @@ function ReactAtom() {
 }
 
 
-function Scene() {
+function Scene({ onSpeedChange, speedModifier }: { onSpeedChange?: (speed: number) => void; speedModifier?: number }) {
   return (
     <>
       <OrthographicCamera makeDefault position={[0, -1.5, 10]} zoom={100} />
@@ -169,7 +174,7 @@ function Scene() {
       <ambientLight intensity={0.05} />
 
       {/* Spinning neon React logo */}
-      <ReactAtom />
+      <ReactAtom onSpeedChange={onSpeedChange} speedModifier={speedModifier} />
 
       {/* Bloom post-processing - ultra soft glow */}
       <EffectComposer>
@@ -186,19 +191,77 @@ function Scene() {
 }
 
 export function ReactLogo3D() {
+  const [speedMultiplier, setSpeedMultiplier] = useState(1);
+  const [keyboardSpeedModifier, setKeyboardSpeedModifier] = useState(1);
+
+  // Keyboard controls: Up/Down arrows increase/decrease speed by 10%
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        setKeyboardSpeedModifier(prev => prev * 1.1); // Increase by 10%
+      } else if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        setKeyboardSpeedModifier(prev => Math.max(0.1, prev * 0.9)); // Decrease by 10%, min 0.1x
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  // Calculate glow intensity based on speed
+  // Speed starts at 1.0 and increases by 0.1 every 5 seconds
+  // Glow emanates from atom center, making it more visible as speed increases
+  const glowIntensity = Math.min(1, Math.max(0, (speedMultiplier - 1) / 8)); // 0 to 1 over 8x speed increase
+
+  // Expand dramatically from center - at terminal velocity fills the screen
+  const glowSize = 400 + (glowIntensity * 3000); // 400px to 3400px (viewport-filling at max)
+  const glowOpacity = Math.pow(glowIntensity, 0.5) * 0.95; // Power curve for dramatic growth
+  const glowBlur = 80 + (glowIntensity * 220); // 80px to 300px blur - VERY fuzzy
+
   return (
-    <Canvas
-      shadows
-      gl={{ alpha: true, antialias: true }}
-      style={{
-        width: '100%',
-        height: '100%',
-        background: 'transparent',
-        display: 'block',
-      }}
-      dpr={typeof window !== 'undefined' ? window.devicePixelRatio : 1}
-    >
-      <Scene />
-    </Canvas>
+    <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+      {/* Fuzzy expanding glow - emanates from atom center */}
+      <div
+        style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          width: `${glowSize}px`,
+          height: `${glowSize}px`,
+          transform: 'translate(-50%, -50%)',
+          background: `radial-gradient(circle,
+            rgba(97, 219, 251, ${0.9 * glowIntensity}) 0%,
+            rgba(97, 219, 251, ${0.7 * glowIntensity}) 8%,
+            rgba(97, 219, 251, ${0.5 * glowIntensity}) 18%,
+            rgba(97, 219, 251, ${0.25 * glowIntensity}) 35%,
+            rgba(97, 219, 251, ${0.08 * glowIntensity}) 55%,
+            transparent 75%)`,
+          filter: `blur(${glowBlur}px)`,
+          opacity: glowOpacity,
+          pointerEvents: 'none',
+          zIndex: 1,
+          animation: glowIntensity > 0.7 ? 'pulse 1.8s ease-in-out infinite' : 'none',
+        }}
+      />
+
+      {/* 3D Canvas */}
+      <Canvas
+        shadows
+        gl={{ alpha: true, antialias: true }}
+        style={{
+          width: '100%',
+          height: '100%',
+          background: 'transparent',
+          display: 'block',
+          position: 'relative',
+          zIndex: 2,
+        }}
+        dpr={typeof window !== 'undefined' ? window.devicePixelRatio : 1}
+      >
+        <Scene onSpeedChange={setSpeedMultiplier} speedModifier={keyboardSpeedModifier} />
+      </Canvas>
+    </div>
   );
 }
