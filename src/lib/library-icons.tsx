@@ -115,6 +115,7 @@ export const libraryIcons: Record<string, IconComponent | null> = {
   "styled-components": SiStyledcomponents,
   emotion: null,
   tailwindcss: SiTailwindcss,
+  nativewind: SiTailwindcss, // Use Tailwind logo for NativeWind
 };
 
 // Display name mapping for libraries
@@ -174,6 +175,7 @@ export const libraryDisplayNames: Record<string, string> = {
   "styled-components": "Styled Components",
   emotion: "Emotion",
   tailwindcss: "Tailwind CSS",
+  nativewind: "NativeWind",
 };
 
 // Helper component to render library icon with fallback
