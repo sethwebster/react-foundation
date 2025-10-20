@@ -28,13 +28,13 @@ export async function generateMetadata({
 
   if (!product) {
     return {
-      title: "Product not found",
-      description: "We couldn’t find that React Foundation product.",
+      title: "Store - Product not found",
+      description: "We couldn't find that React Foundation product.",
     };
   }
 
   return {
-    title: product.name,
+    title: `Store - ${product.name}`,
     description: product.description,
     openGraph: {
       title: product.name,

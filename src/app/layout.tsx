@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const siteName = "React Foundation Store";
+const siteName = "React Foundation";
 
 export const metadata: Metadata = {
   title: {
@@ -24,17 +24,17 @@ export const metadata: Metadata = {
     template: `%s · ${siteName}`,
   },
   description:
-    "Official React Foundation storefront featuring limited drops, past releases, and impact-driven merch.",
+    "Supporting the React ecosystem through community funding, transparent governance, and official merchandise.",
   openGraph: {
     siteName,
     title: siteName,
     description:
-      "Shop limited React Foundation drops and support open-source initiatives.",
+      "Supporting the React ecosystem through community funding and open source initiatives.",
   },
   twitter: {
     title: siteName,
     description:
-      "Shop limited React Foundation drops and support open-source initiatives.",
+      "Supporting the React ecosystem through community funding and open source initiatives.",
   },
   icons: [
     { rel: "icon", url: "/favicon-32.png", sizes: "32x32" },

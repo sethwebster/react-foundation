@@ -28,13 +28,13 @@ export async function generateMetadata({
 
   if (!collection) {
     return {
-      title: "Collection not found",
+      title: "Store - Collection not found",
       description: "We couldn't find that collection.",
     };
   }
 
   return {
-    title: collection.title,
+    title: `Store - ${collection.title}`,
     description: collection.description || `Browse the ${collection.title} collection`,
   };
 }

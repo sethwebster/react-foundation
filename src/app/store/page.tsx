@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { Footer } from "@/components/layout/footer";
 import { Hero } from "@/components/home/hero";
 import { FeaturedLook } from "@/components/home/featured-look";
@@ -15,6 +16,12 @@ import {
   getPastDrops,
   isShopifyEnabled,
 } from "@/lib/shopify";
+
+export const metadata: Metadata = {
+  title: "Store",
+  description:
+    "Official React Foundation storefront featuring limited drops, past releases, and impact-driven merch.",
+};
 
 export default async function Home() {
   // Fetch all collections from Shopify
