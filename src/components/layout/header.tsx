@@ -110,6 +110,7 @@ export function Header() {
                   src={session.user.image}
                   alt={session.user.name || "User"}
                   fill
+                  sizes="40px"
                   className="object-cover"
                 />
               ) : (

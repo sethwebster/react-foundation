@@ -45,6 +45,7 @@ export default function ProfileLayout({
                       src={session.user.image}
                       alt={session.user.name || "User"}
                       fill
+                      sizes="80px"
                       className="object-cover"
                     />
                   ) : (
