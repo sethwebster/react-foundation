@@ -7,7 +7,7 @@ import {
 
 import { cn } from "@/lib/cn";
 
-type ButtonVariant = "primary" | "secondary" | "glass" | "ghost" | "link";
+type ButtonVariant = "primary" | "secondary" | "tertiary" | "glass" | "ghost" | "link";
 type ButtonSize = "xs" | "sm" | "md" | "lg";
 
 const baseClasses =
@@ -18,6 +18,8 @@ const variantClasses: Record<ButtonVariant, string> = {
     "bg-gradient-to-r from-sky-400 via-indigo-500 to-purple-500 text-white shadow-lg shadow-indigo-500/30 hover:from-sky-300 hover:via-indigo-400 hover:to-purple-400",
   secondary:
     "border border-white/25 bg-slate-950/40 text-white hover:border-white/40 hover:bg-white/10",
+  tertiary:
+    "border border-emerald-400/30 bg-emerald-500/10 text-emerald-300 hover:border-emerald-400/50 hover:bg-emerald-500/20 hover:text-emerald-200",
   glass:
     "border border-white/15 bg-white/10 text-white shadow-lg shadow-indigo-500/10 backdrop-blur hover:border-white/25 hover:bg-white/15",
   ghost: "text-indigo-100 hover:text-white",
