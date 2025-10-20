@@ -76,7 +76,7 @@ export function LimitedDrops({ heroProduct, dropTiles }: LimitedDropsProps) {
             </p>
           </div>
           <ButtonLink
-            href={heroProduct ? `/products/${heroProduct.slug}` : "#drops"}
+            href={heroProduct ? `/store/products/${heroProduct.slug}` : "/store#drops"}
             size="xs"
             className="mt-8"
           >
@@ -88,7 +88,7 @@ export function LimitedDrops({ heroProduct, dropTiles }: LimitedDropsProps) {
             <ScrollReveal key={product.slug} animation="fade-up" delay={index * 150}>
               <ProductCard
                 product={product}
-                href={`/products/${product.slug}`}
+                href={`/store/products/${product.slug}`}
               />
             </ScrollReveal>
           ))}

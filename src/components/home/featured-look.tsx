@@ -95,7 +95,7 @@ export function FeaturedLook({ products }: FeaturedLookProps) {
         <div className="mt-6 flex items-center justify-between text-sm text-white/70">
           <p>Ships globally</p>
           <ButtonLink
-            href={mainProduct ? `/products/${mainProduct.slug}` : "#drops"}
+            href={mainProduct ? `/store/products/${mainProduct.slug}` : "/store#drops"}
             variant="secondary"
             size="xs"
             className="px-4"

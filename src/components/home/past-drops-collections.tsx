@@ -35,7 +35,7 @@ export function PastDropsCollections({ collections }: PastDropsCollectionsProps)
           return (
             <Link
               key={collection.id}
-              href={`/collections/${collection.handle}`}
+              href={`/store/collections/${collection.handle}`}
               className="group flex flex-col gap-4 rounded-2xl border border-white/10 bg-slate-900/70 p-6 transition hover:border-white/25 hover:bg-slate-900"
             >
               {collection.image ? (

@@ -33,7 +33,7 @@ export default function NotFound() {
               Return to Earth
             </RFDS.ButtonLink>
             <RFDS.ButtonLink
-              href="/collections"
+              href="/store/collections"
               variant="glass"
               size="lg"
               className="min-w-[200px]"

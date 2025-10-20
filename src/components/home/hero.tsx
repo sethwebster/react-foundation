@@ -22,10 +22,10 @@ export function Hero({ heroProduct }: HeroProps) {
         </p>
       </div>
       <div className="flex flex-wrap gap-4">
-        <ButtonLink href="/collections" variant="primary">
+        <ButtonLink href="/store/collections" variant="primary">
           Explore the Collection
         </ButtonLink>
-        <ButtonLink href="#impact" variant="secondary">
+        <ButtonLink href="/store#impact" variant="secondary">
           Watch the Story
         </ButtonLink>
       </div>

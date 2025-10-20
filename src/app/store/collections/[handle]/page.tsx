@@ -126,7 +126,7 @@ export default async function CollectionPage({ params }: CollectionPageProps) {
                 <ProductCard
                   key={product.slug}
                   product={product}
-                  href={`/products/${product.slug}`}
+                  href={`/store/products/${product.slug}`}
                 />
               ))}
             </section>

@@ -26,7 +26,7 @@ export function PastDrops({ products }: PastDropsProps) {
           <ScrollReveal key={product.slug} animation="fade-up" delay={index * 100}>
             <ProductCard
               product={product}
-              href={`/products/${product.slug}`}
+              href={`/store/products/${product.slug}`}
               ctaLabel="View archive"
             />
           </ScrollReveal>

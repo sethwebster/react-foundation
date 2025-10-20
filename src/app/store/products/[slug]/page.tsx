@@ -76,7 +76,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
       <div className="relative mx-auto max-w-6xl px-6 pb-24 sm:px-8 lg:px-12">
         <nav className="flex items-center justify-between text-sm text-white/60">
           <ButtonLink
-            href="/#drops"
+            href="/store#drops"
             variant="secondary"
             size="xs"
             className="px-3"
@@ -220,7 +220,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 More limited drops
               </h2>
               <ButtonLink
-                href="/#drops"
+                href="/store#drops"
                 variant="ghost"
                 size="sm"
               >
@@ -232,7 +232,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 <ProductCard
                   key={related.slug}
                   product={related}
-                  href={`/products/${related.slug}`}
+                  href={`/store/products/${related.slug}`}
                 />
               ))}
             </div>

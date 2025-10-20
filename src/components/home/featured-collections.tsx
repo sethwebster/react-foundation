@@ -60,7 +60,7 @@ export function FeaturedCollections({ collections }: FeaturedCollectionsProps) {
             engineered for meetups, keynotes, and everyday hacking.
           </p>
         </div>
-        <ButtonLink href="/collections" variant="ghost" size="sm">
+        <ButtonLink href="/store/collections" variant="ghost" size="sm">
           View all collections <span aria-hidden>→</span>
         </ButtonLink>
       </div>
@@ -76,7 +76,7 @@ export function FeaturedCollections({ collections }: FeaturedCollectionsProps) {
           return (
             <ScrollReveal key={collection.id} animation="fade-up" delay={index * 100}>
               <Link
-                href={`/collections/${collection.handle}`}
+                href={`/store/collections/${collection.handle}`}
                 className="flex flex-col gap-4 rounded-2xl border border-white/10 bg-slate-900/70 p-6 transition hover:border-white/25 hover:bg-slate-900"
               >
                 <div className="relative h-40 overflow-hidden rounded-xl border border-white/10">
