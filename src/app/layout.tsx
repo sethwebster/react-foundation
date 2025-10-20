@@ -17,24 +17,40 @@ const geistMono = Geist_Mono({
 });
 
 const siteName = "React Foundation";
+const siteUrl = "https://react.foundation"; // Update with actual domain
+const description =
+  "Supporting the React ecosystem through community funding, transparent governance, and official merchandise. Every purchase funds maintainers of 54+ React libraries.";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: {
     default: siteName,
     template: `%s · ${siteName}`,
   },
-  description:
-    "Supporting the React ecosystem through community funding, transparent governance, and official merchandise.",
+  description,
   openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: siteUrl,
     siteName,
-    title: siteName,
-    description:
-      "Supporting the React ecosystem through community funding and open source initiatives.",
+    title: "React Foundation - Supporting the React Ecosystem",
+    description,
+    images: [
+      {
+        url: "/opengraph-image", // Next.js will generate this
+        width: 1200,
+        height: 630,
+        alt: "React Foundation - Supporting the React Ecosystem",
+      },
+    ],
   },
   twitter: {
-    title: siteName,
-    description:
-      "Supporting the React ecosystem through community funding and open source initiatives.",
+    card: "summary_large_image",
+    site: "@reactjs",
+    creator: "@reactjs",
+    title: "React Foundation - Supporting the React Ecosystem",
+    description,
+    images: ["/opengraph-image"],
   },
   icons: [
     { rel: "icon", url: "/favicon-32.png", sizes: "32x32" },
