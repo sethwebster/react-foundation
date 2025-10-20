@@ -75,10 +75,9 @@ export function ExecutiveMessage() {
           </p>
 
           <p>
-            I&apos;ve had the privilege of leading React at Meta for the past several
-            years, and now, as the Executive Director of the React Foundation, I carry
-            the same North Star that&apos;s guided me all along: helping others bring
-            their ideas to life.
+            I&apos;ve had the privilege of leading React at Meta for  many years, and now,
+            as the Executive Director of the React Foundation, I carry the same North Star 
+            that&apos;s guided me all along: helping others bring their ideas to life.
           </p>
 
           <p>
