@@ -1,10 +1,22 @@
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
+import Image from "next/image";
 
 export function ExecutiveMessage() {
   return (
     <ScrollReveal animation="fade-up">
       <section className="scroll-mt-32 space-y-8 rounded-3xl border border-white/10 bg-gradient-to-br from-indigo-500/10 via-purple-500/10 to-pink-500/10 p-12">
-        <div className="space-y-4 text-center">
+        <div className="space-y-6 text-center">
+          <div className="flex justify-center">
+            <div className="relative h-32 w-32 overflow-hidden rounded-full border-4 border-white/20 shadow-2xl">
+              <Image
+                src="/seth-webster-headshot.jpeg"
+                alt="Seth Webster, Executive Director"
+                fill
+                className="object-cover"
+                priority
+              />
+            </div>
+          </div>
           <h2 className="text-3xl font-semibold text-white sm:text-4xl">
             A Message from Our Executive Director
           </h2>
