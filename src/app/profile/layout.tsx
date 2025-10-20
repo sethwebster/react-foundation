@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { Footer } from "@/components/layout/footer";
+import { ErrorBoundary } from "@/components/error-boundary";
 
 export default function ProfileLayout({
   children,
@@ -95,7 +96,9 @@ export default function ProfileLayout({
 
           {/* Main Content */}
           <main className="flex-1">
-            {children}
+            <ErrorBoundary>
+              {children}
+            </ErrorBoundary>
           </main>
         </div>
       </div>

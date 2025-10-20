@@ -58,7 +58,8 @@ export default function SignInPage() {
           {/* GitLab */}
           <button
             onClick={() => signIn("gitlab", { callbackUrl })}
-            className="group relative w-full overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-r from-slate-800 to-slate-900 p-6 transition hover:border-white/20 hover:from-slate-700 hover:to-slate-800"
+            className="group relative w-full overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-r from-slate-800 to-slate-900 p-6 opacity-50 transition hover:border-white/20 hover:from-slate-700 hover:to-slate-800 hover:opacity-100"
+            disabled
           >
             <div className="flex items-center justify-center gap-4">
               <svg
@@ -70,6 +71,9 @@ export default function SignInPage() {
               </svg>
               <span className="text-lg font-semibold text-white">
                 Continue with GitLab
+              </span>
+              <span className="absolute right-3 top-3 rounded-full bg-amber-500/20 px-2 py-1 text-xs font-semibold text-amber-300">
+                Coming Soon
               </span>
             </div>
           </button>
