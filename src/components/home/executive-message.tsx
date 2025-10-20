@@ -7,11 +7,12 @@ export function ExecutiveMessage() {
       <section className="scroll-mt-32 space-y-8 rounded-3xl border border-white/10 bg-gradient-to-br from-indigo-500/10 via-purple-500/10 to-pink-500/10 p-12">
         <div className="space-y-6 text-center">
           <div className="flex justify-center">
-            <div className="relative h-32 w-32 overflow-hidden rounded-full border-4 border-white/20 shadow-2xl">
+            <div className="relative h-32 w-32 shrink-0 overflow-hidden rounded-full border-4 border-white/20 bg-slate-900 shadow-2xl">
               <Image
                 src="/seth-webster-headshot.jpeg"
                 alt="Seth Webster, Executive Director"
-                fill
+                width={128}
+                height={128}
                 className="object-cover"
                 priority
               />
