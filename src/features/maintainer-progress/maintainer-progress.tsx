@@ -20,7 +20,7 @@ export function MaintainerProgress() {
   const { progress, setProgress } = useMaintainerProgress();
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const githubLogin = session?.user?.githubLogin ?? null;
 
   const currentTier: MaintainerTier | null = progress.tier;
