@@ -20,8 +20,8 @@ export default function AboutPage() {
         <div className="h-[24rem] w-[60rem] bg-gradient-to-r from-emerald-400 via-cyan-500 to-blue-600 opacity-30" />
       </div>
 
-      <div className="mx-auto flex h-full max-w-6xl flex-col px-6 pb-24 sm:px-8 lg:px-12">
-        <main className="flex flex-1 flex-col gap-20">
+      <div className="mx-auto flex max-w-6xl flex-col px-6 pb-24 sm:px-8 lg:px-12">
+        <main className="flex flex-col gap-20">
           {/* Hero */}
           <section className="space-y-8 pt-12">
             <Pill>Our Story · Our Mission · Our Values</Pill>

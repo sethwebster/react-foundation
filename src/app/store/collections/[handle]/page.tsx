@@ -68,7 +68,7 @@ export default async function CollectionPage({ params }: CollectionPageProps) {
       <div className="absolute inset-x-0 top-[-10rem] -z-10 flex justify-center blur-3xl">
         <div className="h-[28rem] w-[70rem] bg-gradient-to-r from-indigo-500 via-purple-500 to-sky-500 opacity-25" />
       </div>
-      <div className="mx-auto flex h-full max-w-6xl flex-col gap-16 px-6 pb-24 sm:px-8 lg:px-12">
+      <div className="mx-auto flex max-w-6xl flex-col gap-16 px-6 pb-24 sm:px-8 lg:px-12">
         <header className="space-y-6">
           <div className="flex items-center gap-3">
             {dropStatus && (

@@ -11,7 +11,7 @@ export default function UpdatesLayout({
         <div className="h-[24rem] w-[60rem] bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 opacity-30" />
       </div>
 
-      <div className="mx-auto flex h-full max-w-4xl flex-col px-6 pb-24 sm:px-8 lg:px-12">
+      <div className="mx-auto flex max-w-4xl flex-col px-6 pb-24 sm:px-8 lg:px-12">
         {children}
       </div>
 

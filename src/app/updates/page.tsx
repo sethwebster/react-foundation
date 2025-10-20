@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 export default function UpdatesPage() {
   const updates = getAllUpdates();
   return (
-    <main className="flex flex-1 flex-col gap-20">
+    <main className="flex flex-col gap-20">
       {/* Hero */}
       <section className="space-y-8 pt-12">
         <Pill>Latest News · Announcements · Community Updates</Pill>

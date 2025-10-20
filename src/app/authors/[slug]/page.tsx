@@ -57,8 +57,8 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
         <div className="h-[24rem] w-[60rem] bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 opacity-30" />
       </div>
 
-      <div className="mx-auto flex h-full max-w-4xl flex-col px-6 pb-24 sm:px-8 lg:px-12">
-        <main className="flex flex-1 flex-col gap-12 pt-12">
+      <div className="mx-auto flex max-w-4xl flex-col px-6 pb-24 sm:px-8 lg:px-12">
+        <main className="flex flex-col gap-12 pt-12">
           {/* Author Profile */}
           <section className="space-y-8 rounded-3xl border border-white/10 bg-slate-900/60 p-12">
             <div className="flex flex-col items-center gap-6 text-center">

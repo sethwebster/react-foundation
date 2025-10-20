@@ -59,9 +59,9 @@ export default async function Home() {
         <div className="h-[24rem] w-[60rem] bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-30" />
       </div>
 
-      <div className="mx-auto flex h-full max-w-6xl flex-col px-6 pb-24 sm:px-8 lg:px-12">
+      <div className="mx-auto flex max-w-6xl flex-col px-6 pb-24 sm:px-8 lg:px-12">
         <MaintainerProgressProvider>
-          <main className="flex flex-1 flex-col gap-20">
+          <main className="flex flex-col gap-20">
             <section className="grid items-center gap-12 lg:grid-cols-[minmax(0,1fr)_420px]">
               <Hero heroProduct={heroProductFinal} />
               <FeaturedLook products={currentDropProducts} />
