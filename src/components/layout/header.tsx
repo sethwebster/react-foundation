@@ -59,6 +59,9 @@ export function Header() {
                 <Link className="transition hover:text-white" href="/about">
                   About
                 </Link>
+                <Link className="transition hover:text-white" href="/updates">
+                  Updates
+                </Link>
                 <Link className="transition hover:text-white" href="/impact">
                   Impact
                 </Link>
