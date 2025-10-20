@@ -6,6 +6,7 @@ import { Footer } from "@/components/layout/footer";
 import { BecomeContributor } from "@/components/home/become-contributor";
 import { EcosystemLibraries } from "@/components/home/ecosystem-libraries";
 import { FoundingMembers } from "@/components/home/founding-members";
+import { ExecutiveMessage } from "@/components/home/executive-message";
 
 export const metadata: Metadata = {
   title: "About | React Foundation",
@@ -35,6 +36,9 @@ export default function AboutPage() {
               </p>
             </div>
           </section>
+
+          {/* Executive Message */}
+          <ExecutiveMessage />
 
           {/* Mission */}
           <ScrollReveal animation="fade-up">
