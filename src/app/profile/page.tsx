@@ -67,15 +67,6 @@ export default async function ProfilePage() {
         </Link>
       </div>
 
-      {/* Mobile Sign Out */}
-      <div className="lg:hidden">
-        <Link
-          href="/api/auth/signout"
-          className="block rounded-xl border border-white/10 px-4 py-3 text-center text-base font-medium text-white/70 transition hover:border-red-400/30 hover:bg-red-500/10 hover:text-red-300"
-        >
-          Sign Out
-        </Link>
-      </div>
     </div>
   );
 }

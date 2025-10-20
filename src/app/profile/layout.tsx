@@ -1,15 +1,25 @@
+"use client";
+
 import { redirect } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { getServerAuthSession } from "@/lib/auth";
+import { useSession, signOut } from "next-auth/react";
 import { Footer } from "@/components/layout/footer";
 
-export default async function ProfileLayout({
+export default function ProfileLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const session = await getServerAuthSession();
+  const { data: session, status } = useSession();
+
+  if (status === "loading") {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-slate-950">
+        <p className="text-white/60">Loading...</p>
+      </div>
+    );
+  }
 
   if (!session?.user) {
     redirect("/api/auth/signin");
@@ -73,12 +83,12 @@ export default async function ProfileLayout({
             </nav>
 
             {/* Sign Out */}
-            <Link
-              href="/api/auth/signout"
-              className="block rounded-xl border border-white/10 px-4 py-3 text-center text-sm font-medium text-white/70 transition hover:border-red-400/30 hover:bg-red-500/10 hover:text-red-300"
+            <button
+              onClick={() => signOut({ callbackUrl: "/" })}
+              className="w-full rounded-xl border border-white/10 px-4 py-3 text-center text-sm font-medium text-white/70 transition hover:border-red-400/30 hover:bg-red-500/10 hover:text-red-300"
             >
               Sign Out
-            </Link>
+            </button>
           </div>
         </aside>
 

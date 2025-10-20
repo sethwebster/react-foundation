@@ -26,6 +26,7 @@ export const authOptions: NextAuthOptions = {
   ],
   pages: {
     signIn: "/auth/signin",
+    signOut: "/", // Redirect to home after signout (no confirmation page)
   },
   callbacks: {
     async jwt({ token, profile }) {

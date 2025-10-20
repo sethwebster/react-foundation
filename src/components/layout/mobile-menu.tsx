@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { signOut } from "next-auth/react";
 import type { Session } from "next-auth";
 
 interface MobileMenuProps {
@@ -176,13 +177,15 @@ export function MobileMenu({ session }: MobileMenuProps) {
             {/* Additional Links */}
             <div className="space-y-2">
               {session?.user && (
-                <Link
-                  href="/api/auth/signout"
-                  onClick={closeMenu}
-                  className="block rounded-xl px-4 py-3 text-base font-medium text-white/60 transition hover:bg-white/5 hover:text-white"
+                <button
+                  onClick={() => {
+                    closeMenu();
+                    signOut({ callbackUrl: "/" });
+                  }}
+                  className="w-full rounded-xl px-4 py-3 text-left text-base font-medium text-white/60 transition hover:bg-white/5 hover:text-white"
                 >
                   Sign Out
-                </Link>
+                </button>
               )}
               {!session?.user && (
                 <Link
