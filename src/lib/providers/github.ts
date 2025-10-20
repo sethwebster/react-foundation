@@ -51,7 +51,7 @@ export class GitHubProvider implements ContributionProvider {
 
     // Use GitHub GraphQL API to fetch all contributions at once
     // This is more efficient than individual queries
-    const query = this.buildContributionsQuery(username, githubRepos);
+    const query = this.buildContributionsQuery();
 
     try {
       const response = await fetch('https://api.github.com/graphql', {
@@ -60,7 +60,10 @@ export class GitHubProvider implements ContributionProvider {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${accessToken || process.env.GITHUB_TOKEN}`,
         },
-        body: JSON.stringify({ query }),
+        body: JSON.stringify({
+          query,
+          variables: { username } // Use variables to prevent injection
+        }),
       });
 
       if (!response.ok) {
@@ -83,14 +86,12 @@ export class GitHubProvider implements ContributionProvider {
     }
   }
 
-  private buildContributionsQuery(
-    username: string,
-    repos: RepositoryIdentifier[]
-  ): string {
+  private buildContributionsQuery(): string {
     // Build GraphQL query for user's contribution stats
+    // Username is passed as a variable to prevent injection
     return `
-      query {
-        user(login: "${username}") {
+      query($username: String!) {
+        user(login: $username) {
           contributionsCollection {
             totalPullRequestContributions
             totalIssueContributions
