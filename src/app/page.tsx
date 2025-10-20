@@ -44,7 +44,7 @@ export default function FoundationHome() {
                 Learn Our Story
               </ButtonLink>
             </div>
-            <div className="flex flex-wrap items-center gap-4 text-xs uppercase tracking-[0.2em] text-white/50 sm:gap-6 sm:tracking-[0.25em]">
+            <div className="flex flex-col gap-4 text-xs uppercase tracking-[0.2em] text-white/50 sm:flex-row sm:items-center sm:gap-6 sm:tracking-[0.25em]">
               <div className="flex items-center gap-2">
                 <div className="h-1 w-8 shrink-0 bg-emerald-400" />
                 <span className="whitespace-nowrap">100% Transparent</span>
