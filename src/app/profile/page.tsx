@@ -24,17 +24,16 @@ export default async function ProfilePage() {
         <div className="mt-6 space-y-4">
           <div>
             <p className="text-sm text-white/60">Name</p>
-            <p className="text-base text-white">{session?.user?.name || "Not set"}</p>
+            <p className="text-base text-white">
+              {session?.user?.name || "Not set"}
+              {session?.user?.login && (
+                <span className="text-white/60"> (@{session.user.login})</span>
+              )}
+            </p>
           </div>
           <div>
             <p className="text-sm text-white/60">Email</p>
             <p className="text-base text-white">{session?.user?.email || "Not set"}</p>
-          </div>
-          <div>
-            <p className="text-sm text-white/60">GitHub</p>
-            <p className="text-base text-white">
-              {session?.user?.name ? `@${session.user.name}` : "Not connected"}
-            </p>
           </div>
         </div>
       </div>
