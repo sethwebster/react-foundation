@@ -26,8 +26,19 @@ export default async function ProfilePage() {
             <p className="text-sm text-white/60">Name</p>
             <p className="text-base text-white">
               {session?.user?.name || "Not set"}
-              {session?.user?.login && (
-                <span className="text-white/60"> (@{session.user.login})</span>
+              {session?.user?.githubLogin && (
+                <>
+                  {" "}(
+                  <a
+                    href={`https://github.com/${session.user.githubLogin}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-cyan-400 hover:text-cyan-300 hover:underline"
+                  >
+                    @{session.user.githubLogin}
+                  </a>
+                  )
+                </>
               )}
             </p>
           </div>
