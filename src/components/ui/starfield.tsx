@@ -436,14 +436,16 @@ function ShootingStar({ startPos, endPos, color, onComplete }: {
         />
       )}
 
-      {/* Contrail afterimage (quick flash) */}
+      {/* Contrail afterimage (progressive fade from old to new) */}
       {contrailFade > 0 && (
         <Line
           points={contrailPoints}
-          color={new THREE.Color(color[0] * 1.5, color[1] * 1.5, color[2] * 1.5)}
+          vertexColors={[
+            [color[0] * 0.2 * contrailFade, color[1] * 0.2 * contrailFade, color[2] * 0.2 * contrailFade], // Old end - very faded
+            [color[0] * 1.5 * contrailFade, color[1] * 1.5 * contrailFade, color[2] * 1.5 * contrailFade], // New end - bright
+          ]}
           lineWidth={4}
           transparent
-          opacity={contrailFade * 0.4}
         />
       )}
 
