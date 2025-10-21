@@ -14,6 +14,8 @@ const PUBLIC_ROUTES = [
   '/auth',
   '/api/request-access',
   '/api/check-access', // Prevent infinite loop
+  '/privacy',
+  '/terms',
   '/_next',
   '/favicon.ico',
   '/icon.svg',
