@@ -1,0 +1,306 @@
+/**
+ * Coming Soon Page - Cyberpunk/Neon Style
+ * Blocks access to site unless user is on allowlist
+ */
+
+'use client';
+
+import React, { useState } from 'react';
+import { signIn } from 'next-auth/react';
+import { SiGithub } from '@icons-pack/react-simple-icons';
+import { ReactLogo3D } from '@/components/ui/react-logo-3d';
+import { Starfield } from '@/components/ui/starfield';
+import {
+  useAccessControl,
+  useComingSoonRedirect,
+  useAccessRequest,
+} from '@/lib/access-control/use-access-control';
+
+export default function ComingSoonPage() {
+  const [showRequestForm, setShowRequestForm] = useState(false);
+
+  // Business logic in custom hooks
+  const { isAuthenticated, userEmail } = useAccessControl();
+  useComingSoonRedirect(); // Auto-redirects if allowlisted
+
+  const {
+    email,
+    setEmail,
+    message,
+    setMessage,
+    isSubmitting,
+    submitted,
+    error: requestError,
+    submitRequest,
+  } = useAccessRequest();
+
+  const handleRequestAccess = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await submitRequest();
+  };
+
+  return (
+    <div className="relative min-h-screen overflow-hidden bg-black">
+      {/* Cyberpunk Grid Background */}
+      <div className="pointer-events-none absolute inset-0 opacity-20">
+        <div
+          className="h-full w-full"
+          style={{
+            backgroundImage: `
+              linear-gradient(rgba(0, 255, 255, 0.1) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(0, 255, 255, 0.1) 1px, transparent 1px)
+            `,
+            backgroundSize: '50px 50px',
+            transform: 'perspective(500px) rotateX(60deg)',
+            transformOrigin: 'center bottom',
+          }}
+        />
+      </div>
+
+      {/* Animated Gradient Overlay */}
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-transparent to-pink-500/10 animate-pulse" />
+        <div className="absolute inset-0 bg-gradient-to-tl from-purple-500/10 via-transparent to-cyan-500/10 opacity-50" />
+      </div>
+
+      {/* Scanline Effect - Temporarily disabled */}
+      {/* <div
+        className="pointer-events-none absolute inset-0 opacity-10"
+        style={{
+          backgroundImage: 'repeating-linear-gradient(0deg, rgba(0, 255, 255, 0.5) 0px, transparent 1px, transparent 2px, rgba(0, 255, 255, 0.5) 3px)',
+        }}
+      /> */}
+
+      {/* Three.js Starfield */}
+      <div className="pointer-events-none absolute inset-0 z-0">
+        <Starfield />
+      </div>
+
+      {/* Content */}
+      <div className="relative z-10 flex min-h-screen flex-col items-center justify-center px-4 py-8">
+        <div className="w-full max-w-2xl space-y-6 text-center">
+          {/* Logo/Icon Area with 3D React Logo */}
+          <div className="relative mx-auto h-56 w-56">
+            <div className="absolute inset-0 animate-pulse rounded-full bg-cyan-500/20 blur-3xl" />
+            <div className="relative h-full w-full">
+              <ReactLogo3D scale={0.5} />
+            </div>
+          </div>
+
+          {/* Title */}
+          <div className="space-y-2">
+            <h1 className="text-4xl font-black uppercase tracking-wider sm:text-5xl md:text-6xl">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-500 drop-shadow-[0_0_20px_rgba(0,255,255,0.5)]">
+                React Foundation
+              </span>
+            </h1>
+            <div className="flex items-center justify-center gap-2">
+              <div className="h-px w-8 bg-gradient-to-r from-transparent via-cyan-400 to-transparent" />
+              <p className="text-lg font-bold uppercase tracking-[0.3em] text-cyan-400 sm:text-xl">
+                Coming Soon
+              </p>
+              <div className="h-px w-8 bg-gradient-to-r from-transparent via-cyan-400 to-transparent" />
+            </div>
+          </div>
+
+          {/* Description */}
+          <p className="mx-auto max-w-xl text-sm text-cyan-100/80 sm:text-base">
+            We're building something <span className="font-bold text-cyan-400">revolutionary</span> for the React ecosystem.
+            Support open source maintainers, earn exclusive access, and shape the future of React together.
+          </p>
+
+          {/* Glitch Text Effect */}
+          <div className="py-2">
+            <div className="inline-block border border-cyan-500/50 bg-black/50 px-6 py-3 backdrop-blur-sm">
+              <p className="glitch-text font-mono text-sm uppercase tracking-wider text-pink-400">
+                [ System Initializing... ]
+              </p>
+            </div>
+          </div>
+
+          {/* Auth/Request Section */}
+          <div className="space-y-3">
+            {!isAuthenticated && (
+              <div className="space-y-4">
+                {/* GitHub Sign In */}
+                <button
+                  onClick={() => signIn('github', { callbackUrl: '/' })}
+                  className="group relative w-full overflow-hidden rounded-lg border-2 border-cyan-400 bg-black/80 px-8 py-4 font-bold uppercase tracking-wider text-cyan-400 shadow-[0_0_20px_rgba(0,255,255,0.3)] transition hover:bg-cyan-400/10 hover:shadow-[0_0_30px_rgba(0,255,255,0.5)]"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-400/10 to-transparent opacity-0 transition group-hover:opacity-100" />
+                  <div className="relative flex items-center justify-center gap-3">
+                    <SiGithub size={24} />
+                    <span>Access with GitHub</span>
+                  </div>
+                </button>
+
+                {/* Request Access Toggle */}
+                <button
+                  onClick={() => setShowRequestForm(!showRequestForm)}
+                  className="text-sm text-cyan-400/70 underline decoration-dotted underline-offset-4 transition hover:text-cyan-400"
+                >
+                  {showRequestForm ? 'Hide request form' : 'Request early access'}
+                </button>
+              </div>
+            )}
+
+            {isAuthenticated && (
+              <div className="space-y-4">
+                <div className="rounded-lg border border-pink-500/50 bg-pink-500/10 p-6 backdrop-blur-sm">
+                  <p className="font-semibold text-pink-400">Access Restricted</p>
+                  <p className="mt-2 text-sm text-pink-100/80">
+                    You're signed in as <span className="font-mono text-cyan-400">{userEmail}</span> but
+                    you're not on the allowlist yet.
+                  </p>
+                </div>
+                <button
+                  onClick={() => setShowRequestForm(true)}
+                  className="w-full rounded-lg border-2 border-pink-400 bg-black/80 px-6 py-3 font-bold uppercase tracking-wider text-pink-400 shadow-[0_0_20px_rgba(236,72,153,0.3)] transition hover:bg-pink-400/10"
+                >
+                  Request Access
+                </button>
+              </div>
+            )}
+
+            {/* Request Access Form */}
+            {showRequestForm && (
+              <div className="rounded-xl border border-cyan-500/50 bg-black/90 p-6 backdrop-blur-sm">
+                {!submitted ? (
+                  <form onSubmit={handleRequestAccess} className="space-y-4">
+                    <div>
+                      <label className="mb-2 block text-left text-sm font-semibold uppercase tracking-wider text-cyan-400">
+                        Email
+                      </label>
+                      <input
+                        type="email"
+                        required
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="w-full rounded-lg border border-cyan-500/50 bg-black/50 px-4 py-3 font-mono text-cyan-100 placeholder-cyan-500/30 outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/50"
+                        placeholder="you@example.com"
+                      />
+                    </div>
+                    <div>
+                      <label className="mb-2 block text-left text-sm font-semibold uppercase tracking-wider text-cyan-400">
+                        Why do you want access?
+                      </label>
+                      <textarea
+                        required
+                        value={message}
+                        onChange={(e) => setMessage(e.target.value)}
+                        rows={4}
+                        className="w-full rounded-lg border border-cyan-500/50 bg-black/50 px-4 py-3 font-mono text-cyan-100 placeholder-cyan-500/30 outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/50"
+                        placeholder="Tell us about your involvement in the React ecosystem..."
+                      />
+                    </div>
+                    <button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="w-full rounded-lg border-2 border-cyan-400 bg-cyan-500/10 px-6 py-3 font-bold uppercase tracking-wider text-cyan-400 shadow-[0_0_20px_rgba(0,255,255,0.3)] transition hover:bg-cyan-400/20 hover:shadow-[0_0_30px_rgba(0,255,255,0.5)] disabled:opacity-50"
+                    >
+                      {isSubmitting ? 'Sending...' : 'Request Access'}
+                    </button>
+                  </form>
+                ) : (
+                  <div className="space-y-3 py-4">
+                    <div className="text-4xl">✓</div>
+                    <p className="font-bold text-cyan-400">Request Sent!</p>
+                    <p className="text-sm text-cyan-100/70">
+                      We'll review your request and get back to you soon.
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Status Indicators */}
+          <div className="flex items-center justify-center gap-6 pt-6">
+            <StatusDot label="Backend" status="online" />
+            <StatusDot label="API" status="online" />
+            <StatusDot label="Launch" status="pending" />
+          </div>
+        </div>
+      </div>
+
+      {/* Fixed Footer */}
+      <div className="fixed bottom-6 left-0 right-0 z-20 text-center">
+        <p className="font-mono text-xs uppercase tracking-widest text-cyan-500/50">
+          React Foundation · 2025
+        </p>
+      </div>
+
+      {/* Add animations to globals.css */}
+      <style jsx global>{`
+        @keyframes float {
+          0%, 100% {
+            transform: translateY(0px) translateX(0px);
+            opacity: 0;
+          }
+          50% {
+            transform: translateY(-100px) translateX(50px);
+            opacity: 1;
+          }
+        }
+
+        @keyframes spin-slow {
+          from {
+            transform: rotate(0deg);
+          }
+          to {
+            transform: rotate(360deg);
+          }
+        }
+
+        @keyframes glitch {
+          0%, 10% {
+            transform: translate(0);
+            text-shadow: none;
+          }
+          12% {
+            transform: translate(-3px, 2px);
+            text-shadow: 3px -2px 0 rgba(0, 255, 255, 0.8), -3px 2px 0 rgba(255, 0, 255, 0.8);
+          }
+          14% {
+            transform: translate(2px, -2px);
+            text-shadow: -2px 3px 0 rgba(0, 255, 255, 0.8), 2px -3px 0 rgba(255, 0, 255, 0.8);
+          }
+          16% {
+            transform: translate(-2px, 1px);
+            text-shadow: 4px 0 0 rgba(0, 255, 255, 0.8), -4px 0 0 rgba(255, 0, 255, 0.8);
+          }
+          18%, 100% {
+            transform: translate(0);
+            text-shadow: none;
+          }
+        }
+
+        .animate-spin-slow {
+          animation: spin-slow 20s linear infinite;
+        }
+
+        .glitch-text {
+          animation: glitch 3s infinite;
+          position: relative;
+        }
+      `}</style>
+    </div>
+  );
+}
+
+function StatusDot({ label, status }: { label: string; status: 'online' | 'pending' | 'offline' }) {
+  const colors = {
+    online: 'bg-green-400 shadow-[0_0_10px_rgba(34,197,94,0.8)]',
+    pending: 'bg-yellow-400 shadow-[0_0_10px_rgba(250,204,21,0.8)] animate-pulse',
+    offline: 'bg-red-400 shadow-[0_0_10px_rgba(239,68,68,0.8)]',
+  };
+
+  return (
+    <div className="flex items-center gap-2">
+      <div className={`h-2 w-2 rounded-full ${colors[status]}`} />
+      <span className="font-mono text-xs uppercase tracking-wider text-cyan-500/70">
+        {label}
+      </span>
+    </div>
+  );
+}

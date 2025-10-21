@@ -165,16 +165,18 @@ function ReactAtom({ onSpeedChange, speedModifier }: { onSpeedChange?: (speed: n
 }
 
 
-function Scene({ onSpeedChange, speedModifier }: { onSpeedChange?: (speed: number) => void; speedModifier?: number }) {
+function Scene({ onSpeedChange, speedModifier, scale = 1 }: { onSpeedChange?: (speed: number) => void; speedModifier?: number; scale?: number }) {
   return (
     <>
-      <OrthographicCamera makeDefault position={[0, -1.5, 10]} zoom={100} />
+      <OrthographicCamera makeDefault position={[0, 0, 10]} zoom={100 * scale} />
 
       {/* Minimal ambient light */}
       <ambientLight intensity={0.05} />
 
       {/* Spinning neon React logo */}
-      <ReactAtom onSpeedChange={onSpeedChange} speedModifier={speedModifier} />
+      <group scale={scale}>
+        <ReactAtom onSpeedChange={onSpeedChange} speedModifier={speedModifier} />
+      </group>
 
       {/* Bloom post-processing - ultra soft glow */}
       <EffectComposer>
@@ -190,7 +192,7 @@ function Scene({ onSpeedChange, speedModifier }: { onSpeedChange?: (speed: numbe
   );
 }
 
-export function ReactLogo3D() {
+export function ReactLogo3D({ scale = 1 }: { scale?: number }) {
   const [speedMultiplier, setSpeedMultiplier] = useState(1);
   const [keyboardSpeedModifier, setKeyboardSpeedModifier] = useState(1);
 
@@ -260,7 +262,7 @@ export function ReactLogo3D() {
         }}
         dpr={typeof window !== 'undefined' ? window.devicePixelRatio : 1}
       >
-        <Scene onSpeedChange={setSpeedMultiplier} speedModifier={keyboardSpeedModifier} />
+        <Scene onSpeedChange={setSpeedMultiplier} speedModifier={keyboardSpeedModifier} scale={scale} />
       </Canvas>
     </div>
   );

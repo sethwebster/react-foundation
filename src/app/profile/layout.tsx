@@ -1,30 +1,26 @@
-"use client";
-
 import { redirect } from "next/navigation";
-import Link from "next/link";
-import { useSession, signOut } from "next-auth/react";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { Footer } from "@/components/layout/footer";
 import { ErrorBoundary } from "@/components/error-boundary";
-import { UserAvatar } from "@/components/ui/user-avatar";
+import { UserManagementService } from "@/lib/admin/user-management-service";
+import { ProfileLayoutClient } from "./layout-client";
 
-export default function ProfileLayout({
+export default async function ProfileLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { data: session, status } = useSession();
-
-  if (status === "loading") {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-950">
-        <p className="text-white/60">Loading...</p>
-      </div>
-    );
-  }
+  const session = await getServerSession(authOptions);
 
   if (!session?.user) {
     redirect("/api/auth/signin");
   }
+
+  // Check admin status server-side
+  const isAdmin = session.user.email
+    ? await UserManagementService.isAdmin(session.user.email)
+    : false;
 
   return (
     <>
@@ -33,60 +29,11 @@ export default function ProfileLayout({
           <div className="h-[24rem] w-full max-w-[60rem] bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 opacity-30" />
         </div>
 
-        <div className="mx-auto flex max-w-7xl gap-8 px-6 pb-24 sm:px-8 lg:px-12">
-        {/* Left Sidebar */}
-        <aside className="hidden w-64 shrink-0 lg:block">
-          <div className="sticky top-24 space-y-6">
-            {/* Profile Card */}
-            <div className="rounded-2xl border border-white/10 bg-slate-900/60 p-6">
-              <div className="flex flex-col items-center gap-4 text-center">
-                <UserAvatar user={session.user} size={80} />
-                <div>
-                  <h2 className="font-semibold text-white">{session.user.name}</h2>
-                  <p className="text-sm text-white/60">{session.user.email}</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Navigation */}
-            <nav className="space-y-2">
-              <Link
-                href="/profile"
-                className="block rounded-xl px-4 py-3 text-sm font-medium text-white/70 transition hover:bg-white/5 hover:text-white"
-              >
-                Profile
-              </Link>
-              <Link
-                href="/profile/contributor-status"
-                className="block rounded-xl px-4 py-3 text-sm font-medium text-white/70 transition hover:bg-white/5 hover:text-white"
-              >
-                Contributor Status
-              </Link>
-              <Link
-                href="/profile/repos"
-                className="block rounded-xl px-4 py-3 text-sm font-medium text-white/70 transition hover:bg-white/5 hover:text-white"
-              >
-                Repos
-              </Link>
-            </nav>
-
-            {/* Sign Out */}
-            <button
-              onClick={() => signOut({ callbackUrl: "/" })}
-              className="w-full rounded-xl border border-white/10 px-4 py-3 text-center text-sm font-medium text-white/70 transition hover:border-red-400/30 hover:bg-red-500/10 hover:text-red-300"
-            >
-              Sign Out
-            </button>
-          </div>
-        </aside>
-
-          {/* Main Content */}
-          <main className="flex-1">
-            <ErrorBoundary>
-              {children}
-            </ErrorBoundary>
-          </main>
-        </div>
+        <ProfileLayoutClient isAdmin={isAdmin}>
+          <ErrorBoundary>
+            {children}
+          </ErrorBoundary>
+        </ProfileLayoutClient>
       </div>
 
       <Footer />

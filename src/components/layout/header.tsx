@@ -13,6 +13,7 @@ export function Header() {
   const pathname = usePathname();
   const { data: session } = useSession();
   const isStorePage = pathname?.startsWith("/store");
+  const isComingSoonPage = pathname === "/coming-soon";
 
   return (
     <header className="fixed left-0 right-0 top-0 z-50 border-b border-white/10 bg-slate-950/95 shadow-lg shadow-black/20 backdrop-blur-xl supports-[backdrop-filter]:bg-slate-950/80">
@@ -44,7 +45,7 @@ export function Header() {
         </div>
 
         {/* Desktop Navigation (hidden on mobile) */}
-        <div className="hidden items-center gap-4 text-sm text-white/70 md:flex">
+        <div className={`hidden items-center gap-4 text-sm text-white/70 md:flex transition ${isComingSoonPage ? 'blur-sm pointer-events-none' : ''}`}>
           <nav className="flex items-center gap-6">
             {isStorePage ? (
               // Store navigation
