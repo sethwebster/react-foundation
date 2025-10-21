@@ -16,6 +16,10 @@ const PUBLIC_ROUTES = [
   '/api/check-access', // Prevent infinite loop
   '/_next',
   '/favicon.ico',
+  '/icon.svg',
+  '/opengraph-image',
+  '/twitter-image',
+  '/apple-icon',
   '/models',
   '/react-logo.svg',
 ];
