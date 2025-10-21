@@ -195,7 +195,12 @@ export class AccessRequestsService {
       }
 
       const fromDomain = process.env.RESEND_FROM_DOMAIN || 'yourdomain.com';
-      const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
+      const baseUrl = process.env.NEXTAUTH_URL;
+
+      if (!baseUrl) {
+        console.error('❌ NEXTAUTH_URL not configured - email will not include links');
+        // Still send email, but without the link
+      }
 
       console.log(`   From: noreply@${fromDomain}`);
       console.log(`   To: ${email}`);
@@ -212,9 +217,9 @@ export class AccessRequestsService {
                 <h1 style="color: #10b981; font-size: 32px;">🎉 Welcome!</h1>
                 <p style="font-size: 18px; color: #fff;">Your access request has been approved.</p>
                 <p style="color: #aaa; margin: 20px 0;">You can now sign in and access the React Foundation.</p>
-                <a href="${baseUrl}" style="display: inline-block; margin-top: 20px; padding: 14px 32px; background: #06b6d4; color: #000; text-decoration: none; border-radius: 8px; font-weight: bold;">
+                ${baseUrl ? `<a href="${baseUrl}" style="display: inline-block; margin-top: 20px; padding: 14px 32px; background: #06b6d4; color: #000; text-decoration: none; border-radius: 8px; font-weight: bold;">
                   Sign In Now
-                </a>
+                </a>` : '<p style="color: #666; margin-top: 20px;">Please visit the React Foundation to sign in.</p>'}
               </div>
             </body>
           </html>

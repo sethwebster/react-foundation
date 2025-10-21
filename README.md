@@ -135,10 +135,18 @@ Copy `.env.example` to `.env` and provide:
 - `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` - OAuth App credentials
 - `GITHUB_TOKEN` - Personal access token with `read:user` and `public_repo` scopes
 - `NEXTAUTH_SECRET` - Generate with `openssl rand -base64 32`
-- `NEXTAUTH_URL` - http://localhost:3000
+- `NEXTAUTH_URL` - http://localhost:3000 (for development) or your production URL (e.g., https://yourdomain.com)
 
 **OpenAI (optional - for AI image generation):**
 - `OPENAI_API_KEY` - OpenAI API key
+
+**Email Notifications (required for access request emails):**
+- `RESEND_API_KEY` - Resend API key for sending emails
+- `RESEND_FROM_DOMAIN` - Domain for sending emails (e.g., yourdomain.com)
+- `ADMIN_EMAIL` - Email address to receive access request notifications
+
+**Redis (required for access control):**
+- `REDIS_URL` - Redis connection URL (e.g., redis://localhost:6379)
 
 ## Key Features
 

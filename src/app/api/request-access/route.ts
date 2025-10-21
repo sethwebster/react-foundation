@@ -75,7 +75,9 @@ export async function POST(request: NextRequest) {
     const approveToken = AccessRequestsService.generateActionToken(accessRequest.id, 'approve');
     const denyToken = AccessRequestsService.generateActionToken(accessRequest.id, 'deny');
 
-    const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
+    // Get base URL from request or environment variable
+    const requestUrl = new URL(request.url);
+    const baseUrl = process.env.NEXTAUTH_URL || `${requestUrl.protocol}//${requestUrl.host}`;
     const approveUrl = `${baseUrl}/api/admin/request-action?token=${approveToken}`;
     const denyUrl = `${baseUrl}/api/admin/request-action?token=${denyToken}`;
     const reviewUrl = `${baseUrl}/admin/requests?id=${accessRequest.id}`;
