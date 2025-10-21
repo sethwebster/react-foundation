@@ -340,18 +340,16 @@ function ShootingStar({ startPos, endPos, color, onComplete }: {
       ];
       setContrailPoints([contrailStart, currentPos]);
 
-      // Spawn smoke particles along the trail
-      if (Math.random() < 0.3) { // Spawn less frequently for better visibility
-        smokeParticles.current.push({
-          pos: new THREE.Vector3(currentPos[0], currentPos[1], currentPos[2]),
-          age: 0,
-          velocity: new THREE.Vector3(
-            (Math.random() - 0.5) * 3, // Random outward velocity
-            (Math.random() - 0.5) * 3,
-            0
-          ),
-        });
-      }
+      // Spawn smoke particles along the trail (every frame!)
+      smokeParticles.current.push({
+        pos: new THREE.Vector3(currentPos[0], currentPos[1], currentPos[2]),
+        age: 0,
+        velocity: new THREE.Vector3(
+          (Math.random() - 0.5) * 5, // Faster outward expansion
+          (Math.random() - 0.5) * 5,
+          0
+        ),
+      });
     }
 
     // Update smoke particles (expand and fade like smoke)
@@ -364,9 +362,9 @@ function ShootingStar({ startPos, endPos, color, onComplete }: {
       })
       .filter(p => p.age < 1.5); // Fade over 1.5 seconds
 
-    // Fade contrail after star exits
-    if (newProgress > 1.3) {
-      setContrailFade(f => Math.max(0, f - delta * 0.5));
+    // Start fading contrail early (while star is still moving)
+    if (newProgress > 0.6) {
+      setContrailFade(f => Math.max(0, f - delta * 33.3)); // 30ms fade
     }
 
     // Clean up when done
@@ -375,11 +373,16 @@ function ShootingStar({ startPos, endPos, color, onComplete }: {
     }
 
     // Update smoke particle geometry
-    if (smokeRef.current) {
+    if (smokeRef.current && smokeParticles.current.length > 0) {
       const maxParticles = 100;
       const positions = new Float32Array(maxParticles * 3);
       const colors = new Float32Array(maxParticles * 3);
       const sizes = new Float32Array(maxParticles);
+
+      // Debug
+      if (smokeParticles.current.length > 10 && Math.random() < 0.01) {
+        console.log(`Smoke particles: ${smokeParticles.current.length}`);
+      }
 
       for (let i = 0; i < Math.min(smokeParticles.current.length, maxParticles); i++) {
         const particle = smokeParticles.current[i];
@@ -390,12 +393,12 @@ function ShootingStar({ startPos, endPos, color, onComplete }: {
 
         // Fade out exponentially
         const fade = Math.pow(1 - particle.age / 1.5, 2);
-        colors[i * 3] = color[0] * fade * 2; // Brighter
-        colors[i * 3 + 1] = color[1] * fade * 2;
-        colors[i * 3 + 2] = color[2] * fade * 2;
+        colors[i * 3] = color[0] * fade * 3; // Very bright
+        colors[i * 3 + 1] = color[1] * fade * 3;
+        colors[i * 3 + 2] = color[2] * fade * 3;
 
         // Expand as it ages (like smoke)
-        sizes[i] = 5 + particle.age * 15; // Grows bigger (5 to 27.5)
+        sizes[i] = 8 + particle.age * 25; // Grows bigger and faster (8 to 45.5)
       }
 
       const posAttr = new THREE.BufferAttribute(positions, 3);
@@ -409,6 +412,14 @@ function ShootingStar({ startPos, endPos, color, onComplete }: {
       smokeRef.current.geometry.setAttribute('position', posAttr);
       smokeRef.current.geometry.setAttribute('color', colAttr);
       smokeRef.current.geometry.setAttribute('size', sizeAttr);
+
+      // Force geometry update
+      smokeRef.current.geometry.attributes.position.needsUpdate = true;
+      smokeRef.current.geometry.attributes.color.needsUpdate = true;
+      smokeRef.current.geometry.attributes.size.needsUpdate = true;
+
+      // Set draw range to only render actual particles
+      smokeRef.current.geometry.setDrawRange(0, smokeParticles.current.length);
     }
   });
 
@@ -425,14 +436,16 @@ function ShootingStar({ startPos, endPos, color, onComplete }: {
         />
       )}
 
-      {/* Contrail (fading line trail) */}
-      <Line
-        points={contrailPoints}
-        color={new THREE.Color(color[0], color[1], color[2])}
-        lineWidth={5}
-        transparent
-        opacity={contrailFade * 0.3}
-      />
+      {/* Contrail afterimage (quick flash) */}
+      {contrailFade > 0 && (
+        <Line
+          points={contrailPoints}
+          color={new THREE.Color(color[0] * 1.5, color[1] * 1.5, color[2] * 1.5)}
+          lineWidth={4}
+          transparent
+          opacity={contrailFade * 0.4}
+        />
+      )}
 
       {/* Smoke particles (expanding and fading like smoke) */}
       <points ref={smokeRef}>
