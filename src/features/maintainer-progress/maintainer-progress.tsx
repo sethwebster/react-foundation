@@ -12,6 +12,7 @@ import {
 import { products } from "@/lib/products";
 
 import { useMaintainerProgress } from "./context";
+import { UsernameInput } from "./username-input";
 
 const formatter = new Intl.NumberFormat("en-US");
 
@@ -19,9 +20,6 @@ export function MaintainerProgress() {
   const { progress, setProgress } = useMaintainerProgress();
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
-  const [clickCount, setClickCount] = useState(0);
-  const [showCustomInput, setShowCustomInput] = useState(false);
-  const [customUsername, setCustomUsername] = useState("");
   const { data: session, status } = useSession();
   const githubLogin = session?.user?.githubLogin ?? null;
 
@@ -81,37 +79,13 @@ export function MaintainerProgress() {
     [setProgress],
   );
 
+  // Auto-populate from session when logged in
   useEffect(() => {
     if (githubLogin) {
+      localStorage.setItem('contributor-username', githubLogin);
       fetchProgress(githubLogin);
     }
   }, [githubLogin, fetchProgress]);
-
-  useEffect(() => {
-    if (clickCount > 0 && clickCount < 5) {
-      const timer = setTimeout(() => setClickCount(0), 2000);
-      return () => clearTimeout(timer);
-    }
-  }, [clickCount]);
-
-  const handleGithubTextClick = () => {
-    const newCount = clickCount + 1;
-    setClickCount(newCount);
-
-    if (newCount >= 5) {
-      setShowCustomInput(true);
-      setClickCount(0);
-    }
-  };
-
-  const handleCustomUsernameSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (customUsername.trim()) {
-      fetchProgress(customUsername.trim());
-      setShowCustomInput(false);
-      setCustomUsername("");
-    }
-  };
 
   const reposByCategory = useMemo(() => {
     const grouped = new Map<LibraryCategory, string[]>();
@@ -189,67 +163,11 @@ export function MaintainerProgress() {
           </p>
         </div>
         <div className="flex w-full max-w-xs flex-col gap-2">
-          {status === "authenticated" && githubLogin ? (
-            <>
-              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-white/50">
-                Connected GitHub
-              </p>
-              {showCustomInput ? (
-                <form onSubmit={handleCustomUsernameSubmit} className="flex flex-col gap-2">
-                  <input
-                    type="text"
-                    value={customUsername}
-                    onChange={(e) => setCustomUsername(e.target.value)}
-                    placeholder="Enter GitHub username"
-                    className="rounded-lg border border-white/15 bg-slate-950/60 px-3 py-2 text-sm text-white/80 placeholder:text-white/40 focus:border-sky-500/50 focus:outline-none focus:ring-2 focus:ring-sky-500/20"
-                    autoFocus
-                  />
-                  <div className="flex gap-2">
-                    <button
-                      type="submit"
-                      className="flex-1 rounded-md border border-sky-500/30 bg-sky-500/10 px-2 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-sky-300 transition hover:border-sky-500/50 hover:bg-sky-500/20 disabled:cursor-not-allowed disabled:border-white/5 disabled:bg-white/5"
-                      disabled={isPending || !customUsername.trim()}
-                    >
-                      Check
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setShowCustomInput(false);
-                        setCustomUsername("");
-                      }}
-                      className="rounded-md border border-white/10 bg-white/5 px-2 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-white/60 transition hover:border-white/20 hover:bg-white/10"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </form>
-              ) : (
-                <div className="flex items-center justify-between rounded-lg border border-white/15 bg-slate-950/60 px-3 py-2 text-sm text-white/80">
-                  <span
-                    onClick={handleGithubTextClick}
-                    className="cursor-pointer select-none transition hover:text-white"
-                    title="Click 5 times to check any username"
-                  >
-                    {progress.username || githubLogin}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => fetchProgress(githubLogin)}
-                    className="rounded-md border border-white/10 bg-white/10 px-2 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:border-white/30 hover:bg-white/20 disabled:cursor-not-allowed disabled:border-white/5 disabled:bg-white/5"
-                    disabled={isPending}
-                  >
-                    {isPending ? "Refreshing…" : "Refresh"}
-                  </button>
-                </div>
-              )}
-            </>
-          ) : (
-            <p className="rounded-lg border border-white/10 bg-slate-950/60 px-3 py-2 text-sm text-white/70">
-              Sign in with GitHub to track your maintainer contributions and unlock Core Maintainer
-              Essentials.
-            </p>
-          )}
+          <UsernameInput
+            githubLogin={githubLogin}
+            onUsernameChange={fetchProgress}
+            isPending={isPending}
+          />
           {error ? <p className="text-xs text-rose-400">{error}</p> : null}
         </div>
       </div>

@@ -13,6 +13,14 @@ const nextConfig: NextConfig = {
         hostname: 'cdn.shopify.com',
         pathname: '/s/files/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'avatars.githubusercontent.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'secure.gravatar.com',
+      },
     ],
   },
 };

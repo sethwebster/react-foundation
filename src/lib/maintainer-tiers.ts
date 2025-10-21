@@ -22,6 +22,7 @@ type RepoTarget = {
   name: string;
   category: LibraryCategory;
   tier: 1 | 2 | 3; // For potential future weighting
+  provider?: 'github' | 'gitlab' | 'bitbucket' | 'gitea'; // Default: github
 };
 
 export type MaintainerTier = {
@@ -120,9 +121,11 @@ export const ecosystemLibraries: RepoTarget[] = [
   // Data Tables (1 repo)
   { owner: "TanStack", name: "table", category: "tables", tier: 1 },
 
-  // Styling (2 repos)
+  // Styling (4 repos)
   { owner: "styled-components", name: "styled-components", category: "styling", tier: 1 },
   { owner: "emotion-js", name: "emotion", category: "styling", tier: 1 },
+  { owner: "tailwindlabs", name: "tailwindcss", category: "styling", tier: 1 },
+  { owner: "marklawlor", name: "nativewind", category: "styling", tier: 2 },
 ];
 
 // Legacy export for backwards compatibility

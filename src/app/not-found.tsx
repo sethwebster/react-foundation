@@ -49,13 +49,11 @@ export default function NotFound() {
 
 function BackgroundGlow() {
   return (
-    <div aria-hidden className="pointer-events-none fixed inset-0 z-0">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.12),_transparent_55%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_35%,_rgba(76,29,149,0.25),_transparent_50%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_85%_20%,_rgba(14,116,144,0.2),_transparent_45%)]" />
-      <div className="absolute inset-x-1/2 top-20 h-[28rem] w-[28rem] -translate-x-1/2 rounded-full bg-sky-500/40 blur-3xl sm:h-[34rem] sm:w-[34rem]" />
-      <div className="absolute left-[12%] top-[55%] h-56 w-56 -translate-y-1/2 rounded-full bg-indigo-500/35 blur-3xl" />
-      <div className="absolute right-[10%] top-[62%] h-64 w-64 -translate-y-1/2 rounded-full bg-purple-500/25 blur-[110px]" />
+    <div aria-hidden className="pointer-events-none fixed inset-0 z-0 bg-slate-900">
+      {/* Static subtle background gradients */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.08),_transparent_55%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_35%,_rgba(76,29,149,0.15),_transparent_50%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_85%_20%,_rgba(14,116,144,0.12),_transparent_45%)]" />
     </div>
   );
 }

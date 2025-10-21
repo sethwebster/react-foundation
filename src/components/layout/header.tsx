@@ -3,17 +3,21 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 import { Button } from "@/components/ui/button";
-import { SignInButton } from "@/features/auth/sign-in-button";
+import { MobileMenu } from "@/components/layout/mobile-menu";
+import { UserAvatar } from "@/components/ui/user-avatar";
 
 export function Header() {
   const pathname = usePathname();
+  const { data: session } = useSession();
   const isStorePage = pathname?.startsWith("/store");
 
   return (
     <header className="fixed left-0 right-0 top-0 z-50 border-b border-white/10 bg-slate-950/95 shadow-lg shadow-black/20 backdrop-blur-xl supports-[backdrop-filter]:bg-slate-950/80">
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-6 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-8 lg:px-12">
+      <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4 sm:px-8 lg:px-12">
+        {/* Logo */}
         <div className="flex items-center gap-3">
           <div className="relative h-10 w-10 overflow-hidden rounded-full bg-white/10 ring-1 ring-white/15">
             <Link href="/">
@@ -38,7 +42,9 @@ export function Header() {
             </Link>
           </div>
         </div>
-        <div className="flex items-center gap-4 text-sm text-white/70">
+
+        {/* Desktop Navigation (hidden on mobile) */}
+        <div className="hidden items-center gap-4 text-sm text-white/70 md:flex">
           <nav className="flex items-center gap-6">
             {isStorePage ? (
               // Store navigation
@@ -71,7 +77,8 @@ export function Header() {
               </>
             )}
           </nav>
-          <SignInButton />
+
+          {/* Cart (store pages only) */}
           {isStorePage && (
             <Button variant="glass" size="sm" className="relative px-3" type="button">
               <svg
@@ -92,6 +99,48 @@ export function Header() {
               </span>
             </Button>
           )}
+
+          {/* Profile Icon or Sign In */}
+          {session?.user ? (
+            <UserAvatar
+              user={session.user}
+              size={40}
+              href="/profile"
+              className="transition hover:border-cyan-400/50 hover:shadow-lg hover:shadow-cyan-500/20"
+            />
+          ) : (
+            <Link
+              href="/api/auth/signin"
+              className="rounded-full border border-white/10 bg-sky-500/80 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-sky-400"
+            >
+              Sign in
+            </Link>
+          )}
+        </div>
+
+        {/* Mobile Menu (shows on mobile only) */}
+        <div className="flex items-center gap-2 md:hidden">
+          {isStorePage && (
+            <Button variant="glass" size="sm" className="relative px-3" type="button">
+              <svg
+                className="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+                />
+              </svg>
+              <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-sky-500 text-[10px] font-bold text-white">
+                0
+              </span>
+            </Button>
+          )}
+          <MobileMenu session={session} />
         </div>
       </div>
     </header>
