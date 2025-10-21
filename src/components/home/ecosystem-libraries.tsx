@@ -2,18 +2,27 @@ import { ScrollReveal } from "@/components/ui/scroll-reveal";
 import { ecosystemLibraries } from "@/lib/maintainer-tiers";
 import { LibraryCard } from "@/components/ui/library-card";
 import { libraryDisplayNames } from "@/lib/library-icons";
+import { type LibraryScore } from "@/lib/ris";
 
 interface EcosystemLibrariesProps {
   id?: string;
   title?: string;
   description?: string;
+  risScores?: LibraryScore[]; // Optional RIS scores
+  showRIS?: boolean; // Whether to display RIS scores
 }
 
 export function EcosystemLibraries({
   id = "libraries",
   title = "Supported Ecosystem",
   description = "We track contributions across all 54 critical React ecosystem libraries:",
+  risScores,
+  showRIS = false,
 }: EcosystemLibrariesProps) {
+  // Create a map of library names to RIS scores for quick lookup
+  const risScoreMap = risScores
+    ? new Map(risScores.map((score) => [score.repo, score.ris]))
+    : new Map();
   // Group libraries by category
   const categorizedLibraries = [
     {
@@ -93,6 +102,8 @@ export function EcosystemLibraries({
                       name={lib.name}
                       displayName={libraryDisplayNames[lib.name] || lib.name}
                       delay={idx * 0.05}
+                      risScore={risScoreMap.get(lib.name)}
+                      showRIS={showRIS}
                     />
                   ))}
                 </div>
