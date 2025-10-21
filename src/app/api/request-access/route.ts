@@ -63,7 +63,7 @@ export async function POST(request: NextRequest) {
 
     // Determine from address
     const fromDomain = process.env.RESEND_FROM_DOMAIN || 'yourdomain.com';
-    const fromAddress = `React Foundation Store <noreply@${fromDomain}>`;
+    const fromAddress = `React Foundation <noreply@${fromDomain}>`;
 
     console.log(`   From address: ${fromAddress}`);
     console.log(`   Sending via Resend...`);

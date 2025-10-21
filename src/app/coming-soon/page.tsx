@@ -18,6 +18,7 @@ import {
 
 export default function ComingSoonPage() {
   const [showRequestForm, setShowRequestForm] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   // Business logic in custom hooks
   const { isAuthenticated, userEmail } = useAccessControl();
@@ -30,7 +31,6 @@ export default function ComingSoonPage() {
     setMessage,
     isSubmitting,
     submitted,
-    error: requestError,
     submitRequest,
   } = useAccessRequest();
 
@@ -39,8 +39,14 @@ export default function ComingSoonPage() {
     await submitRequest();
   };
 
+  // Fade in after a brief delay
+  React.useEffect(() => {
+    const timer = setTimeout(() => setIsLoaded(true), 100);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
-    <div className="relative min-h-screen overflow-hidden bg-black">
+    <div className={`relative min-h-screen overflow-hidden bg-black transition-opacity duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
       {/* Cyberpunk Grid Background */}
       <div className="pointer-events-none absolute inset-0 opacity-20">
         <div
@@ -105,7 +111,7 @@ export default function ComingSoonPage() {
 
           {/* Description */}
           <p className="mx-auto max-w-xl text-sm text-cyan-100/80 sm:text-base">
-            We're building something <span className="font-bold text-cyan-400">revolutionary</span> for the React ecosystem.
+            We&apos;re building something <span className="font-bold text-cyan-400">revolutionary</span> for the React ecosystem.
             Support open source maintainers, earn exclusive access, and shape the future of React together.
           </p>
 
@@ -149,8 +155,8 @@ export default function ComingSoonPage() {
                 <div className="rounded-lg border border-pink-500/50 bg-pink-500/10 p-6 backdrop-blur-sm">
                   <p className="font-semibold text-pink-400">Access Restricted</p>
                   <p className="mt-2 text-sm text-pink-100/80">
-                    You're signed in as <span className="font-mono text-cyan-400">{userEmail}</span> but
-                    you're not on the allowlist yet.
+                    You&apos;re signed in as <span className="font-mono text-cyan-400">{userEmail}</span> but
+                    you&apos;re not on the allowlist yet.
                   </p>
                 </div>
                 <button
@@ -206,7 +212,7 @@ export default function ComingSoonPage() {
                     <div className="text-4xl">✓</div>
                     <p className="font-bold text-cyan-400">Request Sent!</p>
                     <p className="text-sm text-cyan-100/70">
-                      We'll review your request and get back to you soon.
+                      We&apos;ll review your request and get back to you soon.
                     </p>
                   </div>
                 )}

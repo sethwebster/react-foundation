@@ -8,6 +8,7 @@
 import { useMemo, useRef, useState } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { EffectComposer, Bloom } from '@react-three/postprocessing';
+import { Line } from '@react-three/drei';
 import * as THREE from 'three';
 import { Enterprise } from './enterprise-flyby';
 
@@ -219,18 +220,21 @@ function Stars() {
       <points ref={regularStarsRef}>
         <bufferGeometry>
           <bufferAttribute
+            args={[positions, 3]}
             attach="attributes-position"
             count={starCount}
             array={positions}
             itemSize={3}
           />
           <bufferAttribute
+            args={[colors, 3]}
             attach="attributes-color"
             count={starCount}
             array={colors}
             itemSize={3}
           />
           <bufferAttribute
+            args={[sizes, 1]}
             attach="attributes-size"
             count={starCount}
             array={sizes}
@@ -253,18 +257,21 @@ function Stars() {
       <points ref={starburstStarsRef}>
         <bufferGeometry>
           <bufferAttribute
+            args={[starburstData.positions, 3]}
             attach="attributes-position"
             count={starburstCount}
             array={starburstData.positions}
             itemSize={3}
           />
           <bufferAttribute
+            args={[starburstData.colors, 3]}
             attach="attributes-color"
             count={starburstCount}
             array={starburstData.colors}
             itemSize={3}
           />
           <bufferAttribute
+            args={[starburstData.sizes, 1]}
             attach="attributes-size"
             count={starburstCount}
             array={starburstData.sizes}
@@ -292,10 +299,14 @@ function ShootingStar({ startPos, endPos, color, onComplete }: {
   color: [number, number, number];
   onComplete: () => void;
 }) {
-  const lineRef = useRef<THREE.Line>(null);
-  const contrailRef = useRef<THREE.Line>(null);
+  const smokeRef = useRef<THREE.Points>(null);
   const [progress, setProgress] = useState(0);
-  const [contrailFade, setContrailFade] = useState(1);
+  const [streakPoints, setStreakPoints] = useState<[number, number, number][]>([startPos, startPos]);
+  const smokeParticles = useRef<Array<{
+    pos: THREE.Vector3;
+    age: number;
+    velocity: THREE.Vector3;
+  }>>([]);
 
   useFrame((state, delta) => {
     const newProgress = progress + delta * 3; // 2x faster
@@ -304,59 +315,83 @@ function ShootingStar({ startPos, endPos, color, onComplete }: {
       // Star is still moving
       setProgress(newProgress);
 
-      // Update main bright streak (shorter, tighter)
-      if (lineRef.current) {
-        const currentPos = new THREE.Vector3(
-          startPos[0] + (endPos[0] - startPos[0]) * newProgress,
-          startPos[1] + (endPos[1] - startPos[1]) * newProgress,
-          startPos[2]
-        );
+      // Update streak and contrail positions
+      const currentPos: [number, number, number] = [
+        startPos[0] + (endPos[0] - startPos[0]) * newProgress,
+        startPos[1] + (endPos[1] - startPos[1]) * newProgress,
+        startPos[2]
+      ];
 
-        const trailStart = new THREE.Vector3(
-          currentPos.x - (endPos[0] - startPos[0]) * 0.12, // Shorter streak (50% of before)
-          currentPos.y - (endPos[1] - startPos[1]) * 0.12,
-          startPos[2]
-        );
+      const trailStart: [number, number, number] = [
+        currentPos[0] - (endPos[0] - startPos[0]) * 0.12,
+        currentPos[1] - (endPos[1] - startPos[1]) * 0.12,
+        startPos[2]
+      ];
 
-        const positions = lineRef.current.geometry.attributes.position.array as Float32Array;
-        positions[0] = trailStart.x;
-        positions[1] = trailStart.y;
-        positions[2] = trailStart.z;
-        positions[3] = currentPos.x;
-        positions[4] = currentPos.y;
-        positions[5] = currentPos.z;
+      setStreakPoints([trailStart, currentPos]);
 
-        lineRef.current.geometry.attributes.position.needsUpdate = true;
-      }
-
-      // Update contrail (full path behind)
-      if (contrailRef.current) {
-        const currentPos = new THREE.Vector3(
-          startPos[0] + (endPos[0] - startPos[0]) * newProgress,
-          startPos[1] + (endPos[1] - startPos[1]) * newProgress,
-          startPos[2]
-        );
-
-        const positions = contrailRef.current.geometry.attributes.position.array as Float32Array;
-        positions[0] = startPos[0];
-        positions[1] = startPos[1];
-        positions[2] = startPos[2];
-        positions[3] = currentPos.x;
-        positions[4] = currentPos.y;
-        positions[5] = currentPos.z;
-
-        contrailRef.current.geometry.attributes.position.needsUpdate = true;
-      }
-    } else {
-      // Star is done, fade the contrail slowly
-      setContrailFade(f => {
-        const newFade = f - delta * 0.2; // Fade over 5 seconds
-        if (newFade <= 0) {
-          onComplete();
-          return 0;
-        }
-        return newFade;
+      // Spawn smoke particles along the trail
+      smokeParticles.current.push({
+        pos: new THREE.Vector3(currentPos[0], currentPos[1], currentPos[2]),
+        age: 0,
+        velocity: new THREE.Vector3(
+          (Math.random() - 0.5) * 3, // Random outward velocity
+          (Math.random() - 0.5) * 3,
+          0
+        ),
       });
+    }
+
+    // Update smoke particles (expand and fade like smoke)
+    smokeParticles.current = smokeParticles.current
+      .map(p => {
+        // Move particle outward (smoke expansion)
+        p.pos.add(p.velocity.clone().multiplyScalar(delta));
+        p.age += delta;
+        return p;
+      })
+      .filter(p => p.age < 1.5); // Fade over 1.5 seconds
+
+    // Clean up when done
+    if (newProgress > 1.5 && smokeParticles.current.length === 0) {
+      onComplete();
+    }
+
+    // Update smoke particle geometry
+    if (smokeRef.current) {
+      const maxParticles = 100;
+      const positions = new Float32Array(maxParticles * 3);
+      const colors = new Float32Array(maxParticles * 3);
+      const sizes = new Float32Array(maxParticles);
+
+      for (let i = 0; i < Math.min(smokeParticles.current.length, maxParticles); i++) {
+        const particle = smokeParticles.current[i];
+
+        positions[i * 3] = particle.pos.x;
+        positions[i * 3 + 1] = particle.pos.y;
+        positions[i * 3 + 2] = particle.pos.z;
+
+        // Fade out exponentially
+        const fade = Math.pow(1 - particle.age / 1.5, 2);
+        colors[i * 3] = color[0] * fade * 2; // Brighter
+        colors[i * 3 + 1] = color[1] * fade * 2;
+        colors[i * 3 + 2] = color[2] * fade * 2;
+
+        // Expand as it ages (like smoke)
+        sizes[i] = 5 + particle.age * 15; // Grows bigger (5 to 27.5)
+      }
+
+      const posAttr = new THREE.BufferAttribute(positions, 3);
+      const colAttr = new THREE.BufferAttribute(colors, 3);
+      const sizeAttr = new THREE.BufferAttribute(sizes, 1);
+
+      posAttr.setUsage(THREE.DynamicDrawUsage);
+      colAttr.setUsage(THREE.DynamicDrawUsage);
+      sizeAttr.setUsage(THREE.DynamicDrawUsage);
+
+      smokeRef.current.geometry.setAttribute('position', posAttr);
+      smokeRef.current.geometry.setAttribute('color', colAttr);
+      smokeRef.current.geometry.setAttribute('size', sizeAttr);
     }
   });
 
@@ -364,43 +399,31 @@ function ShootingStar({ startPos, endPos, color, onComplete }: {
     <>
       {/* Main bright streak (leading edge) */}
       {progress <= 1.3 && (
-        <line ref={lineRef}>
-          <bufferGeometry>
-            <bufferAttribute
-              attach="attributes-position"
-              count={2}
-              array={new Float32Array(6)}
-              itemSize={3}
-            />
-          </bufferGeometry>
-          <lineBasicMaterial
-            color={new THREE.Color(color[0] * 3, color[1] * 3, color[2] * 3)}
-            transparent
-            opacity={1.0}
-            blending={THREE.AdditiveBlending}
-            linewidth={3}
-          />
-        </line>
+        <Line
+          points={streakPoints}
+          color={new THREE.Color(color[0] * 3, color[1] * 3, color[2] * 3)}
+          lineWidth={3}
+          transparent
+          opacity={1.0}
+        />
       )}
 
-      {/* Contrail (fading glow trail) */}
-      <line ref={contrailRef}>
-        <bufferGeometry>
-          <bufferAttribute
-            attach="attributes-position"
-            count={2}
-            array={new Float32Array(6)}
-            itemSize={3}
+      {/* Smoke particles (expanding and fading like smoke) */}
+      {smokeParticles.current.length > 0 && (
+        <points ref={smokeRef}>
+          <bufferGeometry />
+          <pointsMaterial
+            size={1}
+            vertexColors
+            transparent
+            opacity={0.6}
+            sizeAttenuation={false}
+            blending={THREE.AdditiveBlending}
+            map={createStarTexture()}
+            depthWrite={false}
           />
-        </bufferGeometry>
-        <lineBasicMaterial
-          color={new THREE.Color(color[0], color[1], color[2])}
-          transparent
-          opacity={contrailFade * 0.4}
-          blending={THREE.AdditiveBlending}
-          linewidth={4}
-        />
-      </line>
+        </points>
+      )}
     </>
   );
 }

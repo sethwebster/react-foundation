@@ -6,6 +6,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import Link from 'next/link';
 import { ReactLogo3D } from '@/components/ui/react-logo-3d';
 
 export default function Error({
@@ -40,7 +41,7 @@ export default function Error({
           </h1>
 
           <p className="text-lg text-white/70">
-            Don't worry, it happens to the best of us. Let's get you back on track.
+            Don&apos;t worry, it happens to the best of us. Let&apos;s get you back on track.
           </p>
 
           {process.env.NODE_ENV === 'development' && (
@@ -63,12 +64,12 @@ export default function Error({
             >
               Try Again
             </button>
-            <a
+            <Link
               href="/"
               className="min-w-[200px] rounded-lg border-2 border-white/20 bg-white/5 px-8 py-4 font-bold text-white backdrop-blur-sm transition hover:bg-white/10"
             >
               Return Home
-            </a>
+            </Link>
           </div>
         </div>
       </div>

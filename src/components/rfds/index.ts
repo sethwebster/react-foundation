@@ -1,7 +1,7 @@
 /**
- * React Foundation Store Design System (RFDS)
+ * React Foundation Design System (RFDS)
  *
- * A layered design system for the React Foundation Store.
+ * A layered design system for the React Foundation.
  *
  * Architecture:
  * - Primitives: Base building blocks (Button, Typography, etc.)
@@ -30,7 +30,7 @@ import { ProductCard, ProductGallery } from "./components";
 import { Header, Footer } from "./layouts";
 
 /**
- * React Foundation Store Design System namespace
+ * React Foundation Design System namespace
  *
  * Organized by layer for clarity and maintainability
  */

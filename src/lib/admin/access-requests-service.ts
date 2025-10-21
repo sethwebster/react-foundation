@@ -184,16 +184,26 @@ export class AccessRequestsService {
    */
   private static async sendApprovalEmail(email: string): Promise<void> {
     try {
+      console.log(`📧 Sending approval email to ${email}...`);
+
       const { Resend } = await import('resend');
       const resend = new Resend(process.env.RESEND_API_KEY);
+
+      if (!process.env.RESEND_API_KEY) {
+        console.error('❌ RESEND_API_KEY not configured - skipping email');
+        return;
+      }
 
       const fromDomain = process.env.RESEND_FROM_DOMAIN || 'yourdomain.com';
       const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000';
 
-      await resend.emails.send({
-        from: `React Foundation Store <noreply@${fromDomain}>`,
+      console.log(`   From: noreply@${fromDomain}`);
+      console.log(`   To: ${email}`);
+
+      const result = await resend.emails.send({
+        from: `React Foundation <noreply@${fromDomain}>`,
         to: [email],
-        subject: '✅ Access Approved - React Foundation Store',
+        subject: '✅ Access Approved - React Foundation',
         html: `
           <!DOCTYPE html>
           <html>
@@ -201,7 +211,7 @@ export class AccessRequestsService {
               <div style="max-width: 500px; margin: 0 auto; text-align: center;">
                 <h1 style="color: #10b981; font-size: 32px;">🎉 Welcome!</h1>
                 <p style="font-size: 18px; color: #fff;">Your access request has been approved.</p>
-                <p style="color: #aaa; margin: 20px 0;">You can now sign in and access the React Foundation Store.</p>
+                <p style="color: #aaa; margin: 20px 0;">You can now sign in and access the React Foundation.</p>
                 <a href="${baseUrl}" style="display: inline-block; margin-top: 20px; padding: 14px 32px; background: #06b6d4; color: #000; text-decoration: none; border-radius: 8px; font-weight: bold;">
                   Sign In Now
                 </a>
@@ -211,9 +221,13 @@ export class AccessRequestsService {
         `,
       });
 
-      console.log(`📧 Approval email sent to ${email}`);
+      if (result.data) {
+        console.log(`✅ Approval email sent! ID: ${result.data.id}`);
+      } else if (result.error) {
+        console.error(`❌ Resend error:`, result.error);
+      }
     } catch (error) {
-      console.error(`Error sending approval email to ${email}:`, error);
+      console.error(`❌ Error sending approval email to ${email}:`, error);
     }
   }
 
@@ -222,22 +236,32 @@ export class AccessRequestsService {
    */
   private static async sendDenialEmail(email: string): Promise<void> {
     try {
+      console.log(`📧 Sending denial email to ${email}...`);
+
       const { Resend } = await import('resend');
       const resend = new Resend(process.env.RESEND_API_KEY);
 
+      if (!process.env.RESEND_API_KEY) {
+        console.error('❌ RESEND_API_KEY not configured - skipping email');
+        return;
+      }
+
       const fromDomain = process.env.RESEND_FROM_DOMAIN || 'yourdomain.com';
 
-      await resend.emails.send({
-        from: `React Foundation Store <noreply@${fromDomain}>`,
+      console.log(`   From: noreply@${fromDomain}`);
+      console.log(`   To: ${email}`);
+
+      const result = await resend.emails.send({
+        from: `React Foundation <noreply@${fromDomain}>`,
         to: [email],
-        subject: 'Access Request Update - React Foundation Store',
+        subject: 'Access Request Update - React Foundation',
         html: `
           <!DOCTYPE html>
           <html>
             <body style="font-family: system-ui; background: #000; color: #fff; padding: 40px;">
               <div style="max-width: 500px; margin: 0 auto; text-align: center;">
                 <h1 style="color: #ef4444; font-size: 32px;">Access Request Update</h1>
-                <p style="font-size: 16px; color: #fff;">Thank you for your interest in the React Foundation Store.</p>
+                <p style="font-size: 16px; color: #fff;">Thank you for your interest in the React Foundation.</p>
                 <p style="color: #aaa; margin: 20px 0;">
                   After review, we're unable to grant access at this time. We appreciate your understanding.
                 </p>
@@ -250,9 +274,13 @@ export class AccessRequestsService {
         `,
       });
 
-      console.log(`📧 Denial email sent to ${email}`);
+      if (result.data) {
+        console.log(`✅ Denial email sent! ID: ${result.data.id}`);
+      } else if (result.error) {
+        console.error(`❌ Resend error:`, result.error);
+      }
     } catch (error) {
-      console.error(`Error sending denial email to ${email}:`, error);
+      console.error(`❌ Error sending denial email to ${email}:`, error);
     }
   }
 

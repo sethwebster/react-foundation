@@ -72,8 +72,11 @@ export function Enterprise() {
   });
 
   return (
-    <group ref={groupRef} scale={5}>
-      <primitive object={scene} />
+    <group ref={groupRef} scale={5} renderOrder={1000}>
+      <primitive object={scene} renderOrder={1000} />
     </group>
   );
 }
+
+// Preload the model
+useGLTF.preload('/models/enterprise.glb');

@@ -1,7 +1,7 @@
 import { ImageResponse } from 'next/og';
 
 export const runtime = 'edge';
-export const alt = 'React Foundation Store - Official Merchandise';
+export const alt = 'React Foundation - Official Merchandise';
 export const size = {
   width: 1200,
   height: 630,
@@ -58,7 +58,7 @@ export default async function StoreOGImage() {
             textAlign: 'center',
           }}
         >
-          React Foundation Store
+          React Foundation
         </div>
 
         {/* Subtitle */}
