@@ -65,7 +65,7 @@ GITHUB_CLIENT_ID=xxxxx
 GITHUB_CLIENT_SECRET=xxxxx
 GITHUB_TOKEN=ghp_xxxxx
 NEXTAUTH_SECRET=xxxxx
-NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_URL=http://localhost:3000  # Use production URL (e.g., https://yourdomain.com) when deployed
 ```
 
 ### 2. API Tokens
