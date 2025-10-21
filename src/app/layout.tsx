@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 const siteName = "React Foundation";
-const siteUrl = "https://react.foundation"; // Update with actual domain
+const siteUrl = "https://react.foundation"; 
 const description =
   "Supporting the React ecosystem through community funding, transparent governance, and official merchandise. Every purchase funds maintainers of 54+ React libraries.";
 
