@@ -36,6 +36,12 @@ export default function ComingSoonPage() {
 
   const handleRequestAccess = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Use authenticated email
+    if (userEmail) {
+      setEmail(userEmail);
+    }
+
     await submitRequest();
   };
 
@@ -128,24 +134,19 @@ export default function ComingSoonPage() {
           <div className="space-y-3">
             {!isAuthenticated && (
               <div className="space-y-4">
+                <p className="text-sm text-white/60">
+                  Sign in with GitHub to request early access
+                </p>
                 {/* GitHub Sign In */}
                 <button
                   onClick={() => signIn('github', { callbackUrl: '/' })}
-                  className="group relative w-full overflow-hidden rounded-lg border-2 border-cyan-400 bg-black/80 px-8 py-4 font-bold uppercase tracking-wider text-cyan-400 shadow-[0_0_20px_rgba(0,255,255,0.3)] transition hover:bg-cyan-400/10 hover:shadow-[0_0_30px_rgba(0,255,255,0.5)]"
+                  className="group relative w-full cursor-pointer overflow-hidden rounded-lg border-2 border-cyan-400 bg-black/80 px-8 py-4 font-bold uppercase tracking-wider text-cyan-400 shadow-[0_0_20px_rgba(0,255,255,0.3)] transition hover:bg-cyan-400/10 hover:shadow-[0_0_30px_rgba(0,255,255,0.5)]"
                 >
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-400/10 to-transparent opacity-0 transition group-hover:opacity-100" />
                   <div className="relative flex items-center justify-center gap-3">
                     <SiGithub size={24} />
-                    <span>Access with GitHub</span>
+                    <span>Sign in with GitHub</span>
                   </div>
-                </button>
-
-                {/* Request Access Toggle */}
-                <button
-                  onClick={() => setShowRequestForm(!showRequestForm)}
-                  className="cursor-pointer text-sm text-cyan-400/70 underline decoration-dotted underline-offset-4 transition hover:text-cyan-400"
-                >
-                  {showRequestForm ? 'Hide request form' : 'Request early access'}
                 </button>
               </div>
             )}
@@ -169,22 +170,24 @@ export default function ComingSoonPage() {
             )}
 
             {/* Request Access Form */}
-            {showRequestForm && (
+            {showRequestForm && isAuthenticated && userEmail && (
               <div className="rounded-xl border border-cyan-500/50 bg-black/90 p-6 backdrop-blur-sm">
                 {!submitted ? (
                   <form onSubmit={handleRequestAccess} className="space-y-4">
                     <div>
                       <label className="mb-2 block text-left text-sm font-semibold uppercase tracking-wider text-cyan-400">
-                        Email
+                        GitHub Account
                       </label>
                       <input
                         type="email"
                         required
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="w-full rounded-lg border border-cyan-500/50 bg-black/50 px-4 py-3 font-mono text-cyan-100 placeholder-cyan-500/30 outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/50"
-                        placeholder="you@example.com"
+                        value={userEmail}
+                        disabled
+                        className="w-full rounded-lg border border-cyan-500/50 bg-black/30 px-4 py-3 font-mono text-cyan-100 opacity-75"
                       />
+                      <p className="mt-1 text-xs text-white/50">
+                        Using your authenticated GitHub email
+                      </p>
                     </div>
                     <div>
                       <label className="mb-2 block text-left text-sm font-semibold uppercase tracking-wider text-cyan-400">
