@@ -143,7 +143,7 @@ export default function ComingSoonPage() {
                 {/* Request Access Toggle */}
                 <button
                   onClick={() => setShowRequestForm(!showRequestForm)}
-                  className="text-sm text-cyan-400/70 underline decoration-dotted underline-offset-4 transition hover:text-cyan-400"
+                  className="cursor-pointer text-sm text-cyan-400/70 underline decoration-dotted underline-offset-4 transition hover:text-cyan-400"
                 >
                   {showRequestForm ? 'Hide request form' : 'Request early access'}
                 </button>
@@ -202,7 +202,7 @@ export default function ComingSoonPage() {
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="w-full rounded-lg border-2 border-cyan-400 bg-cyan-500/10 px-6 py-3 font-bold uppercase tracking-wider text-cyan-400 shadow-[0_0_20px_rgba(0,255,255,0.3)] transition hover:bg-cyan-400/20 hover:shadow-[0_0_30px_rgba(0,255,255,0.5)] disabled:opacity-50"
+                      className="w-full cursor-pointer rounded-lg border-2 border-cyan-400 bg-cyan-500/10 px-6 py-3 font-bold uppercase tracking-wider text-cyan-400 shadow-[0_0_20px_rgba(0,255,255,0.3)] transition hover:bg-cyan-400/20 hover:shadow-[0_0_30px_rgba(0,255,255,0.5)] disabled:opacity-50"
                     >
                       {isSubmitting ? 'Sending...' : 'Request Access'}
                     </button>
@@ -236,8 +236,8 @@ export default function ComingSoonPage() {
         </p>
       </div>
 
-      {/* Add animations to globals.css */}
-      <style jsx global>{`
+      {/* Add animations */}
+      <style>{`
         @keyframes float {
           0%, 100% {
             transform: translateY(0px) translateX(0px);
