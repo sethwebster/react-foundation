@@ -5,6 +5,7 @@
 
 import Redis from 'ioredis';
 import type { LibraryRawMetrics, QuarterlyAllocation } from './ris/types';
+import type { LibraryActivityData } from './ris/activity-types';
 
 // Singleton Redis client
 let redis: Redis | null = null;
@@ -270,7 +271,7 @@ export async function setCollectionStatus(status: {
 /**
  * Get collection status
  */
-export async function getCollectionStatus(): Promise<any> {
+export async function getCollectionStatus(): Promise<Record<string, unknown> | null> {
   const client = getRedisClient();
   const key = REDIS_KEYS.collectionStatus;
 
@@ -306,7 +307,7 @@ export async function clearRISCache(): Promise<void> {
 export async function cacheLibraryActivity(
   owner: string,
   repo: string,
-  activity: any // LibraryActivityData from activity-types
+  activity: LibraryActivityData
 ): Promise<void> {
   const client = getRedisClient();
   const key = REDIS_KEYS.libraryActivity(owner, repo);
@@ -321,7 +322,7 @@ export async function cacheLibraryActivity(
 export async function getCachedLibraryActivity(
   owner: string,
   repo: string
-): Promise<any | null> {
+): Promise<LibraryActivityData | null> {
   const client = getRedisClient();
   const key = REDIS_KEYS.libraryActivity(owner, repo);
 

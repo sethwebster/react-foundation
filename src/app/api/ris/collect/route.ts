@@ -87,8 +87,6 @@ export async function POST(request: NextRequest) {
         // Get cached activity data (permanent storage)
         const cachedActivity = await getCachedLibraryActivity(library.owner, library.name);
 
-        let metrics: LibraryRawMetrics;
-
         // Collect or update activity
         const activity = await aggregator.collectLibraryActivity(
           library.owner,
@@ -101,7 +99,7 @@ export async function POST(request: NextRequest) {
         await cacheLibraryActivity(library.owner, library.name, activity);
 
         // Convert activity to metrics (applies 12-month window)
-        metrics = calculateMetricsFromActivity(activity);
+        const metrics = calculateMetricsFromActivity(activity);
 
         // Cache calculated metrics (7 day TTL)
         await cacheLibraryMetrics(library.owner, library.name, metrics);

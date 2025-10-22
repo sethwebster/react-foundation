@@ -26,11 +26,11 @@ const PUBLIC_ROUTES = [
   '/react-logo.svg',
 ];
 
-// API routes that should work for allowlisted users
-const PROTECTED_API_ROUTES = [
-  '/api/ris',
-  '/api/maintainer',
-];
+// API routes that should work for allowlisted users (future use)
+// const PROTECTED_API_ROUTES = [
+//   '/api/ris',
+//   '/api/maintainer',
+// ];
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;

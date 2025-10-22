@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 /**
  * Scoring System Explanation Page
  * Explains the React Impact Score in simple, accessible language

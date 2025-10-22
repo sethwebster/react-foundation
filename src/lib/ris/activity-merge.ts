@@ -67,7 +67,7 @@ function mergeArrays<T>(
   keyField: keyof T
 ): T[] {
   // Create a map of existing items
-  const existingMap = new Map<any, T>();
+  const existingMap = new Map<unknown, T>();
   existingItems.forEach(item => {
     existingMap.set(item[keyField], item);
   });
@@ -82,8 +82,8 @@ function mergeArrays<T>(
 
   // Sort by creation date (most recent first)
   return merged.sort((a, b) => {
-    const dateA = getItemDate(a);
-    const dateB = getItemDate(b);
+    const dateA = getItemDate(a as Record<string, unknown>);
+    const dateB = getItemDate(b as Record<string, unknown>);
     return dateB.getTime() - dateA.getTime();
   });
 }
@@ -91,8 +91,8 @@ function mergeArrays<T>(
 /**
  * Get date from activity item
  */
-function getItemDate(item: any): Date {
-  const dateStr = item.created_at || item.date || item.published_at || new Date().toISOString();
+function getItemDate(item: Record<string, unknown>): Date {
+  const dateStr = (item.created_at || item.date || item.published_at || new Date().toISOString()) as string;
   return new Date(dateStr);
 }
 

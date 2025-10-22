@@ -165,43 +165,55 @@ export class MetricsAggregator {
     libraryName: string,
     owner: string,
     repo: string,
-    github: any,
-    npm: any,
-    cdn: any,
-    ossf: any
+    github: Record<string, unknown> | null,
+    npm: Record<string, unknown> | null,
+    cdn: Record<string, unknown> | null,
+    ossf: Record<string, unknown> | null
   ): LibraryRawMetrics {
+    // Helper to safely extract number
+    const getNum = (obj: Record<string, unknown> | null, key: string): number => {
+      if (!obj) return 0;
+      const val = obj[key];
+      return typeof val === 'number' ? val : 0;
+    };
+
+    // Helper to safely extract boolean
+    const getBool = (obj: Record<string, unknown> | null, key: string): boolean => {
+      if (!obj) return false;
+      return obj[key] === true;
+    };
+
     // Ecosystem Footprint (EF)
-    const npm_downloads = npm?.downloads_12mo || 0;
-    const gh_dependents = npm?.dependents_count || 0; // From npms.io
-    const import_mentions = this.estimateImportMentions(github?.stars || 0); // Rough estimate
-    const cdn_hits = cdn?.jsdelivr_hits_12mo || 0;
+    const npm_downloads = getNum(npm, 'downloads_12mo');
+    const gh_dependents = getNum(npm, 'dependents_count');
+    const import_mentions = this.estimateImportMentions(getNum(github, 'stars'));
+    const cdn_hits = getNum(cdn, 'jsdelivr_hits_12mo');
 
     // Contribution Quality (CQ)
     const pr_points = this.calculatePRPoints(github);
     const issue_resolution_rate = this.calculateIssueResolutionRate(github);
-    const median_first_response_hours =
-      this.calculateMedianResponseTime(github);
-    const unique_contribs = github?.unique_contribs_12mo || 0;
+    const median_first_response_hours = this.calculateMedianResponseTime(github);
+    const unique_contribs = getNum(github, 'unique_contribs_12mo');
 
     // Maintainer Health (MH)
-    const active_maintainers = github?.active_maintainers || 0;
-    const release_cadence_days = github?.median_release_days || 0;
-    const top_author_share = github?.top_contributor_share || 0;
-    const triage_latency_hours = median_first_response_hours; // Use same as response time
-    const maintainer_survey = this.estimateMaintainerHealth(github); // Heuristic
+    const active_maintainers = getNum(github, 'active_maintainers');
+    const release_cadence_days = getNum(github, 'median_release_days');
+    const top_author_share = getNum(github, 'top_contributor_share');
+    const triage_latency_hours = median_first_response_hours;
+    const maintainer_survey = this.estimateMaintainerHealth(github);
 
     // Community Benefit (CB)
     const docs_completeness = this.estimateDocsCompleteness(github, npm);
-    const tutorials_refs = this.estimateTutorialRefs(github?.stars || 0);
+    const tutorials_refs = this.estimateTutorialRefs(getNum(github, 'stars'));
     const helpful_events = this.estimateHelpfulEvents(github);
     const user_satisfaction = this.estimateUserSatisfaction(github, npm);
 
     // Mission Alignment (MA)
-    const a11y_advances = 0; // Would need manual curation
-    const perf_concurrency_support = 0; // Would need manual curation
-    const typescript_strictness = npm?.typescript_support ? 1 : 0;
-    const rsc_compat_progress = 0; // Would need manual curation
-    const security_practices = ossf?.normalized_score || 0;
+    const a11y_advances = 0;
+    const perf_concurrency_support = 0;
+    const typescript_strictness = getBool(npm, 'typescript_support') ? 1 : 0;
+    const rsc_compat_progress = 0;
+    const security_practices = getNum(ossf, 'normalized_score');
 
     return {
       libraryName,
@@ -243,25 +255,23 @@ export class MetricsAggregator {
    * Calculate PR points (weighted by impact)
    * Simplified version - in reality would need PR size and impact analysis
    */
-  private calculatePRPoints(github: any): number {
+  private calculatePRPoints(github: Record<string, unknown> | null): number {
     if (!github) return 0;
 
-    const prs = github.pr_merged_12mo || 0;
-    const contribs = github.unique_contribs_12mo || 1;
+    const prs = typeof github.pr_merged_12mo === 'number' ? github.pr_merged_12mo : 0;
+    const contribs = typeof github.unique_contribs_12mo === 'number' ? github.unique_contribs_12mo : 1;
 
-    // Simple heuristic: more PRs and contributors = higher quality
-    // In reality, would analyze LOC changed, test coverage, etc.
     return prs * Math.log10(1 + contribs);
   }
 
   /**
    * Calculate issue resolution rate
    */
-  private calculateIssueResolutionRate(github: any): number {
-    if (!github || !github.issues_opened_12mo) return 0;
+  private calculateIssueResolutionRate(github: Record<string, unknown> | null): number {
+    if (!github) return 0;
 
-    const opened = github.issues_opened_12mo;
-    const closed = github.issues_closed_12mo || 0;
+    const opened = typeof github.issues_opened_12mo === 'number' ? github.issues_opened_12mo : 0;
+    const closed = typeof github.issues_closed_12mo === 'number' ? github.issues_closed_12mo : 0;
 
     return opened > 0 ? Math.min(1, closed / opened) : 0;
   }
@@ -269,13 +279,12 @@ export class MetricsAggregator {
   /**
    * Calculate median response time
    */
-  private calculateMedianResponseTime(github: any): number {
+  private calculateMedianResponseTime(github: Record<string, unknown> | null): number {
     if (!github) return 0;
 
-    const prResponse = github.median_pr_response_hours || 0;
-    const issueResponse = github.median_issue_response_hours || 0;
+    const prResponse = typeof github.median_pr_response_hours === 'number' ? github.median_pr_response_hours : 0;
+    const issueResponse = typeof github.median_issue_response_hours === 'number' ? github.median_issue_response_hours : 0;
 
-    // Average of both if available
     if (prResponse > 0 && issueResponse > 0) {
       return (prResponse + issueResponse) / 2;
     }
@@ -286,26 +295,29 @@ export class MetricsAggregator {
   /**
    * Estimate maintainer health (0-1)
    */
-  private estimateMaintainerHealth(github: any): number {
+  private estimateMaintainerHealth(github: Record<string, unknown> | null): number {
     if (!github) return 0;
 
     let score = 0;
 
     // Not archived
-    if (!github.is_archived) score += 0.3;
+    if (github.is_archived !== true) score += 0.3;
 
     // Recent commits
-    const daysSinceCommit = this.daysSince(github.last_commit_date);
+    const lastCommitDate = typeof github.last_commit_date === 'string' ? github.last_commit_date : new Date().toISOString();
+    const daysSinceCommit = this.daysSince(lastCommitDate);
     if (daysSinceCommit < 30) score += 0.3;
     else if (daysSinceCommit < 90) score += 0.15;
 
     // Multiple maintainers
-    if (github.active_maintainers >= 3) score += 0.2;
-    else if (github.active_maintainers >= 1) score += 0.1;
+    const maintainers = typeof github.active_maintainers === 'number' ? github.active_maintainers : 0;
+    if (maintainers >= 3) score += 0.2;
+    else if (maintainers >= 1) score += 0.1;
 
     // Regular releases
-    if (github.release_count_12mo >= 4) score += 0.2;
-    else if (github.release_count_12mo >= 1) score += 0.1;
+    const releases = typeof github.release_count_12mo === 'number' ? github.release_count_12mo : 0;
+    if (releases >= 4) score += 0.2;
+    else if (releases >= 1) score += 0.1;
 
     return Math.min(1, score);
   }
@@ -313,23 +325,24 @@ export class MetricsAggregator {
   /**
    * Estimate docs completeness (0-1)
    */
-  private estimateDocsCompleteness(github: any, npm: any): number {
+  private estimateDocsCompleteness(github: Record<string, unknown> | null, npm: Record<string, unknown> | null): number {
     let score = 0;
 
-    // Has types (good docs indicator)
-    if (npm?.typescript_support) score += 0.3;
+    // Has types
+    if (npm && npm.typescript_support === true) score += 0.3;
 
-    // Has releases (suggests documented versioning)
-    if (github?.release_count_12mo > 0) score += 0.2;
+    // Has releases
+    const releases = github && typeof github.release_count_12mo === 'number' ? github.release_count_12mo : 0;
+    if (releases > 0) score += 0.2;
 
-    // Popular (likely has good docs)
-    const stars = github?.stars || 0;
+    // Popular
+    const stars = github && typeof github.stars === 'number' ? github.stars : 0;
     if (stars > 10000) score += 0.3;
     else if (stars > 1000) score += 0.2;
     else if (stars > 100) score += 0.1;
 
-    // Has recent activity (docs likely updated)
-    if (github && !github.is_archived) score += 0.2;
+    // Not archived
+    if (github && github.is_archived !== true) score += 0.2;
 
     return Math.min(1, score);
   }
@@ -345,12 +358,11 @@ export class MetricsAggregator {
   /**
    * Estimate helpful events (discussions, answers)
    */
-  private estimateHelpfulEvents(github: any): number {
+  private estimateHelpfulEvents(github: Record<string, unknown> | null): number {
     if (!github) return 0;
 
-    // Use issue and PR activity as proxy
-    const issues = github.issues_closed_12mo || 0;
-    const prs = github.pr_merged_12mo || 0;
+    const issues = typeof github.issues_closed_12mo === 'number' ? github.issues_closed_12mo : 0;
+    const prs = typeof github.pr_merged_12mo === 'number' ? github.pr_merged_12mo : 0;
 
     return issues + prs;
   }
@@ -358,22 +370,20 @@ export class MetricsAggregator {
   /**
    * Estimate user satisfaction (0-1)
    */
-  private estimateUserSatisfaction(github: any, npm: any): number {
-    if (!github) return 0.5; // Neutral default
+  private estimateUserSatisfaction(github: Record<string, unknown> | null, npm: Record<string, unknown> | null): number {
+    if (!github) return 0.5;
 
     let score = 0.5;
 
-    // High issue resolution rate = happy users
     const resolutionRate = this.calculateIssueResolutionRate(github);
     score += resolutionRate * 0.2;
 
-    // Fast response time = happy users
     const responseHours = this.calculateMedianResponseTime(github);
     if (responseHours > 0 && responseHours < 24) score += 0.2;
     else if (responseHours > 0 && responseHours < 72) score += 0.1;
 
-    // Regular releases = maintained = happy users
-    if (github.release_count_12mo >= 4) score += 0.1;
+    const releases = typeof github.release_count_12mo === 'number' ? github.release_count_12mo : 0;
+    if (releases >= 4) score += 0.1;
 
     return Math.min(1, Math.max(0, score));
   }

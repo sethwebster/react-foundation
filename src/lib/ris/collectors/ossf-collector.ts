@@ -74,7 +74,7 @@ export class OSSFCollector {
   /**
    * Extract scores for specific checks
    */
-  private extractCheckScores(checks: any[]): OSSFMetrics['checks'] {
+  private extractCheckScores(checks: Array<{ name: string; score?: number }>): OSSFMetrics['checks'] {
     const findCheckScore = (name: string): number => {
       const check = checks.find((c) => c.name === name);
       if (!check || check.score === undefined) return 0;

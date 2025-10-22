@@ -69,8 +69,8 @@ export class AccessRequestsService {
 
     try {
       return JSON.parse(data);
-    } catch (error) {
-      console.error(`Error parsing request ${id}:`, error);
+    } catch (_error) {
+      console.error(`Error parsing request ${id}:`, _error);
       return null;
     }
   }
@@ -231,8 +231,8 @@ export class AccessRequestsService {
       } else if (result.error) {
         console.error(`❌ Resend error:`, result.error);
       }
-    } catch (error) {
-      console.error(`❌ Error sending approval email to ${email}:`, error);
+    } catch (_error) {
+      console.error(`❌ Error sending approval email to ${email}:`, _error);
     }
   }
 
@@ -284,8 +284,8 @@ export class AccessRequestsService {
       } else if (result.error) {
         console.error(`❌ Resend error:`, result.error);
       }
-    } catch (error) {
-      console.error(`❌ Error sending denial email to ${email}:`, error);
+    } catch (_error) {
+      console.error(`❌ Error sending denial email to ${email}:`, _error);
     }
   }
 
@@ -311,7 +311,7 @@ export class AccessRequestsService {
       }
 
       return { requestId, action };
-    } catch (error) {
+    } catch (_error) {
       return null;
     }
   }

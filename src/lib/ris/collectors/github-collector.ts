@@ -166,7 +166,7 @@ export class GitHubCollector {
       }
     `;
 
-    const result: any = await this.graphqlClient(query, { owner, repo });
+    const result: Record<string, unknown> = await this.graphqlClient(query, { owner, repo });
     const repository = result.repository;
 
     return {
@@ -207,12 +207,12 @@ export class GitHubCollector {
 
       // Count unique contributors in last 12 months
       const recentContributors = new Set(
-        commits.map((c: any) => c.author?.login || c.commit?.author?.name).filter(Boolean)
+        commits.map((c: Record<string, unknown>) => c.author?.login || c.commit?.author?.name).filter(Boolean)
       );
 
       // Determine active maintainers (contributors with 12+ commits in last year)
       const commitCounts = new Map<string, number>();
-      commits.forEach((c: any) => {
+      commits.forEach((c: Record<string, unknown>) => {
         const author = c.author?.login || c.commit?.author?.name;
         if (author) {
           commitCounts.set(author, (commitCounts.get(author) || 0) + 1);
@@ -262,10 +262,10 @@ export class GitHubCollector {
           direction: 'desc',
           per_page: 100,
         },
-        (response) => response.data.filter((pr: any) => new Date(pr.created_at) >= new Date(since)).slice(0, 100)
+        (response) => response.data.filter((pr: Record<string, unknown>) => new Date(pr.created_at) >= new Date(since)).slice(0, 100)
       );
 
-      const merged = prs.filter((pr: any) => pr.merged_at).length;
+      const merged = prs.filter((pr: Record<string, unknown>) => pr.merged_at).length;
 
       // Calculate response times - sample 20 PRs (much faster)
       const responseTimes: number[] = [];
@@ -279,7 +279,7 @@ export class GitHubCollector {
           });
 
           const firstResponse = timeline.data.find(
-            (event: any) => event.event === 'commented' && event.actor?.login !== pr.user?.login
+            (event: Record<string, unknown>) => event.event === 'commented' && event.actor?.login !== pr.user?.login
           );
 
           if (firstResponse && firstResponse.created_at) {
@@ -329,15 +329,15 @@ export class GitHubCollector {
           since,
           per_page: 100,
         },
-        (response) => response.data.filter((issue: any) => !issue.pull_request).slice(0, 100)
+        (response) => response.data.filter((issue: Record<string, unknown>) => !issue.pull_request).slice(0, 100)
       );
 
       const opened = issues.filter(
-        (issue: any) => new Date(issue.created_at) >= new Date(since)
+        (issue: Record<string, unknown>) => new Date(issue.created_at) >= new Date(since)
       ).length;
 
       const closed = issues.filter(
-        (issue: any) =>
+        (issue: Record<string, unknown>) =>
           issue.closed_at && new Date(issue.closed_at) >= new Date(since)
       ).length;
 
@@ -410,7 +410,7 @@ export class GitHubCollector {
       const oneYearAgo = new Date();
       oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
 
-      const significantReleases = releases.filter((r: any) => {
+      const significantReleases = releases.filter((r: Record<string, unknown>) => {
         const publishedAt = new Date(r.published_at || r.created_at);
         if (publishedAt < oneYearAgo) return false;
 
@@ -425,7 +425,7 @@ export class GitHubCollector {
       // Calculate median days between releases
       if (significantReleases.length >= 2) {
         const dates = significantReleases
-          .map((r: any) => new Date(r.published_at || r.created_at).getTime())
+          .map((r: Record<string, unknown>) => new Date(r.published_at || r.created_at).getTime())
           .sort((a, b) => a - b);
 
         const daysBetween: number[] = [];
