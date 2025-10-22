@@ -71,8 +71,8 @@ export default function ComingSoonPage() {
 
       {/* Animated Gradient Overlay */}
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-transparent to-pink-500/10 animate-pulse" />
-        <div className="absolute inset-0 bg-gradient-to-tl from-purple-500/10 via-transparent to-cyan-500/10 opacity-50" />
+        <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-transparent to-orange-500/10 animate-pulse" />
+        <div className="absolute inset-0 bg-gradient-to-tl from-amber-500/10 via-transparent to-cyan-500/10 opacity-50" />
       </div>
 
       {/* Scanline Effect - Temporarily disabled */}
@@ -102,7 +102,7 @@ export default function ComingSoonPage() {
           {/* Title */}
           <div className="space-y-2">
             <h1 className="text-4xl font-black uppercase tracking-wider sm:text-5xl md:text-6xl">
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-500 drop-shadow-[0_0_20px_rgba(0,255,255,0.5)]">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-amber-400 to-orange-500 drop-shadow-[0_0_20px_rgba(0,255,255,0.5)]">
                 React Foundation
               </span>
             </h1>
