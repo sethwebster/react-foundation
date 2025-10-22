@@ -196,12 +196,12 @@ export class AccessRequestsService {
       }
 
       const fromDomain = process.env.RESEND_FROM_DOMAIN || 'yourdomain.com';
-      const baseUrl = process.env.NEXTAUTH_URL;
 
-      if (!baseUrl) {
-        logger.error('❌ NEXTAUTH_URL not configured - email will not include links');
-        // Still send email, but without the link
-      }
+      // Get base URL using Vercel environment variables
+      const protocol = process.env.VERCEL_ENV === 'production' ? 'https://' : 'https://';
+      const baseUrl = process.env.VERCEL_URL
+        ? `${protocol}${process.env.VERCEL_URL}`
+        : process.env.NEXTAUTH_URL || 'http://localhost:3000';
 
       logger.info(`   From: noreply@${fromDomain}`);
       logger.info(`   To: ${email}`);

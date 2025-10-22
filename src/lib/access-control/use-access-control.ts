@@ -31,6 +31,7 @@ export function useAccessControl() {
  * Hook to auto-redirect allowlisted users away from Coming Soon page
  * Call this ONLY on the Coming Soon page
  * Uses server-side API to check allowlist (doesn't expose emails to client)
+ * Polls every 5 seconds to detect when user is approved
  */
 export function useComingSoonRedirect() {
   const { status } = useSession();
@@ -39,34 +40,39 @@ export function useComingSoonRedirect() {
 
   useEffect(() => {
     async function checkAndRedirect() {
-      // Only check once when authenticated
-      if (status === 'loading' || hasChecked) {
+      if (status === 'loading') {
         return;
       }
 
       if (status === 'authenticated') {
-        setHasChecked(true);
-
         try {
-          // Call server-side API to check access (doesn't expose allowlist)
+          // Call server-side API to check access
           const response = await fetch('/api/check-access');
           const data = await response.json();
 
           if (data.isAllowed) {
             console.log('✅ User is allowlisted, redirecting to home...');
             router.push('/');
-          } else {
+          } else if (!hasChecked) {
             console.log('ℹ️  User not on allowlist, staying on Coming Soon page');
+            setHasChecked(true);
           }
         } catch (_error) {
           console.error('Error checking access:', _error);
+          setHasChecked(true);
         }
       } else if (status === 'unauthenticated') {
         setHasChecked(true);
       }
     }
 
+    // Check immediately
     checkAndRedirect();
+
+    // Poll every 5 seconds to detect when access is granted
+    const interval = setInterval(checkAndRedirect, 5000);
+
+    return () => clearInterval(interval);
   }, [status, hasChecked, router]);
 
   return {

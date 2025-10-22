@@ -75,9 +75,12 @@ export async function POST(request: NextRequest) {
     const approveToken = AccessRequestsService.generateActionToken(accessRequest.id, 'approve');
     const denyToken = AccessRequestsService.generateActionToken(accessRequest.id, 'deny');
 
-    // Get base URL from request or environment variable
-    const requestUrl = new URL(request.url);
-    const baseUrl = process.env.NEXTAUTH_URL || `${requestUrl.protocol}//${requestUrl.host}`;
+    // Get base URL using Vercel environment variables
+    const protocol = process.env.VERCEL_ENV === 'production' ? 'https://' : 'https://';
+    const baseUrl = process.env.VERCEL_URL
+      ? `${protocol}${process.env.VERCEL_URL}`
+      : process.env.NEXTAUTH_URL || 'http://localhost:3000';
+
     const approveUrl = `${baseUrl}/api/admin/request-action?token=${approveToken}`;
     const denyUrl = `${baseUrl}/api/admin/request-action?token=${denyToken}`;
     const reviewUrl = `${baseUrl}/admin/requests?id=${accessRequest.id}`;
