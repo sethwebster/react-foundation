@@ -60,6 +60,15 @@ export async function middleware(request: NextRequest) {
 
   const userEmail = (token.email as string).toLowerCase();
 
+  console.log(`   User email: ${userEmail}`);
+
+  // Super admin check - environment variable failsafe
+  const SUPER_ADMIN = process.env.SUPER_ADMIN_EMAIL?.toLowerCase();
+  if (SUPER_ADMIN && userEmail === SUPER_ADMIN) {
+    console.log(`   👑 Super admin detected - access granted`);
+    return NextResponse.next();
+  }
+
   // Call our API route to check access (works in Edge runtime)
   try {
     const baseUrl = request.nextUrl.origin;
@@ -69,10 +78,16 @@ export async function middleware(request: NextRequest) {
       },
     });
 
+    if (!checkResponse.ok) {
+      console.log(`   ❌ Access check API failed: ${checkResponse.status}`);
+      const url = request.nextUrl.clone();
+      url.pathname = '/coming-soon';
+      return NextResponse.redirect(url);
+    }
+
     const checkData = await checkResponse.json();
 
-    console.log(`   User email: ${userEmail}`);
-    console.log(`   Has access: ${checkData.isAllowed}`);
+    console.log(`   Has access (Redis): ${checkData.isAllowed}`);
 
     if (!checkData.isAllowed) {
       console.log(`   ❌ Not in user list, redirecting to /coming-soon`);
@@ -85,7 +100,7 @@ export async function middleware(request: NextRequest) {
     console.log(`   ✅ Access granted`);
     return NextResponse.next();
   } catch (error) {
-    console.error('Error checking access:', error);
+    console.error('   ❌ Error checking access:', error);
     // On error, redirect to coming soon for safety
     const url = request.nextUrl.clone();
     url.pathname = '/coming-soon';

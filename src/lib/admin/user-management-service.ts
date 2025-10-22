@@ -22,7 +22,9 @@ const REDIS_KEYS = {
 
 export class UserManagementService {
   // Super admin - always has access even if Redis is empty
-  private static readonly SUPER_ADMIN = 'sethwebster@gmail.com';
+  private static get SUPER_ADMIN(): string | undefined {
+    return process.env.SUPER_ADMIN_EMAIL?.toLowerCase();
+  }
 
   /**
    * Add or update a user
@@ -94,7 +96,7 @@ export class UserManagementService {
     const normalizedEmail = email.toLowerCase().trim();
 
     // Super admin always has access
-    if (normalizedEmail === this.SUPER_ADMIN) {
+    if (this.SUPER_ADMIN && normalizedEmail === this.SUPER_ADMIN) {
       return true;
     }
 
@@ -109,7 +111,7 @@ export class UserManagementService {
     const normalizedEmail = email.toLowerCase().trim();
 
     // Super admin is always admin
-    if (normalizedEmail === this.SUPER_ADMIN) {
+    if (this.SUPER_ADMIN && normalizedEmail === this.SUPER_ADMIN) {
       return true;
     }
 
