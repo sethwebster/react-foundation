@@ -128,20 +128,25 @@ export class GitHubActivityCollector {
         }
       );
 
-      return prs.map(pr => ({
-        id: pr.id,
-        number: pr.number,
-        title: pr.title,
-        created_at: pr.created_at,
-        merged_at: pr.merged_at,
-        closed_at: pr.closed_at,
-        state: pr.state as 'open' | 'closed',
-        merged: pr.merged_at !== null,
-        author: pr.user?.login || 'unknown',
-        additions: pr.additions || 0,
-        deletions: pr.deletions || 0,
-        changed_files: pr.changed_files || 0,
-      }));
+      return prs.map(pr => {
+        const prData = pr as Record<string, unknown>;
+        const getNum = (key: string) => typeof prData[key] === 'number' ? prData[key] as number : 0;
+
+        return {
+          id: pr.id,
+          number: pr.number,
+          title: pr.title,
+          created_at: pr.created_at,
+          merged_at: pr.merged_at,
+          closed_at: pr.closed_at,
+          state: pr.state as 'open' | 'closed',
+          merged: pr.merged_at !== null,
+          author: pr.user?.login || 'unknown',
+          additions: getNum('additions'),
+          deletions: getNum('deletions'),
+          changed_files: getNum('changed_files'),
+        };
+      });
     } catch (error) {
       console.error(`Error fetching all PRs for ${owner}/${repo}:`, error);
       return [];
@@ -165,20 +170,26 @@ export class GitHubActivityCollector {
           direction: 'desc',
           per_page: 100,
         },
-        (response) => response.data.filter((issue: any) => !issue.pull_request)
+        (response) => response.data.filter((issue: Record<string, unknown>) => !issue.pull_request)
       );
 
-      return issues.map(issue => ({
-        id: issue.id,
-        number: issue.number,
-        title: issue.title,
-        created_at: issue.created_at,
-        closed_at: issue.closed_at,
-        state: issue.state as 'open' | 'closed',
-        author: issue.user?.login || 'unknown',
-        comments: issue.comments,
-        labels: issue.labels?.map((l: any) => l.name) || [],
-      }));
+      return issues.map(issue => {
+        const labels = Array.isArray(issue.labels) ?
+          issue.labels.map(l => (typeof l === 'object' && l !== null && 'name' in l ? String(l.name) : '')).filter(Boolean) :
+          [];
+
+        return {
+          id: issue.id,
+          number: issue.number,
+          title: issue.title,
+          created_at: issue.created_at,
+          closed_at: issue.closed_at,
+          state: issue.state as 'open' | 'closed',
+          author: issue.user?.login || 'unknown',
+          comments: issue.comments,
+          labels,
+        };
+      });
     } catch (error) {
       console.error(`Error fetching all issues for ${owner}/${repo}:`, error);
       return [];
@@ -268,20 +279,25 @@ export class GitHubActivityCollector {
         (response) => response.data.filter(pr => pr.created_at > since)
       );
 
-      return prs.map(pr => ({
-        id: pr.id,
-        number: pr.number,
-        title: pr.title,
-        created_at: pr.created_at,
-        merged_at: pr.merged_at,
-        closed_at: pr.closed_at,
-        state: pr.state as 'open' | 'closed',
-        merged: pr.merged_at !== null,
-        author: pr.user?.login || 'unknown',
-        additions: pr.additions || 0,
-        deletions: pr.deletions || 0,
-        changed_files: pr.changed_files || 0,
-      }));
+      return prs.map(pr => {
+        const prData = pr as Record<string, unknown>;
+        const getNum = (key: string) => typeof prData[key] === 'number' ? prData[key] as number : 0;
+
+        return {
+          id: pr.id,
+          number: pr.number,
+          title: pr.title,
+          created_at: pr.created_at,
+          merged_at: pr.merged_at,
+          closed_at: pr.closed_at,
+          state: pr.state as 'open' | 'closed',
+          merged: pr.merged_at !== null,
+          author: pr.user?.login || 'unknown',
+          additions: getNum('additions'),
+          deletions: getNum('deletions'),
+          changed_files: getNum('changed_files'),
+        };
+      });
     } catch (error) {
       console.error(`Error fetching PRs since ${since}:`, error);
       return [];
@@ -302,20 +318,30 @@ export class GitHubActivityCollector {
           since,
           per_page: 100,
         },
-        (response) => response.data.filter((issue: any) => !issue.pull_request && issue.created_at > since)
+        (response) => response.data.filter((issue: Record<string, unknown>) =>
+          !issue.pull_request &&
+          typeof issue.created_at === 'string' &&
+          issue.created_at > since
+        )
       );
 
-      return issues.map(issue => ({
-        id: issue.id,
-        number: issue.number,
-        title: issue.title,
-        created_at: issue.created_at,
-        closed_at: issue.closed_at,
-        state: issue.state as 'open' | 'closed',
-        author: issue.user?.login || 'unknown',
-        comments: issue.comments,
-        labels: issue.labels?.map((l: any) => l.name) || [],
-      }));
+      return issues.map(issue => {
+        const labels = Array.isArray(issue.labels) ?
+          issue.labels.map(l => (typeof l === 'object' && l !== null && 'name' in l ? String(l.name) : '')).filter(Boolean) :
+          [];
+
+        return {
+          id: issue.id,
+          number: issue.number,
+          title: issue.title,
+          created_at: issue.created_at,
+          closed_at: issue.closed_at,
+          state: issue.state as 'open' | 'closed',
+          author: issue.user?.login || 'unknown',
+          comments: issue.comments,
+          labels,
+        };
+      });
     } catch (error) {
       console.error(`Error fetching issues since ${since}:`, error);
       return [];

@@ -167,13 +167,21 @@ export class GitHubCollector {
     `;
 
     const result: Record<string, unknown> = await this.graphqlClient(query, { owner, repo });
-    const repository = result.repository;
+    const repository = result.repository as Record<string, unknown>;
+
+    const getNum = (key: string) => typeof repository[key] === 'number' ? repository[key] as number : 0;
+    const getBool = (key: string) => repository[key] === true;
+    const getDefaultBranch = () => {
+      const branch = repository.defaultBranchRef as Record<string, unknown> | undefined;
+      const target = branch?.target as Record<string, unknown> | undefined;
+      return target?.committedDate as string | undefined;
+    };
 
     return {
-      stars: repository.stargazerCount,
-      forks: repository.forkCount,
-      is_archived: repository.isArchived,
-      last_commit_date: repository.defaultBranchRef?.target?.committedDate || new Date().toISOString(),
+      stars: getNum('stargazerCount'),
+      forks: getNum('forkCount'),
+      is_archived: getBool('isArchived'),
+      last_commit_date: getDefaultBranch() || new Date().toISOString(),
     };
   }
 
@@ -207,15 +215,23 @@ export class GitHubCollector {
 
       // Count unique contributors in last 12 months
       const recentContributors = new Set(
-        commits.map((c: Record<string, unknown>) => c.author?.login || c.commit?.author?.name).filter(Boolean)
+        commits.map((c: Record<string, unknown>) => {
+          const author = c.author as Record<string, unknown> | undefined;
+          const commit = c.commit as Record<string, unknown> | undefined;
+          const commitAuthor = commit?.author as Record<string, unknown> | undefined;
+          return author?.login || commitAuthor?.name || '';
+        }).filter(Boolean)
       );
 
       // Determine active maintainers (contributors with 12+ commits in last year)
       const commitCounts = new Map<string, number>();
       commits.forEach((c: Record<string, unknown>) => {
-        const author = c.author?.login || c.commit?.author?.name;
-        if (author) {
-          commitCounts.set(author, (commitCounts.get(author) || 0) + 1);
+        const author = c.author as Record<string, unknown> | undefined;
+        const commit = c.commit as Record<string, unknown> | undefined;
+        const commitAuthor = commit?.author as Record<string, unknown> | undefined;
+        const authorName = author?.login || commitAuthor?.name;
+        if (typeof authorName === 'string') {
+          commitCounts.set(authorName, (commitCounts.get(authorName) || 0) + 1);
         }
       });
 

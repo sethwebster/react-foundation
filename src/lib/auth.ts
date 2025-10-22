@@ -11,7 +11,7 @@ export const authOptions: NextAuthOptions = {
       clientSecret: getRequiredEnvVar('GITHUB_CLIENT_SECRET'),
       authorization: {
         params: {
-          scope: "read:user public_repo",
+          scope: "read:user user:email",
         },
       },
     }),
