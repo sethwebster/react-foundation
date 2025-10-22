@@ -1,0 +1,8 @@
+{
+  "crons": [
+    {
+      "path": "/api/ris/collect",
+      "schedule": "0 2 * * *"
+    }
+  ]
+}

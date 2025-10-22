@@ -58,8 +58,8 @@ export function useComingSoonRedirect() {
           } else {
             console.log('ℹ️  User not on allowlist, staying on Coming Soon page');
           }
-        } catch (error) {
-          console.error('Error checking access:', error);
+        } catch (_error) {
+          console.error('Error checking access:', _error);
         }
       } else if (status === 'unauthenticated') {
         setHasChecked(true);

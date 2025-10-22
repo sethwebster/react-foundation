@@ -4,6 +4,7 @@
  */
 
 import { getRedisClient } from '@/lib/redis';
+import { logger } from '@/lib/logger';
 
 export type UserRole = 'admin' | 'user';
 
@@ -54,7 +55,7 @@ export class UserManagementService {
       await client.srem(REDIS_KEYS.admins, normalizedEmail);
     }
 
-    console.log(`✅ User ${normalizedEmail} added with role: ${role}`);
+    logger.info(`✅ User ${normalizedEmail} added with role: ${role}`);
   }
 
   /**
@@ -68,7 +69,7 @@ export class UserManagementService {
     await client.srem(REDIS_KEYS.allUsers, normalizedEmail);
     await client.srem(REDIS_KEYS.admins, normalizedEmail);
 
-    console.log(`✅ User ${normalizedEmail} removed`);
+    logger.info(`✅ User ${normalizedEmail} removed`);
   }
 
   /**
@@ -84,7 +85,7 @@ export class UserManagementService {
     try {
       return JSON.parse(data);
     } catch (error) {
-      console.error(`Error parsing user data for ${normalizedEmail}:`, error);
+      logger.error(`Error parsing user data for ${normalizedEmail}:`, error);
       return null;
     }
   }
@@ -171,7 +172,7 @@ export class UserManagementService {
       const exists = await this.hasAccess(email);
       if (!exists) {
         await this.addUser(email, 'user', 'env-migration');
-        console.log(`Migrated ${email} from environment variable`);
+        logger.info(`Migrated ${email} from environment variable`);
       }
     }
   }
