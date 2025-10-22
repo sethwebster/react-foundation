@@ -11,7 +11,7 @@ export function SignInButton() {
   if (isLoading) {
     return (
       <button
-        className="rounded-full border border-white/10 bg-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-white/40"
+        className="rounded-full border border-border/10 bg-background/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-foreground/40"
         type="button"
         disabled
       >
@@ -25,7 +25,7 @@ export function SignInButton() {
       <button
         type="button"
         onClick={() => signOut()}
-        className="rounded-full border border-white/10 bg-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-white transition hover:border-white/30 hover:bg-white/20"
+        className="rounded-full border border-border/10 bg-background/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-foreground transition hover:border-border/30 hover:bg-background/20"
       >
         Sign out
       </button>
@@ -36,7 +36,7 @@ export function SignInButton() {
     <button
       type="button"
       onClick={() => signIn("github")}
-      className="rounded-full border border-white/10 bg-sky-500/80 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-white transition hover:bg-sky-400"
+      className="rounded-full border border-border/10 bg-primary/80 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] text-foreground transition hover:bg-primary/50"
     >
       Sign in with GitHub
     </button>

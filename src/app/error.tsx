@@ -33,19 +33,19 @@ export default function Error({
       <div className="fixed z-10 flex items-center justify-center px-6 text-center" style={{ bottom: '6rem', left: '0', right: '0' }}>
         <div className="max-w-2xl space-y-8">
           {/* Error message */}
-          <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl">
+          <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
             Something tangled the{' '}
             <span className="bg-gradient-to-r from-red-400 via-orange-400 to-pink-400 bg-clip-text text-transparent">
               React Fiber
             </span>
           </h1>
 
-          <p className="text-lg text-white/70">
+          <p className="text-lg text-foreground/70">
             Don&apos;t worry, it happens to the best of us. Let&apos;s get you back on track.
           </p>
 
           {process.env.NODE_ENV === 'development' && (
-            <details className="rounded-lg border border-red-500/30 bg-red-500/10 p-4 text-left">
+            <details className="rounded-lg border border-destructive/30 bg-destructive/10 p-4 text-left">
               <summary className="cursor-pointer font-mono text-sm text-red-300">
                 Error Details (Dev Only)
               </summary>
@@ -60,13 +60,13 @@ export default function Error({
           <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
             <button
               onClick={reset}
-              className="min-w-[200px] rounded-lg bg-gradient-to-r from-cyan-500 to-blue-500 px-8 py-4 font-bold text-white shadow-lg transition hover:from-cyan-400 hover:to-blue-400"
+              className="min-w-[200px] rounded-lg bg-gradient-to-r from-cyan-500 to-blue-500 px-8 py-4 font-bold text-foreground shadow-lg transition hover:from-cyan-400 hover:to-blue-400"
             >
               Try Again
             </button>
             <Link
               href="/"
-              className="min-w-[200px] rounded-lg border-2 border-white/20 bg-white/5 px-8 py-4 font-bold text-white backdrop-blur-sm transition hover:bg-white/10"
+              className="min-w-[200px] rounded-lg border-2 border-border/20 bg-background/5 px-8 py-4 font-bold text-foreground backdrop-blur-sm transition hover:bg-background/10"
             >
               Return Home
             </Link>
@@ -79,7 +79,7 @@ export default function Error({
 
 function BackgroundGlow() {
   return (
-    <div aria-hidden className="pointer-events-none fixed inset-0 z-0 bg-slate-900">
+    <div aria-hidden className="pointer-events-none fixed inset-0 z-0 bg-muted">
       {/* Subtle background gradients */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(239,68,68,0.08),_transparent_55%)]" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_35%,_rgba(251,146,60,0.15),_transparent_50%)]" />

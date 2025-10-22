@@ -64,7 +64,7 @@ export default async function CollectionPage({ params }: CollectionPageProps) {
     : null;
 
   return (
-    <div className="min-h-screen bg-slate-950 pt-24 text-slate-100">
+    <div className="min-h-screen bg-background pt-24 text-muted-foreground">
       <div className="absolute inset-x-0 top-[-10rem] -z-10 flex justify-center blur-3xl">
         <div className="h-[28rem] w-[70rem] bg-gradient-to-r from-indigo-500 via-purple-500 to-sky-500 opacity-25" />
       </div>
@@ -75,44 +75,44 @@ export default async function CollectionPage({ params }: CollectionPageProps) {
               <span
                 className={`rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wider ${
                   dropStatus === 'current'
-                    ? 'bg-emerald-500/20 text-emerald-300'
+                    ? 'bg-success/20 text-emerald-300'
                     : dropStatus === 'upcoming'
-                    ? 'bg-sky-500/20 text-sky-300'
-                    : 'bg-white/10 text-white/50'
+                    ? 'bg-primary/20 text-sky-300'
+                    : 'bg-background/10 text-foreground/50'
                 }`}
               >
                 {dropStatus}
               </span>
             )}
             {collection?.isDrop && dropLabel && seasonYear && (
-              <span className="text-sm text-white/50">
+              <span className="text-sm text-foreground/50">
                 {dropLabel} · {seasonYear}
               </span>
             )}
           </div>
 
           <div className="space-y-4">
-            <h1 className="text-4xl font-semibold text-white sm:text-5xl">
+            <h1 className="text-4xl font-semibold text-foreground sm:text-5xl">
               {collection?.dropTheme || collection?.title || 'Collection'}
             </h1>
             {collection?.description && (
-              <p className="max-w-3xl text-base text-white/70">
+              <p className="max-w-3xl text-base text-foreground/70">
                 {collection.description}
               </p>
             )}
           </div>
 
           {collection?.limitedEditionSize && (
-            <div className="flex items-center gap-2 text-sm text-white/60">
-              <span className="rounded-full border border-white/15 bg-white/5 px-4 py-2">
+            <div className="flex items-center gap-2 text-sm text-foreground/60">
+              <span className="rounded-full border border-border/15 bg-background/5 px-4 py-2">
                 Limited edition of {collection.limitedEditionSize}
               </span>
             </div>
           )}
 
           {products.length > 0 && (
-            <div className="flex flex-wrap items-center gap-4 text-sm text-white/60">
-              <span className="rounded-full border border-white/15 bg-white/5 px-4 py-2">
+            <div className="flex flex-wrap items-center gap-4 text-sm text-foreground/60">
+              <span className="rounded-full border border-border/15 bg-background/5 px-4 py-2">
                 {products.length} {products.length === 1 ? 'product' : 'products'}
               </span>
             </div>
@@ -131,8 +131,8 @@ export default async function CollectionPage({ params }: CollectionPageProps) {
               ))}
             </section>
           ) : (
-            <div className="rounded-2xl border border-white/10 bg-white/5 p-12 text-center">
-              <p className="text-white/60">
+            <div className="rounded-2xl border border-border/10 bg-background/5 p-12 text-center">
+              <p className="text-foreground/60">
                 No products in this collection yet. Check back soon!
               </p>
             </div>

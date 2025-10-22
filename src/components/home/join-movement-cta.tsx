@@ -4,11 +4,11 @@ import { ScrollReveal } from "@/components/ui/scroll-reveal";
 export function JoinMovementCTA() {
   return (
     <ScrollReveal animation="scale">
-      <section className="scroll-mt-32 space-y-8 rounded-3xl border border-white/10 bg-gradient-to-br from-indigo-500/10 via-purple-500/10 to-pink-500/10 p-12 text-center">
-        <h2 className="text-3xl font-semibold text-white sm:text-4xl">
+      <section className="scroll-mt-32 space-y-8 rounded-3xl border border-border/10 bg-gradient-to-br from-indigo-500/10 via-purple-500/10 to-pink-500/10 p-12 text-center">
+        <h2 className="text-3xl font-semibold text-foreground sm:text-4xl">
           Join the Movement
         </h2>
-        <p className="mx-auto max-w-2xl text-lg text-white/70">
+        <p className="mx-auto max-w-2xl text-lg text-foreground/70">
           Whether you&apos;re a contributor, maintainer, or React enthusiast, there are
           many ways to support the foundation and help build a sustainable future
           for open source.

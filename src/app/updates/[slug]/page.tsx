@@ -60,7 +60,7 @@ export default async function UpdatePage({ params }: UpdatePageProps) {
             day: "numeric",
           })}
         </Pill>
-        <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl">
+        <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
           {update.metadata.title}
         </h1>
 
@@ -68,7 +68,7 @@ export default async function UpdatePage({ params }: UpdatePageProps) {
         {author && (
           <div className="flex items-center gap-4">
             {author.avatar && (
-              <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-full border-2 border-white/20">
+              <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-full border-2 border-border/20">
                 <Image
                   src={author.avatar}
                   alt={author.name}
@@ -81,11 +81,11 @@ export default async function UpdatePage({ params }: UpdatePageProps) {
             <div>
               <Link
                 href={`/authors/${author.slug}`}
-                className="font-semibold text-white hover:text-cyan-300"
+                className="font-semibold text-foreground hover:text-cyan-300"
               >
                 {author.name}
               </Link>
-              <p className="text-sm text-white/60">{author.title}</p>
+              <p className="text-sm text-foreground/60">{author.title}</p>
             </div>
           </div>
         )}
@@ -97,7 +97,7 @@ export default async function UpdatePage({ params }: UpdatePageProps) {
       </div>
 
       {/* Back Link */}
-      <div className="mt-12 border-t border-white/10 pt-8">
+      <div className="mt-12 border-t border-border/10 pt-8">
         <Link
           href="/updates"
           className="text-sm text-cyan-400 transition hover:text-cyan-300"

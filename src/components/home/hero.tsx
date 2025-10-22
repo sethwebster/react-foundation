@@ -12,10 +12,10 @@ export function Hero({ heroProduct }: HeroProps) {
     <div className="space-y-8">
       <Pill>{heroProduct?.releaseWindow ?? "Drop 05 · Winter 2025"}</Pill>
       <div>
-        <h1 className="text-5xl font-semibold leading-tight text-white sm:text-6xl">
+        <h1 className="text-5xl font-semibold leading-tight text-foreground sm:text-6xl">
           Fund the React Foundation in style.
         </h1>
-        <p className="mt-6 max-w-xl text-lg text-white/70">
+        <p className="mt-6 max-w-xl text-lg text-foreground/70">
           Premium gear designed with the community, for the community. Every
           purchase accelerates open-source sustainability and React education
           worldwide.
@@ -37,17 +37,17 @@ export function Hero({ heroProduct }: HeroProps) {
           className="mt-2"
         />
       ) : null}
-      <div className="flex items-center gap-6 text-xs uppercase tracking-[0.25em] text-white/50">
+      <div className="flex items-center gap-6 text-xs uppercase tracking-[0.25em] text-foreground/50">
         <div className="flex items-center gap-2">
-          <div className="h-1 w-8 bg-emerald-400" />
+          <div className="h-1 w-8 bg-success/50" />
           Built for Devs
         </div>
         <div className="flex items-center gap-2">
-          <div className="h-1 w-8 bg-sky-400" />
+          <div className="h-1 w-8 bg-primary/50" />
           Carbon Neutral
         </div>
         <div className="flex items-center gap-2">
-          <div className="h-1 w-8 bg-rose-400" />
+          <div className="h-1 w-8 bg-destructive/50" />
           Profits → Foundation
         </div>
       </div>

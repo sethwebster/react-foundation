@@ -50,19 +50,19 @@ export function RequestsListClient({
   return (
     <>
       {error && (
-        <div className="rounded-lg border border-red-500/50 bg-red-500/10 p-4 text-red-300">
+        <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-red-300">
           {error}
         </div>
       )}
 
       {/* Pending Requests */}
-      <div className="rounded-2xl border border-white/10 bg-slate-900/60 p-6">
-        <h2 className="mb-4 text-xl font-semibold text-white">
+      <div className="rounded-2xl border border-border/10 bg-muted/60 p-6">
+        <h2 className="mb-4 text-xl font-semibold text-foreground">
           Pending Requests ({pendingRequests.length})
         </h2>
 
         {pendingRequests.length === 0 && (
-          <p className="text-center text-white/60">No pending requests</p>
+          <p className="text-center text-foreground/60">No pending requests</p>
         )}
 
         <div className="space-y-4">
@@ -71,41 +71,41 @@ export function RequestsListClient({
               key={req.id}
               className={`rounded-xl border p-6 ${
                 req.id === highlightId
-                  ? 'border-cyan-500 bg-cyan-500/10'
-                  : 'border-white/10 bg-black/30'
+                  ? 'border-primary bg-primary/10'
+                  : 'border-border/10 bg-foreground/30'
               }`}
             >
               <div className="space-y-4">
                 <div>
-                  <p className="text-lg font-semibold text-white">{req.email}</p>
-                  <p className="text-sm text-white/50">
+                  <p className="text-lg font-semibold text-foreground">{req.email}</p>
+                  <p className="text-sm text-foreground/50">
                     Requested {new Date(req.requestedAt).toLocaleString()}
                   </p>
                 </div>
 
-                <div className="rounded-lg border border-white/10 bg-black/50 p-4">
-                  <p className="text-sm text-white/80">{req.message}</p>
+                <div className="rounded-lg border border-border/10 bg-foreground/50 p-4">
+                  <p className="text-sm text-foreground/80">{req.message}</p>
                 </div>
 
                 <div className="flex gap-3">
                   <button
                     onClick={() => handleApprove(req.id, 'user')}
                     disabled={isPending}
-                    className="flex-1 rounded-lg bg-green-500 px-4 py-2 font-semibold text-black transition hover:bg-green-400 disabled:opacity-50"
+                    className="flex-1 rounded-lg bg-success px-4 py-2 font-semibold text-foreground transition hover:bg-success/50 disabled:opacity-50"
                   >
                     ✅ Approve as User
                   </button>
                   <button
                     onClick={() => handleApprove(req.id, 'admin')}
                     disabled={isPending}
-                    className="flex-1 rounded-lg bg-purple-500 px-4 py-2 font-semibold text-white transition hover:bg-purple-400 disabled:opacity-50"
+                    className="flex-1 rounded-lg bg-accent px-4 py-2 font-semibold text-foreground transition hover:bg-accent/50 disabled:opacity-50"
                   >
                     👑 Approve as Admin
                   </button>
                   <button
                     onClick={() => handleDeny(req.id)}
                     disabled={isPending}
-                    className="rounded-lg bg-red-500/20 px-4 py-2 font-semibold text-red-300 transition hover:bg-red-500/30 disabled:opacity-50"
+                    className="rounded-lg bg-destructive/20 px-4 py-2 font-semibold text-red-300 transition hover:bg-destructive/30 disabled:opacity-50"
                   >
                     ❌ Deny
                   </button>
@@ -117,8 +117,8 @@ export function RequestsListClient({
       </div>
 
       {/* Processed Requests */}
-      <div className="rounded-2xl border border-white/10 bg-slate-900/60 p-6">
-        <h2 className="mb-4 text-xl font-semibold text-white">
+      <div className="rounded-2xl border border-border/10 bg-muted/60 p-6">
+        <h2 className="mb-4 text-xl font-semibold text-foreground">
           Processed Requests ({processedRequests.length})
         </h2>
 
@@ -126,11 +126,11 @@ export function RequestsListClient({
           {processedRequests.slice(0, 20).map((req) => (
             <div
               key={req.id}
-              className="flex items-center justify-between rounded-lg border border-white/10 bg-black/20 p-4"
+              className="flex items-center justify-between rounded-lg border border-border/10 bg-foreground/20 p-4"
             >
               <div>
-                <p className="font-medium text-white">{req.email}</p>
-                <p className="text-sm text-white/50">
+                <p className="font-medium text-foreground">{req.email}</p>
+                <p className="text-sm text-foreground/50">
                   {req.status === 'approved' ? '✅ Approved' : '❌ Denied'} on{' '}
                   {new Date(req.reviewedAt!).toLocaleDateString()}
                   {req.reviewedBy && ` by ${req.reviewedBy}`}
@@ -139,8 +139,8 @@ export function RequestsListClient({
               <span
                 className={`rounded px-3 py-1 text-sm font-semibold ${
                   req.status === 'approved'
-                    ? 'bg-green-500/20 text-green-300'
-                    : 'bg-red-500/20 text-red-300'
+                    ? 'bg-success/20 text-green-300'
+                    : 'bg-destructive/20 text-red-300'
                 }`}
               >
                 {req.status}

@@ -52,7 +52,7 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
   );
 
   return (
-    <div className="min-h-screen bg-slate-950 pt-24 text-slate-100">
+    <div className="min-h-screen bg-background pt-24 text-muted-foreground">
       <div className="absolute inset-x-0 top-[-6rem] -z-10 flex justify-center blur-3xl">
         <div className="h-[24rem] w-[60rem] bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 opacity-30" />
       </div>
@@ -60,10 +60,10 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
       <div className="mx-auto flex max-w-4xl flex-col px-6 pb-24 sm:px-8 lg:px-12">
         <main className="flex flex-col gap-12 pt-12">
           {/* Author Profile */}
-          <section className="space-y-8 rounded-3xl border border-white/10 bg-slate-900/60 p-12">
+          <section className="space-y-8 rounded-3xl border border-border/10 bg-muted/60 p-12">
             <div className="flex flex-col items-center gap-6 text-center">
               {author.avatar && (
-                <div className="relative h-32 w-32 overflow-hidden rounded-full border-4 border-white/20 shadow-2xl">
+                <div className="relative h-32 w-32 overflow-hidden rounded-full border-4 border-border/20 shadow-2xl">
                   <Image
                     src={author.avatar}
                     alt={author.name}
@@ -74,12 +74,12 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
                 </div>
               )}
               <div>
-                <h1 className="text-3xl font-bold text-white sm:text-4xl">
+                <h1 className="text-3xl font-bold text-foreground sm:text-4xl">
                   {author.name}
                 </h1>
-                <p className="mt-2 text-lg text-white/70">{author.title}</p>
+                <p className="mt-2 text-lg text-foreground/70">{author.title}</p>
               </div>
-              <p className="max-w-2xl text-base leading-relaxed text-white/80">
+              <p className="max-w-2xl text-base leading-relaxed text-foreground/80">
                 {author.bio}
               </p>
 
@@ -90,7 +90,7 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
                     href={author.github}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="rounded-full border border-white/20 bg-white/5 px-4 py-2 text-sm text-white/80 transition hover:border-cyan-400/50 hover:bg-white/10 hover:text-cyan-300"
+                    className="rounded-full border border-border/20 bg-background/5 px-4 py-2 text-sm text-foreground/80 transition hover:border-cyan-400/50 hover:bg-background/10 hover:text-cyan-300"
                   >
                     GitHub →
                   </a>
@@ -100,7 +100,7 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
                     href={author.twitter}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="rounded-full border border-white/20 bg-white/5 px-4 py-2 text-sm text-white/80 transition hover:border-cyan-400/50 hover:bg-white/10 hover:text-cyan-300"
+                    className="rounded-full border border-border/20 bg-background/5 px-4 py-2 text-sm text-foreground/80 transition hover:border-cyan-400/50 hover:bg-background/10 hover:text-cyan-300"
                   >
                     Twitter →
                   </a>
@@ -110,7 +110,7 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
                     href={author.linkedin}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="rounded-full border border-white/20 bg-white/5 px-4 py-2 text-sm text-white/80 transition hover:border-cyan-400/50 hover:bg-white/10 hover:text-cyan-300"
+                    className="rounded-full border border-border/20 bg-background/5 px-4 py-2 text-sm text-foreground/80 transition hover:border-cyan-400/50 hover:bg-background/10 hover:text-cyan-300"
                   >
                     LinkedIn →
                   </a>
@@ -120,7 +120,7 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
                     href={author.website}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="rounded-full border border-white/20 bg-white/5 px-4 py-2 text-sm text-white/80 transition hover:border-cyan-400/50 hover:bg-white/10 hover:text-cyan-300"
+                    className="rounded-full border border-border/20 bg-background/5 px-4 py-2 text-sm text-foreground/80 transition hover:border-cyan-400/50 hover:bg-background/10 hover:text-cyan-300"
                   >
                     Website →
                   </a>
@@ -132,7 +132,7 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
           {/* Author's Updates */}
           {authorUpdates.length > 0 && (
             <section className="space-y-6">
-              <h2 className="text-2xl font-semibold text-white">
+              <h2 className="text-2xl font-semibold text-foreground">
                 Updates by {author.name}
               </h2>
               <div className="space-y-4">
@@ -140,11 +140,11 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
                   <Link
                     key={update.slug}
                     href={`/updates/${update.slug}`}
-                    className="block rounded-2xl border border-white/10 bg-slate-900/60 p-6 transition hover:border-white/20 hover:bg-slate-900/80"
+                    className="block rounded-2xl border border-border/10 bg-muted/60 p-6 transition hover:border-border/20 hover:bg-muted/80"
                   >
                     <time
                       dateTime={update.metadata.date}
-                      className="text-xs text-white/50"
+                      className="text-xs text-foreground/50"
                     >
                       {new Date(update.metadata.date).toLocaleDateString("en-US", {
                         year: "numeric",
@@ -152,10 +152,10 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
                         day: "numeric",
                       })}
                     </time>
-                    <h3 className="mt-2 text-lg font-semibold text-white">
+                    <h3 className="mt-2 text-lg font-semibold text-foreground">
                       {update.metadata.title}
                     </h3>
-                    <p className="mt-2 text-sm text-white/70">
+                    <p className="mt-2 text-sm text-foreground/70">
                       {update.metadata.description}
                     </p>
                   </Link>
@@ -165,7 +165,7 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
           )}
 
           {/* Back Link */}
-          <div className="border-t border-white/10 pt-8">
+          <div className="border-t border-border/10 pt-8">
             <Link
               href="/authors"
               className="text-sm text-cyan-400 transition hover:text-cyan-300"

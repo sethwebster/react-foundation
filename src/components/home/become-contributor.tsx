@@ -4,13 +4,13 @@ export function BecomeContributor() {
   return (
     <section
       id="contribute"
-      className="scroll-mt-32 space-y-12 rounded-3xl border border-white/10 bg-gradient-to-br from-indigo-500/10 via-purple-500/10 to-pink-500/10 p-12"
+      className="scroll-mt-32 space-y-12 rounded-3xl border border-border/10 bg-gradient-to-br from-indigo-500/10 via-purple-500/10 to-pink-500/10 p-12"
     >
       <div className="text-center">
-        <h2 className="text-3xl font-semibold text-white sm:text-4xl">
+        <h2 className="text-3xl font-semibold text-foreground sm:text-4xl">
           Become a Contributor
         </h2>
-        <p className="mx-auto mt-4 max-w-2xl text-base text-white/70">
+        <p className="mx-auto mt-4 max-w-2xl text-base text-foreground/70">
           Join the movement to sustain and grow the React ecosystem. Whether you code,
           donate, sponsor, or become a member, your contribution makes a real difference.
         </p>
@@ -18,11 +18,11 @@ export function BecomeContributor() {
 
       <div className="grid gap-6 lg:grid-cols-2">
         {/* Contribute Code */}
-        <div className="group space-y-6 rounded-2xl border border-white/10 bg-slate-900/60 p-8 transition-all hover:border-white/20 hover:bg-slate-900/80">
+        <div className="group space-y-6 rounded-2xl border border-border/10 bg-muted/60 p-8 transition-all hover:border-border/20 hover:bg-muted/80">
           <div className="flex items-start gap-4">
             <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-400 to-cyan-500 transition-transform group-hover:scale-110">
               <svg
-                className="h-7 w-7 text-white"
+                className="h-7 w-7 text-foreground"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -36,10 +36,10 @@ export function BecomeContributor() {
               </svg>
             </div>
             <div className="flex-1">
-              <h3 className="text-xl font-semibold text-white">
+              <h3 className="text-xl font-semibold text-foreground">
                 Contribute to Repos
               </h3>
-              <p className="mt-2 text-sm leading-relaxed text-white/70">
+              <p className="mt-2 text-sm leading-relaxed text-foreground/70">
                 Submit code, RFCs, proposals, documentation, or bug reports to React
                 and 54+ ecosystem libraries. Your contributions directly improve the
                 tools millions of developers use.
@@ -66,11 +66,11 @@ export function BecomeContributor() {
         </div>
 
         {/* Donate */}
-        <div className="group space-y-6 rounded-2xl border border-white/10 bg-slate-900/60 p-8 transition-all hover:border-white/20 hover:bg-slate-900/80">
+        <div className="group space-y-6 rounded-2xl border border-border/10 bg-muted/60 p-8 transition-all hover:border-border/20 hover:bg-muted/80">
           <div className="flex items-start gap-4">
             <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-sky-400 to-indigo-500 transition-transform group-hover:scale-110">
               <svg
-                className="h-7 w-7 text-white"
+                className="h-7 w-7 text-foreground"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -84,10 +84,10 @@ export function BecomeContributor() {
               </svg>
             </div>
             <div className="flex-1">
-              <h3 className="text-xl font-semibold text-white">
+              <h3 className="text-xl font-semibold text-foreground">
                 Make a Donation
               </h3>
-              <p className="mt-2 text-sm leading-relaxed text-white/70">
+              <p className="mt-2 text-sm leading-relaxed text-foreground/70">
                 One-time or recurring donations directly fund maintainers, educational
                 resources, and accessibility initiatives. 100% of funds go to the
                 ecosystem.
@@ -110,11 +110,11 @@ export function BecomeContributor() {
         </div>
 
         {/* Sponsor a Library */}
-        <div className="group space-y-6 rounded-2xl border border-white/10 bg-slate-900/60 p-8 transition-all hover:border-white/20 hover:bg-slate-900/80">
+        <div className="group space-y-6 rounded-2xl border border-border/10 bg-muted/60 p-8 transition-all hover:border-border/20 hover:bg-muted/80">
           <div className="flex items-start gap-4">
             <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-purple-400 to-pink-500 transition-transform group-hover:scale-110">
               <svg
-                className="h-7 w-7 text-white"
+                className="h-7 w-7 text-foreground"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -128,10 +128,10 @@ export function BecomeContributor() {
               </svg>
             </div>
             <div className="flex-1">
-              <h3 className="text-xl font-semibold text-white">
+              <h3 className="text-xl font-semibold text-foreground">
                 Sponsor a Library
               </h3>
-              <p className="mt-2 text-sm leading-relaxed text-white/70">
+              <p className="mt-2 text-sm leading-relaxed text-foreground/70">
                 Directly sponsor your favorite React ecosystem library. Choose from 54
                 libraries including Redux, TanStack Query, React Router, and more.
               </p>
@@ -153,11 +153,11 @@ export function BecomeContributor() {
         </div>
 
         {/* Become a Member */}
-        <div className="group space-y-6 rounded-2xl border border-white/10 bg-slate-900/60 p-8 transition-all hover:border-white/20 hover:bg-slate-900/80">
+        <div className="group space-y-6 rounded-2xl border border-border/10 bg-muted/60 p-8 transition-all hover:border-border/20 hover:bg-muted/80">
           <div className="flex items-start gap-4">
             <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-orange-400 to-red-500 transition-transform group-hover:scale-110">
               <svg
-                className="h-7 w-7 text-white"
+                className="h-7 w-7 text-foreground"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -171,10 +171,10 @@ export function BecomeContributor() {
               </svg>
             </div>
             <div className="flex-1">
-              <h3 className="text-xl font-semibold text-white">
+              <h3 className="text-xl font-semibold text-foreground">
                 Become a Member
               </h3>
-              <p className="mt-2 text-sm leading-relaxed text-white/70">
+              <p className="mt-2 text-sm leading-relaxed text-foreground/70">
                 Join the React Foundation as an official member. Get voting rights on
                 funding decisions, exclusive updates, and recognition in our community.
               </p>
@@ -196,8 +196,8 @@ export function BecomeContributor() {
         </div>
       </div>
 
-      <div className="border-t border-white/10 pt-8 text-center">
-        <p className="text-sm text-white/60">
+      <div className="border-t border-border/10 pt-8 text-center">
+        <p className="text-sm text-foreground/60">
           Questions about contributing?{" "}
           <a
             href="mailto:hello@react.foundation"

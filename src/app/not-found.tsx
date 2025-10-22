@@ -15,7 +15,7 @@ export default function NotFound() {
       <div className="fixed z-10 flex items-center justify-center px-6 text-center" style={{ bottom: '6rem', left: '0', right: '0' }}>
         <div className="max-w-2xl space-y-8">
           {/* Main message */}
-          <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl">
+          <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
             This page drifted off the{" "}
             <span className="bg-gradient-to-r from-sky-400 via-indigo-400 to-purple-400 bg-clip-text text-transparent">
               React Fiber
@@ -49,7 +49,7 @@ export default function NotFound() {
 
 function BackgroundGlow() {
   return (
-    <div aria-hidden className="pointer-events-none fixed inset-0 z-0 bg-slate-900">
+    <div aria-hidden className="pointer-events-none fixed inset-0 z-0 bg-muted">
       {/* Static subtle background gradients */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.08),_transparent_55%)]" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_35%,_rgba(76,29,149,0.15),_transparent_50%)]" />

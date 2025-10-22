@@ -1,6 +1,35 @@
 # PRIME DIRECTIVES
 Never use eslint disables for TSC errors. Fix the problem. If you don't know the type, use unknown, never use any.
 
+# CURSOR DIRECTIVES
+## Component Creation Priority
+1. **ALWAYS check RFDS first**: `import { RFDS } from "@/components/rfds"`
+2. **Use Semantic Components**: `RFDS.SemanticButton`, `RFDS.SemanticCard`, `RFDS.SemanticBadge`
+3. **Compose from Primitives**: If custom needed, use `RFDS.Button`, `RFDS.Pill`, `RFDS.Rating`
+4. **One-off components**: Still use design system primitives as building blocks
+5. **NEVER create from scratch**: Always start with design system components
+
+## Color Usage Rules
+- **NEVER use hardcoded colors**: `bg-blue-500`, `text-red-600`, `border-gray-200`
+- **ALWAYS use semantic colors**: `bg-primary`, `text-destructive`, `border-border`
+- **Check theme-config.ts**: For available semantic color tokens
+- **Test both themes**: Light and dark mode compatibility required
+
+## Default Import Pattern
+```typescript
+// ✅ CORRECT - Start with design system
+import { RFDS } from "@/components/rfds";
+
+// Use semantic components first
+<RFDS.SemanticButton variant="primary">Click me</RFDS.SemanticButton>
+<RFDS.SemanticCard>Content</RFDS.SemanticCard>
+
+// Compose from primitives if needed
+<div className="bg-card text-card-foreground border border-border">
+  <RFDS.Button variant="primary">Action</RFDS.Button>
+</div>
+```
+
 # Claude Directives for React Foundation Store
 
 ## 🎯 CRITICAL RULES (NEVER BREAK)
@@ -83,6 +112,57 @@ import { RFDS } from "@/components/rfds"
 - **Primitives**: Base building blocks (Button, Typography, etc.)
 - **Components**: Composed from primitives (ProductCard, etc.)
 - **Layouts**: Page structure (Header, Footer)
+- **Semantic Components**: Themeable components (SemanticButton, SemanticCard, etc.)
+
+## 🎨 DESIGN SYSTEM & THEMING
+
+### CRITICAL: Always Use Design System
+**NEVER create new components without checking the design system first!**
+
+#### Design System Hierarchy
+1. **Check RFDS first**: `import { RFDS } from "@/components/rfds"`
+2. **Use Semantic Components**: For themeable, consistent UI
+3. **Compose from Primitives**: If you need something custom
+4. **One-off components**: Still use design system primitives
+
+#### Semantic Theming System
+All colors are semantic and themeable. **NEVER use hardcoded colors!**
+
+```typescript
+// ❌ WRONG - Hardcoded colors
+<div className="bg-blue-500 text-white border-gray-200">
+
+// ✅ CORRECT - Semantic colors
+<div className="bg-primary text-primary-foreground border-border">
+```
+
+#### Available Semantic Colors
+- **Background**: `bg-background`, `bg-card`, `bg-muted`
+- **Text**: `text-foreground`, `text-muted-foreground`
+- **Interactive**: `bg-primary`, `bg-secondary`, `bg-accent`
+- **Status**: `bg-destructive`, `bg-success`, `bg-warning`
+- **Borders**: `border-border`, `border-primary`, `border-destructive`
+
+#### Component Creation Rules
+1. **Check RFDS first**: Does `RFDS.SemanticButton` work?
+2. **Use semantic components**: `RFDS.SemanticCard`, `RFDS.SemanticBadge`
+3. **Compose from primitives**: If custom needed, use `RFDS.Button`, `RFDS.Pill`
+4. **Theme-aware**: All components must work in light/dark themes
+5. **One-off exception**: Even one-off components should use design system primitives
+
+#### Migration Script
+Use the migration script to convert hardcoded colors:
+```bash
+node scripts/migrate-to-semantic-colors.js
+```
+
+#### Theme Configuration
+All themes defined in `src/lib/theme-config.ts`:
+- Light theme colors
+- Dark theme colors  
+- Semantic color mappings
+- Gradient definitions
+- Shadow definitions
 
 ### Component Patterns
 - **Functional components**: Use hooks, avoid class components

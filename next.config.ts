@@ -3,9 +3,7 @@ import createMDX from "@next/mdx";
 
 const nextConfig: NextConfig = {
   pageExtensions: ["js", "jsx", "md", "mdx", "ts", "tsx"],
-  experimental: {
-    reactCompiler: true, // Enable React Compiler v1.0
-  },
+  reactCompiler: true, // Enable React Compiler v1.0 (moved from experimental)
   images: {
     remotePatterns: [
       {

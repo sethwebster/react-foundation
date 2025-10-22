@@ -52,7 +52,7 @@ export default function ComingSoonPage() {
   }, []);
 
   return (
-    <div className={`relative min-h-screen overflow-hidden bg-black transition-opacity duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
+    <div className={`relative min-h-screen overflow-hidden bg-foreground transition-opacity duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
       {/* Cyberpunk Grid Background */}
       <div className="pointer-events-none absolute inset-0 opacity-20">
         <div
@@ -93,7 +93,7 @@ export default function ComingSoonPage() {
         <div className="w-full max-w-2xl space-y-6 text-center">
           {/* Logo/Icon Area with 3D React Logo */}
           <div className="relative mx-auto h-56 w-56">
-            <div className="absolute inset-0 animate-pulse rounded-full bg-cyan-500/20 blur-3xl" />
+            <div className="absolute inset-0 animate-pulse rounded-full bg-primary/20 blur-3xl" />
             <div className="relative h-full w-full">
               <ReactLogo3D scale={0.5} />
             </div>
@@ -123,7 +123,7 @@ export default function ComingSoonPage() {
 
           {/* Glitch Text Effect */}
           <div className="py-2">
-            <div className="inline-block border border-cyan-500/50 bg-black/50 px-6 py-3 backdrop-blur-sm">
+            <div className="inline-block border border-primary/50 bg-foreground/50 px-6 py-3 backdrop-blur-sm">
               <p className="glitch-text font-mono text-sm uppercase tracking-wider text-pink-400">
                 [ System Initializing... ]
               </p>
@@ -134,13 +134,13 @@ export default function ComingSoonPage() {
           <div className="space-y-3">
             {!isAuthenticated && (
               <div className="space-y-4">
-                <p className="text-sm text-white/60">
+                <p className="text-sm text-foreground/60">
                   Sign in with GitHub to request early access
                 </p>
                 {/* GitHub Sign In */}
                 <button
                   onClick={() => signIn('github', { callbackUrl: '/' })}
-                  className="group relative w-full cursor-pointer overflow-hidden rounded-lg border-2 border-cyan-400 bg-black/80 px-8 py-4 font-bold uppercase tracking-wider text-cyan-400 shadow-[0_0_20px_rgba(0,255,255,0.3)] transition hover:bg-cyan-400/10 hover:shadow-[0_0_30px_rgba(0,255,255,0.5)]"
+                  className="group relative w-full cursor-pointer overflow-hidden rounded-lg border-2 border-cyan-400 bg-foreground/80 px-8 py-4 font-bold uppercase tracking-wider text-cyan-400 shadow-[0_0_20px_rgba(0,255,255,0.3)] transition hover:bg-primary/50/10 hover:shadow-[0_0_30px_rgba(0,255,255,0.5)]"
                 >
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-400/10 to-transparent opacity-0 transition group-hover:opacity-100" />
                   <div className="relative flex items-center justify-center gap-3">
@@ -153,7 +153,7 @@ export default function ComingSoonPage() {
 
             {isAuthenticated && (
               <div className="space-y-4">
-                <div className="rounded-lg border border-pink-500/50 bg-pink-500/10 p-6 backdrop-blur-sm">
+                <div className="rounded-lg border border-pink-500/50 bg-accent/10 p-6 backdrop-blur-sm">
                   <p className="font-semibold text-pink-400">Access Restricted</p>
                   <p className="mt-2 text-sm text-pink-100/80">
                     You&apos;re signed in as <span className="font-mono text-cyan-400">{userEmail}</span> but
@@ -162,7 +162,7 @@ export default function ComingSoonPage() {
                 </div>
                 <button
                   onClick={() => setShowRequestForm(true)}
-                  className="w-full rounded-lg border-2 border-pink-400 bg-black/80 px-6 py-3 font-bold uppercase tracking-wider text-pink-400 shadow-[0_0_20px_rgba(236,72,153,0.3)] transition hover:bg-pink-400/10"
+                  className="w-full rounded-lg border-2 border-pink-400 bg-foreground/80 px-6 py-3 font-bold uppercase tracking-wider text-pink-400 shadow-[0_0_20px_rgba(236,72,153,0.3)] transition hover:bg-accent/50/10"
                 >
                   Request Access
                 </button>
@@ -171,7 +171,7 @@ export default function ComingSoonPage() {
 
             {/* Request Access Form */}
             {showRequestForm && isAuthenticated && userEmail && (
-              <div className="rounded-xl border border-cyan-500/50 bg-black/90 p-6 backdrop-blur-sm">
+              <div className="rounded-xl border border-primary/50 bg-foreground/90 p-6 backdrop-blur-sm">
                 {!submitted ? (
                   <form onSubmit={handleRequestAccess} className="space-y-4">
                     <div>
@@ -183,9 +183,9 @@ export default function ComingSoonPage() {
                         required
                         value={userEmail}
                         disabled
-                        className="w-full rounded-lg border border-cyan-500/50 bg-black/30 px-4 py-3 font-mono text-cyan-100 opacity-75"
+                        className="w-full rounded-lg border border-primary/50 bg-foreground/30 px-4 py-3 font-mono text-cyan-100 opacity-75"
                       />
-                      <p className="mt-1 text-xs text-white/50">
+                      <p className="mt-1 text-xs text-foreground/50">
                         Using your authenticated GitHub email
                       </p>
                     </div>
@@ -198,14 +198,14 @@ export default function ComingSoonPage() {
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
                         rows={4}
-                        className="w-full rounded-lg border border-cyan-500/50 bg-black/50 px-4 py-3 font-mono text-cyan-100 placeholder-cyan-500/30 outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/50"
+                        className="w-full rounded-lg border border-primary/50 bg-foreground/50 px-4 py-3 font-mono text-cyan-100 placeholder-cyan-500/30 outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/50"
                         placeholder="Tell us about your involvement in the React ecosystem..."
                       />
                     </div>
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="w-full cursor-pointer rounded-lg border-2 border-cyan-400 bg-cyan-500/10 px-6 py-3 font-bold uppercase tracking-wider text-cyan-400 shadow-[0_0_20px_rgba(0,255,255,0.3)] transition hover:bg-cyan-400/20 hover:shadow-[0_0_30px_rgba(0,255,255,0.5)] disabled:opacity-50"
+                      className="w-full cursor-pointer rounded-lg border-2 border-cyan-400 bg-primary/10 px-6 py-3 font-bold uppercase tracking-wider text-cyan-400 shadow-[0_0_20px_rgba(0,255,255,0.3)] transition hover:bg-primary/50/20 hover:shadow-[0_0_30px_rgba(0,255,255,0.5)] disabled:opacity-50"
                     >
                       {isSubmitting ? 'Sending...' : 'Request Access'}
                     </button>
@@ -234,7 +234,7 @@ export default function ComingSoonPage() {
 
       {/* Fixed Footer */}
       <div className="fixed bottom-6 left-0 right-0 z-20 text-center">
-        <p className="font-mono text-xs uppercase tracking-widest text-cyan-500/50">
+        <p className="font-mono text-xs uppercase tracking-widest text-primary/50">
           React Foundation · 2025
         </p>
       </div>
@@ -299,15 +299,15 @@ export default function ComingSoonPage() {
 
 function StatusDot({ label, status }: { label: string; status: 'online' | 'pending' | 'offline' }) {
   const colors = {
-    online: 'bg-green-400 shadow-[0_0_10px_rgba(34,197,94,0.8)]',
-    pending: 'bg-yellow-400 shadow-[0_0_10px_rgba(250,204,21,0.8)] animate-pulse',
-    offline: 'bg-red-400 shadow-[0_0_10px_rgba(239,68,68,0.8)]',
+    online: 'bg-success/50 shadow-[0_0_10px_rgba(34,197,94,0.8)]',
+    pending: 'bg-warning/50 shadow-[0_0_10px_rgba(250,204,21,0.8)] animate-pulse',
+    offline: 'bg-destructive/50 shadow-[0_0_10px_rgba(239,68,68,0.8)]',
   };
 
   return (
     <div className="flex items-center gap-2">
       <div className={`h-2 w-2 rounded-full ${colors[status]}`} />
-      <span className="font-mono text-xs uppercase tracking-wider text-cyan-500/70">
+      <span className="font-mono text-xs uppercase tracking-wider text-primary/70">
         {label}
       </span>
     </div>

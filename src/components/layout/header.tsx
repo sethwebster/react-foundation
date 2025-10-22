@@ -8,6 +8,7 @@ import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { MobileMenu } from "@/components/layout/mobile-menu";
 import { UserAvatar } from "@/components/ui/user-avatar";
+import { ThemeToggleWrapper } from "@/components/ui/theme-toggle-wrapper";
 
 export function Header() {
   const pathname = usePathname();
@@ -16,11 +17,11 @@ export function Header() {
   const isComingSoonPage = pathname === "/coming-soon";
 
   return (
-    <header className="fixed left-0 right-0 top-0 z-50 border-b border-white/10 bg-slate-950/95 shadow-lg shadow-black/20 backdrop-blur-xl supports-[backdrop-filter]:bg-slate-950/80">
+    <header className="fixed left-0 right-0 top-0 z-50 bg-background/95 shadow-lg shadow-foreground/10 backdrop-blur-xl supports-[backdrop-filter]:bg-background/80">
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4 sm:px-8 lg:px-12">
         {/* Logo */}
         <div className="flex items-center gap-3">
-          <div className="relative h-10 w-10 overflow-hidden rounded-full bg-white/10 ring-1 ring-white/15">
+          <div className="relative h-10 w-10 overflow-hidden">
             <Link href="/">
               <Image
                 src="/react-logo.svg"
@@ -34,10 +35,10 @@ export function Header() {
           </div>
           <div>
             <Link href="/">
-              <p className="text-sm uppercase tracking-[0.25em] text-white/60">
+              <p className="text-sm uppercase tracking-[0.25em] text-muted-foreground">
                 React Foundation
               </p>
-              <p className="text-base font-medium text-white">
+              <p className="text-base font-medium text-foreground">
                 {isStorePage ? "Official Store" : "Supporting the Ecosystem"}
               </p>
             </Link>
@@ -45,34 +46,34 @@ export function Header() {
         </div>
 
         {/* Desktop Navigation (hidden on mobile) */}
-        <div className={`hidden items-center gap-4 text-sm text-white/70 md:flex transition ${isComingSoonPage ? 'blur-sm pointer-events-none' : ''}`}>
+        <div className={`hidden items-center gap-4 text-sm text-muted-foreground md:flex transition ${isComingSoonPage ? 'blur-sm pointer-events-none' : ''}`}>
           <nav className="flex items-center gap-6">
             {isStorePage ? (
               // Store navigation
               <>
-                <Link className="transition hover:text-white" href="/store#featured">
+                <Link className="transition hover:text-foreground" href="/store#featured">
                   Collections
                 </Link>
-                <Link className="transition hover:text-white" href="/store#drops">
+                <Link className="transition hover:text-foreground" href="/store#drops">
                   Limited Drops
                 </Link>
-                <Link className="transition hover:text-white" href="/impact">
+                <Link className="transition hover:text-foreground" href="/impact">
                   Impact
                 </Link>
               </>
             ) : (
               // Foundation navigation
               <>
-                <Link className="transition hover:text-white" href="/about">
+                <Link className="transition hover:text-foreground" href="/about">
                   About
                 </Link>
-                <Link className="transition hover:text-white" href="/updates">
+                <Link className="transition hover:text-foreground" href="/updates">
                   Updates
                 </Link>
-                <Link className="transition hover:text-white" href="/impact">
+                <Link className="transition hover:text-foreground" href="/impact">
                   Impact
                 </Link>
-                <Link className="transition hover:text-white" href="/store">
+                <Link className="transition hover:text-foreground" href="/store">
                   Store
                 </Link>
               </>
@@ -95,11 +96,14 @@ export function Header() {
                   d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
                 />
               </svg>
-              <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-sky-500 text-[10px] font-bold text-white">
+              <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
                 0
               </span>
             </Button>
           )}
+
+          {/* Theme Toggle */}
+          <ThemeToggleWrapper />
 
           {/* Profile Icon or Sign In */}
           {session?.user ? (
@@ -107,12 +111,12 @@ export function Header() {
               user={session.user}
               size={40}
               href="/profile"
-              className="transition hover:border-cyan-400/50 hover:shadow-lg hover:shadow-cyan-500/20"
+              className="transition hover:border-primary/50 hover:shadow-lg hover:shadow-primary/20"
             />
           ) : (
             <Link
               href="/api/auth/signin"
-              className="rounded-full border border-white/10 bg-sky-500/80 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-sky-400"
+              className="rounded-full border border-border bg-primary px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-primary-foreground transition hover:bg-primary/90"
             >
               Sign in
             </Link>
@@ -136,7 +140,7 @@ export function Header() {
                   d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
                 />
               </svg>
-              <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-sky-500 text-[10px] font-bold text-white">
+              <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
                 0
               </span>
             </Button>

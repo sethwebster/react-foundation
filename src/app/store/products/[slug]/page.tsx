@@ -64,7 +64,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const relatedProducts = await getRelatedProducts(product.slug);
 
   return (
-    <div className="relative min-h-screen bg-slate-950 pt-24 text-slate-100">
+    <div className="relative min-h-screen bg-background pt-24 text-muted-foreground">
       <div
         className={`pointer-events-none absolute inset-0 blur-3xl`}
         aria-hidden
@@ -74,7 +74,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
         />
       </div>
       <div className="relative mx-auto max-w-6xl px-6 pb-24 sm:px-8 lg:px-12">
-        <nav className="flex items-center justify-between text-sm text-white/60">
+        <nav className="flex items-center justify-between text-sm text-foreground/60">
           <ButtonLink
             href="/store#drops"
             variant="secondary"
@@ -83,14 +83,14 @@ export default async function ProductPage({ params }: ProductPageProps) {
           >
             <span aria-hidden>←</span> Back to store
           </ButtonLink>
-          <span className="uppercase tracking-[0.3em] text-white/40">
+          <span className="uppercase tracking-[0.3em] text-foreground/40">
             {product.releaseWindow}
           </span>
         </nav>
 
         <div className="mt-12 grid gap-12 lg:grid-cols-[minmax(0,1fr)_360px]">
           <div className="space-y-10">
-            <div className="rounded-3xl border border-white/10 bg-slate-900/70 p-4 sm:p-8">
+            <div className="rounded-3xl border border-border/10 bg-muted/70 p-4 sm:p-8">
               <ProductGallery
                 images={product.images}
                 className="mx-auto max-w-[520px]"
@@ -98,15 +98,15 @@ export default async function ProductPage({ params }: ProductPageProps) {
               <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
                 <div>
                   <div className="space-y-1">
-                    <p className="text-[11px] uppercase tracking-[0.35em] text-white/70">
+                    <p className="text-[11px] uppercase tracking-[0.35em] text-foreground/70">
                       {inventorySummary.availabilityLabel}
                     </p>
-                    <p className="text-xs text-white/60">{inventorySummary.inventoryLabel}</p>
+                    <p className="text-xs text-foreground/60">{inventorySummary.inventoryLabel}</p>
                   </div>
-                  <h1 className="mt-2 text-4xl font-semibold text-white sm:text-5xl">
+                  <h1 className="mt-2 text-4xl font-semibold text-foreground sm:text-5xl">
                     {product.name}
                   </h1>
-                  <p className="mt-3 text-base text-white/70">
+                  <p className="mt-3 text-base text-foreground/70">
                     {product.tagline}
                   </p>
                   <Rating
@@ -116,48 +116,48 @@ export default async function ProductPage({ params }: ProductPageProps) {
                     className="mt-4"
                   />
                 </div>
-                <div className="rounded-full border border-white/15 bg-white/10 px-4 py-2 text-sm font-semibold text-white/80">
+                <div className="rounded-full border border-border/15 bg-background/10 px-4 py-2 text-sm font-semibold text-foreground/80">
                   {product.price}
                 </div>
               </div>
             </div>
 
-            <section className="space-y-6 rounded-3xl border border-white/10 bg-slate-900/60 p-8">
-              <h2 className="text-xl font-semibold text-white">
+            <section className="space-y-6 rounded-3xl border border-border/10 bg-muted/60 p-8">
+              <h2 className="text-xl font-semibold text-foreground">
                 Built for the React community
               </h2>
-              <p className="text-sm text-white/70">{product.description}</p>
+              <p className="text-sm text-foreground/70">{product.description}</p>
               <div className="grid gap-4 sm:grid-cols-2">
                 {product.features.map((feature) => (
                   <div
                     key={feature}
-                    className="rounded-2xl border border-white/10 bg-white/[0.04] p-4"
+                    className="rounded-2xl border border-border/10 bg-background/[0.04] p-4"
                   >
-                    <p className="text-sm text-white/80">{feature}</p>
+                    <p className="text-sm text-foreground/80">{feature}</p>
                   </div>
                 ))}
               </div>
             </section>
 
-            <section className="grid gap-6 rounded-3xl border border-white/10 bg-slate-900/60 p-8 sm:grid-cols-[minmax(0,1fr)_260px]">
+            <section className="grid gap-6 rounded-3xl border border-border/10 bg-muted/60 p-8 sm:grid-cols-[minmax(0,1fr)_260px]">
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-white">
+                <h3 className="text-lg font-semibold text-foreground">
                   Why it matters
                 </h3>
-                <ul className="space-y-3 text-sm text-white/70">
+                <ul className="space-y-3 text-sm text-foreground/70">
                   {product.highlights.map((highlight) => (
                     <li
                       key={highlight}
-                      className="flex gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-4"
+                      className="flex gap-3 rounded-xl border border-border/10 bg-background/[0.03] p-4"
                     >
-                      <span className="mt-1 h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                      <span className="mt-1 h-1.5 w-1.5 rounded-full bg-success/50" />
                       <span>{highlight}</span>
                     </li>
                   ))}
                 </ul>
               </div>
-              <aside className="rounded-2xl border border-white/10 bg-white/[0.04] p-6 text-sm text-white/70">
-                <p className="font-semibold text-white/80">
+              <aside className="rounded-2xl border border-border/10 bg-background/[0.04] p-6 text-sm text-foreground/70">
+                <p className="font-semibold text-foreground/80">
                   Impact guarantee
                 </p>
                 <p className="mt-3">
@@ -169,26 +169,26 @@ export default async function ProductPage({ params }: ProductPageProps) {
             </section>
           </div>
 
-          <aside className="space-y-8 rounded-3xl border border-white/10 bg-slate-900/70 p-8">
+          <aside className="space-y-8 rounded-3xl border border-border/10 bg-muted/70 p-8">
             <div>
-              <p className="text-xs uppercase tracking-[0.3em] text-white/50">
+              <p className="text-xs uppercase tracking-[0.3em] text-foreground/50">
                 Drop support tier
               </p>
-              <p className="mt-4 text-sm text-white/70">
+              <p className="mt-4 text-sm text-foreground/70">
                 Secure your piece and we will notify you as soon as the checkout
                 experience is live.
               </p>
             </div>
-            <div className="space-y-3 text-sm text-white/70">
+            <div className="space-y-3 text-sm text-foreground/70">
               {product.specs.map((spec) => (
                 <div
                   key={spec.label}
-                  className="rounded-2xl border border-white/10 bg-white/[0.04] p-4"
+                  className="rounded-2xl border border-border/10 bg-background/[0.04] p-4"
                 >
-                  <p className="text-xs uppercase tracking-[0.25em] text-white/40">
+                  <p className="text-xs uppercase tracking-[0.25em] text-foreground/40">
                     {spec.label}
                   </p>
-                  <p className="mt-2 text-sm text-white/80">{spec.value}</p>
+                  <p className="mt-2 text-sm text-foreground/80">{spec.value}</p>
                 </div>
               ))}
             </div>
@@ -198,12 +198,12 @@ export default async function ProductPage({ params }: ProductPageProps) {
             >
               Join the waitlist
             </ButtonLink>
-            <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 text-xs text-white/50">
+            <div className="rounded-2xl border border-border/10 bg-background/[0.03] p-4 text-xs text-foreground/50">
               <p>
                 Need sizing help? Email{" "}
                 <a
                   href="mailto:shop@react.foundation"
-                  className="text-indigo-200 hover:text-white"
+                  className="text-indigo-200 hover:text-foreground"
                 >
                   shop@react.foundation
                 </a>{" "}
@@ -216,7 +216,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
         {relatedProducts.length > 0 ? (
           <section className="mt-16 space-y-6">
             <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-semibold text-white">
+              <h2 className="text-2xl font-semibold text-foreground">
                 More limited drops
               </h2>
               <ButtonLink
