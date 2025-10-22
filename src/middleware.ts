@@ -44,9 +44,12 @@ export async function middleware(request: NextRequest) {
   const token = await getToken({
     req: request,
     secret: process.env.NEXTAUTH_SECRET,
+    secureCookie: process.env.NODE_ENV === 'production',
   });
 
   console.log(`🔐 Middleware check for ${pathname}`);
+  console.log(`   Has NEXTAUTH_SECRET: ${!!process.env.NEXTAUTH_SECRET}`);
+  console.log(`   Token exists: ${!!token}`);
   console.log(`   Authenticated: ${!!token}`);
   console.log(`   Email: ${token?.email || 'none'}`);
 
