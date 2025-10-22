@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+// Check computed styles
+window.addEventListener('load', () => {
+  const root = document.documentElement;
+  const computed = getComputedStyle(root);
+  console.log('--color-background:', computed.getPropertyValue('--color-background'));
+  console.log('--color-border:', computed.getPropertyValue('--color-border'));
+  console.log('--color-foreground:', computed.getPropertyValue('--color-foreground'));
+  console.log('dark class present:', root.classList.contains('dark'));
+  console.log('data-theme:', root.getAttribute('data-theme'));
+});
+</script>
+</head>
+<body>Open console to see CSS variable values</body>
+</html>

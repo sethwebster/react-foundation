@@ -23,7 +23,7 @@ export function ExecutiveMessage() {
           </h2>
         </div>
 
-        <div className="prose prose-lg prose-invert prose-cyan mx-auto max-w-3xl">
+        <div className="mx-auto max-w-3xl space-y-6 leading-relaxed text-foreground">
           <p>
             You know, every so often, something comes along in software that changes not
             just how we build — but why we build.
@@ -69,7 +69,7 @@ export function ExecutiveMessage() {
           </p>
 
           <p>
-            <strong>
+            <strong className="font-semibold">
               Because this isn&apos;t just about governance. It&apos;s about legacy.
               <br />
               It&apos;s about ensuring that the ideas we build together endure.
@@ -94,7 +94,7 @@ export function ExecutiveMessage() {
           </p>
 
           <p>
-            <strong>Let&apos;s make the next chapter one that lasts for generations.</strong>
+            <strong className="font-semibold">Let&apos;s make the next chapter one that lasts for generations.</strong>
           </p>
         </div>
 

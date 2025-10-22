@@ -36,10 +36,20 @@ export function ThemeProvider({
   // Initialize theme from localStorage on mount
   useEffect(() => {
     const storedTheme = getStoredTheme();
+
+    // Disable transitions on initial load
+    document.documentElement.classList.add('no-transition');
+
     setThemeState(storedTheme);
     setMounted(true);
+
     // Apply the theme immediately after mounting
     applyTheme(storedTheme);
+
+    // Re-enable transitions after a brief delay
+    setTimeout(() => {
+      document.documentElement.classList.remove('no-transition');
+    }, 100);
   }, []);
 
   // Apply theme when it changes

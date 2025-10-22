@@ -21,7 +21,7 @@ export function ThemeToggle() {
     if (theme === 'system') {
       return (
         <svg
-          className="h-4 w-4"
+          className="h-5 w-5"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -39,7 +39,7 @@ export function ThemeToggle() {
     if (effectiveTheme === 'dark') {
       return (
         <svg
-          className="h-4 w-4"
+          className="h-5 w-5"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -56,7 +56,7 @@ export function ThemeToggle() {
 
     return (
       <svg
-        className="h-4 w-4"
+        className="h-5 w-5"
         fill="none"
         viewBox="0 0 24 24"
         stroke="currentColor"
@@ -78,16 +78,14 @@ export function ThemeToggle() {
   };
 
   return (
-    <Button
-      variant="ghost"
-      size="sm"
+    <button
       onClick={toggleTheme}
-      className="relative h-9 w-9 p-0"
+      className="relative flex h-10 w-10 items-center justify-center rounded-lg border border-border bg-card text-foreground transition hover:bg-muted hover:text-foreground"
       title={`Switch to ${theme === 'light' ? 'dark' : theme === 'dark' ? 'system' : 'light'} theme`}
+      aria-label={`Toggle theme (currently ${getLabel()})`}
     >
       {getIcon()}
-      <span className="sr-only">Toggle theme (currently {getLabel()})</span>
-    </Button>
+    </button>
   );
 }
 

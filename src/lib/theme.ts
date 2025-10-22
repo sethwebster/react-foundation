@@ -62,9 +62,9 @@ export interface ThemeConfig {
 export const themeConfig: ThemeConfig = {
   light: {
     background: '#ffffff',
-    foreground: '#0f172a',
+    foreground: '#0f172a',        // slate-900 - dark for readability
     muted: '#f1f5f9',
-    mutedForeground: '#64748b',
+    mutedForeground: '#475569',   // slate-600 - darker for better contrast
     popover: '#ffffff',
     popoverForeground: '#0f172a',
     card: '#ffffff',
@@ -87,22 +87,22 @@ export const themeConfig: ThemeConfig = {
     chart5: '#ef4444',
   },
   dark: {
-    background: '#0a0a0a',
-    foreground: '#ededed',
-    muted: '#1a1a1a',
-    mutedForeground: '#a1a1aa',
-    popover: '#0a0a0a',
-    popoverForeground: '#ededed',
-    card: '#0a0a0a',
-    cardForeground: '#ededed',
-    border: '#27272a',
-    input: '#27272a',
-    primary: '#0ea5e9',
+    background: '#0f172a',  // slate-900 to match react.foundation
+    foreground: '#f8fafc',  // slate-50 for better contrast
+    muted: '#1e293b',       // slate-800
+    mutedForeground: '#94a3b8',  // slate-400
+    popover: '#1e293b',     // slate-800
+    popoverForeground: '#f8fafc',
+    card: '#1e293b',        // slate-800
+    cardForeground: '#f8fafc',
+    border: '#334155',      // slate-700 - subtle but visible when needed
+    input: '#334155',
+    primary: '#0ea5e9',     // sky-500
     primaryForeground: '#ffffff',
-    secondary: '#1a1a1a',
-    secondaryForeground: '#ededed',
-    accent: '#1a1a1a',
-    accentForeground: '#ededed',
+    secondary: '#334155',   // slate-700
+    secondaryForeground: '#f8fafc',
+    accent: '#334155',      // slate-700
+    accentForeground: '#f8fafc',
     destructive: '#ef4444',
     destructiveForeground: '#ffffff',
     ring: '#0ea5e9',
@@ -135,33 +135,26 @@ export function applyTheme(theme: Theme) {
   if (typeof window === 'undefined') {
     return; // Skip during SSR
   }
-  
+
   const effectiveTheme = getEffectiveTheme(theme);
-  const colors = themeConfig[effectiveTheme];
-  
   const root = document.documentElement;
-  
-  // Apply CSS custom properties
-  Object.entries(colors).forEach(([key, value]) => {
-    root.style.setProperty(`--color-${key}`, value);
-  });
-  
-  // Set data attribute for Tailwind dark mode
+
+  // Set data attribute for reference
   root.setAttribute('data-theme', effectiveTheme);
-  
-  // Also add/remove dark class for Tailwind compatibility
+
+  // Toggle dark class - CSS handles all color changes
   if (effectiveTheme === 'dark') {
     root.classList.add('dark');
   } else {
     root.classList.remove('dark');
   }
-  
+
   // Update meta theme-color for mobile browsers
   const metaThemeColor = document.querySelector('meta[name="theme-color"]');
   if (metaThemeColor) {
-    metaThemeColor.setAttribute('content', colors.background);
+    const bgColor = effectiveTheme === 'dark' ? '#0f172a' : '#ffffff';
+    metaThemeColor.setAttribute('content', bgColor);
   }
-  
 }
 
 /**
