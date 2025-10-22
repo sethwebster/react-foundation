@@ -278,7 +278,11 @@ export class GitHubCollector {
           direction: 'desc',
           per_page: 100,
         },
-        (response) => response.data.filter((pr: Record<string, unknown>) => new Date(pr.created_at) >= new Date(since)).slice(0, 100)
+        (response) => response.data.filter((pr: Record<string, unknown>) => {
+          const createdAt = pr.created_at;
+          if (typeof createdAt !== 'string') return false;
+          return new Date(createdAt) >= new Date(since);
+        }).slice(0, 100)
       );
 
       const merged = prs.filter((pr: Record<string, unknown>) => pr.merged_at).length;
@@ -295,14 +299,22 @@ export class GitHubCollector {
           });
 
           const firstResponse = timeline.data.find(
-            (event: Record<string, unknown>) => event.event === 'commented' && event.actor?.login !== pr.user?.login
+            (event: Record<string, unknown>) => {
+              const actor = event.actor as Record<string, unknown> | undefined;
+              return event.event === 'commented' && actor?.login !== pr.user?.login;
+            }
           );
 
-          if (firstResponse && firstResponse.created_at) {
-            const responseTime =
-              new Date(firstResponse.created_at).getTime() -
-              new Date(pr.created_at).getTime();
-            responseTimes.push(responseTime);
+          if (firstResponse) {
+            const eventData = firstResponse as Record<string, unknown>;
+            const createdAt = eventData.created_at;
+            if (typeof createdAt === 'string') {
+              const prCreatedAt = typeof pr.created_at === 'string' ? pr.created_at : new Date().toISOString();
+              const responseTime =
+                new Date(createdAt).getTime() -
+                new Date(prCreatedAt).getTime();
+              responseTimes.push(responseTime);
+            }
           }
         } catch {
           // Skip if timeline fetch fails
@@ -349,12 +361,19 @@ export class GitHubCollector {
       );
 
       const opened = issues.filter(
-        (issue: Record<string, unknown>) => new Date(issue.created_at) >= new Date(since)
+        (issue: Record<string, unknown>) => {
+          const createdAt = issue.created_at;
+          if (typeof createdAt !== 'string') return false;
+          return new Date(createdAt) >= new Date(since);
+        }
       ).length;
 
       const closed = issues.filter(
-        (issue: Record<string, unknown>) =>
-          issue.closed_at && new Date(issue.closed_at) >= new Date(since)
+        (issue: Record<string, unknown>) => {
+          const closedAt = issue.closed_at;
+          if (typeof closedAt !== 'string') return false;
+          return new Date(closedAt) >= new Date(since);
+        }
       ).length;
 
       // Calculate response times - sample 20 issues (much faster)
@@ -427,11 +446,14 @@ export class GitHubCollector {
       oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
 
       const significantReleases = releases.filter((r: Record<string, unknown>) => {
-        const publishedAt = new Date(r.published_at || r.created_at);
+        const dateStr = (typeof r.published_at === 'string' ? r.published_at :
+                        typeof r.created_at === 'string' ? r.created_at :
+                        new Date().toISOString());
+        const publishedAt = new Date(dateStr);
         if (publishedAt < oneYearAgo) return false;
 
         // Try to detect non-patch releases (not perfect but reasonable heuristic)
-        const version = r.tag_name || r.name || '';
+        const version = String(r.tag_name || r.name || '');
         const patchPattern = /\.\d+$/; // ends with .number (like v1.2.3)
         const hasMultipleDots = (version.match(/\./g) || []).length >= 2;
 
@@ -441,7 +463,12 @@ export class GitHubCollector {
       // Calculate median days between releases
       if (significantReleases.length >= 2) {
         const dates = significantReleases
-          .map((r: Record<string, unknown>) => new Date(r.published_at || r.created_at).getTime())
+          .map((r: Record<string, unknown>) => {
+            const dateStr = (typeof r.published_at === 'string' ? r.published_at :
+                            typeof r.created_at === 'string' ? r.created_at :
+                            new Date().toISOString());
+            return new Date(dateStr).getTime();
+          })
           .sort((a, b) => a - b);
 
         const daysBetween: number[] = [];
