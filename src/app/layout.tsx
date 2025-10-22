@@ -73,7 +73,7 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ThemeProvider>
+        <ThemeProvider defaultTheme="dark">
           <AuthProvider session={session}>
             <Header />
             {children}
