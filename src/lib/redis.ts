@@ -6,6 +6,16 @@
 import Redis from 'ioredis';
 import type { LibraryRawMetrics, QuarterlyAllocation } from './ris/types';
 import type { LibraryActivityData } from './ris/activity-types';
+import { logger } from './logger';
+
+/**
+ * Sanitize input for use in Redis keys
+ * Prevents injection attacks
+ */
+function sanitizeKeyParam(param: string): string {
+  // Remove any characters that aren't alphanumeric, dash, underscore, or dot
+  return param.replace(/[^a-zA-Z0-9._-]/g, '_').substring(0, 200);
+}
 
 // Singleton Redis client
 let redis: Redis | null = null;
@@ -41,30 +51,30 @@ export function getRedisClient(): Redis {
   });
 
   redis.on('error', (err) => {
-    console.error('Redis connection error:', err);
+    logger.error('Redis connection error:', err);
   });
 
   redis.on('connect', () => {
-    console.log('Redis connected');
+    logger.info('Redis connected');
   });
 
   return redis;
 }
 
 /**
- * Redis key patterns
+ * Redis key patterns (sanitized)
  */
 export const REDIS_KEYS = {
   // Raw activity data for a library (permanent cache)
   libraryActivity: (owner: string, repo: string) =>
-    `ris:activity:${owner}:${repo}`,
+    `ris:activity:${sanitizeKeyParam(owner)}:${sanitizeKeyParam(repo)}`,
 
   // Calculated metrics for a single library (derived from activity)
   libraryMetrics: (owner: string, repo: string) =>
-    `ris:metrics:${owner}:${repo}`,
+    `ris:metrics:${sanitizeKeyParam(owner)}:${sanitizeKeyParam(repo)}`,
 
   // Current quarterly allocation
-  allocation: (period: string) => `ris:allocation:${period}`,
+  allocation: (period: string) => `ris:allocation:${sanitizeKeyParam(period)}`,
 
   // Last update timestamp
   lastUpdated: 'ris:last_updated',
@@ -74,6 +84,9 @@ export const REDIS_KEYS = {
 
   // Lock for preventing concurrent collections
   collectionLock: 'ris:collection_lock',
+
+  // Error log for failed collections
+  collectionErrors: 'ris:collection_errors',
 };
 
 /**
@@ -334,6 +347,59 @@ export async function getCachedLibraryActivity(
   } catch (error) {
     console.error(`Error parsing cached activity for ${owner}/${repo}:`, error);
     return null;
+  }
+}
+
+/**
+ * Log collection error
+ */
+export async function logCollectionError(
+  library: string,
+  error: string,
+  details?: Record<string, unknown>
+): Promise<void> {
+  try {
+    const client = getRedisClient();
+    const errorEntry = {
+      library,
+      error,
+      details,
+      timestamp: new Date().toISOString(),
+    };
+
+    // Store as list (latest first)
+    await client.lpush(
+      REDIS_KEYS.collectionErrors,
+      JSON.stringify(errorEntry)
+    );
+
+    // Keep only last 100 errors
+    await client.ltrim(REDIS_KEYS.collectionErrors, 0, 99);
+
+    logger.error(`Collection error for ${library}:`, error, details);
+  } catch (_error) {
+    logger.error('Failed to log collection error to Redis:', _error);
+  }
+}
+
+/**
+ * Get collection errors
+ */
+export async function getCollectionErrors(limit: number = 50): Promise<Array<Record<string, unknown>>> {
+  try {
+    const client = getRedisClient();
+    const errors = await client.lrange(REDIS_KEYS.collectionErrors, 0, limit - 1);
+
+    return errors.map(e => {
+      try {
+        return JSON.parse(e);
+      } catch {
+        return { error: 'Failed to parse', raw: e };
+      }
+    });
+  } catch (_error) {
+    logger.error('Failed to get collection errors:', _error);
+    return [];
   }
 }
 

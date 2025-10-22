@@ -6,6 +6,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { getToken } from 'next-auth/jwt';
+import { logger } from '@/lib/logger';
 
 // Public routes that don't require allowlist
 const PUBLIC_ROUTES = [
@@ -47,15 +48,12 @@ export async function middleware(request: NextRequest) {
     secureCookie: process.env.NODE_ENV === 'production',
   });
 
-  console.log(`🔐 Middleware check for ${pathname}`);
-  console.log(`   Has NEXTAUTH_SECRET: ${!!process.env.NEXTAUTH_SECRET}`);
-  console.log(`   Token exists: ${!!token}`);
-  console.log(`   Authenticated: ${!!token}`);
-  console.log(`   Email: ${token?.email || 'none'}`);
+  logger.debug(`Middleware check for ${pathname}`);
+  logger.debug(`  Token exists: ${!!token}, Email: ${token?.email || 'none'}`);
 
   // If not authenticated, redirect to coming soon
   if (!token || !token.email) {
-    console.log(`   ❌ Not authenticated, redirecting to /coming-soon`);
+    logger.debug(`  Not authenticated, redirecting to /coming-soon`);
     const url = request.nextUrl.clone();
     url.pathname = '/coming-soon';
     return NextResponse.redirect(url);
@@ -63,12 +61,10 @@ export async function middleware(request: NextRequest) {
 
   const userEmail = (token.email as string).toLowerCase();
 
-  console.log(`   User email: ${userEmail}`);
-
   // Super admin check - environment variable failsafe
   const SUPER_ADMIN = process.env.SUPER_ADMIN_EMAIL?.toLowerCase();
   if (SUPER_ADMIN && userEmail === SUPER_ADMIN) {
-    console.log(`   👑 Super admin detected - access granted`);
+    logger.debug(`  Super admin access granted: ${userEmail}`);
     return NextResponse.next();
   }
 
@@ -82,7 +78,7 @@ export async function middleware(request: NextRequest) {
     });
 
     if (!checkResponse.ok) {
-      console.log(`   ❌ Access check API failed: ${checkResponse.status}`);
+      logger.warn(`Access check API failed for ${userEmail}: ${checkResponse.status}`);
       const url = request.nextUrl.clone();
       url.pathname = '/coming-soon';
       return NextResponse.redirect(url);
@@ -90,20 +86,17 @@ export async function middleware(request: NextRequest) {
 
     const checkData = await checkResponse.json();
 
-    console.log(`   Has access (Redis): ${checkData.isAllowed}`);
-
     if (!checkData.isAllowed) {
-      console.log(`   ❌ Not in user list, redirecting to /coming-soon`);
+      logger.debug(`  User not on allowlist: ${userEmail}`);
       const url = request.nextUrl.clone();
       url.pathname = '/coming-soon';
       return NextResponse.redirect(url);
     }
 
-    // User has access, proceed
-    console.log(`   ✅ Access granted`);
+    logger.debug(`  Access granted: ${userEmail}`);
     return NextResponse.next();
   } catch (error) {
-    console.error('   ❌ Error checking access:', error);
+    logger.error('Error checking access:', error);
     // On error, redirect to coming soon for safety
     const url = request.nextUrl.clone();
     url.pathname = '/coming-soon';

@@ -4,9 +4,13 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
+import { UserManagementService } from '@/lib/admin/user-management-service';
 import { ecosystemLibraries } from '@/lib/maintainer-tiers';
 import { MetricsAggregator } from '@/lib/ris/collectors/aggregator';
 import { RISScoringService } from '@/lib/ris/scoring-service';
+import { logger } from '@/lib/logger';
 import {
   cacheLibraryMetrics,
   cacheLibraryActivity,
@@ -16,6 +20,7 @@ import {
   acquireCollectionLock,
   releaseCollectionLock,
   setCollectionStatus,
+  logCollectionError,
 } from '@/lib/redis';
 import type { LibraryRawMetrics } from '@/lib/ris/types';
 import { calculateMetricsFromActivity } from '@/lib/ris/activity-calculator';
@@ -24,13 +29,33 @@ export const maxDuration = 300; // 5 minutes max execution time
 
 export async function POST(request: NextRequest) {
   try {
+    // Check authentication - require admin role
+    const session = await getServerSession(authOptions);
+
+    if (!session?.user?.email) {
+      logger.warn('RIS collection attempted without authentication');
+      return NextResponse.json(
+        { error: 'Authentication required' },
+        { status: 401 }
+      );
+    }
+
+    const isAdmin = await UserManagementService.isAdmin(session.user.email);
+    if (!isAdmin) {
+      logger.warn(`RIS collection attempted by non-admin: ${session.user.email}`);
+      return NextResponse.json(
+        { error: 'Admin role required' },
+        { status: 403 }
+      );
+    }
+
     // Parse query parameters
     const { searchParams } = new URL(request.url);
     const forceRefresh = searchParams.get('force') === 'true';
     const maxAgeHours = parseInt(searchParams.get('maxAge') || '24', 10);
 
-    console.log(`🔄 Collection mode: ${forceRefresh ? 'FORCE REFRESH' : 'INCREMENTAL'}`);
-    console.log(`📅 Max cache age: ${maxAgeHours} hours`);
+    logger.info(`RIS collection started by ${session.user.email}: ${forceRefresh ? 'FORCE' : 'INCREMENTAL'}`);
+    logger.debug(`Max cache age: ${maxAgeHours} hours`);
 
     // Parse GitHub tokens (supports both single and multiple)
     const githubTokens = process.env.GITHUB_TOKENS
@@ -44,13 +69,14 @@ export async function POST(request: NextRequest) {
         : [];
 
     if (githubTokens.length === 0) {
+      logger.error('GITHUB_TOKEN not configured');
       return NextResponse.json(
         { error: 'GITHUB_TOKEN or GITHUB_TOKENS environment variable not set' },
         { status: 500 }
       );
     }
 
-    console.log(`🔑 Using ${githubTokens.length} GitHub token(s) for collection`);
+    logger.info(`Using ${githubTokens.length} GitHub token(s) for collection`);
 
     // Try to acquire lock
     const lockAcquired = await acquireCollectionLock();
@@ -121,16 +147,24 @@ export async function POST(request: NextRequest) {
           startedAt: new Date().toISOString(),
         });
 
-        console.log(`📊 Progress: ${collected} full, ${skipped} incremental / ${ecosystemLibraries.length} total`);
+        logger.debug(`Progress: ${collected} full, ${skipped} incremental / ${ecosystemLibraries.length} total`);
       } catch (error) {
-        console.error(`❌ Error collecting ${library.owner}/${library.name}:`, error);
+        logger.error(`Error collecting ${library.owner}/${library.name}:`, error);
+
+        // Log error to Redis for admin review
+        await logCollectionError(
+          `${library.owner}/${library.name}`,
+          error instanceof Error ? error.message : String(error),
+          { owner: library.owner, repo: library.name }
+        );
+
         failed++;
         // Continue with other libraries even if one fails
       }
     }
 
     // Calculate RIS scores and allocation
-    console.log('Calculating RIS scores and allocation...');
+    logger.debug('Calculating RIS scores and allocation...');
     const scoringService = new RISScoringService();
     const currentQuarter = getCurrentQuarter();
     const totalPool = 1_000_000; // $1M default pool
@@ -171,7 +205,7 @@ export async function POST(request: NextRequest) {
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error('Collection error:', error);
+    logger.error('Collection error:', error);
 
     // Release lock on error
     await releaseCollectionLock();

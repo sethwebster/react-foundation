@@ -4,6 +4,7 @@
  */
 
 import { getRedisClient } from '@/lib/redis';
+import { logger } from '@/lib/logger';
 import crypto from 'crypto';
 
 export interface AccessRequest {
@@ -53,7 +54,7 @@ export class AccessRequestsService {
     // Map email to request ID
     await client.set(REDIS_KEYS.requestByEmail(email), id);
 
-    console.log(`✅ Access request created: ${id} for ${email}`);
+    logger.info(`✅ Access request created: ${id} for ${email}`);
 
     return request;
   }
@@ -70,7 +71,7 @@ export class AccessRequestsService {
     try {
       return JSON.parse(data);
     } catch (_error) {
-      console.error(`Error parsing request ${id}:`, _error);
+      logger.error(`Error parsing request ${id}:`, _error);
       return null;
     }
   }
@@ -149,7 +150,7 @@ export class AccessRequestsService {
     // Send approval email
     await this.sendApprovalEmail(request.email);
 
-    console.log(`✅ Request ${id} approved for ${request.email}`);
+    logger.info(`✅ Request ${id} approved for ${request.email}`);
   }
 
   /**
@@ -176,7 +177,7 @@ export class AccessRequestsService {
     // Send denial email
     await this.sendDenialEmail(request.email);
 
-    console.log(`✅ Request ${id} denied for ${request.email}`);
+    logger.info(`✅ Request ${id} denied for ${request.email}`);
   }
 
   /**
@@ -184,13 +185,13 @@ export class AccessRequestsService {
    */
   private static async sendApprovalEmail(email: string): Promise<void> {
     try {
-      console.log(`📧 Sending approval email to ${email}...`);
+      logger.info(`📧 Sending approval email to ${email}...`);
 
       const { Resend } = await import('resend');
       const resend = new Resend(process.env.RESEND_API_KEY);
 
       if (!process.env.RESEND_API_KEY) {
-        console.error('❌ RESEND_API_KEY not configured - skipping email');
+        logger.error('❌ RESEND_API_KEY not configured - skipping email');
         return;
       }
 
@@ -198,12 +199,12 @@ export class AccessRequestsService {
       const baseUrl = process.env.NEXTAUTH_URL;
 
       if (!baseUrl) {
-        console.error('❌ NEXTAUTH_URL not configured - email will not include links');
+        logger.error('❌ NEXTAUTH_URL not configured - email will not include links');
         // Still send email, but without the link
       }
 
-      console.log(`   From: noreply@${fromDomain}`);
-      console.log(`   To: ${email}`);
+      logger.info(`   From: noreply@${fromDomain}`);
+      logger.info(`   To: ${email}`);
 
       const result = await resend.emails.send({
         from: `React Foundation <noreply@${fromDomain}>`,
@@ -227,12 +228,12 @@ export class AccessRequestsService {
       });
 
       if (result.data) {
-        console.log(`✅ Approval email sent! ID: ${result.data.id}`);
+        logger.info(`✅ Approval email sent! ID: ${result.data.id}`);
       } else if (result.error) {
-        console.error(`❌ Resend error:`, result.error);
+        logger.error(`❌ Resend error:`, result.error);
       }
     } catch (_error) {
-      console.error(`❌ Error sending approval email to ${email}:`, _error);
+      logger.error(`❌ Error sending approval email to ${email}:`, _error);
     }
   }
 
@@ -241,20 +242,20 @@ export class AccessRequestsService {
    */
   private static async sendDenialEmail(email: string): Promise<void> {
     try {
-      console.log(`📧 Sending denial email to ${email}...`);
+      logger.info(`📧 Sending denial email to ${email}...`);
 
       const { Resend } = await import('resend');
       const resend = new Resend(process.env.RESEND_API_KEY);
 
       if (!process.env.RESEND_API_KEY) {
-        console.error('❌ RESEND_API_KEY not configured - skipping email');
+        logger.error('❌ RESEND_API_KEY not configured - skipping email');
         return;
       }
 
       const fromDomain = process.env.RESEND_FROM_DOMAIN || 'yourdomain.com';
 
-      console.log(`   From: noreply@${fromDomain}`);
-      console.log(`   To: ${email}`);
+      logger.info(`   From: noreply@${fromDomain}`);
+      logger.info(`   To: ${email}`);
 
       const result = await resend.emails.send({
         from: `React Foundation <noreply@${fromDomain}>`,
@@ -280,12 +281,12 @@ export class AccessRequestsService {
       });
 
       if (result.data) {
-        console.log(`✅ Denial email sent! ID: ${result.data.id}`);
+        logger.info(`✅ Denial email sent! ID: ${result.data.id}`);
       } else if (result.error) {
-        console.error(`❌ Resend error:`, result.error);
+        logger.error(`❌ Resend error:`, result.error);
       }
     } catch (_error) {
-      console.error(`❌ Error sending denial email to ${email}:`, _error);
+      logger.error(`❌ Error sending denial email to ${email}:`, _error);
     }
   }
 
