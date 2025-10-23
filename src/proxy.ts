@@ -1,5 +1,5 @@
 /**
- * Middleware - Access Control
+ * Proxy - Access Control
  * Blocks all routes except Coming Soon page unless user is allowlisted
  */
 
@@ -33,7 +33,7 @@ const PUBLIC_ROUTES = [
 //   '/api/maintainer',
 // ];
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Allow public routes
@@ -48,7 +48,7 @@ export async function middleware(request: NextRequest) {
     secureCookie: process.env.NODE_ENV === 'production',
   });
 
-  logger.debug(`Middleware check for ${pathname}`);
+  logger.debug(`Proxy check for ${pathname}`);
   logger.debug(`  Token exists: ${!!token}, Email: ${token?.email || 'none'}`);
 
   // If not authenticated, redirect to coming soon
@@ -68,7 +68,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Call our API route to check access (works in Edge runtime)
+  // Call our API route to check access (runs in Node.js runtime)
   try {
     const baseUrl = request.nextUrl.origin;
     const checkResponse = await fetch(`${baseUrl}/api/check-access`, {
