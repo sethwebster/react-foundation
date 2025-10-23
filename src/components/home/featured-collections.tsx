@@ -48,14 +48,14 @@ export function FeaturedCollections({ collections }: FeaturedCollectionsProps) {
     <section
       id="featured"
       style={{ scrollMarginTop: "160px" }}
-      className="space-y-10 rounded-3xl border border-white/10 bg-white/5 p-10 backdrop-blur"
+      className="space-y-10 rounded-3xl border border-border/10 bg-background/5 p-10 backdrop-blur"
     >
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h2 className="text-3xl font-semibold text-white">
+          <h2 className="text-3xl font-semibold text-foreground">
             Signature Collections
           </h2>
-          <p className="mt-3 max-w-lg text-sm text-white/60">
+          <p className="mt-3 max-w-lg text-sm text-foreground/60">
             Build a wardrobe that champions open-source. Explore curated edits
             engineered for meetups, keynotes, and everyday hacking.
           </p>
@@ -77,9 +77,9 @@ export function FeaturedCollections({ collections }: FeaturedCollectionsProps) {
             <ScrollReveal key={collection.id} animation="fade-up" delay={index * 100}>
               <Link
                 href={`/store/collections/${collection.handle}`}
-                className="flex flex-col gap-4 rounded-2xl border border-white/10 bg-slate-900/70 p-6 transition hover:border-white/25 hover:bg-slate-900"
+                className="flex flex-col gap-4 rounded-2xl border border-border/10 bg-muted/70 p-6 transition hover:border-border/25 hover:bg-muted"
               >
-                <div className="relative h-40 overflow-hidden rounded-xl border border-white/10">
+                <div className="relative h-40 overflow-hidden rounded-xl border border-border/10">
                   <Image
                     src={imageUrl}
                     alt={imageAlt}
@@ -89,10 +89,10 @@ export function FeaturedCollections({ collections }: FeaturedCollectionsProps) {
                   />
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-white">
+                  <h3 className="text-lg font-semibold text-foreground">
                     {collection.title}
                   </h3>
-                  <p className="mt-2 text-sm text-white/60">
+                  <p className="mt-2 text-sm text-foreground/60">
                     {collection.description}
                   </p>
                 </div>

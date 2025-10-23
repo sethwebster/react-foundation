@@ -23,8 +23,8 @@ export function UserAvatar({
   const initial = user.name?.charAt(0) || user.email?.charAt(0) || "U";
   const borderClass = showBorder
     ? size >= 80
-      ? "border-4 border-white/20"
-      : "border-2 border-white/20"
+      ? "border-4 border-border/20"
+      : "border-2 border-border/20"
     : "";
 
   const avatar = (
@@ -42,7 +42,7 @@ export function UserAvatar({
         />
       ) : (
         <div
-          className="flex h-full w-full items-center justify-center bg-gradient-to-br from-cyan-400 to-indigo-500 font-bold text-white"
+          className="flex h-full w-full items-center justify-center bg-gradient-to-br from-cyan-400 to-indigo-500 font-bold text-foreground"
           style={{ fontSize: size * 0.4 }}
         >
           {initial}

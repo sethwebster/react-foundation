@@ -48,7 +48,7 @@ export function Rating({
   if (count === 0) {
     return (
       <div
-        className={cn("flex items-center gap-2 text-xs text-white/50", className)}
+        className={cn("flex items-center gap-2 text-xs text-muted-foreground", className)}
       >
         <span className="text-[11px] uppercase tracking-[0.2em]">
           No reviews yet
@@ -59,7 +59,7 @@ export function Rating({
 
   return (
     <div
-      className={cn("flex items-center gap-2 text-xs text-white/50", className)}
+      className={cn("flex items-center gap-2 text-xs text-foreground/50", className)}
       aria-label={`Rated ${formattedValue} out of ${max}`}
     >
       <div className="flex items-center gap-1">

@@ -13,18 +13,18 @@ export default async function ProfilePage() {
   return (
     <div className="space-y-8 pt-12">
       <div>
-        <h1 className="text-4xl font-bold text-white">Profile</h1>
-        <p className="mt-2 text-base text-white/70">
+        <h1 className="text-4xl font-bold text-foreground">Profile</h1>
+        <p className="mt-2 text-base text-foreground/70">
           Manage your React Foundation account and preferences.
         </p>
       </div>
 
-      <div className="rounded-3xl border border-white/10 bg-slate-900/60 p-8">
-        <h2 className="text-2xl font-semibold text-white">Account Information</h2>
+      <div className="rounded-3xl border border-border/10 bg-muted/60 p-8">
+        <h2 className="text-2xl font-semibold text-foreground">Account Information</h2>
         <div className="mt-6 space-y-4">
           <div>
-            <p className="text-sm text-white/60">Name</p>
-            <p className="text-base text-white">
+            <p className="text-sm text-foreground/60">Name</p>
+            <p className="text-base text-foreground">
               {session?.user?.name || "Not set"}
               {session?.user?.githubLogin && (
                 <>
@@ -43,8 +43,8 @@ export default async function ProfilePage() {
             </p>
           </div>
           <div>
-            <p className="text-sm text-white/60">Email</p>
-            <p className="text-base text-white">{session?.user?.email || "Not set"}</p>
+            <p className="text-sm text-foreground/60">Email</p>
+            <p className="text-base text-foreground">{session?.user?.email || "Not set"}</p>
           </div>
         </div>
       </div>
@@ -53,17 +53,17 @@ export default async function ProfilePage() {
       <div className="grid gap-4 sm:grid-cols-2 lg:hidden">
         <Link
           href="/profile/contributor-status"
-          className="rounded-2xl border border-white/10 bg-slate-900/60 p-6 transition hover:border-white/20 hover:bg-slate-900/80"
+          className="rounded-2xl border border-border/10 bg-muted/60 p-6 transition hover:border-border/20 hover:bg-muted/80"
         >
-          <h3 className="font-semibold text-white">Contributor Status</h3>
-          <p className="mt-2 text-sm text-white/60">View your contributions and tier</p>
+          <h3 className="font-semibold text-foreground">Contributor Status</h3>
+          <p className="mt-2 text-sm text-foreground/60">View your contributions and tier</p>
         </Link>
         <Link
           href="/profile/repos"
-          className="rounded-2xl border border-white/10 bg-slate-900/60 p-6 transition hover:border-white/20 hover:bg-slate-900/80"
+          className="rounded-2xl border border-border/10 bg-muted/60 p-6 transition hover:border-border/20 hover:bg-muted/80"
         >
-          <h3 className="font-semibold text-white">Repos</h3>
-          <p className="mt-2 text-sm text-white/60">See your repository activity</p>
+          <h3 className="font-semibold text-foreground">Repos</h3>
+          <p className="mt-2 text-sm text-foreground/60">See your repository activity</p>
         </Link>
       </div>
 

@@ -386,11 +386,11 @@ export function getRISColorClass(ris: number): string {
  */
 export function getComponentColorClass(component: string): string {
   const colors: Record<string, string> = {
-    EF: 'bg-blue-500/20 text-blue-300',
-    CQ: 'bg-green-500/20 text-green-300',
-    MH: 'bg-purple-500/20 text-purple-300',
-    CB: 'bg-yellow-500/20 text-yellow-300',
-    MA: 'bg-pink-500/20 text-pink-300',
+    EF: 'bg-primary/20 text-blue-300',
+    CQ: 'bg-success/20 text-green-300',
+    MH: 'bg-accent/20 text-purple-300',
+    CB: 'bg-warning/20 text-yellow-300',
+    MA: 'bg-accent/20 text-pink-300',
   };
-  return colors[component] || 'bg-gray-500/20 text-gray-300';
+  return colors[component] || 'bg-muted/20 text-muted-foreground';
 }

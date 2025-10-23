@@ -28,10 +28,10 @@ export default async function AdminLayout({
   if (!isAdmin) {
     return (
       <div className="container mx-auto max-w-4xl px-4 py-12 mt-20">
-        <div className="rounded-xl border border-red-500/50 bg-red-500/10 p-6 text-center">
+        <div className="rounded-xl border border-destructive/50 bg-destructive/10 p-6 text-center">
           <h1 className="text-2xl font-bold text-red-400 mb-2">Access Denied</h1>
           <p className="text-red-400/80">Admin role required to access this area.</p>
-          <p className="text-white/60 mt-4 text-sm">
+          <p className="text-foreground/60 mt-4 text-sm">
             If you believe you should have access, please contact the administrator.
           </p>
         </div>

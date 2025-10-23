@@ -152,11 +152,11 @@ export function MaintainerProgress() {
   }, [progress.stats]);
 
   return (
-    <section className="rounded-3xl border border-white/10 bg-slate-900/80 p-6 backdrop-blur">
+    <section className="rounded-3xl border border-border/10 bg-muted/80 p-6 backdrop-blur">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h2 className="text-2xl font-semibold text-white">Ecosystem Contributor Progress</h2>
-          <p className="mt-2 max-w-xl text-sm text-white/70">
+          <h2 className="text-2xl font-semibold text-foreground">Ecosystem Contributor Progress</h2>
+          <p className="mt-2 max-w-xl text-sm text-foreground/70">
             Link your GitHub account to unlock the Core Maintainer Essentials collection. We
             track contributions to {ecosystemLibraries.length} React ecosystem libraries across state management, data fetching,
             routing, frameworks, testing, styling, and more over the past year.
@@ -174,31 +174,31 @@ export function MaintainerProgress() {
 
       <div className="mt-6 grid gap-6 md:grid-cols-[minmax(0,1fr)_280px]">
         <div className="space-y-4">
-          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-5">
-            <p className="text-xs uppercase tracking-[0.3em] text-white/50">Current tier</p>
-            <p className="mt-2 text-xl font-semibold text-white">
+          <div className="rounded-2xl border border-border/10 bg-background/[0.03] p-5">
+            <p className="text-xs uppercase tracking-[0.3em] text-foreground/50">Current tier</p>
+            <p className="mt-2 text-xl font-semibold text-foreground">
               {currentTier?.label ?? "No Tier"}
             </p>
-            <p className="mt-1 text-sm text-white/60">
+            <p className="mt-1 text-sm text-foreground/60">
               {currentTier?.description ?? "Start contributing to unlock the Contributor tier and gain access to exclusive products."}
             </p>
             <div className="mt-4">
-              <div className="flex items-center justify-between text-xs text-white/60">
+              <div className="flex items-center justify-between text-xs text-foreground/60">
                 <span>Score</span>
-                <span className="font-semibold text-white">
+                <span className="font-semibold text-foreground">
                   {formatter.format(progress.stats?.score ?? 0)}
                 </span>
               </div>
-              <div className="mt-2 h-2 rounded-full bg-white/10">
+              <div className="mt-2 h-2 rounded-full bg-background/10">
                 <div
-                  className="h-full rounded-full bg-sky-400 transition-all"
+                  className="h-full rounded-full bg-primary/50 transition-all"
                   style={{ width: `${Math.round(progressTowardsNext * 100)}%` }}
                 />
               </div>
               {nextTier ? (
-                <p className="mt-2 text-xs text-white/50">
+                <p className="mt-2 text-xs text-foreground/50">
                   {Math.max(nextTier.minScore - (progress.stats?.score ?? 0), 0)} more points to
-                  reach <span className="text-white">{nextTier.label}</span>.
+                  reach <span className="text-foreground">{nextTier.label}</span>.
                 </p>
               ) : (
                 <p className="mt-2 text-xs text-emerald-300">
@@ -215,18 +215,18 @@ export function MaintainerProgress() {
           </div>
 
           {categoryContributions.size > 0 && (
-            <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4">
-              <p className="text-xs uppercase tracking-[0.3em] text-white/50">Category Breakdown</p>
+            <div className="rounded-2xl border border-border/10 bg-background/[0.02] p-4">
+              <p className="text-xs uppercase tracking-[0.3em] text-foreground/50">Category Breakdown</p>
               <div className="mt-3 grid gap-2 sm:grid-cols-2">
                 {Array.from(categoryContributions.entries())
                   .sort((a, b) => b[1] - a[1])
                   .map(([category, count]) => (
                     <div
                       key={category}
-                      className="flex items-center justify-between rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2"
+                      className="flex items-center justify-between rounded-lg border border-border/10 bg-background/[0.03] px-3 py-2"
                     >
-                      <span className="text-xs text-white/70">{categoryLabels[category]}</span>
-                      <span className="text-xs font-semibold text-white">
+                      <span className="text-xs text-foreground/70">{categoryLabels[category]}</span>
+                      <span className="text-xs font-semibold text-foreground">
                         {formatter.format(count)}
                       </span>
                     </div>
@@ -235,40 +235,40 @@ export function MaintainerProgress() {
             </div>
           )}
 
-          <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4">
+          <div className="rounded-2xl border border-border/10 bg-background/[0.02] p-4">
             <Collapsible
               trigger={
-                <p className="text-sm font-medium tracking-wide text-white/70">Your Contributions</p>
+                <p className="text-sm font-medium tracking-wide text-foreground/70">Your Contributions</p>
               }
             >
               <div className="space-y-8">
                 {/* Scoring System */}
                 <div>
-                  <h3 className="mb-4 text-sm font-semibold text-white/90">Scoring System</h3>
+                  <h3 className="mb-4 text-sm font-semibold text-foreground/90">Scoring System</h3>
 
                   <div className="space-y-2">
-                    <div className="flex items-center justify-between rounded-xl bg-white/5 px-4 py-3 backdrop-blur-sm transition hover:bg-white/[0.07]">
-                      <span className="text-sm text-white/80">Pull Requests Opened</span>
-                      <span className="text-sm font-semibold tabular-nums text-white">8 pts</span>
+                    <div className="flex items-center justify-between rounded-xl bg-background/5 px-4 py-3 backdrop-blur-sm transition hover:bg-background/[0.07]">
+                      <span className="text-sm text-foreground/80">Pull Requests Opened</span>
+                      <span className="text-sm font-semibold tabular-nums text-foreground">8 pts</span>
                     </div>
 
-                    <div className="flex items-center justify-between rounded-xl bg-white/5 px-4 py-3 backdrop-blur-sm transition hover:bg-white/[0.07]">
-                      <span className="text-sm text-white/80">Issues Opened</span>
-                      <span className="text-sm font-semibold tabular-nums text-white">3 pts</span>
+                    <div className="flex items-center justify-between rounded-xl bg-background/5 px-4 py-3 backdrop-blur-sm transition hover:bg-background/[0.07]">
+                      <span className="text-sm text-foreground/80">Issues Opened</span>
+                      <span className="text-sm font-semibold tabular-nums text-foreground">3 pts</span>
                     </div>
 
-                    <div className="flex items-center justify-between rounded-xl bg-white/5 px-4 py-3 backdrop-blur-sm transition hover:bg-white/[0.07]">
-                      <span className="text-sm text-white/80">Commits</span>
-                      <span className="text-sm font-semibold tabular-nums text-white">1 pt</span>
+                    <div className="flex items-center justify-between rounded-xl bg-background/5 px-4 py-3 backdrop-blur-sm transition hover:bg-background/[0.07]">
+                      <span className="text-sm text-foreground/80">Commits</span>
+                      <span className="text-sm font-semibold tabular-nums text-foreground">1 pt</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Tracked Libraries */}
                 <div>
-                  <h3 className="mb-4 text-sm font-semibold text-white/90">
+                  <h3 className="mb-4 text-sm font-semibold text-foreground/90">
                     Tracked Libraries
-                    <span className="ml-2 text-xs font-normal text-white/50">
+                    <span className="ml-2 text-xs font-normal text-foreground/50">
                       ({ecosystemLibraries.length})
                     </span>
                   </h3>
@@ -278,9 +278,9 @@ export function MaintainerProgress() {
                       .sort((a, b) => categoryLabels[a[0]].localeCompare(categoryLabels[b[0]]))
                       .map(([category, repos]) => (
                         <div key={category}>
-                          <p className="mb-2.5 text-xs font-medium uppercase tracking-wider text-white/40">
+                          <p className="mb-2.5 text-xs font-medium uppercase tracking-wider text-foreground/40">
                             {categoryLabels[category]}
-                            <span className="ml-1.5 text-white/30">({repos.length})</span>
+                            <span className="ml-1.5 text-foreground/30">({repos.length})</span>
                           </p>
                           <div className="flex flex-wrap gap-1.5">
                             {repos.map((repo) => {
@@ -292,13 +292,13 @@ export function MaintainerProgress() {
                                   key={repo}
                                   className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium transition-all ${
                                     hasContributions
-                                      ? "bg-emerald-500/15 text-emerald-200 shadow-sm shadow-emerald-500/10"
-                                      : "bg-white/[0.04] text-white/50 hover:bg-white/[0.06]"
+                                      ? "bg-success/15 text-emerald-200 shadow-sm shadow-emerald-500/10"
+                                      : "bg-background/[0.04] text-foreground/50 hover:bg-background/[0.06]"
                                   }`}
                                 >
                                   {repo}
                                   {hasContributions && (
-                                    <span className="inline-flex h-5 min-w-[20px] items-center justify-center rounded-md bg-emerald-500/25 px-1.5 text-[11px] font-semibold tabular-nums text-emerald-100">
+                                    <span className="inline-flex h-5 min-w-[20px] items-center justify-center rounded-md bg-success/25 px-1.5 text-[11px] font-semibold tabular-nums text-emerald-100">
                                       {contributionCount}
                                     </span>
                                   )}
@@ -315,11 +315,11 @@ export function MaintainerProgress() {
           </div>
         </div>
 
-        <aside className="space-y-4 rounded-2xl border border-white/10 bg-white/[0.03] p-5 text-sm text-white/70">
-          <p className="text-xs uppercase tracking-[0.3em] text-white/50">Product Unlock Timeline</p>
+        <aside className="space-y-4 rounded-2xl border border-border/10 bg-background/[0.03] p-5 text-sm text-foreground/70">
+          <p className="text-xs uppercase tracking-[0.3em] text-foreground/50">Product Unlock Timeline</p>
 
           {status === "unauthenticated" ? (
-            <p className="text-sm text-white/60">
+            <p className="text-sm text-foreground/60">
               Link your GitHub account to start unlocking the Core Maintainer Essentials collection.
             </p>
           ) : (
@@ -335,23 +335,23 @@ export function MaintainerProgress() {
                     <div className="mb-3 flex items-center gap-2">
                       <div className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold ${
                         isUnlocked
-                          ? 'bg-emerald-500/20 text-emerald-300'
-                          : 'bg-white/10 text-white/40'
+                          ? 'bg-success/20 text-emerald-300'
+                          : 'bg-background/10 text-foreground/40'
                       }`}>
                         {isUnlocked ? '✓' : '🔒'}
                       </div>
                       <div>
-                        <p className="text-xs font-semibold text-white/90">{tier.label}</p>
-                        <p className="text-[10px] text-white/50">{tier.minScore}+ points</p>
+                        <p className="text-xs font-semibold text-foreground/90">{tier.label}</p>
+                        <p className="text-[10px] text-foreground/50">{tier.minScore}+ points</p>
                       </div>
                     </div>
-                    <ul className="ml-8 space-y-2 border-l-2 border-white/10 pl-4">
+                    <ul className="ml-8 space-y-2 border-l-2 border-border/10 pl-4">
                       {tierProducts.map((product) => (
                         <li key={product.slug} className={isUnlocked ? 'opacity-100' : 'opacity-50'}>
-                          <span className={`text-sm font-medium ${isUnlocked ? 'text-emerald-200' : 'text-white/60'}`}>
+                          <span className={`text-sm font-medium ${isUnlocked ? 'text-emerald-200' : 'text-foreground/60'}`}>
                             {product.name}
                           </span>
-                          <span className="block text-xs text-white/40">{product.tagline}</span>
+                          <span className="block text-xs text-foreground/40">{product.tagline}</span>
                         </li>
                       ))}
                     </ul>
@@ -368,9 +368,9 @@ export function MaintainerProgress() {
 
 function StatCard({ label, value }: { label: string; value: number }) {
   return (
-    <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4 text-center">
-      <p className="text-xs uppercase tracking-[0.3em] text-white/50">{label}</p>
-      <p className="mt-2 text-xl font-semibold text-white">{formatter.format(value)}</p>
+    <div className="rounded-xl border border-border/10 bg-background/[0.03] p-4 text-center">
+      <p className="text-xs uppercase tracking-[0.3em] text-foreground/50">{label}</p>
+      <p className="mt-2 text-xl font-semibold text-foreground">{formatter.format(value)}</p>
     </div>
   );
 }

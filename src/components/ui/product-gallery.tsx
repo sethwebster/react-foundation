@@ -120,7 +120,7 @@ export function ProductGallery({ images, className }: ProductGalleryProps) {
     >
       <div
         ref={frameRef}
-        className="group relative aspect-square overflow-hidden rounded-2xl border border-white/10 bg-slate-900"
+        className="group relative aspect-square overflow-hidden rounded-2xl border border-border/10 bg-muted"
         onPointerMove={handlePointerMove}
         onPointerLeave={handlePointerLeave}
       >
@@ -147,7 +147,7 @@ export function ProductGallery({ images, className }: ProductGalleryProps) {
                 key={image.id}
                 type="button"
                 onClick={() => setActiveIndex(index)}
-                className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl border border-white/15 transition data-[active=true]:border-white/50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-300"
+                className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl border border-border/15 transition data-[active=true]:border-border/50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-300"
                 data-active={isActive}
               >
                 <Image

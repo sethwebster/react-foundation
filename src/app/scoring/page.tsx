@@ -17,16 +17,16 @@ export default function ScoringPage() {
       <div className="space-y-8">
         {/* Hero */}
         <div className="text-center">
-          <h1 className="text-4xl font-bold text-white sm:text-5xl">
+          <h1 className="text-4xl font-bold text-foreground sm:text-5xl">
             How Library Scoring Works
           </h1>
-          <p className="mt-4 text-xl text-white/70">
+          <p className="mt-4 text-xl text-foreground/70">
             A simple explanation of how we measure impact and share funding fairly
           </p>
         </div>
 
         {/* Main Content */}
-        <div className="space-y-12 rounded-3xl border border-white/10 bg-slate-900/60 p-8 sm:p-12">
+        <div className="space-y-12 rounded-3xl border border-border/10 bg-muted/60 p-8 sm:p-12">
 
           {/* The Big Idea */}
           <Section
@@ -70,7 +70,7 @@ export default function ScoringPage() {
                   <li>How many other projects depend on it</li>
                   <li>How often it appears in big, important projects</li>
                 </ul>
-                <p className="mt-3 text-sm italic text-white/60">
+                <p className="mt-3 text-sm italic text-foreground/60">
                   Why it matters: If lots of people rely on something, it's super important to keep it working!
                 </p>
               </ScoreComponent>
@@ -88,7 +88,7 @@ export default function ScoringPage() {
                   <li>How quickly do maintainers help people who need support?</li>
                   <li>How many different people contribute ideas?</li>
                 </ul>
-                <p className="mt-3 text-sm italic text-white/60">
+                <p className="mt-3 text-sm italic text-foreground/60">
                   Why it matters: Quality beats quantity! One awesome fix is better than 100 tiny, unhelpful changes.
                 </p>
               </ScoreComponent>
@@ -106,7 +106,7 @@ export default function ScoringPage() {
                   <li>Releases updates regularly (like watering plants on schedule)</li>
                   <li>Responds to problems quickly</li>
                 </ul>
-                <p className="mt-3 text-sm italic text-white/60">
+                <p className="mt-3 text-sm italic text-foreground/60">
                   Why it matters: We want libraries to last for years, not crash and burn because one person gets tired.
                 </p>
               </ScoreComponent>
@@ -124,7 +124,7 @@ export default function ScoringPage() {
                   <li>Tutorials that help beginners get started</li>
                   <li>Helpful answers to people's questions</li>
                 </ul>
-                <p className="mt-3 text-sm italic text-white/60">
+                <p className="mt-3 text-sm italic text-foreground/60">
                   Why it matters: When people help others learn, everyone in the community gets smarter!
                 </p>
               </ScoreComponent>
@@ -143,7 +143,7 @@ export default function ScoringPage() {
                   <li>Use modern best practices (like TypeScript)</li>
                   <li>Work with new React features</li>
                 </ul>
-                <p className="mt-3 text-sm italic text-white/60">
+                <p className="mt-3 text-sm italic text-foreground/60">
                   Why it matters: We want to support libraries that help React's vision for the future!
                 </p>
               </ScoreComponent>
@@ -155,7 +155,7 @@ export default function ScoringPage() {
             title="How We Calculate the Score 🧮"
             icon="📐"
           >
-            <div className="rounded-xl border border-white/10 bg-white/[0.03] p-6">
+            <div className="rounded-xl border border-border/10 bg-background/[0.03] p-6">
               <p className="mb-4">Here's the math, but explained simply:</p>
               <div className="space-y-3 text-sm">
                 <FormulaStep weight={30} label="Ecosystem Footprint" />
@@ -163,8 +163,8 @@ export default function ScoringPage() {
                 <FormulaStep weight={20} label="Maintainer Health" />
                 <FormulaStep weight={15} label="Community Benefit" />
                 <FormulaStep weight={10} label="Mission Alignment" />
-                <div className="border-t border-white/10 pt-3">
-                  <p className="font-semibold text-white">
+                <div className="border-t border-border/10 pt-3">
+                  <p className="font-semibold text-foreground">
                     = <span className="text-cyan-400">Your Library's Impact Score</span> (0-100%)
                   </p>
                 </div>
@@ -181,7 +181,7 @@ export default function ScoringPage() {
             icon="🤝"
           >
             <p className="mb-4">Once we know everyone's scores, sharing money is like sharing pizza:</p>
-            <div className="space-y-4 rounded-xl border border-white/10 bg-white/[0.03] p-6">
+            <div className="space-y-4 rounded-xl border border-border/10 bg-background/[0.03] p-6">
               <Step number={1}>
                 <strong>Add up all the scores</strong> from every library
               </Step>
@@ -193,9 +193,9 @@ export default function ScoringPage() {
               </Step>
             </div>
 
-            <div className="mt-6 rounded-xl border border-yellow-500/30 bg-yellow-500/10 p-6">
+            <div className="mt-6 rounded-xl border border-warning/30 bg-warning/10 p-6">
               <p className="font-semibold text-yellow-300">⚠️ Fair Play Rules:</p>
-              <ul className="mt-3 list-disc space-y-2 pl-6 text-sm text-white/80">
+              <ul className="mt-3 list-disc space-y-2 pl-6 text-sm text-foreground/80">
                 <li><strong>Minimum guarantee:</strong> Every library gets at least $5,000—even small helpers matter!</li>
                 <li><strong>Maximum cap:</strong> No library can take more than 12% of the total pool—we share fairly!</li>
                 <li><strong>Emergency fund:</strong> We save 10% for urgent fixes and special situations</li>
@@ -237,11 +237,11 @@ export default function ScoringPage() {
           </Section>
 
           {/* Final Thought */}
-          <div className="rounded-2xl border border-cyan-500/30 bg-cyan-500/10 p-8 text-center">
-            <p className="text-lg font-medium text-white">
+          <div className="rounded-2xl border border-primary/30 bg-primary/10 p-8 text-center">
+            <p className="text-lg font-medium text-foreground">
               🎯 Our goal is simple: <strong>Reward the libraries that make the biggest positive impact</strong> on the React community.
             </p>
-            <p className="mt-4 text-white/70">
+            <p className="mt-4 text-foreground/70">
               By measuring impact fairly and sharing funding transparently, we help amazing open source projects thrive!
             </p>
           </div>
@@ -264,11 +264,11 @@ function Section({
 }) {
   return (
     <section>
-      <h2 className="mb-6 flex items-center gap-3 text-2xl font-bold text-white sm:text-3xl">
+      <h2 className="mb-6 flex items-center gap-3 text-2xl font-bold text-foreground sm:text-3xl">
         <span className="text-3xl">{icon}</span>
         {title}
       </h2>
-      <div className="space-y-4 text-white/80">{children}</div>
+      <div className="space-y-4 text-foreground/80">{children}</div>
     </section>
   );
 }
@@ -287,11 +287,11 @@ function ScoreComponent({
   children: React.ReactNode;
 }) {
   const colorClasses = {
-    blue: 'border-blue-500/30 bg-blue-500/10',
-    green: 'border-green-500/30 bg-green-500/10',
-    purple: 'border-purple-500/30 bg-purple-500/10',
-    yellow: 'border-yellow-500/30 bg-yellow-500/10',
-    pink: 'border-pink-500/30 bg-pink-500/10',
+    blue: 'border-primary/30 bg-primary/10',
+    green: 'border-success/30 bg-success/10',
+    purple: 'border-accent/30 bg-accent/10',
+    yellow: 'border-warning/30 bg-warning/10',
+    pink: 'border-pink-500/30 bg-accent/10',
   };
 
   return (
@@ -299,18 +299,18 @@ function ScoreComponent({
       <div className="mb-3 flex items-center gap-3">
         <span className="text-2xl">{emoji}</span>
         <div>
-          <span className="mr-2 text-sm font-semibold text-white/60">#{number}</span>
-          <span className="text-lg font-bold text-white">{title}</span>
+          <span className="mr-2 text-sm font-semibold text-foreground/60">#{number}</span>
+          <span className="text-lg font-bold text-foreground">{title}</span>
         </div>
       </div>
-      <div className="space-y-3 text-sm text-white/80">{children}</div>
+      <div className="space-y-3 text-sm text-foreground/80">{children}</div>
     </div>
   );
 }
 
 function FormulaStep({ weight, label }: { weight: number; label: string }) {
   return (
-    <div className="flex items-center gap-2 text-white/80">
+    <div className="flex items-center gap-2 text-foreground/80">
       <span className="font-mono font-semibold text-cyan-400">{weight}%</span>
       <span>×</span>
       <span>{label}</span>
@@ -321,10 +321,10 @@ function FormulaStep({ weight, label }: { weight: number; label: string }) {
 function Step({ number, children }: { number: number; children: React.ReactNode }) {
   return (
     <div className="flex gap-3">
-      <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-cyan-500/20 text-sm font-bold text-cyan-300">
+      <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary/20 text-sm font-bold text-cyan-300">
         {number}
       </div>
-      <p className="text-white/80">{children}</p>
+      <p className="text-foreground/80">{children}</p>
     </div>
   );
 }
@@ -339,12 +339,12 @@ function BenefitCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+    <div className="rounded-xl border border-border/10 bg-background/[0.03] p-4">
       <div className="mb-2 flex items-center gap-2">
         <span className="text-2xl">{emoji}</span>
-        <span className="font-semibold text-white">{title}</span>
+        <span className="font-semibold text-foreground">{title}</span>
       </div>
-      <p className="text-sm text-white/70">{children}</p>
+      <p className="text-sm text-foreground/70">{children}</p>
     </div>
   );
 }

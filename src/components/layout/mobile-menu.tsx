@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import type { Session } from "next-auth";
+import { ThemeToggleWrapper } from "@/components/ui/theme-toggle-wrapper";
 
 interface MobileMenuProps {
   session: Session | null;
@@ -13,12 +14,38 @@ interface MobileMenuProps {
 
 export function MobileMenu({ session }: MobileMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [adminChecked, setAdminChecked] = useState(false);
   const pathname = usePathname();
 
   const toggleMenu = () => setIsOpen(!isOpen);
   const closeMenu = () => setIsOpen(false);
 
   const isStorePage = pathname?.startsWith("/store");
+
+  // Check admin status only when menu is opened and hasn't been checked yet
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      if (!isOpen || adminChecked || !session?.user?.email) {
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/admin/check');
+        if (response.ok) {
+          const data = await response.json();
+          setIsAdmin(data.isAdmin);
+          setAdminChecked(true);
+        }
+      } catch (error) {
+        console.error('Failed to check admin status:', error);
+        setIsAdmin(false);
+        setAdminChecked(true);
+      }
+    };
+
+    checkAdminStatus();
+  }, [isOpen, adminChecked, session?.user?.email]);
 
   const navigationLinks = isStorePage
     ? [
@@ -38,13 +65,13 @@ export function MobileMenu({ session }: MobileMenuProps) {
       {/* Menu Button */}
       <button
         onClick={toggleMenu}
-        className="flex h-10 w-10 items-center justify-center rounded-full transition hover:bg-white/5"
+        className="flex h-10 w-10 items-center justify-center rounded-full transition hover:bg-muted"
         aria-label={isOpen ? "Close menu" : "Open menu"}
         aria-expanded={isOpen}
       >
         {session?.user ? (
           // Profile icon
-          <div className="relative h-8 w-8 overflow-hidden rounded-full border-2 border-white/20">
+          <div className="relative h-8 w-8 overflow-hidden rounded-full border-2 border-border">
             {session.user.image ? (
               <Image
                 src={session.user.image}
@@ -53,7 +80,7 @@ export function MobileMenu({ session }: MobileMenuProps) {
                 className="object-cover"
               />
             ) : (
-              <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-cyan-400 to-indigo-500 text-xs font-bold text-white">
+              <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary to-primary/80 text-xs font-bold text-primary-foreground">
                 {session.user.name?.charAt(0) || session.user.email?.charAt(0) || "U"}
               </div>
             )}
@@ -61,7 +88,7 @@ export function MobileMenu({ session }: MobileMenuProps) {
         ) : (
           // Hamburger icon
           <svg
-            className="h-6 w-6 text-white"
+            className="h-6 w-6 text-foreground"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -79,7 +106,7 @@ export function MobileMenu({ session }: MobileMenuProps) {
       {/* Overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
+          className="fixed inset-0 z-40 bg-background/50 backdrop-blur-sm"
           onClick={closeMenu}
         />
       )}
@@ -87,14 +114,13 @@ export function MobileMenu({ session }: MobileMenuProps) {
       {/* Menu Panel - Only render on mobile, slide from right */}
       {isOpen && (
         <div
-          className="fixed right-0 top-0 z-50 min-h-screen w-80 max-w-[90vw] animate-in slide-in-from-right border-l border-white/10 shadow-2xl md:hidden"
-          style={{ backgroundColor: '#0f172a' }}
+          className="fixed right-0 top-0 z-50 min-h-screen w-80 max-w-[90vw] animate-in slide-in-from-right border-l border-border bg-background shadow-2xl md:hidden"
         >
-        <div className="flex flex-col" style={{ backgroundColor: '#0f172a' }}>
+        <div className="flex flex-col bg-background">
           {/* Header */}
-          <div className="flex items-center justify-between border-b border-white/10 p-6" style={{ backgroundColor: '#0f172a' }}>
+          <div className="flex items-center justify-between border-b border-border p-6 bg-background">
             <div className="flex items-center gap-3">
-              <div className="relative h-8 w-8 overflow-hidden rounded-full bg-white/10 ring-1 ring-white/15">
+              <div className="relative h-8 w-8 overflow-hidden rounded-full bg-muted ring-1 ring-border">
                 <Image
                   src="/react-logo.svg"
                   alt="React Foundation"
@@ -102,15 +128,15 @@ export function MobileMenu({ session }: MobileMenuProps) {
                   className="object-contain p-1"
                 />
               </div>
-              <span className="text-sm font-semibold text-white">Menu</span>
+              <span className="text-sm font-semibold text-foreground">Menu</span>
             </div>
             <button
               onClick={closeMenu}
-              className="flex h-10 w-10 items-center justify-center rounded-full transition hover:bg-white/5"
+              className="flex h-10 w-10 items-center justify-center rounded-full transition hover:bg-muted"
               aria-label="Close menu"
             >
               <svg
-                className="h-6 w-6 text-white/70"
+                className="h-6 w-6 text-muted-foreground"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -130,10 +156,10 @@ export function MobileMenu({ session }: MobileMenuProps) {
             <Link
               href="/profile"
               onClick={closeMenu}
-              className="block border-b border-white/10 p-6 transition hover:bg-white/5"
+              className="block border-b border-border p-6 transition hover:bg-muted"
             >
               <div className="flex items-center gap-3">
-                <div className="relative h-12 w-12 overflow-hidden rounded-full border-2 border-white/20">
+                <div className="relative h-12 w-12 overflow-hidden rounded-full border-2 border-border">
                   {session.user.image ? (
                     <Image
                       src={session.user.image}
@@ -142,15 +168,15 @@ export function MobileMenu({ session }: MobileMenuProps) {
                       className="object-cover"
                     />
                   ) : (
-                    <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-cyan-400 to-indigo-500 text-lg font-bold text-white">
+                    <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary to-primary/80 text-lg font-bold text-primary-foreground">
                       {session.user.name?.charAt(0) || "U"}
                     </div>
                   )}
                 </div>
                 <div>
-                  <p className="font-semibold text-white">{session.user.name}</p>
-                  <p className="text-xs text-white/60">{session.user.email}</p>
-                  <p className="mt-1 text-xs text-cyan-400">View Profile →</p>
+                  <p className="font-semibold text-foreground">{session.user.name}</p>
+                  <p className="text-xs text-muted-foreground">{session.user.email}</p>
+                  <p className="mt-1 text-xs text-primary">View Profile →</p>
                 </div>
               </div>
             </Link>
@@ -164,7 +190,7 @@ export function MobileMenu({ session }: MobileMenuProps) {
                   key={link.href}
                   href={link.href}
                   onClick={closeMenu}
-                  className="block rounded-xl px-4 py-3 text-base font-medium text-white/80 transition hover:bg-white/5 hover:text-white"
+                  className="block rounded-xl px-4 py-3 text-base font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground"
                 >
                   {link.label}
                 </Link>
@@ -172,17 +198,31 @@ export function MobileMenu({ session }: MobileMenuProps) {
             </div>
 
             {/* Divider */}
-            <div className="my-6 border-t border-white/10" />
+            <div className="my-6 border-t border-border" />
+
+            {/* Theme Toggle */}
+            <div className="mb-4">
+              <ThemeToggleWrapper withLabel />
+            </div>
 
             {/* Additional Links */}
             <div className="space-y-2">
+              {isAdmin && session?.user && (
+                <Link
+                  href="/admin/users"
+                  onClick={closeMenu}
+                  className="block rounded-xl border-2 border-accent/30 bg-accent/10 px-4 py-3 text-base font-medium text-purple-300 transition hover:border-accent/50 hover:bg-accent/20"
+                >
+                  👑 Admin Panel
+                </Link>
+              )}
               {session?.user && (
                 <button
                   onClick={() => {
                     closeMenu();
                     signOut({ callbackUrl: "/" });
                   }}
-                  className="w-full rounded-xl px-4 py-3 text-left text-base font-medium text-white/60 transition hover:bg-white/5 hover:text-white"
+                  className="w-full rounded-xl px-4 py-3 text-left text-base font-medium text-muted-foreground transition hover:bg-muted hover:text-foreground"
                 >
                   Sign Out
                 </button>
@@ -191,7 +231,7 @@ export function MobileMenu({ session }: MobileMenuProps) {
                 <Link
                   href="/api/auth/signin"
                   onClick={closeMenu}
-                  className="block rounded-xl bg-sky-500/80 px-4 py-3 text-center text-base font-semibold text-white transition hover:bg-sky-400"
+                  className="block rounded-xl bg-primary px-4 py-3 text-center text-base font-semibold text-primary-foreground transition hover:bg-primary/90"
                 >
                   Sign in with GitHub
                 </Link>
@@ -200,8 +240,8 @@ export function MobileMenu({ session }: MobileMenuProps) {
           </nav>
 
           {/* Footer */}
-          <div className="border-t border-white/10 p-6">
-            <p className="text-xs text-white/50">
+          <div className="border-t border-border p-6">
+            <p className="text-xs text-muted-foreground">
               © {new Date().getFullYear()} React Foundation
             </p>
           </div>

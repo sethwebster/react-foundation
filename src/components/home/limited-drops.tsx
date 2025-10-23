@@ -20,14 +20,14 @@ export function LimitedDrops({ heroProduct, dropTiles }: LimitedDropsProps) {
   return (
     <section id="drops" style={{ scrollMarginTop: "160px" }} className="space-y-10">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <h2 className="text-3xl font-semibold text-white">Limited Drops</h2>
-        <p className="text-sm text-white/60">
+        <h2 className="text-3xl font-semibold text-foreground">Limited Drops</h2>
+        <p className="text-sm text-foreground/60">
           Micro-batches, numbered pieces, collabs with the React core team.
         </p>
       </div>
       <div className="grid gap-6 lg:grid-cols-[420px_minmax(0,1fr)]">
-        <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-indigo-600/50 via-purple-500/30 to-slate-900 p-8">
-          <div className="relative mb-6 h-48 overflow-hidden rounded-2xl border border-white/15">
+        <div className="rounded-3xl border border-border/10 bg-gradient-to-br from-cyan-600/50 via-yellow-400/30 to-slate-900 p-8">
+          <div className="relative mb-6 h-48 overflow-hidden rounded-2xl border border-border/15">
             {heroImage ? (
               <Image
                 src={heroImage.src}
@@ -53,22 +53,22 @@ export function LimitedDrops({ heroProduct, dropTiles }: LimitedDropsProps) {
           </div>
           <div className="space-y-1">
             {heroInventory ? (
-              <p className="text-[11px] uppercase tracking-[0.35em] text-white/70">
+              <p className="text-[11px] uppercase tracking-[0.35em] text-foreground/70">
                 {heroInventory.inventoryLabel} · {heroInventory.availabilityLabel}
               </p>
             ) : null}
-            <p className="text-xs uppercase tracking-[0.3em] text-white/70">
+            <p className="text-xs uppercase tracking-[0.3em] text-foreground/70">
               {heroProduct?.releaseWindow ?? "Next in queue"}
             </p>
           </div>
-          <h3 className="mt-4 text-2xl font-semibold text-white">
+          <h3 className="mt-4 text-2xl font-semibold text-foreground">
             {heroProduct?.name ?? "The Fiber Jacket"}
           </h3>
           <p className="mt-3 text-sm text-indigo-100/80">
             {heroProduct?.tagline ??
               "A technical shell engineered with seam-sealed pockets, hidden QR code storytelling, and NFC souvenir tag."}
           </p>
-          <div className="mt-6 space-y-2 text-xs text-white/70">
+          <div className="mt-6 space-y-2 text-xs text-foreground/70">
             <p>{heroProduct?.status ?? "Preorders open • Feb 18"}</p>
             <p>
               {heroProduct?.highlights[0] ??

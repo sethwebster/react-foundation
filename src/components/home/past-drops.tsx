@@ -16,8 +16,8 @@ export function PastDrops({ products }: PastDropsProps) {
   return (
     <section id="past-drops" style={{ scrollMarginTop: "160px" }} className="space-y-10">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <h2 className="text-3xl font-semibold text-white">Past Drops Archive</h2>
-        <p className="text-sm text-white/60">
+        <h2 className="text-3xl font-semibold text-foreground">Past Drops Archive</h2>
+        <p className="text-sm text-foreground/60">
           Explore the releases that funded previous React Foundation initiatives.
         </p>
       </div>

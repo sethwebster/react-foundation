@@ -3,10 +3,10 @@ import type { ReactNode } from "react";
 import { cn } from "@/lib/cn";
 
 const toneMap: Record<string, string> = {
-  emerald: "bg-emerald-400",
-  sky: "bg-sky-400",
-  rose: "bg-rose-400",
-  amber: "bg-amber-400",
+  emerald: "bg-success",
+  sky: "bg-primary",
+  rose: "bg-destructive",
+  amber: "bg-warning",
 };
 
 type PillProps = {
@@ -30,7 +30,7 @@ export function Pill({
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-2 text-xs uppercase tracking-[0.15em] text-white/70 backdrop-blur sm:gap-3 sm:px-4 sm:tracking-[0.3em]",
+        "inline-flex items-center gap-2 rounded-full border border-border bg-muted px-3 py-2 text-xs uppercase tracking-[0.15em] text-muted-foreground backdrop-blur sm:gap-3 sm:px-4 sm:tracking-[0.3em]",
         className,
       )}
     >
