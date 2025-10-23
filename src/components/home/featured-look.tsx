@@ -13,16 +13,16 @@ export function FeaturedLook({ products }: FeaturedLookProps) {
   const sideProducts = products.slice(1, 3);
 
   return (
-    <div className="relative h-[32rem] overflow-hidden rounded-3xl border border-white/10 bg-slate-900/60">
-      <div className="absolute inset-x-6 top-6 rounded-2xl border border-white/10 bg-slate-900/90 p-6 shadow-2xl shadow-indigo-500/20">
-        <div className="flex items-center justify-between text-xs text-white/60">
+    <div className="relative h-[32rem] overflow-hidden rounded-3xl border border-border/10 bg-muted/60">
+      <div className="absolute inset-x-6 top-6 rounded-2xl border border-border/10 bg-muted/90 p-6 shadow-2xl shadow-indigo-500/20">
+        <div className="flex items-center justify-between text-xs text-foreground/60">
           <p>Featured Look</p>
           <p>React Summit Capsule</p>
         </div>
         <div className="mt-6 grid gap-4">
           {/* Main featured product image */}
           {mainProduct?.primaryImage ? (
-            <div className="relative h-36 overflow-hidden rounded-2xl border border-white/10">
+            <div className="relative h-36 overflow-hidden rounded-2xl border border-border/10">
               <Image
                 src={mainProduct.primaryImage.src}
                 alt={mainProduct.primaryImage.alt}
@@ -36,7 +36,7 @@ export function FeaturedLook({ products }: FeaturedLookProps) {
               />
             </div>
           ) : (
-            <div className="relative h-36 overflow-hidden rounded-2xl border border-white/10">
+            <div className="relative h-36 overflow-hidden rounded-2xl border border-border/10">
               <Image
                 src="/placeholders/collection-core.png"
                 alt="React Summit capsule collection hero garment"
@@ -54,7 +54,7 @@ export function FeaturedLook({ products }: FeaturedLookProps) {
               product?.primaryImage ? (
                 <div
                   key={product.slug}
-                  className="relative h-24 overflow-hidden rounded-xl border border-white/10"
+                  className="relative h-24 overflow-hidden rounded-xl border border-border/10"
                 >
                   <Image
                     src={product.primaryImage.src}
@@ -70,7 +70,7 @@ export function FeaturedLook({ products }: FeaturedLookProps) {
               ) : (
                 <div
                   key={`placeholder-${index}`}
-                  className="relative h-24 overflow-hidden rounded-xl border border-white/10"
+                  className="relative h-24 overflow-hidden rounded-xl border border-border/10"
                 >
                   <Image
                     src={
@@ -92,7 +92,7 @@ export function FeaturedLook({ products }: FeaturedLookProps) {
             )}
           </div>
         </div>
-        <div className="mt-6 flex items-center justify-between text-sm text-white/70">
+        <div className="mt-6 flex items-center justify-between text-sm text-foreground/70">
           <p>Ships globally</p>
           <ButtonLink
             href={mainProduct ? `/store/products/${mainProduct.slug}` : "/store#drops"}
@@ -104,7 +104,7 @@ export function FeaturedLook({ products }: FeaturedLookProps) {
           </ButtonLink>
         </div>
       </div>
-      <div className="absolute -right-12 bottom-6 h-52 w-52 rounded-full bg-gradient-to-b from-indigo-500/40 to-blue-400/40 blur-3xl" />
+      <div className="absolute -right-12 bottom-6 h-52 w-52 rounded-full bg-gradient-to-b from-cyan-500/40 to-yellow-400/40 blur-3xl" />
       <div className="absolute -left-16 top-20 h-36 w-36 rounded-full bg-gradient-to-b from-rose-400/30 to-amber-400/30 blur-3xl" />
     </div>
   );

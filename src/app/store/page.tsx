@@ -54,9 +54,9 @@ export default async function Home() {
     .slice(0, 4);
 
   return (
-    <div className="min-h-screen bg-slate-950 pt-24 text-slate-100">
+    <div className="min-h-screen bg-background pt-24 text-muted-foreground">
       <div className="absolute inset-x-0 top-[-6rem] -z-10 flex justify-center blur-3xl">
-        <div className="h-[24rem] w-[60rem] bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-30" />
+        <div className="h-[24rem] w-[60rem] bg-gradient-to-r from-cyan-500 via-yellow-300 to-orange-500 opacity-30" />
       </div>
 
       <div className="mx-auto flex max-w-6xl flex-col px-6 pb-24 sm:px-8 lg:px-12">

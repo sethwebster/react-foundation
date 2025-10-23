@@ -47,13 +47,13 @@ export function RISLibraryRankings({
     <div className="space-y-4">
       {/* Sort Controls */}
       <div className="flex flex-wrap gap-2">
-        <span className="text-sm text-white/60">Sort by:</span>
+        <span className="text-sm text-foreground/60">Sort by:</span>
         <button
           onClick={() => setSortBy('ris')}
           className={`rounded px-2 py-1 text-xs font-medium transition ${
             sortBy === 'ris'
-              ? 'bg-cyan-500/20 text-cyan-300'
-              : 'text-white/60 hover:bg-white/5 hover:text-white'
+              ? 'bg-primary/20 text-cyan-300'
+              : 'text-foreground/60 hover:bg-background/5 hover:text-foreground'
           }`}
         >
           RIS Score
@@ -63,8 +63,8 @@ export function RISLibraryRankings({
             onClick={() => setSortBy('allocation')}
             className={`rounded px-2 py-1 text-xs font-medium transition ${
               sortBy === 'allocation'
-                ? 'bg-cyan-500/20 text-cyan-300'
-                : 'text-white/60 hover:bg-white/5 hover:text-white'
+                ? 'bg-primary/20 text-cyan-300'
+                : 'text-foreground/60 hover:bg-background/5 hover:text-foreground'
             }`}
           >
             Allocation
@@ -74,8 +74,8 @@ export function RISLibraryRankings({
           onClick={() => setSortBy('ef')}
           className={`rounded px-2 py-1 text-xs font-medium transition ${
             sortBy === 'ef'
-              ? 'bg-blue-500/20 text-blue-300'
-              : 'text-white/60 hover:bg-white/5 hover:text-white'
+              ? 'bg-primary/20 text-blue-300'
+              : 'text-foreground/60 hover:bg-background/5 hover:text-foreground'
           }`}
         >
           Ecosystem
@@ -84,8 +84,8 @@ export function RISLibraryRankings({
           onClick={() => setSortBy('cq')}
           className={`rounded px-2 py-1 text-xs font-medium transition ${
             sortBy === 'cq'
-              ? 'bg-green-500/20 text-green-300'
-              : 'text-white/60 hover:bg-white/5 hover:text-white'
+              ? 'bg-success/20 text-green-300'
+              : 'text-foreground/60 hover:bg-background/5 hover:text-foreground'
           }`}
         >
           Quality
@@ -94,8 +94,8 @@ export function RISLibraryRankings({
           onClick={() => setSortBy('mh')}
           className={`rounded px-2 py-1 text-xs font-medium transition ${
             sortBy === 'mh'
-              ? 'bg-purple-500/20 text-purple-300'
-              : 'text-white/60 hover:bg-white/5 hover:text-white'
+              ? 'bg-accent/20 text-purple-300'
+              : 'text-foreground/60 hover:bg-background/5 hover:text-foreground'
           }`}
         >
           Health
@@ -114,15 +114,15 @@ export function RISLibraryRankings({
               key={library.libraryName}
               className={`overflow-hidden rounded-xl border transition ${
                 isHighlighted
-                  ? 'border-cyan-500/30 bg-cyan-500/5'
-                  : 'border-white/10 bg-white/[0.03]'
+                  ? 'border-primary/30 bg-primary/5'
+                  : 'border-border/10 bg-background/[0.03]'
               }`}
             >
               <button
                 onClick={() =>
                   setExpandedLibrary(isExpanded ? null : library.libraryName)
                 }
-                className="w-full p-4 text-left transition hover:bg-white/[0.03]"
+                className="w-full p-4 text-left transition hover:bg-background/[0.03]"
               >
                 <div className="flex items-center justify-between gap-4">
                   {/* Rank and Library */}
@@ -130,24 +130,24 @@ export function RISLibraryRankings({
                     <div
                       className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-sm font-bold ${
                         isHighlighted
-                          ? 'bg-cyan-500/20 text-cyan-300'
-                          : 'bg-white/5 text-white/40'
+                          ? 'bg-primary/20 text-cyan-300'
+                          : 'bg-background/5 text-foreground/40'
                       }`}
                     >
                       {rank}
                     </div>
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white/5">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-background/5">
                       <LibraryIcon
                         libraryName={library.repo}
                         size={24}
-                        className="text-white/90"
+                        className="text-foreground/90"
                       />
                     </div>
                     <div>
-                      <div className="font-medium text-white">
+                      <div className="font-medium text-foreground">
                         {library.libraryName}
                       </div>
-                      <div className="text-xs text-white/50">
+                      <div className="text-xs text-foreground/50">
                         {library.owner}/{library.repo}
                       </div>
                     </div>
@@ -165,7 +165,7 @@ export function RISLibraryRankings({
                     {/* Allocation */}
                     {showAllocation && (
                       <div className="hidden text-right sm:block">
-                        <div className="text-xs text-white/50">Allocation</div>
+                        <div className="text-xs text-foreground/50">Allocation</div>
                         <div className="text-sm font-semibold text-cyan-400">
                           {formatAllocation(library.allocation_usd)}
                         </div>
@@ -174,7 +174,7 @@ export function RISLibraryRankings({
 
                     {/* RIS Score */}
                     <div className="text-right">
-                      <div className="text-xs text-white/50">RIS</div>
+                      <div className="text-xs text-foreground/50">RIS</div>
                       <div
                         className={`text-xl font-bold ${getRISColorClass(library.ris)}`}
                       >
@@ -183,7 +183,7 @@ export function RISLibraryRankings({
                     </div>
 
                     {/* Expand arrow */}
-                    <div className="text-white/40">
+                    <div className="text-foreground/40">
                       {isExpanded ? '▼' : '▶'}
                     </div>
                   </div>
@@ -192,7 +192,7 @@ export function RISLibraryRankings({
 
               {/* Expanded Details */}
               {isExpanded && (
-                <div className="border-t border-white/10 bg-white/[0.02] p-4">
+                <div className="border-t border-border/10 bg-background/[0.02] p-4">
                   <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
                     <ComponentDetail
                       label="Ecosystem Footprint"
@@ -263,12 +263,12 @@ function ComponentDetail({
         <span className={`rounded px-1.5 py-0.5 text-xs font-semibold ${getComponentColorClass(code)}`}>
           {code}
         </span>
-        <span className="text-xs text-white/70">{label}</span>
+        <span className="text-xs text-foreground/70">{label}</span>
       </div>
       <div className={`text-lg font-bold ${getRISColorClass(value)}`}>
         {formatRIS(value)}
       </div>
-      <div className="mt-1 text-xs text-white/50">{details}</div>
+      <div className="mt-1 text-xs text-foreground/50">{details}</div>
     </div>
   );
 }

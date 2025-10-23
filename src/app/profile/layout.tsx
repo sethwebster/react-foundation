@@ -24,7 +24,7 @@ export default async function ProfileLayout({
 
   return (
     <>
-      <div className="min-h-screen bg-slate-950 pt-24 text-slate-100">
+      <div className="min-h-screen bg-background pt-24 text-muted-foreground">
         <div className="absolute inset-x-0 top-[-6rem] -z-10 flex justify-center blur-3xl">
           <div className="h-[24rem] w-full max-w-[60rem] bg-gradient-to-r from-cyan-400 via-blue-500 to-amber-500 opacity-30" />
         </div>

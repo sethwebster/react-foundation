@@ -63,18 +63,18 @@ export function RISScoreBreakdown({
   return (
     <div className="space-y-6">
       {/* Overall RIS Score */}
-      <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
+      <div className="rounded-2xl border border-border/10 bg-background/[0.03] p-6">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-lg font-semibold text-white">
+            <h3 className="text-lg font-semibold text-foreground">
               {score.libraryName}
             </h3>
-            <p className="text-sm text-white/60">
+            <p className="text-sm text-foreground/60">
               {score.owner}/{score.repo}
             </p>
           </div>
           <div className="text-right">
-            <div className="text-sm text-white/60">React Impact Score</div>
+            <div className="text-sm text-foreground/60">React Impact Score</div>
             <div className={`text-3xl font-bold ${getRISColorClass(score.ris)}`}>
               {formatRIS(score.ris)}
             </div>
@@ -82,14 +82,14 @@ export function RISScoreBreakdown({
         </div>
 
         {showAllocation && (
-          <div className="mt-4 flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.03] p-4">
-            <span className="text-sm text-white/70">Quarterly Allocation</span>
+          <div className="mt-4 flex items-center justify-between rounded-xl border border-border/10 bg-background/[0.03] p-4">
+            <span className="text-sm text-foreground/70">Quarterly Allocation</span>
             <div className="text-right">
               <div className="text-xl font-semibold text-cyan-400">
                 {formatAllocation(score.allocation_usd)}
               </div>
               {(score.floor_applied || score.cap_applied) && (
-                <div className="mt-1 text-xs text-white/50">
+                <div className="mt-1 text-xs text-foreground/50">
                   {score.floor_applied && '(minimum floor applied)'}
                   {score.cap_applied && '(maximum cap applied)'}
                 </div>
@@ -100,8 +100,8 @@ export function RISScoreBreakdown({
       </div>
 
       {/* Component Scores */}
-      <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
-        <h4 className="mb-4 text-sm font-semibold uppercase tracking-wider text-white/70">
+      <div className="rounded-2xl border border-border/10 bg-background/[0.03] p-6">
+        <h4 className="mb-4 text-sm font-semibold uppercase tracking-wider text-foreground/70">
           Component Scores
         </h4>
         <div className="space-y-4">
@@ -118,10 +118,10 @@ export function RISScoreBreakdown({
                     >
                       {component.code}
                     </span>
-                    <span className="text-sm font-medium text-white">
+                    <span className="text-sm font-medium text-foreground">
                       {component.label}
                     </span>
-                    <span className="text-xs text-white/40">
+                    <span className="text-xs text-foreground/40">
                       ({component.weight}%)
                     </span>
                   </div>
@@ -129,13 +129,13 @@ export function RISScoreBreakdown({
                     {formatRIS(value)}
                   </span>
                 </div>
-                <div className="relative h-2 overflow-hidden rounded-full bg-white/5">
+                <div className="relative h-2 overflow-hidden rounded-full bg-background/5">
                   <div
                     className={`h-full rounded-full ${getComponentBarColor(component.code)}`}
                     style={{ width: `${percentage}%` }}
                   />
                 </div>
-                <p className="mt-1 text-xs text-white/50">
+                <p className="mt-1 text-xs text-foreground/50">
                   {component.description}
                 </p>
               </div>
@@ -146,8 +146,8 @@ export function RISScoreBreakdown({
 
       {/* Raw Metrics (Optional) */}
       {showRawMetrics && (
-        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-6">
-          <h4 className="mb-4 text-sm font-semibold uppercase tracking-wider text-white/70">
+        <div className="rounded-2xl border border-border/10 bg-background/[0.03] p-6">
+          <h4 className="mb-4 text-sm font-semibold uppercase tracking-wider text-foreground/70">
             Key Metrics
           </h4>
           <div className="grid gap-3 sm:grid-cols-2">
@@ -184,20 +184,20 @@ export function RISScoreBreakdown({
 
 function MetricCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-lg border border-white/10 bg-white/[0.02] p-3">
-      <div className="text-xs text-white/50">{label}</div>
-      <div className="mt-1 text-lg font-semibold text-white">{value}</div>
+    <div className="rounded-lg border border-border/10 bg-background/[0.02] p-3">
+      <div className="text-xs text-foreground/50">{label}</div>
+      <div className="mt-1 text-lg font-semibold text-foreground">{value}</div>
     </div>
   );
 }
 
 function getComponentBarColor(component: string): string {
   const colors: Record<string, string> = {
-    EF: 'bg-blue-500',
-    CQ: 'bg-green-500',
-    MH: 'bg-purple-500',
-    CB: 'bg-yellow-500',
-    MA: 'bg-pink-500',
+    EF: 'bg-primary',
+    CQ: 'bg-success',
+    MH: 'bg-accent',
+    CB: 'bg-warning',
+    MA: 'bg-accent',
   };
-  return colors[component] || 'bg-gray-500';
+  return colors[component] || 'bg-muted';
 }

@@ -22,7 +22,7 @@ export default async function AdminRequestsPage() {
   if (!isAdmin) {
     return (
       <div className="container mx-auto max-w-4xl px-4 py-12">
-        <div className="rounded-xl border border-red-500/50 bg-red-500/10 p-6 text-center">
+        <div className="rounded-xl border border-destructive/50 bg-destructive/10 p-6 text-center">
           <p className="text-red-400">Access Denied - Admin role required</p>
         </div>
       </div>
@@ -37,8 +37,8 @@ export default async function AdminRequestsPage() {
       <div className="space-y-8">
         {/* Header */}
         <div>
-          <h1 className="text-4xl font-bold text-white">Access Requests</h1>
-          <p className="mt-2 text-white/70">Review and manage early access requests</p>
+          <h1 className="text-4xl font-bold text-foreground">Access Requests</h1>
+          <p className="mt-2 text-foreground/70">Review and manage early access requests</p>
         </div>
 
         {/* Client component handles interactivity */}

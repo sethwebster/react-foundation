@@ -23,9 +23,9 @@ export function ProductCard({
   return (
     <Link
       href={href}
-      className="group flex flex-col gap-4 rounded-2xl border border-white/10 bg-slate-900/70 p-6 transition hover:border-white/25 hover:bg-slate-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-300"
+      className="group flex flex-col gap-4 rounded-2xl border border-border bg-card/70 p-6 transition hover:border-border/60 hover:bg-card focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
     >
-      <div className="relative h-32 overflow-hidden rounded-xl border border-white/10">
+      <div className="relative h-32 overflow-hidden rounded-xl border border-border">
         <Image
           src={previewImage.src}
           alt={previewImage.alt}
@@ -37,10 +37,10 @@ export function ProductCard({
       </div>
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-sm font-semibold text-white">{product.name}</p>
-          <p className="mt-1 text-sm text-white/60">{product.tagline}</p>
+          <p className="text-sm font-semibold text-card-foreground">{product.name}</p>
+          <p className="mt-1 text-sm text-muted-foreground">{product.tagline}</p>
         </div>
-        <span className="text-sm font-medium text-white/70">
+        <span className="text-sm font-medium text-muted-foreground">
           {product.price}
         </span>
       </div>
@@ -50,12 +50,12 @@ export function ProductCard({
         className="mt-1"
       />
       <div className="space-y-1">
-        <p className="text-[10px] uppercase tracking-[0.35em] text-white/60">
+        <p className="text-[10px] uppercase tracking-[0.35em] text-foreground/60">
           {inventoryLabel} · {availabilityLabel}
         </p>
-        <p className="text-xs text-white/40">{product.status}</p>
+        <p className="text-xs text-foreground/40">{product.status}</p>
       </div>
-      <span className="mt-auto inline-flex items-center gap-2 text-xs font-semibold text-indigo-100 transition group-hover:text-white">
+      <span className="mt-auto inline-flex items-center gap-2 text-xs font-semibold text-indigo-100 transition group-hover:text-foreground">
         {ctaLabel} <span aria-hidden>→</span>
       </span>
     </Link>

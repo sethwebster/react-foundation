@@ -195,10 +195,10 @@ export function LibraryIcon({
     const firstLetter = libraryName.charAt(0).toUpperCase();
     return (
       <div
-        className={`flex items-center justify-center rounded-md bg-white/10 ${className}`}
+        className={`flex items-center justify-center rounded-md bg-background/10 ${className}`}
         style={{ width: size, height: size, fontSize: size * 0.6 }}
       >
-        <span className="font-bold text-white/80">{firstLetter}</span>
+        <span className="font-bold text-foreground/80">{firstLetter}</span>
       </div>
     );
   }

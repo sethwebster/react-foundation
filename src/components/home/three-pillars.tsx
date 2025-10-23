@@ -6,22 +6,22 @@ export function ThreePillars() {
     <ScrollReveal animation="scale">
       <section
         id="pillars"
-        className="scroll-mt-32 space-y-12 rounded-3xl border border-white/10 bg-slate-900/60 p-12"
+        className="scroll-mt-32 space-y-12 rounded-3xl border border-border/10 bg-muted/60 p-12"
       >
         <div className="text-center">
-          <h2 className="text-3xl font-semibold text-white sm:text-4xl">
+          <h2 className="text-3xl font-semibold text-foreground sm:text-4xl">
             Three Pillars of Impact
           </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-base text-white/60">
+          <p className="mx-auto mt-4 max-w-2xl text-base text-foreground/60">
             Every contribution supports our three core initiatives
           </p>
         </div>
 
         <div className="grid gap-8 lg:grid-cols-3">
-          <div className="space-y-4 rounded-2xl border border-white/10 bg-white/[0.03] p-8">
+          <div className="space-y-4 rounded-2xl border border-border/10 bg-background/[0.03] p-8">
             <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-400 to-cyan-500">
               <svg
-                className="h-8 w-8 text-white"
+                className="h-8 w-8 text-foreground"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -34,10 +34,10 @@ export function ThreePillars() {
                 />
               </svg>
             </div>
-            <h3 className="text-xl font-semibold text-white">
+            <h3 className="text-xl font-semibold text-foreground">
               Fund Maintainers
             </h3>
-            <p className="text-sm leading-relaxed text-white/70">
+            <p className="text-sm leading-relaxed text-foreground/70">
               Direct financial support for the developers maintaining the libraries
               you depend on every day. Every purchase helps sustain open source.
             </p>
@@ -48,10 +48,10 @@ export function ThreePillars() {
             </div>
           </div>
 
-          <div className="space-y-4 rounded-2xl border border-white/10 bg-white/[0.03] p-8">
+          <div className="space-y-4 rounded-2xl border border-border/10 bg-background/[0.03] p-8">
             <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-400 to-indigo-500">
               <svg
-                className="h-8 w-8 text-white"
+                className="h-8 w-8 text-foreground"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -64,10 +64,10 @@ export function ThreePillars() {
                 />
               </svg>
             </div>
-            <h3 className="text-xl font-semibold text-white">
+            <h3 className="text-xl font-semibold text-foreground">
               Education & Resources
             </h3>
-            <p className="text-sm leading-relaxed text-white/70">
+            <p className="text-sm leading-relaxed text-foreground/70">
               Supporting tutorials, documentation, workshops, and learning materials
               that help developers master React and its ecosystem.
             </p>
@@ -78,10 +78,10 @@ export function ThreePillars() {
             </div>
           </div>
 
-          <div className="space-y-4 rounded-2xl border border-white/10 bg-white/[0.03] p-8">
-            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-purple-400 to-pink-500">
+          <div className="space-y-4 rounded-2xl border border-border/10 bg-background/[0.03] p-8">
+            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-yellow-300 to-orange-500">
               <svg
-                className="h-8 w-8 text-white"
+                className="h-8 w-8 text-foreground"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -94,10 +94,10 @@ export function ThreePillars() {
                 />
               </svg>
             </div>
-            <h3 className="text-xl font-semibold text-white">
+            <h3 className="text-xl font-semibold text-foreground">
               Global Accessibility
             </h3>
-            <p className="text-sm leading-relaxed text-white/70">
+            <p className="text-sm leading-relaxed text-foreground/70">
               Ensuring React remains accessible and inclusive for developers worldwide,
               regardless of location, background, or resources.
             </p>

@@ -17,10 +17,10 @@ export function AdminSidebar() {
   ];
 
   return (
-    <aside className="fixed left-0 top-20 bottom-0 w-64 border-r border-white/10 bg-slate-950/95 p-6">
+    <aside className="fixed left-0 top-20 bottom-0 w-64 border-r border-border/10 bg-background/95 p-6">
       <div className="space-y-6">
         <div>
-          <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-white/60">
+          <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-foreground/60">
             Admin Panel
           </h2>
           <nav className="space-y-2">
@@ -32,8 +32,8 @@ export function AdminSidebar() {
                   href={item.href}
                   className={`flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition ${
                     isActive
-                      ? 'bg-cyan-500/20 text-cyan-400'
-                      : 'text-white/70 hover:bg-white/5 hover:text-white'
+                      ? 'bg-primary/20 text-cyan-400'
+                      : 'text-foreground/70 hover:bg-background/5 hover:text-foreground'
                   }`}
                 >
                   <span className="text-lg">{item.icon}</span>
@@ -44,10 +44,10 @@ export function AdminSidebar() {
           </nav>
         </div>
 
-        <div className="border-t border-white/10 pt-6">
+        <div className="border-t border-border/10 pt-6">
           <Link
             href="/"
-            className="flex items-center gap-2 text-sm text-white/50 transition hover:text-white"
+            className="flex items-center gap-2 text-sm text-foreground/50 transition hover:text-foreground"
           >
             <span>←</span>
             <span>Back to Site</span>

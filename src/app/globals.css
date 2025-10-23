@@ -4,46 +4,190 @@
 html {
   scroll-behavior: smooth;
   overflow-x: hidden;
+  color-scheme: light dark;
 }
 
+/* Define CSS variables for theming */
 :root {
-  --background: #0f172a;
-  --foreground: #f1f5f9;
-  --color-ratings-gold: #f6c65b;
+  /* Light theme colors - adjusted for better contrast */
+  --background: 0 0% 100%;          /* #ffffff white */
+  --foreground: 222 47% 11%;        /* #0f172a slate-900 - dark text */
+  --card: 0 0% 100%;                /* #ffffff */
+  --card-foreground: 222 47% 11%;   /* #0f172a */
+  --popover: 0 0% 100%;             /* #ffffff */
+  --popover-foreground: 222 47% 11%;/* #0f172a */
+  --primary: 199 89% 48%;           /* #0ea5e9 sky-500 */
+  --primary-foreground: 0 0% 100%;  /* #ffffff */
+  --secondary: 214 32% 95%;         /* #f1f5f9 slate-100 */
+  --secondary-foreground: 222 47% 11%;
+  --muted: 214 32% 95%;             /* #f1f5f9 slate-100 */
+  --muted-foreground: 215 20% 35%;  /* Darker for readability - was 47% */
+  --accent: 214 32% 95%;            /* #f1f5f9 */
+  --accent-foreground: 222 47% 11%;
+  --destructive: 0 84% 60%;         /* #ef4444 red-500 */
+  --destructive-foreground: 0 0% 100%;
+  --border: 214 32% 91%;            /* #e2e8f0 slate-200 */
+  --input: 214 32% 91%;             /* #e2e8f0 */
+  --ring: 199 89% 48%;              /* #0ea5e9 */
+
+  /* Contributor icon gradients */
+  --gradient-icon-code: linear-gradient(135deg, #34d399 0%, #06b6d4 100%);
+  --gradient-icon-donate: linear-gradient(135deg, #38bdf8 0%, #6366f1 100%);
+  --gradient-icon-sponsor: linear-gradient(135deg, #fde047 0%, #f97316 100%);
+  --gradient-icon-member: linear-gradient(135deg, #fb923c 0%, #ef4444 100%);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+.dark {
+  /* Dark theme colors - slate-900 base */
+  --background: 222 47% 11%;        /* #0f172a slate-900 */
+  --foreground: 0 0% 100%;          /* #ffffff pure white - brighter */
+  --card: 217 33% 17%;              /* #1e293b slate-800 */
+  --card-foreground: 210 40% 98%;
+  --popover: 217 33% 17%;           /* #1e293b */
+  --popover-foreground: 210 40% 98%;
+  --primary: 199 89% 48%;           /* #0ea5e9 sky-500 */
+  --primary-foreground: 0 0% 100%;
+  --secondary: 215 25% 27%;         /* #334155 slate-700 */
+  --secondary-foreground: 210 40% 98%;
+  --muted: 217 33% 17%;             /* #1e293b slate-800 */
+  --muted-foreground: 215 20% 65%;  /* #94a3b8 slate-400 */
+  --accent: 215 25% 27%;            /* #334155 slate-700 */
+  --accent-foreground: 210 40% 98%;
+  --destructive: 0 84% 60%;         /* #ef4444 */
+  --destructive-foreground: 0 0% 100%;
+  --border: 215 25% 27%;            /* #334155 slate-700 - subtle border */
+  --input: 215 25% 27%;
+  --ring: 199 89% 48%;
+
+  /* Contributor icon gradients (brighter for dark mode) */
+  --gradient-icon-code: linear-gradient(135deg, #34d399 0%, #22d3ee 100%);
+  --gradient-icon-donate: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
+  --gradient-icon-sponsor: linear-gradient(135deg, #fde047 0%, #fb923c 100%);
+  --gradient-icon-member: linear-gradient(135deg, #fb923c 0%, #f87171 100%);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Tailwind theme configuration */
+@theme {
+  /* Semantic colors using HSL space for opacity support */
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
 }
 
 body {
   min-height: 100vh;
-  background-color: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI",
+  background:
+    linear-gradient(
+      135deg,
+      hsl(var(--background)) 0%,
+      hsl(var(--primary) / 0.03) 50%,
+      hsl(var(--background)) 100%
+    );
+  background-size: 200% 200%;
+  animation: subtleGradientShift 20s ease-in-out infinite;
+  color: hsl(var(--foreground));
+  font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   overflow-x: hidden;
+  transition: color 0.3s ease-in-out;
+}
+
+button {
+  cursor: pointer;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body {
+    animation: none;
+    background: hsl(var(--background));
+  }
 }
 
 *, *::before, *::after {
   box-sizing: border-box;
 }
 
+/* Apply transitions only to elements that need them, not globally */
+:where(button, a, input, select, textarea) {
+  transition: background-color 0.3s ease-in-out,
+              color 0.3s ease-in-out,
+              border-color 0.3s ease-in-out,
+              box-shadow 0.3s ease-in-out;
+}
+
+/* Prevent transitions on page load */
+.no-transition,
+.no-transition * {
+  transition: none !important;
+}
+
+/* Base link styles */
 a {
-  color: inherit;
   text-decoration: none;
+}
+
+/* Only inherit color for non-button links */
+a:not(.inline-flex) {
+  color: inherit;
+}
+
+/* Force button links to respect their own color classes */
+a.inline-flex {
+  color: currentColor;
+}
+
+/* Semantic Gradient Backgrounds */
+.bg-gradient-accent {
+  background: linear-gradient(135deg,
+    hsl(var(--primary) / 0.1) 0%,
+    hsl(var(--accent) / 0.15) 50%,
+    hsl(var(--secondary) / 0.1) 100%);
+}
+
+.bg-gradient-accent-secondary {
+  background: linear-gradient(135deg,
+    hsl(var(--primary) / 0.15) 0%,
+    hsl(var(--ring) / 0.2) 50%,
+    hsl(var(--accent) / 0.15) 100%);
+}
+
+.bg-gradient-accent-tertiary {
+  background: linear-gradient(135deg,
+    hsl(var(--secondary) / 0.1) 0%,
+    hsl(var(--muted) / 0.2) 50%,
+    hsl(var(--accent) / 0.1) 100%);
+}
+
+.bg-gradient-vibrant {
+  background: linear-gradient(135deg,
+    hsl(var(--primary) / 0.2) 0%,
+    hsl(var(--ring) / 0.25) 50%,
+    hsl(var(--accent) / 0.2) 100%);
+}
+
+.bg-gradient-subtle {
+  background: linear-gradient(135deg,
+    hsl(var(--muted) / 0.3) 0%,
+    hsl(var(--accent) / 0.4) 50%,
+    hsl(var(--secondary) / 0.3) 100%);
 }
 
 @keyframes mascot-spin {
@@ -75,5 +219,28 @@ a {
   50% {
     opacity: 0.85;
     transform: translate(-50%, -50%) scale(1.05);
+  }
+}
+
+@keyframes subtleGradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes slide-in-from-right-full {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
   }
 }
