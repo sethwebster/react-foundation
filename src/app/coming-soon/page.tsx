@@ -92,7 +92,7 @@ export default function ComingSoonPage() {
       <div className="relative z-10 flex min-h-screen flex-col items-center justify-center px-4 py-8">
         <div className="w-full max-w-2xl space-y-6 text-center">
           {/* Logo/Icon Area with 3D React Logo */}
-          <div className="relative mx-auto h-56 w-56">
+          <div className="pointer-events-none relative mx-auto h-56 w-56">
             <div className="absolute inset-0 animate-pulse rounded-full bg-primary/20 blur-3xl" />
             <div className="relative h-full w-full">
               <ReactLogo3D scale={0.5} />
@@ -140,11 +140,11 @@ export default function ComingSoonPage() {
                 {/* GitHub Sign In */}
                 <button
                   onClick={() => signIn('github', { callbackUrl: '/' })}
-                  className="group relative w-full cursor-pointer overflow-hidden rounded-lg border-2 border-cyan-400 bg-slate-900/80 px-8 py-4 font-bold uppercase tracking-wider text-cyan-400 shadow-[0_0_20px_rgba(0,255,255,0.3)] transition hover:bg-primary/50/10 hover:shadow-[0_0_30px_rgba(0,255,255,0.5)]"
+                  className="group relative w-full cursor-pointer overflow-hidden rounded-lg border-2 border-cyan-400 bg-slate-900/80 px-4 py-3 sm:px-8 sm:py-4 font-bold uppercase tracking-wider text-sm sm:text-base text-cyan-400 shadow-[0_0_20px_rgba(0,255,255,0.3)] transition hover:bg-primary/10 hover:shadow-[0_0_30px_rgba(0,255,255,0.5)]"
                 >
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-400/10 to-transparent opacity-0 transition group-hover:opacity-100" />
-                  <div className="relative flex items-center justify-center gap-3">
-                    <SiGithub size={24} />
+                  <div className="relative flex items-center justify-center gap-2 sm:gap-3">
+                    <SiGithub className="w-5 h-5 sm:w-6 sm:h-6" />
                     <span>Sign in with GitHub</span>
                   </div>
                 </button>
