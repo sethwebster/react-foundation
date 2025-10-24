@@ -23,6 +23,12 @@ export default function AdminHomePage() {
             description="View system stats and data sources"
           />
           <QuickAction
+            href="/admin/migrate-redis"
+            icon="🔄"
+            title="Migrate Redis"
+            description="Move data from old to new Redis"
+          />
+          <QuickAction
             href="/admin/reset"
             icon="⚠️"
             title="Reset Data"

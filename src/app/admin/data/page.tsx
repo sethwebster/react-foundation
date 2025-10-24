@@ -6,6 +6,39 @@
 export default function AdminDataPage() {
   return (
     <div className="space-y-6 p-6 md:p-8">
+      {/* Quick Actions */}
+      <div className="bg-primary/10 border border-primary/20 rounded-xl p-4 md:p-6">
+        <h2 className="text-xl md:text-2xl font-bold text-foreground mb-4">
+          Admin Actions
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <a
+            href="/admin/migrate-redis"
+            className="flex items-center gap-3 p-4 bg-card border border-border rounded-lg hover:bg-muted transition"
+          >
+            <span className="text-2xl">🔄</span>
+            <div>
+              <h3 className="font-semibold text-foreground">Migrate Redis</h3>
+              <p className="text-xs text-muted-foreground">
+                Move data from old to new Redis instance
+              </p>
+            </div>
+          </a>
+          <a
+            href="/admin/reset"
+            className="flex items-center gap-3 p-4 bg-card border border-destructive/30 rounded-lg hover:bg-destructive/5 transition"
+          >
+            <span className="text-2xl">⚠️</span>
+            <div>
+              <h3 className="font-semibold text-destructive">Reset Communities</h3>
+              <p className="text-xs text-muted-foreground">
+                Clear and re-seed Redis data
+              </p>
+            </div>
+          </a>
+        </div>
+      </div>
+
       {/* System Info */}
       <div className="bg-card border border-border rounded-xl p-4 md:p-6">
         <h2 className="text-xl md:text-2xl font-bold text-foreground mb-4">
@@ -95,6 +128,8 @@ export default function AdminDataPage() {
           <APIEndpoint method="GET" path="/api/communities" description="Fetch all communities (with filters)" />
           <APIEndpoint method="GET" path="/api/communities/stats" description="Get aggregate statistics" />
           <APIEndpoint method="GET" path="/api/communities/[slug]" description="Get single community" />
+          <APIEndpoint method="POST" path="/api/admin/migrate-redis" description="Migrate data from old Redis" />
+          <APIEndpoint method="GET" path="/api/admin/migrate-redis" description="Get migration progress" />
           <APIEndpoint method="POST" path="/api/admin/reset-communities" description="Clear and re-seed Redis" danger />
           <APIEndpoint method="POST" path="/api/admin/merge-communities" description="Merge all sources and seed" danger />
         </div>
