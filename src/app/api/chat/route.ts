@@ -762,7 +762,14 @@ function dedupeCitations(citations: RetrievalResult[]): ChatResponse['citations'
 }
 
 function isPublicSource(source: string): boolean {
-  // Only show citations for public site paths (content/, docs/, public pages)
+  // Show citations for:
+  // 1. Public site paths from ingestion (start with /)
+  // 2. Content/docs/README files
+  // 3. Exclude admin paths
+  if (source.startsWith('/')) {
+    return !source.startsWith('/admin') && !source.startsWith('/api');
+  }
+
   return (
     source.startsWith('content/') ||
     source.startsWith('docs/') ||

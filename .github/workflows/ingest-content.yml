@@ -1,0 +1,122 @@
+name: Ingest Content After Deploy
+
+on:
+  # Trigger after successful deployment to production
+  workflow_run:
+    workflows: ["Vercel Production Deployment"]
+    types:
+      - completed
+
+  # Allow manual trigger for testing
+  workflow_dispatch:
+    inputs:
+      max_pages:
+        description: 'Maximum pages to crawl (0 for unlimited)'
+        required: false
+        default: '0'
+      clear_existing:
+        description: 'Clear existing data before ingestion'
+        required: false
+        default: 'true'
+
+jobs:
+  ingest:
+    name: Ingest Site Content
+    runs-on: ubuntu-latest
+
+    # Only run on successful deployment
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+      - name: Wait for deployment to be ready
+        run: |
+          echo "Waiting 30 seconds for deployment to stabilize..."
+          sleep 30
+
+      - name: Start Content Ingestion
+        id: start_ingestion
+        run: |
+          RESPONSE=$(curl -X POST "${{ secrets.PRODUCTION_URL }}/api/admin/ingest" \
+            -H "Authorization: Bearer ${{ secrets.INGESTION_API_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "deleteOldIndex": true,
+              "maxPages": ${{ github.event.inputs.max_pages || 0 }},
+              "excludePaths": ["/api", "/admin", "/_next"]
+            }' \
+            -s -w "\n%{http_code}")
+
+          HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
+          BODY=$(echo "$RESPONSE" | head -n-1)
+
+          echo "HTTP Status: $HTTP_CODE"
+          echo "Response: $BODY"
+
+          if [ "$HTTP_CODE" -ne 200 ]; then
+            echo "❌ Failed to start ingestion"
+            echo "Response: $BODY"
+            exit 1
+          fi
+
+          INGESTION_ID=$(echo "$BODY" | jq -r '.ingestionId')
+          echo "ingestion_id=$INGESTION_ID" >> $GITHUB_OUTPUT
+          echo "✅ Started ingestion: $INGESTION_ID"
+
+      - name: Monitor Ingestion Progress
+        env:
+          INGESTION_ID: ${{ steps.start_ingestion.outputs.ingestion_id }}
+        run: |
+          echo "Monitoring ingestion progress..."
+
+          MAX_WAIT=600  # 10 minutes max
+          ELAPSED=0
+          INTERVAL=10
+
+          while [ $ELAPSED -lt $MAX_WAIT ]; do
+            RESPONSE=$(curl -s "${{ secrets.PRODUCTION_URL }}/api/admin/ingest?ingestionId=$INGESTION_ID" \
+              -H "Authorization: Bearer ${{ secrets.INGESTION_API_TOKEN }}")
+
+            STATUS=$(echo "$RESPONSE" | jq -r '.status')
+            PHASE=$(echo "$RESPONSE" | jq -r '.phase')
+            CRAWLED=$(echo "$RESPONSE" | jq -r '.crawledPages')
+            CHUNKS_CREATED=$(echo "$RESPONSE" | jq -r '.chunksCreated')
+            CHUNKS_STORED=$(echo "$RESPONSE" | jq -r '.chunksStored')
+
+            echo "[$ELAPSED s] Status: $STATUS | Phase: $PHASE | Pages: $CRAWLED | Chunks: $CHUNKS_STORED"
+
+            if [ "$STATUS" = "completed" ]; then
+              echo ""
+              echo "✅ Ingestion completed successfully!"
+              echo "   Pages crawled: $CRAWLED"
+              echo "   Chunks created: $CHUNKS_CREATED"
+              echo "   Chunks stored: $CHUNKS_STORED"
+              exit 0
+            fi
+
+            if [ "$STATUS" = "failed" ]; then
+              echo ""
+              echo "❌ Ingestion failed!"
+              echo "$RESPONSE" | jq -r '.errors[]' 2>/dev/null || echo "No error details available"
+              exit 1
+            fi
+
+            sleep $INTERVAL
+            ELAPSED=$((ELAPSED + INTERVAL))
+          done
+
+          echo ""
+          echo "⚠️ Ingestion timeout after $MAX_WAIT seconds"
+          echo "Check the admin panel for final status"
+          exit 1
+
+      - name: Summary
+        if: always()
+        run: |
+          if [ "${{ job.status }}" = "success" ]; then
+            echo "🎉 Content ingestion completed successfully!"
+            echo "The chatbot now has access to the latest site content."
+          else
+            echo "⚠️ Content ingestion encountered issues"
+            echo "Check the logs above for details"
+            echo "You can manually trigger ingestion from /admin/ingest"
+          fi
