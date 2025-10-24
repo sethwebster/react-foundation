@@ -91,7 +91,14 @@ export async function GET(request: Request) {
     // Apply upcoming events filter
     const upcoming = searchParams.get('upcoming');
     if (upcoming === 'true') {
-      communities = communities.filter((c) => c.last_event_date);
+      communities = communities.filter((c) => {
+        if (!c.last_event_date) return false;
+        // Consider "upcoming" as having event in last 6 months
+        const sixMonthsAgo = new Date();
+        sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+        const lastEvent = new Date(c.last_event_date);
+        return lastEvent >= sixMonthsAgo;
+      });
     }
 
     // Apply sorting

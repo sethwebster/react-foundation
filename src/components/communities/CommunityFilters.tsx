@@ -209,11 +209,14 @@ export function CommunityFilters() {
           <input
             type="checkbox"
             checked={filters.has_upcoming_events || false}
-            onChange={(e) => updateFilter('has_upcoming_events', e.target.checked)}
+            onChange={(e) => {
+              console.log('📅 Has upcoming events toggled:', e.target.checked);
+              updateFilter('has_upcoming_events', e.target.checked);
+            }}
             className="w-4 h-4 rounded border-border text-primary focus:ring-2 focus:ring-primary"
           />
           <span className="text-sm text-foreground group-hover:text-primary transition">
-            Has upcoming events
+            Recent activity (last 6 months)
           </span>
         </label>
       </div>
