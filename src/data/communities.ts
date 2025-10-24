@@ -1,8 +1,7 @@
 /**
  * React Communities - Single Source of Truth
  * 65 communities merged from all sources
- * Last updated: 2025-10-24T19:47:04.155Z
- * Unverified meetup URLs removed - will be added as verified
+ * Last updated: 2025-10-24T15:48:25.994Z
  */
 
 import type { Community } from '@/types/community';
@@ -42,6 +41,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "verified": true,
     "cois_tier": "platinum",
     "cois_score": 0.95,
+    "meetup_url": "https://www.meetup.com/react-bangalore/",
     "website": "https://reactnexus.com",
     "last_event_date": "2025-01-18",
     "created_at": "2025-10-24T14:57:54.936Z",
@@ -77,6 +77,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "verified": true,
     "cois_tier": "platinum",
     "cois_score": 0.91,
+    "meetup_url": "https://www.meetup.com/react-israel/",
     "website": "https://react-next.com",
     "last_event_date": "2025-01-16",
     "created_at": "2025-10-24T14:57:54.936Z",
@@ -118,6 +119,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "verified": true,
     "cois_tier": "platinum",
     "cois_score": 0.92,
+    "meetup_url": "https://www.meetup.com/react-ba/",
     "last_event_date": "2025-01-15",
     "created_at": "2025-10-24T14:57:54.936Z",
     "updated_at": "2025-10-24T14:57:54.936Z"
@@ -156,6 +158,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "verified": true,
     "cois_tier": "gold",
     "cois_score": 0.87,
+    "meetup_url": "https://www.meetup.com/reactjs-and-friends/",
     "last_event_date": "2024-12-20",
     "created_at": "2025-10-24T14:57:54.936Z",
     "updated_at": "2025-10-24T14:57:54.936Z"
@@ -193,6 +196,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "verified": true,
     "cois_tier": "gold",
     "cois_score": 0.85,
+    "meetup_url": "https://www.meetup.com/react-melbourne/",
     "last_event_date": "2024-12-10",
     "created_at": "2025-10-24T14:57:54.936Z",
     "updated_at": "2025-10-24T14:57:54.936Z"
@@ -230,6 +234,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "verified": true,
     "cois_tier": "gold",
     "cois_score": 0.87,
+    "meetup_url": "https://www.meetup.com/react-sydney/",
     "last_event_date": "2025-01-10",
     "created_at": "2025-10-24T14:57:54.936Z",
     "updated_at": "2025-10-24T14:57:54.936Z"
@@ -267,6 +272,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "verified": true,
     "cois_tier": "gold",
     "cois_score": 0.85,
+    "meetup_url": "https://www.meetup.com/react-india-delhi-ncr/",
     "last_event_date": "2025-01-14",
     "created_at": "2025-10-24T14:57:54.936Z",
     "updated_at": "2025-10-24T14:57:54.936Z"
@@ -308,6 +314,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "verified": true,
     "cois_tier": "gold",
     "cois_score": 0.8724275869600789,
+    "meetup_url": "https://www.meetup.com/react-chicago/",
     "created_at": "2025-10-24T15:05:17.672Z",
     "updated_at": "2025-10-24T15:05:17.672Z",
     "region": "Illinois"
@@ -346,6 +353,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "verified": true,
     "cois_tier": "gold",
     "cois_score": 0.86,
+    "meetup_url": "https://www.meetup.com/real-world-react-sf/",
     "last_event_date": "2025-01-08",
     "created_at": "2025-10-24T14:57:54.936Z",
     "updated_at": "2025-10-24T14:57:54.936Z"
@@ -377,6 +385,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "verified": true,
     "cois_tier": "platinum",
     "cois_score": 0.9,
+    "meetup_url": "https://www.meetup.com/react-amsterdam/",
     "website": "https://reactsummit.com",
     "last_event_date": "2024-11-28",
     "created_at": "2025-10-24T14:57:54.936Z",
@@ -420,6 +429,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "verified": true,
     "cois_tier": "gold",
     "cois_score": 0.8633468455579587,
+    "meetup_url": "https://www.meetup.com/react-atl/",
     "created_at": "2025-10-24T15:05:17.672Z",
     "updated_at": "2025-10-24T15:05:17.672Z"
   },
@@ -458,6 +468,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "verified": true,
     "cois_tier": "gold",
     "cois_score": 0.83,
+    "meetup_url": "https://www.meetup.com/react-vancouver/",
     "last_event_date": "2025-01-05",
     "created_at": "2025-10-24T14:57:54.936Z",
     "updated_at": "2025-10-24T14:57:54.936Z"
@@ -500,6 +511,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "verified": true,
     "cois_tier": "gold",
     "cois_score": 0.8623249290397901,
+    "meetup_url": "https://www.meetup.com/react-atx/",
     "created_at": "2025-10-24T15:05:17.672Z",
     "updated_at": "2025-10-24T15:05:17.672Z"
   },
@@ -541,6 +553,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "verified": true,
     "cois_tier": "silver",
     "cois_score": 0.8556302500767288,
+    "meetup_url": "https://www.meetup.com/seattle-react-js/",
     "created_at": "2025-10-24T15:05:17.672Z",
     "updated_at": "2025-10-24T15:05:17.672Z"
   },
@@ -578,6 +591,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "verified": true,
     "cois_tier": "gold",
     "cois_score": 0.84,
+    "meetup_url": "https://www.meetup.com/real-world-react/",
     "last_event_date": "2024-12-18",
     "created_at": "2025-10-24T14:57:54.936Z",
     "updated_at": "2025-10-24T14:57:54.936Z"
@@ -615,6 +629,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "verified": true,
     "cois_tier": "silver",
     "cois_score": 0.8544068044350276,
+    "meetup_url": "https://www.meetup.com/reactjs-boston/",
     "created_at": "2025-10-24T15:05:17.672Z",
     "updated_at": "2025-10-24T15:05:17.672Z"
   },
@@ -653,6 +668,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "verified": true,
     "cois_tier": "gold",
     "cois_score": 0.88,
+    "meetup_url": "https://www.meetup.com/react-vienna/",
     "last_event_date": "2025-01-15",
     "created_at": "2025-10-24T14:57:54.936Z",
     "updated_at": "2025-10-24T14:57:54.936Z"
@@ -690,6 +706,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "verified": true,
     "cois_tier": "silver",
     "cois_score": 0.74,
+    "meetup_url": "https://www.meetup.com/react-native-nyc/",
     "last_event_date": "2024-12-10",
     "created_at": "2025-10-24T14:57:54.936Z",
     "updated_at": "2025-10-24T14:57:54.936Z"
@@ -727,6 +744,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "verified": true,
     "cois_tier": "silver",
     "cois_score": 0.82,
+    "meetup_url": "https://www.meetup.com/react-cwb/",
     "last_event_date": "2025-01-12",
     "created_at": "2025-10-24T14:57:54.936Z",
     "updated_at": "2025-10-24T14:57:54.936Z"
@@ -768,6 +786,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "verified": true,
     "cois_tier": "silver",
     "cois_score": 0.8414973347970818,
+    "meetup_url": "https://www.meetup.com/react-js-colombia/",
     "created_at": "2025-10-24T15:05:17.672Z",
     "updated_at": "2025-10-24T15:05:17.672Z"
   },
@@ -804,6 +823,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "verified": true,
     "cois_tier": "silver",
     "cois_score": 0.78,
+    "meetup_url": "https://www.meetup.com/reactbris/",
     "last_event_date": "2024-11-20",
     "created_at": "2025-10-24T14:57:54.936Z",
     "updated_at": "2025-10-24T14:57:54.936Z"
@@ -844,6 +864,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "verified": true,
     "cois_tier": "silver",
     "cois_score": 0.77,
+    "meetup_url": "https://www.meetup.com/forwardjs-ottawa/",
     "last_event_date": "2025-01-10",
     "created_at": "2025-10-24T14:57:54.936Z",
     "updated_at": "2025-10-24T14:57:54.936Z"
@@ -875,6 +896,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "verified": true,
     "cois_tier": "silver",
     "cois_score": 0.79,
+    "meetup_url": "https://www.meetup.com/reactjs-girls-london/",
     "last_event_date": "2024-11-18",
     "created_at": "2025-10-24T14:57:54.936Z",
     "updated_at": "2025-10-24T14:57:54.936Z"
@@ -911,6 +933,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "verified": true,
     "cois_tier": "silver",
     "cois_score": 0.8322219294733919,
+    "meetup_url": "https://www.meetup.com/reactjs-oslo/",
     "created_at": "2025-10-24T15:05:17.672Z",
     "updated_at": "2025-10-24T15:05:17.672Z"
   },
@@ -951,6 +974,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "verified": true,
     "cois_tier": "silver",
     "cois_score": 0.8322219294733919,
+    "meetup_url": "https://www.meetup.com/react-dc/",
     "last_event_date": "2020-12-31",
     "created_at": "2025-10-24T15:05:17.673Z",
     "updated_at": "2025-10-24T15:05:17.673Z",
@@ -993,6 +1017,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "verified": true,
     "cois_tier": "silver",
     "cois_score": 0.8301029995663981,
+    "meetup_url": "https://www.meetup.com/react-wroclaw-meetup/",
     "created_at": "2025-10-24T15:05:17.672Z",
     "updated_at": "2025-10-24T15:05:17.672Z"
   },
@@ -1029,6 +1054,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "verified": true,
     "cois_tier": "bronze",
     "cois_score": 0.68,
+    "meetup_url": "https://www.meetup.com/react-floripa/",
     "last_event_date": "2024-11-25",
     "created_at": "2025-10-24T14:57:54.936Z",
     "updated_at": "2025-10-24T14:57:54.936Z"
@@ -1063,6 +1089,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "verified": true,
     "cois_tier": "silver",
     "cois_score": 0.72,
+    "meetup_url": "https://kommunity.com/react-devs-kenya",
     "last_event_date": "2024-12-18",
     "created_at": "2025-10-24T14:57:54.936Z",
     "updated_at": "2025-10-24T14:57:54.936Z"
@@ -1105,6 +1132,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "verified": true,
     "cois_tier": "silver",
     "cois_score": 0.8230448921378274,
+    "meetup_url": "https://www.meetup.com/reactjs-barcelona/",
     "created_at": "2025-10-24T15:05:17.672Z",
     "updated_at": "2025-10-24T15:05:17.672Z"
   },
@@ -1133,6 +1161,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "status": "inactive",
     "invite_only": false,
     "verified": true,
+    "meetup_url": "https://www.meetup.com/react-toronto/",
     "last_event_date": "2018-11-15",
     "created_at": "2025-10-24T14:57:54.936Z",
     "updated_at": "2025-10-24T14:57:54.936Z"
@@ -1175,6 +1204,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "verified": true,
     "cois_tier": "silver",
     "cois_score": 0.8204119982655925,
+    "meetup_url": "https://www.meetup.com/react-munich/",
     "created_at": "2025-10-24T15:05:17.672Z",
     "updated_at": "2025-10-24T15:05:17.672Z"
   },
@@ -1211,6 +1241,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "verified": true,
     "cois_tier": "bronze",
     "cois_score": 0.67,
+    "meetup_url": "https://www.meetup.com/react-jax/",
     "last_event_date": "2024-12-12",
     "created_at": "2025-10-24T14:57:54.936Z",
     "updated_at": "2025-10-24T14:57:54.936Z"
@@ -1248,6 +1279,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "verified": true,
     "cois_tier": "silver",
     "cois_score": 0.8176091259055681,
+    "meetup_url": "https://www.meetup.com/reactjs-philippines/",
     "created_at": "2025-10-24T15:05:17.672Z",
     "updated_at": "2025-10-24T15:05:17.672Z"
   },
@@ -1288,6 +1320,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "verified": true,
     "cois_tier": "silver",
     "cois_score": 0.8176091259055681,
+    "meetup_url": "https://www.meetup.com/react-native-los-angeles/",
     "last_event_date": "2019-12-31",
     "created_at": "2025-10-24T15:05:17.673Z",
     "updated_at": "2025-10-24T15:05:17.673Z",
@@ -1324,6 +1357,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "status": "inactive",
     "invite_only": false,
     "verified": true,
+    "meetup_url": "https://www.meetup.com/reactbh/",
     "last_event_date": "2019-12-15",
     "created_at": "2025-10-24T14:57:54.936Z",
     "updated_at": "2025-10-24T14:57:54.936Z"
@@ -1365,6 +1399,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "verified": true,
     "cois_tier": "bronze",
     "cois_score": 0.8146128035678238,
+    "meetup_url": "https://www.meetup.com/z-rich-reactjs-meetup/",
     "created_at": "2025-10-24T15:05:17.672Z",
     "updated_at": "2025-10-24T15:05:17.672Z"
   },
@@ -1410,6 +1445,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "verified": true,
     "cois_tier": "bronze",
     "cois_score": 0.8146128035678238,
+    "meetup_url": "https://www.meetup.com/react-helsinki/",
     "created_at": "2025-10-24T15:05:17.672Z",
     "updated_at": "2025-10-24T15:05:17.672Z"
   },
@@ -1450,6 +1486,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "verified": true,
     "cois_tier": "bronze",
     "cois_score": 0.8113943352306837,
+    "meetup_url": "https://www.meetup.com/kansas-city-react-meetup/",
     "created_at": "2025-10-24T15:05:17.673Z",
     "updated_at": "2025-10-24T15:05:17.673Z",
     "region": "Missouri"
@@ -1485,6 +1522,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "status": "paused",
     "invite_only": false,
     "verified": true,
+    "meetup_url": "https://www.meetup.com/react-new-york/",
     "last_event_date": "2018-06-15",
     "created_at": "2025-10-24T14:57:54.936Z",
     "updated_at": "2025-10-24T14:57:54.936Z"
@@ -1567,6 +1605,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "verified": true,
     "cois_tier": "bronze",
     "cois_score": 0.8079181246047624,
+    "meetup_url": "https://www.meetup.com/boston-react-native/",
     "created_at": "2025-10-24T15:05:17.672Z",
     "updated_at": "2025-10-24T15:05:17.672Z"
   },
@@ -1608,6 +1647,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "verified": true,
     "cois_tier": "silver",
     "cois_score": 0.76,
+    "meetup_url": "https://www.meetup.com/reactjs-belgium/",
     "last_event_date": "2024-12-05",
     "created_at": "2025-10-24T14:57:54.936Z",
     "updated_at": "2025-10-24T14:57:54.936Z"
@@ -1649,6 +1689,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "verified": true,
     "cois_tier": "bronze",
     "cois_score": 0.8,
+    "meetup_url": "https://www.meetup.com/react-cdmx/",
     "created_at": "2025-10-24T15:05:17.672Z",
     "updated_at": "2025-10-24T15:05:17.672Z"
   },
@@ -1689,6 +1730,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "verified": true,
     "cois_tier": "bronze",
     "cois_score": 0.8,
+    "meetup_url": "https://www.meetup.com/react-indy/",
     "created_at": "2025-10-24T15:05:17.673Z",
     "updated_at": "2025-10-24T15:05:17.673Z",
     "region": "Indiana"
@@ -1730,6 +1772,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "verified": true,
     "cois_tier": "bronze",
     "cois_score": 0.799519629159718,
+    "meetup_url": "https://www.meetup.com/react-warsaw/",
     "created_at": "2025-10-24T15:05:17.672Z",
     "updated_at": "2025-10-24T15:05:17.672Z"
   },
@@ -1760,6 +1803,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "verified": true,
     "cois_tier": "bronze",
     "cois_score": 0.62,
+    "meetup_url": "https://www.meetup.com/hfxjs/",
     "last_event_date": "2024-11-15",
     "created_at": "2025-10-24T14:57:54.936Z",
     "updated_at": "2025-10-24T14:57:54.936Z"
@@ -1851,6 +1895,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "verified": true,
     "cois_tier": "bronze",
     "cois_score": 0.58,
+    "meetup_url": "https://www.meetup.com/react-native-bay-area/",
     "last_event_date": "2024-10-22",
     "created_at": "2025-10-24T14:57:54.936Z",
     "updated_at": "2025-10-24T14:57:54.936Z"
@@ -1887,6 +1932,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "verified": true,
     "cois_tier": "bronze",
     "cois_score": 0.59,
+    "meetup_url": "https://www.meetup.com/kl-react/",
     "last_event_date": "2024-09-18",
     "created_at": "2025-10-24T14:57:54.936Z",
     "updated_at": "2025-10-24T14:57:54.936Z"
@@ -1923,6 +1969,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "verified": true,
     "cois_tier": "bronze",
     "cois_score": 0.7897627091290441,
+    "meetup_url": "https://www.meetup.com/react-dallas/",
     "website": "ReactDallas.org",
     "last_event_date": "2017-12-31",
     "created_at": "2025-10-24T15:05:17.673Z",
@@ -1962,6 +2009,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "verified": true,
     "cois_tier": "bronze",
     "cois_score": 0.61,
+    "meetup_url": "https://www.meetup.com/react-native-chicago/",
     "last_event_date": "2024-12-09",
     "created_at": "2025-10-24T14:57:54.936Z",
     "updated_at": "2025-10-24T14:57:54.936Z"
@@ -2003,6 +2051,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "verified": true,
     "cois_tier": "bronze",
     "cois_score": 0.7885361220031513,
+    "meetup_url": "https://www.meetup.com/reactvegas/",
     "last_event_date": "2019-12-31",
     "created_at": "2025-10-24T15:05:17.673Z",
     "updated_at": "2025-10-24T15:05:17.673Z",
@@ -2034,6 +2083,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "verified": true,
     "cois_tier": "bronze",
     "cois_score": 0.7842609239610562,
+    "meetup_url": "https://www.meetup.com/reactjs-oc/",
     "last_event_date": "2018-12-31",
     "created_at": "2025-10-24T15:05:17.673Z",
     "updated_at": "2025-10-24T15:05:17.673Z",
@@ -2076,6 +2126,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "verified": true,
     "cois_tier": "bronze",
     "cois_score": 0.7830588668685144,
+    "meetup_url": "https://www.meetup.com/react-paris-meetup/",
     "created_at": "2025-10-24T15:05:17.671Z",
     "updated_at": "2025-10-24T15:05:17.672Z"
   },
@@ -2116,6 +2167,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "verified": true,
     "cois_tier": "bronze",
     "cois_score": 0.7824125833916549,
+    "meetup_url": "https://www.meetup.com/manila-react-js-native-developers/",
     "created_at": "2025-10-24T15:05:17.672Z",
     "updated_at": "2025-10-24T15:05:17.672Z"
   },
@@ -2151,6 +2203,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "verified": true,
     "cois_tier": "bronze",
     "cois_score": 0.7760422483423212,
+    "meetup_url": "https://www.meetup.com/reactjs-charlotte/",
     "created_at": "2025-10-24T15:05:17.672Z",
     "updated_at": "2025-10-24T15:05:17.672Z",
     "region": "North Carolina"
@@ -2192,6 +2245,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "verified": true,
     "cois_tier": "bronze",
     "cois_score": 0.7753583058892907,
+    "meetup_url": "https://www.meetup.com/react-madrid-reactmad/",
     "last_event_date": "2015-12-31",
     "created_at": "2025-10-24T15:05:17.672Z",
     "updated_at": "2025-10-24T15:05:17.672Z"
@@ -2260,6 +2314,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "status": "inactive",
     "invite_only": false,
     "verified": true,
+    "meetup_url": "https://www.meetup.com/react-joburg/",
     "created_at": "2025-10-24T15:05:17.672Z",
     "updated_at": "2025-10-24T15:05:17.672Z"
   },
@@ -2290,6 +2345,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "status": "active",
     "invite_only": false,
     "verified": true,
+    "meetup_url": "https://www.meetup.com/react-thessaloniki/",
     "created_at": "2025-10-24T14:57:54.936Z",
     "updated_at": "2025-10-24T14:57:54.936Z"
   },
@@ -2323,6 +2379,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "status": "inactive",
     "invite_only": false,
     "verified": true,
+    "meetup_url": "https://www.meetup.com/reactjs-columbus/",
     "last_event_date": "2019-12-31",
     "created_at": "2025-10-24T15:05:17.673Z",
     "updated_at": "2025-10-24T15:05:17.673Z",
@@ -2361,6 +2418,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "status": "paused",
     "invite_only": false,
     "verified": true,
+    "meetup_url": "https://www.meetup.com/react-user-group-albania/",
     "created_at": "2025-10-24T14:57:54.935Z",
     "updated_at": "2025-10-24T14:57:54.936Z"
   },
@@ -2394,6 +2452,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "status": "active",
     "invite_only": false,
     "verified": true,
+    "meetup_url": "https://www.meetup.com/react-osaka/",
     "created_at": "2025-10-24T15:05:17.672Z",
     "updated_at": "2025-10-24T15:05:17.672Z"
   },
@@ -2427,6 +2486,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "status": "active",
     "invite_only": false,
     "verified": true,
+    "meetup_url": "https://www.meetup.com/react-native-helsinki/",
     "created_at": "2025-10-24T15:05:17.672Z",
     "updated_at": "2025-10-24T15:05:17.672Z"
   },
@@ -2466,6 +2526,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "status": "active",
     "invite_only": false,
     "verified": true,
+    "meetup_url": "https://www.meetup.com/react-denver/",
     "website": "reactdenver.com",
     "created_at": "2025-10-24T15:05:17.672Z",
     "updated_at": "2025-10-24T15:05:17.672Z"
