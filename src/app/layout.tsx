@@ -29,6 +29,7 @@ export const metadata: Metadata = {
     template: `%s · ${siteName}`,
   },
   description,
+  manifest: "/site.webmanifest",
   openGraph: {
     type: "website",
     locale: "en_US",
@@ -54,11 +55,14 @@ export const metadata: Metadata = {
     images: ["/opengraph-image"],
   },
   icons: [
-    { rel: "icon", url: "/favicon-32.png", sizes: "32x32" },
-    { rel: "icon", url: "/favicon-16.png", sizes: "16x16" },
-    { rel: "apple-touch-icon", url: "/favicon-192.png" },
-    { rel: "shortcut icon", url: "/favicon.ico" },
-    { rel: "icon", url: "/favicon.png" },
+    { rel: "icon", url: "/favicon.ico", sizes: "any" },
+    { rel: "icon", url: "/favicon.svg", type: "image/svg+xml" },
+    { rel: "icon", url: "/favicon-16.png", sizes: "16x16", type: "image/png" },
+    { rel: "icon", url: "/favicon-32.png", sizes: "32x32", type: "image/png" },
+    { rel: "icon", url: "/favicon-96x96.png", sizes: "96x96", type: "image/png" },
+    { rel: "icon", url: "/favicon-192.png", sizes: "192x192", type: "image/png" },
+    { rel: "icon", url: "/favicon-256.png", sizes: "256x256", type: "image/png" },
+    { rel: "apple-touch-icon", url: "/apple-touch-icon.png", sizes: "180x180" },
   ],
 };
 
