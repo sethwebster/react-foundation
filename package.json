@@ -23,7 +23,8 @@
     "drops:list": "node --env-file=.env scripts/shopify-list-drops.mjs",
     "drops:create": "node --env-file=.env scripts/shopify-create-drop.mjs",
     "collections:generate-images": "node --env-file=.env scripts/generate-collection-images.mjs",
-    "admin:bootstrap": "node --env-file=.env scripts/bootstrap-admin.mjs"
+    "admin:bootstrap": "node --env-file=.env scripts/bootstrap-admin.mjs",
+    "seed:communities": "npx tsx scripts/seed-communities.ts"
   },
   "dependencies": {
     "@icons-pack/react-simple-icons": "^13.8.0",
@@ -39,15 +40,18 @@
     "@tailwindcss/typography": "^0.5.19",
     "@types/ioredis": "^4.28.10",
     "@types/mdx": "^2.0.13",
+    "@types/react-leaflet": "^2.8.3",
     "babel-plugin-react-compiler": "^1.0.0",
     "gray-matter": "^4.0.3",
     "ioredis": "^5.8.2",
+    "leaflet": "^1.9.4",
     "next": "^16.0.0",
     "next-auth": "^4.24.11",
     "next-mdx-remote": "^5.0.0",
     "postprocessing": "^6.37.8",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-leaflet": "^5.0.0",
     "resend": "^6.2.1",
     "simple-icons": "^15.17.0",
     "swr": "^2.3.6",
@@ -56,6 +60,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
+    "@types/leaflet": "^1.9.21",
     "@types/node": "^20",
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",

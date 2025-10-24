@@ -244,3 +244,69 @@ a.inline-flex {
     opacity: 1;
   }
 }
+
+/* Leaflet Map Styles */
+.leaflet-popup-content-wrapper {
+  background-color: hsl(var(--card)) !important;
+  color: hsl(var(--card-foreground)) !important;
+  border: 2px solid hsl(var(--border)) !important;
+  border-radius: 0.75rem !important;
+  padding: 0 !important;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+}
+
+.leaflet-popup-tip {
+  background-color: hsl(var(--card)) !important;
+  border: 2px solid hsl(var(--border));
+}
+
+.leaflet-popup-content {
+  margin: 0 !important;
+  min-width: 320px !important;
+  max-width: 400px !important;
+  width: auto !important;
+  color: hsl(var(--card-foreground)) !important;
+  overflow: visible !important;
+}
+
+.leaflet-popup-content * {
+  color: inherit;
+}
+
+/* Ensure popups don't get too close to edges */
+.leaflet-popup {
+  margin-bottom: 20px !important;
+}
+
+.custom-marker {
+  background: transparent;
+  border: none;
+}
+
+.custom-marker-icon {
+  background: transparent !important;
+  border: none !important;
+}
+
+.custom-marker-icon svg {
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+  transition: transform 0.2s ease;
+}
+
+.custom-marker-icon:hover svg {
+  transform: scale(1.15);
+}
+
+/* Hide default Leaflet close button since we removed it */
+.leaflet-container a.leaflet-popup-close-button {
+  display: none !important;
+}
+
+/* Custom popup styling */
+.leaflet-popup {
+  margin-bottom: 20px !important;
+}
+
+.leaflet-popup-content-wrapper {
+  padding: 0 !important;
+}
