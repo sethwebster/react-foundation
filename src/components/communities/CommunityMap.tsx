@@ -298,23 +298,24 @@ export function CommunityMap() {
               }
               title={`${community.name} - ${community.cois_tier || community.status}`}
             >
-              <Popup className="custom-popup" minWidth={320} maxWidth={400}>
+              <Popup className="custom-popup" minWidth={320} maxWidth={400} closeButton={false}>
                 <div className="p-4" style={{ color: 'hsl(var(--card-foreground))' }}>
+                  {/* Header with tier badge */}
                   <div className="mb-3">
-                    <div className="flex items-start justify-between gap-2 mb-2">
-                      <h3 className="font-bold text-lg flex-1" style={{ color: 'hsl(var(--card-foreground))' }}>
-                        {community.name}
-                      </h3>
-                      {community.cois_tier && (
+                    {community.cois_tier && (
+                      <div className="flex justify-end mb-2">
                         <span
-                          className={`px-2 py-1 rounded text-xs font-medium text-white whitespace-nowrap ${getTierBadgeColor(
+                          className={`px-2.5 py-1 rounded-full text-xs font-medium text-white whitespace-nowrap ${getTierBadgeColor(
                             community.cois_tier
                           )}`}
                         >
                           {getTierIcon(community.cois_tier)} {community.cois_tier}
                         </span>
-                      )}
-                    </div>
+                      </div>
+                    )}
+                    <h3 className="font-bold text-lg mb-2" style={{ color: 'hsl(var(--card-foreground))' }}>
+                      {community.name}
+                    </h3>
                     <p className="text-sm" style={{ color: 'hsl(var(--muted-foreground))' }}>
                       {community.city}
                       {community.region && `, ${community.region}`}, {community.country}
@@ -355,21 +356,40 @@ export function CommunityMap() {
                     ))}
                   </div>
 
-                  <a
-                    href={`/communities/${community.slug}`}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      window.history.pushState({}, '', `/communities/${community.slug}`);
-                      window.dispatchEvent(new PopStateEvent('popstate'));
-                    }}
-                    className="block w-full text-center rounded-lg px-4 py-2.5 text-sm font-semibold transition hover:opacity-90 cursor-pointer"
-                    style={{
-                      backgroundColor: 'hsl(var(--primary))',
-                      color: 'hsl(var(--primary-foreground))'
-                    }}
-                  >
-                    View Details →
-                  </a>
+                  <div className="flex gap-2">
+                    <a
+                      href={`/communities/${community.slug}`}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        window.history.pushState({}, '', `/communities/${community.slug}`);
+                        window.dispatchEvent(new PopStateEvent('popstate'));
+                      }}
+                      className="flex-1 text-center rounded-lg px-4 py-2.5 text-sm font-semibold transition hover:opacity-90 cursor-pointer"
+                      style={{
+                        backgroundColor: 'hsl(var(--primary))',
+                        color: 'hsl(var(--primary-foreground))'
+                      }}
+                    >
+                      View Details
+                    </a>
+                    {community.meetup_url && (
+                      <a
+                        href={community.meetup_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex-shrink-0 rounded-lg px-3 py-2.5 text-sm font-semibold transition hover:opacity-90"
+                        style={{
+                          backgroundColor: '#ED1C40',
+                          color: '#ffffff'
+                        }}
+                        title="Join on Meetup.com"
+                      >
+                        <svg className="w-4 h-4" viewBox="0 0 512 512" fill="currentColor">
+                          <path d="M99 414.3c1.1 5.7-2.3 11.1-8 12.3-5.4 1.1-10.9-2.3-12-8-1.1-5.4 2.3-11 7.7-12 5.4-1.2 11.1 2.3 12.3 7.7z"/>
+                        </svg>
+                      </a>
+                    )}
+                  </div>
                 </div>
               </Popup>
             </Marker>

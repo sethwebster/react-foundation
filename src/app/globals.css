@@ -297,12 +297,16 @@ a.inline-flex {
   transform: scale(1.15);
 }
 
+/* Hide default Leaflet close button since we removed it */
 .leaflet-container a.leaflet-popup-close-button {
-  color: hsl(var(--muted-foreground)) !important;
-  font-size: 24px !important;
-  padding: 8px 8px 0 0 !important;
+  display: none !important;
 }
 
-.leaflet-container a.leaflet-popup-close-button:hover {
-  color: hsl(var(--foreground)) !important;
+/* Custom popup styling */
+.leaflet-popup {
+  margin-bottom: 20px !important;
+}
+
+.leaflet-popup-content-wrapper {
+  padding: 0 !important;
 }

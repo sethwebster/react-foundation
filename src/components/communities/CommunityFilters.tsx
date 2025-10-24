@@ -202,8 +202,7 @@ export function CommunityFilters() {
       </div>
 
       {/* Toggles */}
-      <div className="space-y-3 pt-2 border-t border-border">
-        {/* Removed "Verified only" - all communities are verified */}
+      {/* <div className="space-y-3 pt-2 border-t border-border">
 
         <label className="flex items-center gap-2 cursor-pointer group">
           <input
@@ -219,7 +218,7 @@ export function CommunityFilters() {
             Recent activity (last 6 months)
           </span>
         </label>
-      </div>
+      </div> */}
 
       {/* Apply button (for mobile) */}
       <button className="w-full lg:hidden bg-primary text-primary-foreground rounded-lg px-4 py-2 font-medium hover:bg-primary/90 transition">
