@@ -47,10 +47,19 @@ const PUBLIC_ROUTES = [
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  // Check for crawler bypass token (for internal content ingestion)
+  const crawlerBypassToken = request.headers.get('X-Crawler-Bypass');
+  if (crawlerBypassToken && process.env.CRAWLER_BYPASS_TOKEN) {
+    if (crawlerBypassToken === process.env.CRAWLER_BYPASS_TOKEN) {
+      logger.debug(`  Crawler bypass granted for ${pathname}`);
+      return NextResponse.next();
+    }
+  }
+
   // TEMPORARILY DISABLE PROXY FOR FAVICON TESTING
   // Allow all favicon and static asset requests first
-  if (pathname.includes('favicon') || 
-      pathname.includes('apple-touch-icon') || 
+  if (pathname.includes('favicon') ||
+      pathname.includes('apple-touch-icon') ||
       pathname.includes('site.webmanifest') ||
       pathname.includes('web-app-manifest') ||
       pathname.match(/\.(ico|png|jpg|jpeg|gif|webp|svg)$/)) {

@@ -24,3 +24,15 @@ export function getResponseModel(): string {
 export function getEmbeddingModel(): string {
   return getChatbotEnv().embeddingModel;
 }
+
+export async function createEmbedding(text: string): Promise<number[]> {
+  const client = getOpenAIClient();
+  const model = getEmbeddingModel();
+
+  const response = await client.embeddings.create({
+    model,
+    input: text,
+  });
+
+  return response.data[0].embedding;
+}
