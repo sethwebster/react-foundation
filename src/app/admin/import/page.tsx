@@ -45,19 +45,43 @@ export default function AdminImportPage() {
 
         <div className="bg-card border border-border rounded-xl p-8 space-y-6">
           <p className="text-foreground">
-            This will import all communities from{' '}
-            <code className="bg-muted px-2 py-1 rounded text-sm">
-              data/normalized-meetups-data.json
-            </code>{' '}
-            into Redis.
+            This will merge all community data sources and seed Redis with the complete list.
           </p>
 
+          <div className="bg-muted/30 border border-border rounded-lg p-4 text-sm text-foreground space-y-2">
+            <p><strong>Sources:</strong></p>
+            <ul className="list-disc list-inside space-y-1 text-muted-foreground">
+              <li>Manual data: ~33 communities (best structure)</li>
+              <li>JSON data: 43 communities from react.dev</li>
+              <li>Deduplicates and merges → ~65 total</li>
+            </ul>
+          </div>
+
           <button
-            onClick={handleImport}
+            onClick={async () => {
+              setLoading(true);
+              setError(null);
+              setResult(null);
+              try {
+                const response = await fetch('/api/admin/merge-communities', {
+                  method: 'POST',
+                });
+                const data = await response.json();
+                if (data.success) {
+                  setResult(data);
+                } else {
+                  setError(data.error || 'Merge failed');
+                }
+              } catch (err: any) {
+                setError(err.message);
+              } finally {
+                setLoading(false);
+              }
+            }}
             disabled={loading}
             className="w-full bg-primary text-primary-foreground px-6 py-4 rounded-lg font-semibold hover:bg-primary/90 transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? 'Importing...' : 'Import Communities from JSON'}
+            {loading ? 'Merging & Seeding...' : 'Merge All Data & Seed Redis'}
           </button>
 
           {result && (

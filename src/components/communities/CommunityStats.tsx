@@ -35,8 +35,12 @@ export function CommunityStats() {
 
   const { stats } = data;
 
+  // Only show "Active" stat if >= 75% are active
+  const activePercentage = stats.active_communities / stats.total_communities;
+  const showActiveStat = activePercentage >= 0.75;
+
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center max-w-5xl mx-auto">
+    <div className={`grid grid-cols-2 md:grid-cols-${showActiveStat ? '4' : '3'} gap-8 text-center max-w-5xl mx-auto`}>
       <StatCard
         number={stats.total_communities.toString()}
         label="Communities"
@@ -49,10 +53,12 @@ export function CommunityStats() {
         number={formatNumber(stats.total_members)}
         label="Total Members"
       />
-      <StatCard
-        number={stats.active_communities.toString()}
-        label="Active"
-      />
+      {showActiveStat && (
+        <StatCard
+          number={stats.active_communities.toString()}
+          label="Active"
+        />
+      )}
     </div>
   );
 }

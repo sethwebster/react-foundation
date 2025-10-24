@@ -7,7 +7,7 @@ import type { Community } from '@/types/community';
 
 const COMMUNITIES_KEY = 'communities:all';
 const SEEDED_FLAG_KEY = 'communities:seeded';
-const CACHE_TTL = 60 * 60 * 24; // 24 hours (longer since stored in Redis)
+// No TTL - communities persist permanently in Redis (not cache, it's the database!)
 
 /**
  * Get Redis client (lazy load to avoid import errors)
@@ -55,12 +55,10 @@ export async function seedCommunities(communities: Community[]): Promise<void> {
 
     console.log(`🌱 Seeding ${communities.length} communities into Redis...`);
 
-    // Store communities as JSON
+    // Store communities as JSON (no expiry - permanent)
     await redis.set(
       COMMUNITIES_KEY,
-      JSON.stringify(communities),
-      'EX',
-      CACHE_TTL
+      JSON.stringify(communities)
     );
 
     // Set seeded flag (no expiry - permanent)
@@ -127,12 +125,10 @@ export async function addCommunity(community: Community): Promise<void> {
     // Add new community
     communities.push(community);
 
-    // Save back to Redis
+    // Save back to Redis (permanent)
     await redis.set(
       COMMUNITIES_KEY,
-      JSON.stringify(communities),
-      'EX',
-      CACHE_TTL
+      JSON.stringify(communities)
     );
 
     console.log(`✅ Added community: ${community.name}`);
@@ -168,12 +164,10 @@ export async function updateCommunity(
       updated_at: new Date().toISOString(),
     };
 
-    // Save back to Redis
+    // Save back to Redis (permanent)
     await redis.set(
       COMMUNITIES_KEY,
-      JSON.stringify(communities),
-      'EX',
-      CACHE_TTL
+      JSON.stringify(communities)
     );
 
     console.log(`✅ Updated community: ${communities[index].name}`);
@@ -198,12 +192,10 @@ export async function deleteCommunity(communityId: string): Promise<void> {
       throw new Error(`Community ${communityId} not found`);
     }
 
-    // Save back to Redis
+    // Save back to Redis (permanent)
     await redis.set(
       COMMUNITIES_KEY,
-      JSON.stringify(filtered),
-      'EX',
-      CACHE_TTL
+      JSON.stringify(filtered)
     );
 
     console.log(`✅ Deleted community: ${communityId}`);

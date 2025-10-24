@@ -12,6 +12,9 @@ export function AdminSidebar() {
   const pathname = usePathname();
 
   const navItems = [
+    { href: '/admin', label: 'Home', icon: '🏠', exact: true },
+    { href: '/admin/data', label: 'Data', icon: '📊' },
+    { href: '/admin/reset', label: 'Reset', icon: '⚠️', dangerous: true },
     { href: '/admin/users', label: 'Users', icon: '👥' },
     { href: '/admin/requests', label: 'Access Requests', icon: '📧' },
   ];
@@ -25,14 +28,21 @@ export function AdminSidebar() {
           </h2>
           <nav className="space-y-2">
             {navItems.map((item) => {
-              const isActive = pathname === item.href;
+              const isActive = item.exact
+                ? pathname === item.href
+                : pathname === item.href || pathname?.startsWith(item.href + '/');
+
               return (
                 <Link
                   key={item.href}
                   href={item.href}
                   className={`flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition ${
                     isActive
-                      ? 'bg-primary/20 text-cyan-400'
+                      ? item.dangerous
+                        ? 'bg-destructive/10 text-destructive'
+                        : 'bg-primary/20 text-cyan-400'
+                      : item.dangerous
+                      ? 'text-destructive/60 hover:bg-destructive/5'
                       : 'text-foreground/70 hover:bg-background/5 hover:text-foreground'
                   }`}
                 >

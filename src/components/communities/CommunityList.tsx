@@ -7,6 +7,8 @@
 
 import { RFDS } from '@/components/rfds';
 import useSWR from 'swr';
+import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import type { Community } from '@/types/community';
 
 // Fetcher for SWR
@@ -112,9 +114,15 @@ const FALLBACK_COMMUNITIES: Community[] = [
 ];
 
 export function CommunityList() {
-  // Fetch communities from API
+  const searchParams = useSearchParams();
+
+  // Build query string from search params
+  const queryString = searchParams.toString();
+  const apiUrl = `/api/communities${queryString ? `?${queryString}` : ''}`;
+
+  // Fetch communities from API with filters
   const { data, error, isLoading } = useSWR(
-    '/api/communities',
+    apiUrl,
     fetcher,
     {
       revalidateOnFocus: false,
@@ -231,12 +239,12 @@ function CommunityCard({ community }: { community: Community }) {
 
         {/* Actions */}
         <div className="flex md:flex-col gap-2">
-          <a
+          <Link
             href={`/communities/${community.slug}`}
-            className="flex-1 md:flex-none text-center bg-primary text-primary-foreground rounded-lg px-4 py-2 font-medium hover:bg-primary/90 transition whitespace-nowrap"
+            className="flex-1 md:flex-none text-center bg-primary text-primary-foreground rounded-lg px-4 py-2 font-medium hover:bg-primary/90 transition whitespace-nowrap block"
           >
             View Details
-          </a>
+          </Link>
           {community.meetup_url && (
             <a
               href={community.meetup_url}

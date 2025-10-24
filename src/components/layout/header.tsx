@@ -79,6 +79,15 @@ export function Header() {
                 <Link className="transition hover:text-foreground" href="/store">
                   Store
                 </Link>
+                {session?.user && (
+                  <Link
+                    className="transition hover:text-foreground text-destructive font-medium"
+                    href="/admin"
+                    title="Admin Panel"
+                  >
+                    ⚙️
+                  </Link>
+                )}
               </>
             )}
           </nav>

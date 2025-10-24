@@ -8,6 +8,7 @@ import { CommunityMap } from '@/components/communities/CommunityMap';
 import { CommunityFilters } from '@/components/communities/CommunityFilters';
 import { CommunityList } from '@/components/communities/CommunityList';
 import { CommunityStats } from '@/components/communities/CommunityStats';
+import { CommunitySortDropdown } from '@/components/communities/CommunitySortDropdown';
 import './leaflet.css';
 
 export const metadata = {
@@ -92,16 +93,11 @@ export default function CommunitiesPage() {
 
             {/* Community List */}
             <main className="lg:col-span-3">
-              <div className="mb-6 flex items-center justify-between">
-                <h2 className="text-3xl font-bold text-foreground">
+              <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <h2 className="text-2xl md:text-3xl font-bold text-foreground">
                   All Communities
                 </h2>
-                <select className="px-4 py-2 bg-card border border-border rounded-lg text-foreground text-sm">
-                  <option value="distance">Nearest First</option>
-                  <option value="members">Most Members</option>
-                  <option value="activity">Most Active</option>
-                  <option value="cois">Highest CoIS</option>
-                </select>
+                <CommunitySortDropdown />
               </div>
 
               <Suspense fallback={<ListSkeleton />}>

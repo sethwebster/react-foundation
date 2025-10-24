@@ -357,13 +357,18 @@ export function CommunityMap() {
 
                   <a
                     href={`/communities/${community.slug}`}
-                    className="block w-full text-center rounded-lg px-4 py-2.5 text-sm font-semibold transition hover:opacity-90"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      window.history.pushState({}, '', `/communities/${community.slug}`);
+                      window.dispatchEvent(new PopStateEvent('popstate'));
+                    }}
+                    className="block w-full text-center rounded-lg px-4 py-2.5 text-sm font-semibold transition hover:opacity-90 cursor-pointer"
                     style={{
                       backgroundColor: 'hsl(var(--primary))',
                       color: 'hsl(var(--primary-foreground))'
                     }}
                   >
-                    View Community Details →
+                    View Details →
                   </a>
                 </div>
               </Popup>
