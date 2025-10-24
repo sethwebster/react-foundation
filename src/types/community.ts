@@ -44,6 +44,7 @@ export interface Community {
   status: CommunityStatus;
   invite_only: boolean; // For CoIS participation
   verified: boolean; // Verified by React Foundation
+  verification_status?: 'pending' | 'verified' | 'rejected'; // Admin review status (optional for legacy data)
 
   // CoIS Data
   cois_tier?: 'platinum' | 'gold' | 'silver' | 'bronze' | 'none';

@@ -9,6 +9,7 @@ import { RFDS } from '@/components/rfds';
 import useSWR from 'swr';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
+import { VerificationBadge } from './VerificationBadge';
 import type { Community } from '@/types/community';
 
 // Fetcher for SWR
@@ -180,15 +181,15 @@ function CommunityCard({ community }: { community: Community }) {
         <div className="flex-1">
           <div className="flex items-start gap-3 mb-2">
             <div className="flex-1">
-              <div className="flex items-center gap-2 mb-1">
+              <div className="flex items-center gap-2 mb-1 flex-wrap">
                 <h3 className="text-xl font-bold text-foreground">
                   {community.name}
                 </h3>
-                {community.verified && (
-                  <span className="text-primary" title="Verified">
-                    ✓
-                  </span>
-                )}
+                <VerificationBadge
+                  verified={community.verified}
+                  status={community.verification_status}
+                  size="sm"
+                />
               </div>
               <p className="text-sm text-muted-foreground">
                 {community.city}

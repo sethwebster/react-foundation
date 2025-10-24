@@ -263,7 +263,7 @@ export function CommunityMap() {
       </div> */}
 
       {/* Map Legend */}
-      <div className="absolute top-4 right-4 z-[1000] bg-card/95 backdrop-blur-sm border border-border rounded-lg px-4 py-3 shadow-lg space-y-2">
+      <div className="absolute top-4 right-4 z-10 bg-card/95 backdrop-blur-sm border border-border rounded-lg px-4 py-3 shadow-lg space-y-2">
         <p className="text-xs font-semibold text-foreground mb-2">CoIS Tier</p>
         <TierLegend tier="platinum" />
         <TierLegend tier="gold" />

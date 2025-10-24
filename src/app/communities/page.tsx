@@ -9,6 +9,7 @@ import { CommunityFilters } from '@/components/communities/CommunityFilters';
 import { CommunityList } from '@/components/communities/CommunityList';
 import { CommunityStats } from '@/components/communities/CommunityStats';
 import { CommunitySortDropdown } from '@/components/communities/CommunitySortDropdown';
+import { AddCommunityCTA } from '@/components/communities/AddCommunityCTA';
 import './leaflet.css';
 
 export const metadata = {
@@ -75,6 +76,9 @@ export default function CommunitiesPage() {
               <CommunityMap />
             </Suspense>
           </div>
+
+          {/* Add Community CTA */}
+          <AddCommunityCTA />
         </div>
       </section>
 

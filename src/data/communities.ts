@@ -1562,7 +1562,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "verified": true,
     "cois_tier": "bronze",
     "cois_score": 0.64,
-    "meetup_url": "https://www.meetup.com/react-athens/",
+    "meetup_url": "https://www.meetup.com/react-to-react-athens-meetup/",
     "last_event_date": "2024-10-15",
     "created_at": "2025-10-24T14:57:54.936Z",
     "updated_at": "2025-10-24T14:57:54.936Z"
