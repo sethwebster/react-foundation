@@ -10,8 +10,10 @@ export function AddCommunityForm({ fullPage, onSuccess }: Props = {}) {
   const { data: session } = useSession();
   const router = useRouter();
   const [formData, setFormData] = useState({
-    name: '', address: '', city: '', country: '', description: '',
-    meetup_url: '', website: '', member_count: '', organizer_name: '', organizer_email: ''
+    name: '', country: '',
+    street: '', city: '', state: '', postal: '', // Address components
+    description: '', meetup_url: '', website: '', member_count: '',
+    organizer_name: '', organizer_email: ''
   });
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<{success: boolean; message: string} | null>(null);
@@ -21,10 +23,20 @@ export function AddCommunityForm({ fullPage, onSuccess }: Props = {}) {
     if (!session?.user) { router.push('/api/auth/signin'); return; }
     setSubmitting(true); setResult(null);
     try {
+      // Build full address from components
+      const fullAddress = [formData.street, formData.city, formData.state, formData.postal, formData.country]
+        .filter(Boolean)
+        .join(', ');
+
       const res = await fetch('/api/communities/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...formData, member_count: parseInt(formData.member_count) || 0, submitted_by: session.user.email })
+        body: JSON.stringify({
+          ...formData,
+          address: fullAddress, // Constructed from components
+          member_count: parseInt(formData.member_count) || 0,
+          submitted_by: session.user.email
+        })
       });
       const data = await res.json();
       if (data.success) {
@@ -51,29 +63,95 @@ export function AddCommunityForm({ fullPage, onSuccess }: Props = {}) {
     );
   }
 
-  // Address placeholder based on country
-  const getAddressPlaceholder = () => {
-    if (formData.country === 'United States') return '123 Main Street, City, State ZIP';
-    if (formData.country === 'United Kingdom') return '123 High Street, City, Postcode';
-    if (formData.country === 'Canada') return '123 Main Street, City, Province, Postal Code';
-    if (formData.country === 'India') return '123, Street Name, City, State, PIN';
-    if (formData.country === 'Germany') return 'Straße 123, PLZ Stadt';
-    return 'Full address including venue, street, city';
+  // Get address field labels based on country
+  const getAddressFields = () => {
+    const country = formData.country;
+
+    if (country === 'United States' || country === 'Canada') {
+      return {
+        street: { label: 'Street Address', placeholder: '123 Main Street', required: true },
+        city: { label: 'City', placeholder: 'San Francisco', required: true },
+        state: { label: country === 'United States' ? 'State' : 'Province', placeholder: country === 'United States' ? 'CA' : 'Ontario', required: true },
+        postal: { label: country === 'United States' ? 'ZIP Code' : 'Postal Code', placeholder: country === 'United States' ? '94102' : 'M5H 2N2', required: false }
+      };
+    }
+
+    if (country === 'United Kingdom') {
+      return {
+        street: { label: 'Street Address', placeholder: '123 High Street', required: true },
+        city: { label: 'City', placeholder: 'London', required: true },
+        state: { label: 'County (Optional)', placeholder: 'Greater London', required: false },
+        postal: { label: 'Postcode', placeholder: 'SW1A 1AA', required: false }
+      };
+    }
+
+    if (country === 'India') {
+      return {
+        street: { label: 'Street Address', placeholder: '123, MG Road', required: true },
+        city: { label: 'City', placeholder: 'Bangalore', required: true },
+        state: { label: 'State', placeholder: 'Karnataka', required: true },
+        postal: { label: 'PIN Code', placeholder: '560001', required: false }
+      };
+    }
+
+    if (country === 'Germany') {
+      return {
+        street: { label: 'Straße', placeholder: 'Hauptstraße 123', required: true },
+        city: { label: 'Stadt', placeholder: 'Berlin', required: true },
+        state: { label: 'Bundesland (Optional)', placeholder: 'Berlin', required: false },
+        postal: { label: 'PLZ', placeholder: '10115', required: true }
+      };
+    }
+
+    // Default for other countries
+    return {
+      street: { label: 'Street Address', placeholder: '123 Main Street', required: true },
+      city: { label: 'City', placeholder: 'Amsterdam', required: true },
+      state: { label: 'State/Province (Optional)', placeholder: '', required: false },
+      postal: { label: 'Postal Code (Optional)', placeholder: '', required: false }
+    };
   };
+
+  const fields = formData.country ? getAddressFields() : null;
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div><label className="block text-sm font-medium mb-2">Community Name <span className="text-destructive">*</span></label>
         <input required value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} placeholder="React Amsterdam" className="w-full px-4 py-2 bg-card border border-border rounded-lg focus:ring-2 focus:ring-primary" />
       </div>
+
       <CountrySelect label="Country" required value={formData.country} onChange={(country) => setFormData({...formData, country})} placeholder="Select your country first" />
-      <div><label className="block text-sm font-medium mb-2">Full Address <span className="text-destructive">*</span></label>
-        <input required value={formData.address} onChange={(e) => setFormData({...formData, address: e.target.value})} placeholder={getAddressPlaceholder()} className="w-full px-4 py-2 bg-card border border-border rounded-lg focus:ring-2 focus:ring-primary" />
-        <p className="text-xs text-muted-foreground mt-1">Include venue name, street, city - we'll use this to place your pin on the map</p>
-      </div>
-      <div><label className="block text-sm font-medium mb-2">City <span className="text-destructive">*</span></label>
-        <input required value={formData.city} onChange={(e) => setFormData({...formData, city: e.target.value})} placeholder={formData.country === 'United States' ? 'San Francisco' : 'Amsterdam'} className="w-full px-4 py-2 bg-card border border-border rounded-lg focus:ring-2 focus:ring-primary" />
-      </div>
+
+      {fields && (
+        <>
+          <div><label className="block text-sm font-medium mb-2">{fields.street.label} {fields.street.required && <span className="text-destructive">*</span>}</label>
+            <input required={fields.street.required} value={formData.street} onChange={(e) => setFormData({...formData, street: e.target.value})} placeholder={fields.street.placeholder} className="w-full px-4 py-2 bg-card border border-border rounded-lg focus:ring-2 focus:ring-primary" />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div><label className="block text-sm font-medium mb-2">{fields.city.label} {fields.city.required && <span className="text-destructive">*</span>}</label>
+              <input required={fields.city.required} value={formData.city} onChange={(e) => setFormData({...formData, city: e.target.value})} placeholder={fields.city.placeholder} className="w-full px-4 py-2 bg-card border border-border rounded-lg focus:ring-2 focus:ring-primary" />
+            </div>
+            {fields.state.label && (
+              <div><label className="block text-sm font-medium mb-2">{fields.state.label} {fields.state.required && <span className="text-destructive">*</span>}</label>
+                <input required={fields.state.required} value={formData.state} onChange={(e) => setFormData({...formData, state: e.target.value})} placeholder={fields.state.placeholder} className="w-full px-4 py-2 bg-card border border-border rounded-lg focus:ring-2 focus:ring-primary" />
+              </div>
+            )}
+          </div>
+
+          {fields.postal.label && (
+            <div><label className="block text-sm font-medium mb-2">{fields.postal.label} {fields.postal.required && <span className="text-destructive">*</span>}</label>
+              <input required={fields.postal.required} value={formData.postal} onChange={(e) => setFormData({...formData, postal: e.target.value})} placeholder={fields.postal.placeholder} className="w-full px-4 py-2 bg-card border border-border rounded-lg focus:ring-2 focus:ring-primary" />
+            </div>
+          )}
+        </>
+      )}
+
+      {!formData.country && (
+        <div className="p-4 bg-muted/30 rounded-lg text-sm text-muted-foreground text-center">
+          👆 Select a country above to continue
+        </div>
+      )}
       <div><label className="block text-sm font-medium mb-2">Description <span className="text-destructive">*</span></label>
         <textarea required value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} rows={4} className="w-full px-4 py-2 bg-card border border-border rounded-lg resize-none focus:ring-2 focus:ring-primary" />
       </div>

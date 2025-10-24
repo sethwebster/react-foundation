@@ -27,6 +27,7 @@ export function CountrySelect({
 }: CountrySelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState('');
+  const [highlightedIndex, setHighlightedIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -39,6 +40,38 @@ export function CountrySelect({
         c.code.toLowerCase().includes(search.toLowerCase())
       )
     : COUNTRIES;
+
+  // Keyboard navigation in search input
+  const handleSearchKeyDown = (e: React.KeyboardEvent) => {
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        setHighlightedIndex(prev => (prev + 1) % filteredCountries.length);
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        setHighlightedIndex(prev => (prev - 1 + filteredCountries.length) % filteredCountries.length);
+        break;
+      case 'Enter':
+        e.preventDefault();
+        if (filteredCountries[highlightedIndex]) {
+          onChange(filteredCountries[highlightedIndex].name);
+          setIsOpen(false);
+          setSearch('');
+        }
+        break;
+      case 'Escape':
+        e.preventDefault();
+        setIsOpen(false);
+        setSearch('');
+        break;
+    }
+  };
+
+  // Reset highlighted when search changes
+  useEffect(() => {
+    setHighlightedIndex(0);
+  }, [search]);
 
   // Close on click outside
   useEffect(() => {
@@ -106,6 +139,7 @@ export function CountrySelect({
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
+              onKeyDown={handleSearchKeyDown}
               placeholder="Search countries..."
               className="w-full px-3 py-2 bg-muted border-0 rounded text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
             />
@@ -114,7 +148,7 @@ export function CountrySelect({
           {/* Country List */}
           <div className="max-h-64 overflow-y-auto">
             {filteredCountries.length > 0 ? (
-              filteredCountries.map((country) => (
+              filteredCountries.map((country, index) => (
                 <button
                   key={country.code}
                   type="button"
@@ -123,9 +157,12 @@ export function CountrySelect({
                     setIsOpen(false);
                     setSearch('');
                   }}
+                  onMouseEnter={() => setHighlightedIndex(index)}
                   className={`w-full text-left px-4 py-3 text-sm transition flex items-center gap-3 ${
-                    country.name === value
+                    index === highlightedIndex
                       ? 'bg-primary/10 text-primary font-medium'
+                      : country.name === value
+                      ? 'bg-muted text-foreground font-medium'
                       : 'text-foreground hover:bg-muted'
                   }`}
                 >
