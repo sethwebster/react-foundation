@@ -161,9 +161,12 @@ export default function AboutPage() {
             description="We track contributions across all 54 critical React ecosystem libraries:"
           />
 
-          {/* Governance */}
+          {/* Governance / Communities */}
           <ScrollReveal animation="fade-up">
-            <section className="scroll-mt-32 space-y-8 rounded-3xl border border-border/10 bg-muted/60 p-12">
+            <section
+              id="communities"
+              className="scroll-mt-32 space-y-8 rounded-3xl border border-border/10 bg-muted/60 p-12"
+            >
               <h2 className="text-3xl font-semibold text-foreground sm:text-4xl">
                 Transparent Governance
               </h2>

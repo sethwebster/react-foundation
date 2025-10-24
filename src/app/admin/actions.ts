@@ -126,3 +126,28 @@ export async function denyRequestAction(id: string) {
 
   return { success: true };
 }
+
+/**
+ * Resend admin notification email for a request
+ */
+export async function resendAdminNotificationAction(id: string) {
+  const session = await getServerSession(authOptions);
+
+  if (!session?.user?.email) {
+    throw new Error('Not authenticated');
+  }
+
+  const isAdmin = await UserManagementService.isAdmin(session.user.email);
+  if (!isAdmin) {
+    throw new Error('Admin access required');
+  }
+
+  const request = await AccessRequestsService.getRequest(id);
+  if (!request) {
+    throw new Error('Request not found');
+  }
+
+  await AccessRequestsService.sendAdminNotificationEmail(request);
+
+  return { success: true };
+}

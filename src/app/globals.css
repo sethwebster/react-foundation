@@ -154,6 +154,30 @@ a.inline-flex {
   color: currentColor;
 }
 
+.chat-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.chat-scroll::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+.chat-scroll:hover {
+  scrollbar-width: thin;
+}
+
+.chat-scroll:hover::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.chat-scroll:hover::-webkit-scrollbar-thumb {
+  background-color: rgba(148, 163, 184, 0.5);
+  border-radius: 9999px;
+}
+
 /* Semantic Gradient Backgrounds */
 .bg-gradient-accent {
   background: linear-gradient(135deg,

@@ -1,6 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useSyncExternalStore } from "react";
+import { createLocalStorageStore } from "@/lib/local-storage-store";
 
 interface UsernameInputProps {
   githubLogin: string | null;
@@ -8,45 +10,53 @@ interface UsernameInputProps {
   isPending: boolean;
 }
 
+const USERNAME_STORAGE_KEY = 'contributor-username';
+
+const usernameStore = createLocalStorageStore<string | null>({
+  key: USERNAME_STORAGE_KEY,
+  fallback: null,
+  read: (raw) => raw ?? null,
+  write: (value) => (value === null ? null : value),
+});
+
 export function UsernameInput({ githubLogin, onUsernameChange, isPending }: UsernameInputProps) {
-  const [isLoading, setIsLoading] = useState(true);
   const [showCustomInput, setShowCustomInput] = useState(false);
   const [customUsername, setCustomUsername] = useState("");
-  const [storedUsername, setStoredUsername] = useState<string | null>(null);
+  const lastRequestedUsername = useRef<string | null>(null);
 
-  // Load from localStorage on mount
+  const storedUsername = useSyncExternalStore(
+    usernameStore.subscribe,
+    usernameStore.getSnapshot,
+    usernameStore.getServerSnapshot
+  );
+
   useEffect(() => {
-    const saved = localStorage.getItem('contributor-username');
-    setStoredUsername(saved);
-    setIsLoading(false);
-
-    // Auto-fetch if we have a saved username and not logged in
-    if (!githubLogin && saved) {
-      onUsernameChange(saved);
+    const targetUsername = githubLogin ?? storedUsername;
+    if (!targetUsername || lastRequestedUsername.current === targetUsername) {
+      return;
     }
-  }, [githubLogin, onUsernameChange]);
+
+    lastRequestedUsername.current = targetUsername;
+
+    if (githubLogin) {
+      usernameStore.set(githubLogin);
+    }
+
+    onUsernameChange(targetUsername);
+  }, [githubLogin, onUsernameChange, storedUsername]);
 
   const handleCustomUsernameSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (customUsername.trim()) {
-      const username = customUsername.trim();
-      localStorage.setItem('contributor-username', username);
-      setStoredUsername(username);
-      onUsernameChange(username);
-      setShowCustomInput(false);
-      setCustomUsername("");
+    if (!customUsername.trim()) {
+      return;
     }
-  };
 
-  // Show shimmer while loading localStorage
-  if (isLoading) {
-    return (
-      <div className="space-y-2">
-        <div className="h-4 w-24 animate-pulse rounded bg-background/5" />
-        <div className="h-10 w-full animate-pulse rounded-lg bg-background/5" />
-      </div>
-    );
-  }
+    const username = customUsername.trim();
+    usernameStore.set(username);
+    onUsernameChange(username);
+    setShowCustomInput(false);
+    setCustomUsername("");
+  };
 
   // Logged in with GitHub
   if (githubLogin) {

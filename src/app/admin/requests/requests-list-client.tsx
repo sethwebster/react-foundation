@@ -7,7 +7,11 @@
 
 import { useState, useTransition } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { approveRequestAction, denyRequestAction } from '../actions';
+import {
+  approveRequestAction,
+  denyRequestAction,
+  resendAdminNotificationAction,
+} from '../actions';
 import type { AccessRequest } from '@/lib/admin/access-requests-service';
 
 export function RequestsListClient({
@@ -19,12 +23,14 @@ export function RequestsListClient({
   const highlightId = searchParams.get('id');
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const [status, setStatus] = useState<string | null>(null);
 
   const pendingRequests = initialRequests.filter(r => r.status === 'pending');
   const processedRequests = initialRequests.filter(r => r.status !== 'pending');
 
   const handleApprove = (id: string, role: 'user' | 'admin' = 'user') => {
     setError(null);
+    setStatus(null);
     startTransition(async () => {
       try {
         await approveRequestAction(id, role);
@@ -38,6 +44,7 @@ export function RequestsListClient({
     if (!confirm('Deny this request?')) return;
 
     setError(null);
+    setStatus(null);
     startTransition(async () => {
       try {
         await denyRequestAction(id);
@@ -47,11 +54,29 @@ export function RequestsListClient({
     });
   };
 
+  const handleResendNotification = (id: string) => {
+    setError(null);
+    setStatus(null);
+    startTransition(async () => {
+      try {
+        await resendAdminNotificationAction(id);
+        setStatus('Admin notification email sent again.');
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to resend admin email');
+      }
+    });
+  };
+
   return (
     <>
       {error && (
         <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-red-300">
           {error}
+        </div>
+      )}
+      {status && !error && (
+        <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-4 text-emerald-100">
+          {status}
         </div>
       )}
 
@@ -108,6 +133,15 @@ export function RequestsListClient({
                     className="rounded-lg bg-destructive/20 px-4 py-2 font-semibold text-red-300 transition hover:bg-destructive/30 disabled:opacity-50"
                   >
                     ❌ Deny
+                  </button>
+                </div>
+                <div className="flex justify-end">
+                  <button
+                    onClick={() => handleResendNotification(req.id)}
+                    disabled={isPending}
+                    className="mt-3 inline-flex items-center gap-2 rounded-lg border border-border/30 px-4 py-2 text-sm font-semibold text-foreground transition hover:bg-foreground/20 disabled:opacity-50"
+                  >
+                    📧 Resend Admin Email
                   </button>
                 </div>
               </div>

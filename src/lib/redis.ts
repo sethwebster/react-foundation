@@ -61,6 +61,21 @@ export function getRedisClient(): Redis {
   return redis;
 }
 
+export async function closeRedisClient(): Promise<void> {
+  if (!redis) {
+    return;
+  }
+
+  const client = redis;
+  redis = null;
+
+  try {
+    await client.quit();
+  } catch (error) {
+    logger.error('Redis disconnect error:', error);
+  }
+}
+
 /**
  * Redis key patterns (sanitized)
  */

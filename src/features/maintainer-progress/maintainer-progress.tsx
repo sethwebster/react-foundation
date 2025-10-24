@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState, useTransition } from "react";
+import { useCallback, useMemo, useState, useTransition } from "react";
 import { useSession } from "next-auth/react";
 
 import { Collapsible } from "@/components/ui/collapsible";
@@ -78,14 +78,6 @@ export function MaintainerProgress() {
     },
     [setProgress],
   );
-
-  // Auto-populate from session when logged in
-  useEffect(() => {
-    if (githubLogin) {
-      localStorage.setItem('contributor-username', githubLogin);
-      fetchProgress(githubLogin);
-    }
-  }, [githubLogin, fetchProgress]);
 
   const reposByCategory = useMemo(() => {
     const grouped = new Map<LibraryCategory, string[]>();
