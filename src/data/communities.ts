@@ -1083,7 +1083,7 @@ export const REACT_COMMUNITIES: Community[] = [
     "verified": true,
     "cois_tier": "silver",
     "cois_score": 0.72,
-    "meetup_url": "https://kommunity.com/react-devs-kenya",
+    "website": "https://www.reactdevske.org",
     "last_event_date": "2024-12-18",
     "created_at": "2025-10-24T14:57:54.936Z",
     "updated_at": "2025-10-24T14:57:54.936Z"
