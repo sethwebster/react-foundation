@@ -1,7 +1,7 @@
 /**
- * React Communities - SINGLE SOURCE OF TRUTH
- * 65 communities with verified meetup URLs from react.dev
- * Last updated: 2025-10-24T20:09:37.597Z
+ * React Communities - Single Source of Truth
+ * 65 communities with corrected meetup URLs
+ * Last updated: 2025-10-24T20:22:31.823Z
  */
 
 import type { Community } from '@/types/community';
@@ -44,7 +44,8 @@ export const REACT_COMMUNITIES: Community[] = [
     "website": "https://reactnexus.com",
     "last_event_date": "2025-01-18",
     "created_at": "2025-10-24T14:57:54.936Z",
-    "updated_at": "2025-10-24T14:57:54.936Z"
+    "updated_at": "2025-10-24T14:57:54.936Z",
+    "meetup_url": "https://www.meetup.com/reactjs-bangalore/"
   },
   {
     "id": "react-israel",
@@ -79,7 +80,8 @@ export const REACT_COMMUNITIES: Community[] = [
     "website": "https://react-next.com",
     "last_event_date": "2025-01-16",
     "created_at": "2025-10-24T14:57:54.936Z",
-    "updated_at": "2025-10-24T14:57:54.936Z"
+    "updated_at": "2025-10-24T14:57:54.936Z",
+    "meetup_url": "https://www.meetup.com/react-il/"
   },
   {
     "id": "react-buenos-aires",
@@ -119,7 +121,8 @@ export const REACT_COMMUNITIES: Community[] = [
     "cois_score": 0.92,
     "last_event_date": "2025-01-15",
     "created_at": "2025-10-24T14:57:54.936Z",
-    "updated_at": "2025-10-24T14:57:54.936Z"
+    "updated_at": "2025-10-24T14:57:54.936Z",
+    "meetup_url": "https://www.meetup.com/react-en-buenos-aires/"
   },
   {
     "id": "reactjs-friends-pune",
