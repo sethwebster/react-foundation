@@ -12,6 +12,17 @@ import { Line } from '@react-three/drei';
 import * as THREE from 'three';
 import { Enterprise } from './enterprise-flyby';
 
+function pseudoRandom(seed: number): number {
+  const x = Math.sin(seed) * 10000;
+  return x - Math.floor(x);
+}
+
+function randomBetween(index: number, channel: number, min: number, max: number, iteration = 0): number {
+  const seed = index * 9973 + channel * 6151 + iteration * 37489;
+  const value = pseudoRandom(seed);
+  return min + value * (max - min);
+}
+
 /**
  * Create a circular texture for round stars
  */
@@ -112,6 +123,8 @@ function Stars() {
   const starburstStarsRef = useRef<THREE.Points>(null);
   const starCount = 500;
   const starburstCount = 50; // 10% of stars have starburst
+  const regularWraps = useRef(new Uint32Array(starCount));
+  const starburstWraps = useRef(new Uint32Array(starburstCount));
 
   const { positions, colors, sizes } = useMemo(() => {
     const pos = new Float32Array(starCount * 3);
@@ -120,14 +133,13 @@ function Stars() {
 
     for (let i = 0; i < starCount; i++) {
       // Position stars edge-to-edge (HUGE spread for full viewport)
-      pos[i * 3] = (Math.random() - 0.5) * 300;     // x: -150 to 150
-      pos[i * 3 + 1] = (Math.random() - 0.5) * 200;  // y: -100 to 100
-      pos[i * 3 + 2] = -5 - Math.random() * 5;      // z: -5 to -10
+      pos[i * 3] = randomBetween(i, 1, -150, 150);
+      pos[i * 3 + 1] = randomBetween(i, 2, -100, 100);
+      pos[i * 3 + 2] = randomBetween(i, 3, -10, -5);
 
-      // Color temperature 2500K to 6500K (includes reds and oranges)
-      const temp = 2500 + Math.random() * 4000;
+      const temp = randomBetween(i, 4, 2500, 6500);
       const [r, g, b] = kelvinToRGB(temp);
-      const brightness = 0.4 + Math.random() * 1.0; // 0.4 to 1.4 (huge variation!)
+      const brightness = randomBetween(i, 5, 0.4, 1.4);
 
       col[i * 3] = r * brightness;
       col[i * 3 + 1] = g * brightness;
@@ -135,7 +147,7 @@ function Stars() {
 
       // Size variation (100-120%)
       const baseSize = 0.001;
-      size[i] = baseSize * (1.0 + Math.random() * 0.2); // 1.0x to 1.2x (100-120%)
+      size[i] = baseSize * randomBetween(i, 6, 1.0, 1.2);
     }
 
     return { positions: pos, colors: col, sizes: size };
@@ -148,20 +160,20 @@ function Stars() {
     const size = new Float32Array(starburstCount);
 
     for (let i = 0; i < starburstCount; i++) {
-      pos[i * 3] = (Math.random() - 0.5) * 300;
-      pos[i * 3 + 1] = (Math.random() - 0.5) * 200;
-      pos[i * 3 + 2] = -5 - Math.random() * 5;
+      pos[i * 3] = randomBetween(i, 10, -150, 150);
+      pos[i * 3 + 1] = randomBetween(i, 11, -100, 100);
+      pos[i * 3 + 2] = randomBetween(i, 12, -10, -5);
 
-      const temp = 2500 + Math.random() * 4000; // Full range for variety
+      const temp = randomBetween(i, 13, 2500, 6500);
       const [r, g, b] = kelvinToRGB(temp);
-      const brightness = 1.3 + Math.random() * 0.5; // Very bright (1.3 to 1.8)
+      const brightness = randomBetween(i, 14, 1.3, 1.8);
 
       col[i * 3] = r * brightness;
       col[i * 3 + 1] = g * brightness;
       col[i * 3 + 2] = b * brightness;
 
       // Bigger for starburst effect
-      size[i] = 0.002 * (1.2 + Math.random() * 0.3);
+      size[i] = 0.002 * randomBetween(i, 15, 1.2, 1.5);
     }
 
     return { positions: pos, colors: col, sizes: size };
@@ -173,6 +185,7 @@ function Stars() {
     if (regularStarsRef.current) {
       const positions = regularStarsRef.current.geometry.attributes.position.array as Float32Array;
       const starSizes = regularStarsRef.current.geometry.attributes.size.array as Float32Array;
+      const wrapCounts = regularWraps.current;
 
       for (let i = 0; i < starCount; i++) {
         // Parallax: bigger stars (closer) move faster
@@ -184,7 +197,8 @@ function Stars() {
         // Wrap when offscreen on left
         if (positions[i * 3] < -150) {
           positions[i * 3] = 150;
-          positions[i * 3 + 1] = (Math.random() - 0.5) * 200;
+          wrapCounts[i] += 1;
+          positions[i * 3 + 1] = randomBetween(i, 16, -100, 100, wrapCounts[i]);
         }
       }
 
@@ -195,6 +209,7 @@ function Stars() {
     if (starburstStarsRef.current) {
       const positions = starburstStarsRef.current.geometry.attributes.position.array as Float32Array;
       const starSizes = starburstStarsRef.current.geometry.attributes.size.array as Float32Array;
+      const wrapCounts = starburstWraps.current;
 
       for (let i = 0; i < starburstCount; i++) {
         // Starburst stars are closer, move faster
@@ -206,7 +221,8 @@ function Stars() {
         // Wrap when offscreen
         if (positions[i * 3] < -150) {
           positions[i * 3] = 150;
-          positions[i * 3 + 1] = (Math.random() - 0.5) * 200;
+          wrapCounts[i] += 1;
+          positions[i * 3 + 1] = randomBetween(i, 17, -100, 100, wrapCounts[i]);
         }
       }
 

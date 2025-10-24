@@ -1,21 +1,17 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { ThemeToggle } from './theme-toggle';
+import { useHasMounted } from '@/lib/hooks/use-has-mounted';
 
 interface ThemeToggleWrapperProps {
   withLabel?: boolean;
-  size?: 'sm' | 'md' | 'lg';
 }
 
-export function ThemeToggleWrapper({ withLabel = false, size = 'sm' }: ThemeToggleWrapperProps) {
-  const [mounted, setMounted] = useState(false);
+export function ThemeToggleWrapper({ withLabel = false }: ThemeToggleWrapperProps) {
+  const hasMounted = useHasMounted();
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
+  if (!hasMounted) {
     // Return a placeholder during SSR
     return (
       <div className="inline-flex items-center rounded-lg bg-muted p-1 animate-pulse">

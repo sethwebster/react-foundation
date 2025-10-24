@@ -1,7 +1,10 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { Theme, getEffectiveTheme, applyTheme, getStoredTheme, storeTheme } from '@/lib/theme';
+import React, { createContext, useCallback, useContext, useEffect, useMemo } from 'react';
+import { useSyncExternalStore } from 'react';
+import { Theme, getEffectiveTheme, applyTheme } from '@/lib/theme';
+import { createLocalStorageStore } from '@/lib/local-storage-store';
+import { useHasMounted } from '@/lib/hooks/use-has-mounted';
 
 interface ThemeContextType {
   theme: Theme;
@@ -30,42 +33,48 @@ export function ThemeProvider({
   defaultTheme = 'system',
   storageKey = 'react-foundation-theme',
 }: ThemeProviderProps) {
-  const [theme, setThemeState] = useState<Theme>(defaultTheme);
-  const [mounted, setMounted] = useState(false);
+  const themeStore = useMemo(
+    () =>
+      createLocalStorageStore<Theme>({
+        key: storageKey,
+        fallback: defaultTheme,
+        read: (raw, fallbackValue) =>
+          raw === 'light' || raw === 'dark' || raw === 'system' ? raw : fallbackValue,
+        write: (value) => value,
+      }),
+    [defaultTheme, storageKey]
+  );
 
-  // Initialize theme from localStorage on mount
-  useEffect(() => {
-    const storedTheme = getStoredTheme();
+  const theme = useSyncExternalStore(
+    themeStore.subscribe,
+    themeStore.getSnapshot,
+    themeStore.getServerSnapshot
+  );
 
-    // Disable transitions on initial load
-    document.documentElement.classList.add('no-transition');
-
-    setThemeState(storedTheme);
-    setMounted(true);
-
-    // Apply the theme immediately after mounting
-    applyTheme(storedTheme);
-
-    // Re-enable transitions after a brief delay
-    setTimeout(() => {
-      document.documentElement.classList.remove('no-transition');
-    }, 100);
-  }, []);
+  const hasMounted = useHasMounted();
 
   // Apply theme when it changes
   useEffect(() => {
-    if (!mounted) return;
-    
+    if (!hasMounted) return;
+
+    document.documentElement.classList.add('no-transition');
     applyTheme(theme);
-    storeTheme(theme);
-  }, [theme, mounted]);
+    const timer = window.setTimeout(() => {
+      document.documentElement.classList.remove('no-transition');
+    }, 100);
+
+    return () => {
+      window.clearTimeout(timer);
+      document.documentElement.classList.remove('no-transition');
+    };
+  }, [theme, hasMounted]);
 
   // Listen for system theme changes
   useEffect(() => {
-    if (!mounted) return;
+    if (!hasMounted) return;
 
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    
+
     const handleChange = () => {
       if (theme === 'system') {
         applyTheme('system');
@@ -74,16 +83,19 @@ export function ThemeProvider({
 
     mediaQuery.addEventListener('change', handleChange);
     return () => mediaQuery.removeEventListener('change', handleChange);
-  }, [theme, mounted]);
+  }, [theme, hasMounted]);
 
-  const setTheme = (newTheme: Theme) => {
-    setThemeState(newTheme);
-  };
+  const setTheme = useCallback(
+    (newTheme: Theme) => {
+      themeStore.set(newTheme);
+    },
+    [themeStore]
+  );
 
   const effectiveTheme = getEffectiveTheme(theme);
 
   // Prevent hydration mismatch by not rendering until mounted
-  if (!mounted) {
+  if (!hasMounted) {
     return <div style={{ visibility: 'hidden' }}>{children}</div>;
   }
 
