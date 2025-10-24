@@ -52,6 +52,8 @@
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-leaflet": "^5.0.0",
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1",
     "resend": "^6.2.1",
     "simple-icons": "^15.17.0",
     "swr": "^2.3.6",
