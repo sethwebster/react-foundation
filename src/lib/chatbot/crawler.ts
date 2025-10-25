@@ -99,15 +99,25 @@ export class SiteCrawler {
       headers['X-Crawler-Bypass'] = process.env.CRAWLER_BYPASS_TOKEN;
     }
 
-    const response = await fetch(url, { headers });
+    // Fetch with timeout to prevent hanging
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
 
-    // Check if response is OK
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText} for ${url}`);
-    }
+    try {
+      const response = await fetch(url, {
+        headers,
+        signal: controller.signal,
+      });
 
-    const html = await response.text();
-    const { document } = parseHTML(html);
+      clearTimeout(timeoutId);
+
+      // Check if response is OK
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText} for ${url}`);
+      }
+
+      const html = await response.text();
+      const { document } = parseHTML(html);
 
     // Extract title
     const title =
@@ -129,12 +139,21 @@ export class SiteCrawler {
       }
     }
 
-    return {
-      url,
-      title,
-      html,
-      links: [...new Set(links)], // Deduplicate
-    };
+      return {
+        url,
+        title,
+        html,
+        links: [...new Set(links)], // Deduplicate
+      };
+    } catch (error) {
+      clearTimeout(timeoutId);
+
+      // Handle abort/timeout specifically
+      if (error instanceof Error && error.name === 'AbortError') {
+        throw new Error(`Request timeout (30s) for ${url}`);
+      }
+      throw error;
+    }
   }
 
   private toAbsoluteUrl(href: string, baseUrl: string): string | null {
