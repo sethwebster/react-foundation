@@ -18,7 +18,7 @@ export const runtime = 'nodejs'; // Requires Node runtime for file system access
 export const dynamic = 'force-dynamic';
 export const maxDuration = 300; // 5 minutes max
 
-// Store ingestion progress in memory
+// Store ingestion progress in Redis for persistence across server restarts
 interface IngestionProgress {
   status: 'running' | 'completed' | 'failed';
   logs: string[];
@@ -26,12 +26,26 @@ interface IngestionProgress {
   error?: string;
 }
 
-const ingestionProgress = new Map<string, IngestionProgress>();
 const runningIngestions = new Map<string, Promise<void>>();
 
+// Helper to get progress from Redis
+async function getProgress(redis: ReturnType<typeof getRedisClient>, ingestionId: string): Promise<IngestionProgress | null> {
+  const key = `rf:ingestion:${ingestionId}`;
+  const data = await redis.get(key);
+  if (!data) return null;
+  return JSON.parse(data) as IngestionProgress;
+}
+
+// Helper to save progress to Redis
+async function saveProgress(redis: ReturnType<typeof getRedisClient>, ingestionId: string, progress: IngestionProgress) {
+  const key = `rf:ingestion:${ingestionId}`;
+  // Store for 24 hours
+  await redis.setex(key, 86400, JSON.stringify(progress));
+}
+
 // Helper to add log
-function addLog(ingestionId: string, message: string) {
-  const progress = ingestionProgress.get(ingestionId);
+async function addLog(redis: ReturnType<typeof getRedisClient>, ingestionId: string, message: string) {
+  const progress = await getProgress(redis, ingestionId);
   if (progress) {
     const timestamp = new Date().toLocaleTimeString();
     progress.logs.push(`[${timestamp}] ${message}`);
@@ -40,6 +54,8 @@ function addLog(ingestionId: string, message: string) {
     if (progress.logs.length > 200) {
       progress.logs.shift();
     }
+
+    await saveProgress(redis, ingestionId, progress);
   }
   logger.info(`[FullIngestion:${ingestionId}] ${message}`);
 }
@@ -80,16 +96,16 @@ export async function POST(request: Request) {
       );
     }
 
-    // Initialize progress tracking
-    ingestionProgress.set(ingestionId, {
+    const startTime = Date.now();
+    const redis = getRedisClient();
+
+    // Initialize progress tracking in Redis
+    await saveProgress(redis, ingestionId, {
       status: 'running',
       logs: [],
     });
 
-    const startTime = Date.now();
-    const redis = getRedisClient();
-
-    addLog(ingestionId, '🚀 Starting full content ingestion');
+    await addLog(redis, ingestionId, '🚀 Starting full content ingestion');
 
     // Run ingestion in background
     const ingestionPromise = (async () => {
@@ -100,17 +116,17 @@ export async function POST(request: Request) {
         // 1. Blue-Green: Get current index (before creating new one)
         oldIndexName = await getCurrentIndexName(redis);
         if (oldIndexName) {
-          addLog(ingestionId, `📊 Current active index: ${oldIndexName}`);
+          await addLog(redis, ingestionId, `📊 Current active index: ${oldIndexName}`);
         }
 
         // 2. Blue-Green: Generate new unique index name
         newIndexName = generateIndexName();
         const newPrefix = generateIndexPrefix(newIndexName);
-        addLog(ingestionId, `🆕 Creating new index: ${newIndexName}`);
+        await addLog(redis, ingestionId, `🆕 Creating new index: ${newIndexName}`);
 
         // 3. Create new RediSearch index
         await createChunksIndex(redis);
-        addLog(ingestionId, `✅ New index created: ${newIndexName}`);
+        await addLog(redis, ingestionId, `✅ New index created: ${newIndexName}`);
 
         // 4. Initialize loaders
         const loaders = [
@@ -121,13 +137,13 @@ export async function POST(request: Request) {
         ];
 
         // 5. Load content from all sources
-        addLog(ingestionId, `📂 Running ${loaders.length} loaders...`);
+        await addLog(redis, ingestionId, `📂 Running ${loaders.length} loaders...`);
         const allRecords = [];
         const loaderStats = [];
 
         for (const loader of loaders) {
           const loaderStart = Date.now();
-          addLog(ingestionId, `▶️ Running ${loader.name}...`);
+          await addLog(redis, ingestionId, `▶️ Running ${loader.name}...`);
 
           try {
             const records = await loader.load();
@@ -139,10 +155,10 @@ export async function POST(request: Request) {
               duration_ms: Date.now() - loaderStart,
             });
 
-            addLog(ingestionId, `✅ ${loader.name}: ${records.length} records in ${((Date.now() - loaderStart) / 1000).toFixed(1)}s`);
+            await addLog(redis, ingestionId, `✅ ${loader.name}: ${records.length} records in ${((Date.now() - loaderStart) / 1000).toFixed(1)}s`);
           } catch (error) {
             const errorMsg = error instanceof Error ? error.message : 'Unknown error';
-            addLog(ingestionId, `❌ ${loader.name} failed: ${errorMsg}`);
+            await addLog(redis, ingestionId, `❌ ${loader.name} failed: ${errorMsg}`);
 
             loaderStats.push({
               loader: loader.name,
@@ -153,11 +169,11 @@ export async function POST(request: Request) {
           }
         }
 
-        addLog(ingestionId, `📊 Total records loaded: ${allRecords.length}`);
+        await addLog(redis, ingestionId, `📊 Total records loaded: ${allRecords.length}`);
 
         // 6. Upsert all records into NEW index (creates canonical items + chunks + embeddings)
-        addLog(ingestionId, `🧠 Generating embeddings and storing into NEW index...`);
-        addLog(ingestionId, `   Building ${allRecords.length} records into: ${newIndexName}`);
+        await addLog(redis, ingestionId, `🧠 Generating embeddings and storing into NEW index...`);
+        await addLog(redis, ingestionId, `   Building ${allRecords.length} records into: ${newIndexName}`);
 
         const upsertStats = await upsertRecords(
           redis,
@@ -166,22 +182,23 @@ export async function POST(request: Request) {
           (current: number, total: number, recordTitle: string) => {
             // Log progress every 5 records or on last record
             if (current % 5 === 0 || current === total) {
-              addLog(ingestionId, `   Processing [${current}/${total}]: ${recordTitle}`);
+              // Note: Cannot await in sync callback, logs will be added synchronously
+              addLog(redis, ingestionId, `   Processing [${current}/${total}]: ${recordTitle}`);
             }
           }
         );
 
-        addLog(ingestionId, `✅ Created ${upsertStats.chunks_created} chunks with ${upsertStats.embeddings_generated} embeddings in new index`);
+        await addLog(redis, ingestionId, `✅ Created ${upsertStats.chunks_created} chunks with ${upsertStats.embeddings_generated} embeddings in new index`);
 
         if (upsertStats.errors.length > 0) {
-          addLog(ingestionId, `⚠️ ${upsertStats.errors.length} errors occurred`);
+          await addLog(redis, ingestionId, `⚠️ ${upsertStats.errors.length} errors occurred`);
         }
 
         // 7. Generate and store content map
-        addLog(ingestionId, '🗺️ Generating content map...');
+        await addLog(redis, ingestionId, '🗺️ Generating content map...');
         const contentMap = generateContentMap(allRecords);
         await storeContentMap(redis, contentMap);
-        addLog(ingestionId, `✅ Content map created with ${contentMap.sections.length} sections`);
+        await addLog(redis, ingestionId, `✅ Content map created with ${contentMap.sections.length} sections`);
 
         // 7.5. Create index metadata (required for swap)
         // Using correct metadata key pattern from vector-store.ts
@@ -195,17 +212,17 @@ export async function POST(request: Request) {
         }));
 
         // 8. Blue-Green: Atomic swap to new index
-        addLog(ingestionId, '🔄 Swapping to new index (atomic, zero downtime)...');
+        await addLog(redis, ingestionId, '🔄 Swapping to new index (atomic, zero downtime)...');
         const swappedOldIndex = await swapToNewIndex(redis, newIndexName);
-        addLog(ingestionId, `✅ Swapped to new index: ${newIndexName}`);
+        await addLog(redis, ingestionId, `✅ Swapped to new index: ${newIndexName}`);
 
         if (swappedOldIndex) {
-          addLog(ingestionId, `   Old index marked inactive: ${swappedOldIndex}`);
+          await addLog(redis, ingestionId, `   Old index marked inactive: ${swappedOldIndex}`);
 
           // 9. Blue-Green: Cleanup old index
-          addLog(ingestionId, '🗑️ Cleaning up old index...');
+          await addLog(redis, ingestionId, '🗑️ Cleaning up old index...');
           await deleteIndex(redis, swappedOldIndex);
-          addLog(ingestionId, `✅ Deleted old index: ${swappedOldIndex}`);
+          await addLog(redis, ingestionId, `✅ Deleted old index: ${swappedOldIndex}`);
         }
 
         // 10. Complete
@@ -227,24 +244,26 @@ export async function POST(request: Request) {
           },
         };
 
-        addLog(ingestionId, `🎉 Ingestion completed successfully in ${(totalDuration / 1000).toFixed(1)}s`);
-        addLog(ingestionId, `📊 Final stats: ${result.ingestion.chunks_created} chunks, ${result.ingestion.embeddings_generated} embeddings`);
+        await addLog(redis, ingestionId, `🎉 Ingestion completed successfully in ${(totalDuration / 1000).toFixed(1)}s`);
+        await addLog(redis, ingestionId, `📊 Final stats: ${result.ingestion.chunks_created} chunks, ${result.ingestion.embeddings_generated} embeddings`);
 
-        const progress = ingestionProgress.get(ingestionId);
+        const progress = await getProgress(redis, ingestionId);
         if (progress) {
           progress.status = 'completed';
           progress.result = result;
+          await saveProgress(redis, ingestionId, progress);
         }
 
         runningIngestions.delete(ingestionId);
       } catch (error) {
         const errorMsg = error instanceof Error ? error.message : 'Unknown error';
-        addLog(ingestionId, `❌ Ingestion failed: ${errorMsg}`);
+        await addLog(redis, ingestionId, `❌ Ingestion failed: ${errorMsg}`);
 
-        const progress = ingestionProgress.get(ingestionId);
+        const progress = await getProgress(redis, ingestionId);
         if (progress) {
           progress.status = 'failed';
           progress.error = errorMsg;
+          await saveProgress(redis, ingestionId, progress);
         }
 
         runningIngestions.delete(ingestionId);
@@ -277,14 +296,17 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const ingestionId = searchParams.get('ingestionId');
+    const redis = getRedisClient();
 
-    // If no ingestionId, check for running ingestion
+    // If no ingestionId, return latest ingestion from Redis
     if (!ingestionId) {
-      // Return first running ingestion if any
-      for (const [id, progress] of ingestionProgress.entries()) {
-        if (progress.status === 'running') {
+      const latestId = await redis.get('rf:latest-ingestion-id');
+
+      if (latestId) {
+        const progress = await getProgress(redis, latestId);
+        if (progress && progress.status === 'running') {
           return NextResponse.json({
-            ingestionId: id,
+            ingestionId: latestId,
             status: 'running',
             isRunning: true,
           });
@@ -293,12 +315,12 @@ export async function GET(request: Request) {
 
       // No running ingestion
       return NextResponse.json({
-        ingestionId: null,
+        ingestionId: latestId,
         isRunning: false,
       });
     }
 
-    const progress = ingestionProgress.get(ingestionId);
+    const progress = await getProgress(redis, ingestionId);
     if (!progress) {
       return NextResponse.json(
         { error: 'Ingestion not found' },

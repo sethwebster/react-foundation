@@ -40,23 +40,46 @@ async function findMarkdownFiles(dir: string): Promise<string[]> {
 
 /**
  * Convert file path to URL path
- * Example: public-context/foundation/ris-system.md → /docs/foundation/ris-system
+ * Examples:
+ *   public-context/foundation/ris-system.md → /docs/foundation/ris-system
+ *   content/updates/welcome.mdx → /updates/welcome
+ *   src/app/communities/start/page.mdx → /communities/start
  */
 function filePathToUrl(filePath: string, baseDir: string): string {
-  // Remove baseDir prefix and .md extension
+  // Remove baseDir prefix and .md/.mdx extension
   let url = filePath.replace(baseDir, '').replace(/\.mdx?$/, '');
 
-  // Convert to URL path
-  url = `/docs${url}`;
+  // Determine URL prefix based on base directory
+  if (baseDir.includes('public-context')) {
+    // public-context files go to /docs
+    url = `/docs${url}`;
+  } else if (baseDir.includes('src/app')) {
+    // src/app files map to their route
+    // Remove /page suffix if present
+    url = url.replace(/\/page$/, '');
+
+    // Ensure leading slash
+    if (!url.startsWith('/')) {
+      url = '/' + url;
+    }
+  } else if (baseDir.includes('content')) {
+    // content directory maps directly (e.g., content/updates → /updates)
+    if (!url.startsWith('/')) {
+      url = '/' + url;
+    }
+  } else {
+    // Default behavior for other directories
+    url = `/docs${url}`;
+  }
 
   // Handle README files
   if (url.endsWith('/README')) {
     url = url.replace('/README', '');
   }
 
-  // Ensure leading slash
-  if (!url.startsWith('/')) {
-    url = '/' + url;
+  // Handle root readme
+  if (url === '/docs/') {
+    url = '/docs';
   }
 
   return url;
@@ -99,36 +122,86 @@ function extractAnchors(content: string): Array<{ text: string; anchor: string }
 export class MDXLoader implements ContentLoader {
   name = 'MDXLoader';
 
-  constructor(private baseDir: string = '') {
-    // Default to public-context directory
-    if (!baseDir) {
-      this.baseDir = join(process.cwd(), 'public-context');
+  constructor(private baseDirs: string[] = []) {
+    // Default to repo-wide search
+    if (!baseDirs || baseDirs.length === 0) {
+      const cwd = process.cwd();
+      this.baseDirs = [
+        join(cwd, 'public-context'),  // Original directory
+        join(cwd, 'content'),          // Content directory (updates, etc.)
+        join(cwd, 'src/app'),          // App routes (MDX pages)
+      ];
     }
   }
 
   async load(): Promise<RawRecord[]> {
-    logger.info(`[${this.name}] Loading markdown files from ${this.baseDir}`);
+    logger.info(`[${this.name}] Loading markdown files from ${this.baseDirs.length} directories`);
 
-    const files = await findMarkdownFiles(this.baseDir);
-    logger.info(`[${this.name}] Found ${files.length} markdown files`);
+    const allFiles: string[] = [];
+    for (const baseDir of this.baseDirs) {
+      logger.info(`[${this.name}] Scanning ${baseDir}...`);
+      const files = await findMarkdownFiles(baseDir);
+      logger.info(`[${this.name}] Found ${files.length} files in ${baseDir}`);
+      allFiles.push(...files);
+    }
+
+    logger.info(`[${this.name}] Found ${allFiles.length} total markdown files`);
 
     const records: RawRecord[] = [];
 
-    for (const filePath of files) {
+    for (const filePath of allFiles) {
       try {
         // Read file
         const fileContents = await readFile(filePath, 'utf8');
         const stats = await stat(filePath);
 
-        // Parse frontmatter
-        const { data: frontmatter, content } = matter(fileContents);
+        // Parse frontmatter (supports both YAML and Next.js export const metadata)
+        let frontmatter: Record<string, unknown> = {};
+        let content = fileContents;
+
+        // Try parsing YAML frontmatter first
+        const matterResult = matter(fileContents);
+        if (Object.keys(matterResult.data).length > 0) {
+          frontmatter = matterResult.data;
+          content = matterResult.content;
+        } else {
+          // Check for Next.js style metadata export
+          const metadataMatch = fileContents.match(/export\s+const\s+metadata\s+=\s+\{([^\}]+)\}/);
+          if (metadataMatch) {
+            try {
+              // Simple parser for key-value pairs
+              const metadataContent = metadataMatch[1];
+              const lines = metadataContent.split(',');
+
+              for (const line of lines) {
+                const match = line.trim().match(/^(\w+):\s*['"](.+?)['"]$/);
+                if (match) {
+                  const [, key, value] = match;
+                  frontmatter[key] = value;
+                }
+              }
+
+
+              // Remove the metadata export from content for cleaner indexing
+              content = fileContents.replace(/export\s+const\s+metadata\s+=\s+\{[\s\S]*?\n\};?\n*/m, '');
+            } catch (e) {
+              logger.warn(`[${this.name}] Failed to parse metadata from ${filePath}:`, e);
+            }
+          }
+
+          // Remove import statements from MDX files for cleaner content
+          content = content.replace(/^import\s+.+?from\s+['"ޅ].+?['"];?\n*/gm, '');
+        }
+
+        // Determine which base directory this file belongs to
+        const baseDir = this.baseDirs.find(dir => filePath.startsWith(dir)) || this.baseDirs[0];
 
         // Generate ID and URL
-        const id = generateId(filePath, this.baseDir);
-        const url = filePathToUrl(filePath, this.baseDir);
+        const id = generateId(filePath, baseDir);
+        const url = filePathToUrl(filePath, baseDir);
 
-        // Extract title (from frontmatter or first heading)
-        let title = frontmatter.title || '';
+        // Extract title (from frontmatter/metadata or first heading)
+        let title = (frontmatter.title as string) || '';
         if (!title) {
           const titleMatch = content.match(/^#\s+(.+)$/m);
           title = titleMatch ? titleMatch[1].trim() : filePath.split('/').pop()?.replace(/\.mdx?$/, '') || id;
@@ -140,7 +213,7 @@ export class MDXLoader implements ContentLoader {
         // Create record
         const record: RawRecord = {
           id,
-          type: frontmatter.type || 'page',
+          type: (typeof frontmatter.type === 'string' ? frontmatter.type : null) || 'page',
           title,
           url,
           updatedAt: stats.mtime.toISOString(),

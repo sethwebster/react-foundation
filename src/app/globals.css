@@ -1,6 +1,71 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+/* Community Guide Prose Styling - Must come after @plugin to override */
+/* Using multiple selectors for maximum specificity */
+
+/* Light mode - darker text on white */
+html .prose h1,
+html .prose h2,
+html .prose h3,
+html .prose h4,
+html .prose h5,
+html .prose h6,
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4,
+.prose h5,
+.prose h6 {
+  color: #0f172a !important; /* slate-900 */
+}
+
+html .prose p,
+.prose p {
+  color: #334155 !important; /* slate-700 */
+}
+
+html .prose strong,
+.prose strong {
+  color: #0f172a !important; /* slate-900 */
+}
+
+html .prose li,
+.prose li {
+  color: #334155 !important; /* slate-700 */
+}
+
+/* Dark mode - white/light text on dark */
+html.dark .prose h1,
+html.dark .prose h2,
+html.dark .prose h3,
+html.dark .prose h4,
+html.dark .prose h5,
+html.dark .prose h6,
+.dark .prose h1,
+.dark .prose h2,
+.dark .prose h3,
+.dark .prose h4,
+.dark .prose h5,
+.dark .prose h6 {
+  color: #ffffff !important; /* white */
+}
+
+html.dark .prose p,
+.dark .prose p {
+  color: #e5e7eb !important; /* gray-200 */
+}
+
+html.dark .prose strong,
+.dark .prose strong {
+  color: #ffffff !important; /* white */
+}
+
+html.dark .prose li,
+.dark .prose li {
+  color: #e5e7eb !important; /* gray-200 */
+}
+
 html {
   scroll-behavior: smooth;
   overflow-x: hidden;
@@ -26,6 +91,8 @@ html {
   --accent-foreground: 222 47% 11%;
   --destructive: 0 84% 60%;         /* #ef4444 red-500 */
   --destructive-foreground: 0 0% 100%;
+  --success: 142 71% 45%;           /* #10b981 emerald-500 */
+  --success-foreground: 0 0% 100%;
   --border: 214 32% 91%;            /* #e2e8f0 slate-200 */
   --input: 214 32% 91%;             /* #e2e8f0 */
   --ring: 199 89% 48%;              /* #0ea5e9 */
@@ -55,6 +122,8 @@ html {
   --accent-foreground: 210 40% 98%;
   --destructive: 0 84% 60%;         /* #ef4444 */
   --destructive-foreground: 0 0% 100%;
+  --success: 142 71% 45%;           /* #10b981 emerald-500 */
+  --success-foreground: 0 0% 100%;
   --border: 215 25% 27%;            /* #334155 slate-700 - subtle border */
   --input: 215 25% 27%;
   --ring: 199 89% 48%;
@@ -85,6 +154,8 @@ html {
   --color-accent-foreground: hsl(var(--accent-foreground));
   --color-destructive: hsl(var(--destructive));
   --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-success: hsl(var(--success));
+  --color-success-foreground: hsl(var(--success-foreground));
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
@@ -333,4 +404,14 @@ a.inline-flex {
 
 .leaflet-popup-content-wrapper {
   padding: 0 !important;
+}
+
+/* Shimmer animation for chat loading text */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
 }

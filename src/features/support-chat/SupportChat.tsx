@@ -83,6 +83,139 @@ function makeId(): string {
   return `${Date.now().toString(16)}-${Math.random().toString(16).slice(2)}`;
 }
 
+const THINKING_MESSAGES = [
+  'Rendering virtual DOM…',
+  'Reconciling fibers…',
+  'Diffing components…',
+  'useState is thinking…',
+  'useEffect running…',
+  'Hydrating thoughts…',
+  'Composing components…',
+  'Memoizing wisdom…',
+  'Batching updates…',
+  'Suspending disbelief…',
+  'useCallback caching…',
+  'Context propagating…',
+  'Refs resolving…',
+  'Keys aligning…',
+  'Props drilling (responsibly)…',
+  'Hooks hooking…',
+  'Portals opening…',
+  'Fragments assembling…',
+  'JSX transpiling…',
+  'Virtual DOM diffing…',
+  'Fiber tree growing…',
+  'Component mounting…',
+  'State updating…',
+  'Effects cleaning up…',
+  'Refs attaching…',
+  'Context consuming…',
+  'Reducers reducing…',
+  'Actions dispatching…',
+  'Selectors selecting…',
+  'Middleware intercepting…',
+  'Store rehydrating…',
+  'Immer producing…',
+  'Lazy loading…',
+  'Code splitting…',
+  'Tree shaking…',
+  'Bundle optimizing…',
+  'SSR rendering…',
+  'RSC streaming…',
+  'Server components thinking…',
+  'Client components hydrating…',
+  'Islands rendering…',
+  'Partial hydration…',
+  'Concurrent rendering…',
+  'Transitions starting…',
+  'Deferred values computing…',
+  'Suspense boundaries waiting…',
+  'Error boundaries catching…',
+  'StrictMode double-checking…',
+  'Profiler measuring…',
+  'DevTools inspecting…',
+  'React.memo optimizing…',
+  'PureComponent comparing…',
+  'shouldComponentUpdate deciding…',
+  'getDerivedStateFromProps deriving…',
+  'componentDidMount mounting…',
+  'useLayoutEffect painting…',
+  'useInsertionEffect inserting…',
+  'Custom hooks composing…',
+  'Higher-order components wrapping…',
+  'Render props rendering…',
+  'Children.map mapping…',
+  'cloneElement cloning…',
+  'createElement creating…',
+  'Fragment spreading…',
+  'StrictMode scrutinizing…',
+  'Profiler profiling…',
+  'Synthetic events bubbling…',
+  'Event handlers handling…',
+  'Controlled inputs controlling…',
+  'Uncontrolled refs referencing…',
+  'Form data serializing…',
+  'Accessibility attributes applying…',
+  'ARIA roles assigning…',
+  'Focus managing…',
+  'Key events listening…',
+  'Mouse events tracking…',
+  'Touch gestures detecting…',
+  'Scroll position calculating…',
+  'Viewport measuring…',
+  'Resize observing…',
+  'Intersection detecting…',
+  'Mutation observing…',
+  'Performance monitoring…',
+  'Memory profiling…',
+  'Network requests fetching…',
+  'Cache invalidating…',
+  'Queries refetching…',
+  'Optimistic updates applying…',
+  'Normalizing data…',
+  'Schema validating…',
+  'TypeScript type-checking…',
+  'Props types validating…',
+  'ESLint linting…',
+  'Prettier formatting…',
+  'Webpack bundling…',
+  'Vite building…',
+  'Turbopack turboing…',
+  'Hot module replacing…',
+  'Fast refresh refreshing…',
+  'Dev server serving…',
+  'Source maps mapping…',
+  'CSS modules hashing…',
+  'Tailwind generating…',
+  'Styled-components styling…',
+  'Emotion emoting…',
+  'CSS-in-JS injecting…',
+  'Animations timing…',
+  'Transitions easing…',
+  'Spring physics calculating…',
+  'Gesture recognizing…',
+  'Drag and drop tracking…',
+  'Virtual scrolling…',
+  'Infinite lists loading…',
+  'Windowing optimizing…',
+  'Intersection lazy-loading…',
+  'Images optimizing…',
+  'Fonts preloading…',
+  'Metadata generating…',
+  'SEO optimizing…',
+  'Open Graph tagging…',
+  'JSON-LD structuring…',
+  'Sitemap building…',
+  'Robots.txt consulting…',
+  'Analytics tracking…',
+  'A/B testing deciding…',
+  'Feature flags checking…',
+];
+
+function getRandomThinkingMessage(): string {
+  return THINKING_MESSAGES[Math.floor(Math.random() * THINKING_MESSAGES.length)];
+}
+
 export function SupportChat(): JSX.Element {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<UIMessage[]>(INITIAL_MESSAGES);
@@ -161,7 +294,7 @@ export function SupportChat(): JSX.Element {
       {
         id: pendingId,
         role: 'assistant',
-        content: 'Thinking…',
+        content: getRandomThinkingMessage(),
         status: 'loading',
       },
     ]);
@@ -253,13 +386,13 @@ export function SupportChat(): JSX.Element {
   }
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end gap-3 px-2">
+    <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end gap-3 max-sm:bottom-2 max-sm:right-2 max-sm:left-2">
       {isOpen && (
         <div
           className={cn(
             'flex w-full max-w-[360px] flex-col gap-3 rounded-2xl border border-white/10 bg-black/90 p-4 text-sm shadow-2xl shadow-cyan-500/20 backdrop-blur',
             'max-h-[75vh] overflow-hidden',
-            'max-[480px]:fixed max-[480px]:bottom-2 max-[480px]:left-2 max-[480px]:right-2 max-[480px]:top-2 max-[480px]:max-w-none'
+            'max-sm:max-w-none max-sm:max-h-[calc(100vh-120px)]'
           )}
           role="dialog"
           aria-label="Foundation support chat"
@@ -364,12 +497,19 @@ function ChatBubble({ message }: { message: UIMessage }) {
         className={cn(
           'max-w-[80%] rounded-2xl px-3 py-2 text-sm shadow-lg',
           bubbleClasses,
-          message.status === 'loading' && 'animate-pulse bg-white/5 text-white/60',
+          message.status === 'loading' && 'bg-white/5',
           message.status === 'error' && 'border border-red-400/40 text-red-100'
         )}
       >
         {message.status === 'loading' ? (
-          message.content
+          <span
+            className="shimmer-text inline-block bg-gradient-to-r from-white/40 via-white/90 to-white/40 bg-clip-text text-transparent bg-[length:200%_100%]"
+            style={{
+              animation: 'shimmer 2s ease-in-out infinite',
+            }}
+          >
+            {message.content}
+          </span>
         ) : (
           <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
             {message.content}
