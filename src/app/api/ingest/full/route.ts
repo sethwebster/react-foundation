@@ -9,7 +9,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { UserManagementService } from '@/lib/admin/user-management-service';
 import { getRedisClient } from '@/lib/redis';
-import { MDXLoader, CommunitiesLoader, LibrariesLoader, PagesLoader, upsertRecords, generateContentMap, storeContentMap } from '@/lib/ingest';
+import { MDXLoader, CommunitiesLoader, LibrariesLoader, upsertRecords, generateContentMap, storeContentMap } from '@/lib/ingest';
 import { createChunksIndex } from '@/lib/ingest/redis-index';
 import { generateIndexName, generateIndexPrefix, getCurrentIndexName, swapToNewIndex, deleteIndex } from '@/lib/chatbot/vector-store';
 import { logger } from '@/lib/logger';
@@ -114,8 +114,7 @@ export async function POST(request: Request) {
 
         // 4. Initialize loaders
         const loaders = [
-          new MDXLoader(), // Loads public-context markdown files
-          // new PagesLoader(), // TODO: Disabled - pages have client components that can't render server-side
+          new MDXLoader(), // Loads public-context markdown files (includes page-content/)
           new CommunitiesLoader(), // Loads communities from Redis
           new LibrariesLoader(), // Loads tracked libraries
         ];

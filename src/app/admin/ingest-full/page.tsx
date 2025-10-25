@@ -225,13 +225,13 @@ export default function IngestFullPage() {
         </p>
         <ul className="text-xs text-muted-foreground space-y-1 list-disc list-inside">
           <li><strong>Creates new index</strong> with unique timestamp</li>
-          <li><strong>MDX Loader:</strong> 13 docs from public-context/</li>
+          <li><strong>MDX Loader:</strong> ~15 docs from public-context/ (includes page content)</li>
           <li><strong>Communities Loader:</strong> ~65 React communities from Redis</li>
           <li><strong>Libraries Loader:</strong> 32 tracked React ecosystem libraries</li>
           <li><strong>Atomic swap</strong> when complete (instant switchover)</li>
           <li><strong>Deletes old index</strong> after successful swap</li>
-          <li><strong>Total:</strong> ~450-500 chunks of comprehensive knowledge</li>
-          <li><strong>No crawling:</strong> All content from structured sources</li>
+          <li><strong>Total:</strong> ~500-600 chunks of comprehensive knowledge</li>
+          <li><strong>Curated content:</strong> Foundation docs + page content + communities + libraries</li>
           <li><strong>Fast:</strong> Completes in 30-90 seconds</li>
         </ul>
       </div>
