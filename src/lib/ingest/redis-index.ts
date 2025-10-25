@@ -37,6 +37,8 @@ export async function createChunksIndex(redis: Redis): Promise<void> {
     logger.info(`[createChunksIndex] Creating index ${indexName} with ${dimensions} dimensions`);
 
     // Create index with vector + text fields
+    // VECTOR HNSW count should be number of attribute-value pairs × 2
+    // We have 5 pairs: TYPE, DIM, DISTANCE_METRIC, M, EF_CONSTRUCTION = 10 total items
     await redis.call(
       'FT.CREATE',
       indexName,
@@ -65,7 +67,7 @@ export async function createChunksIndex(redis: Redis): Promise<void> {
       'embed',
       'VECTOR',
       'HNSW',
-      '6',
+      '10',  // Changed from 6 to 10 (5 pairs × 2)
       'TYPE',
       'FLOAT32',
       'DIM',

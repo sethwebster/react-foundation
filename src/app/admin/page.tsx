@@ -29,10 +29,10 @@ export default function AdminHomePage() {
             description="Move data from old to new Redis"
           />
           <QuickAction
-            href="/admin/ingest"
+            href="/admin/ingest-full"
             icon="🤖"
             title="Ingest Content"
-            description="Crawl site for chatbot vectors"
+            description="Load content via loaders (MDX, Communities, Libraries)"
           />
           <QuickAction
             href="/admin/reset"
