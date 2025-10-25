@@ -47,7 +47,7 @@ export default async function AdminLayout({
       <AdminSidebar />
 
       {/* Content - fixed container with internal scroll */}
-      <div className="fixed top-16 bottom-0 left-16 lg:left-64 right-0 overflow-y-auto">
+      <div className="fixed top-16 bottom-0 left-16 lg:left-64 right-0 overflow-y-auto bg-background">
         {children}
       </div>
     </>

@@ -63,7 +63,7 @@ export function UsersListClient({
       <div className="rounded-2xl border border-border/10 bg-muted/60 p-6">
         <h2 className="mb-4 text-xl font-semibold text-foreground">Add User</h2>
         {error && (
-          <div className="mb-4 rounded-lg border border-destructive/50 bg-destructive/10 p-3 text-sm text-red-300">
+          <div className="mb-4 rounded-lg border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive-foreground">
             {error}
           </div>
         )}
@@ -75,13 +75,13 @@ export function UsersListClient({
             onChange={(e) => setNewEmail(e.target.value)}
             placeholder="user@example.com"
             disabled={isPending}
-            className="flex-1 rounded-lg border border-border/20 bg-foreground/50 px-4 py-2 text-foreground outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/50 disabled:opacity-50"
+            className="flex-1 rounded-lg border border-border bg-input px-4 py-2 text-foreground outline-none focus:border-ring focus:ring-2 focus:ring-ring/50 disabled:opacity-50"
           />
           <select
             value={newRole}
             onChange={(e) => setNewRole(e.target.value as 'user' | 'admin')}
             disabled={isPending}
-            className="rounded-lg border border-border/20 bg-foreground/50 px-4 py-2 text-foreground outline-none focus:border-cyan-400 disabled:opacity-50"
+            className="rounded-lg border border-border bg-input px-4 py-2 text-foreground outline-none focus:border-ring disabled:opacity-50"
           >
             <option value="user">User</option>
             <option value="admin">Admin</option>
@@ -110,7 +110,7 @@ export function UsersListClient({
           {initialUsers.map((user) => (
             <div
               key={user.email}
-              className="flex items-center justify-between rounded-lg border border-border/10 bg-foreground/30 p-4"
+              className="flex items-center justify-between rounded-lg border border-border bg-card p-4"
             >
               <div className="flex-1">
                 <p className="font-medium text-foreground">{user.email}</p>
@@ -125,8 +125,8 @@ export function UsersListClient({
                 <span
                   className={`rounded px-3 py-1 text-sm font-semibold ${
                     user.role === 'admin'
-                      ? 'bg-accent/20 text-purple-300'
-                      : 'bg-primary/20 text-cyan-300'
+                      ? 'bg-accent/20 text-accent-foreground'
+                      : 'bg-primary/20 text-primary-foreground'
                   }`}
                 >
                   {user.role}
@@ -153,7 +153,7 @@ export function UsersListClient({
                   <button
                     onClick={() => handleRemoveUser(user.email)}
                     disabled={isPending}
-                    className="rounded bg-destructive/20 px-3 py-1 text-sm text-red-300 transition hover:bg-destructive/30 disabled:opacity-50"
+                    className="rounded bg-destructive/20 px-3 py-1 text-sm text-destructive-foreground transition hover:bg-destructive/30 disabled:opacity-50"
                   >
                     Remove
                   </button>
