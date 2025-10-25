@@ -25,11 +25,10 @@ export function AdminSidebar() {
   return (
     <aside
       className={`
-        sticky top-16 self-start
+        fixed left-0 top-16 bottom-0
         border-r border-border bg-background
         transition-all duration-300 ease-in-out
-        flex-shrink-0
-        h-[calc(100vh-4rem)]
+        z-30
         ${isExpanded ? 'w-64' : 'w-16 lg:w-64'}
       `}
     >

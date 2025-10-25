@@ -41,16 +41,14 @@ export default async function AdminLayout({
 
   // Render admin UI for authorized users
   return (
-    <div className="min-h-screen pt-16">
-      <div className="flex">
-        {/* Client-side sidebar for navigation */}
-        <AdminSidebar />
+    <>
+      {/* Client-side sidebar for navigation */}
+      <AdminSidebar />
 
-        {/* Main Content - takes remaining space */}
-        <main className="flex-1 min-w-0">
-          {children}
-        </main>
-      </div>
-    </div>
+      {/* Main Content - scrollable area with margin for sidebar */}
+      <main className="ml-16 lg:ml-64 pt-16 min-h-screen">
+        {children}
+      </main>
+    </>
   );
 }
