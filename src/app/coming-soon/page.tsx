@@ -52,7 +52,7 @@ export default function ComingSoonPage() {
   }, []);
 
   return (
-    <div className={`dark relative min-h-screen overflow-hidden bg-slate-950 transition-opacity duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
+    <div className={`dark fixed inset-0 overflow-hidden bg-slate-950 transition-opacity duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
       {/* Cyberpunk Grid Background */}
       <div className="pointer-events-none absolute inset-0 opacity-20">
         <div
@@ -69,10 +69,11 @@ export default function ComingSoonPage() {
         />
       </div>
 
-      {/* Animated Gradient Overlay */}
+      {/* Warm Gradient Overlay */}
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 via-transparent to-orange-500/10 animate-pulse" />
-        <div className="absolute inset-0 bg-gradient-to-tl from-amber-500/10 via-transparent to-cyan-500/10 opacity-50" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(239,68,68,0.08),_transparent_55%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_35%,_rgba(251,146,60,0.15),_transparent_50%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_85%_20%,_rgba(236,72,153,0.12),_transparent_45%)]" />
       </div>
 
       {/* Scanline Effect - Temporarily disabled */}
@@ -89,7 +90,7 @@ export default function ComingSoonPage() {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 flex min-h-screen flex-col items-center justify-center px-4 py-8">
+      <div className="relative z-10 flex h-full flex-col items-center justify-center overflow-y-auto px-4 py-8">
         <div className="w-full max-w-2xl space-y-6 text-center">
           {/* Logo/Icon Area with 3D React Logo */}
           <div className="pointer-events-none relative mx-auto h-56 w-56">

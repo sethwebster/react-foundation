@@ -1,10 +1,16 @@
 import { RFDS } from "@/components/rfds";
 import { ReactLogo3D } from "@/components/ui/react-logo-3d";
+import { Starfield } from "@/components/ui/starfield";
 
 export default function NotFound() {
   return (
     <main className="relative h-screen overflow-hidden">
       <BackgroundGlow />
+
+      {/* Three.js Starfield */}
+      <div className="pointer-events-none absolute inset-0 z-0">
+        <Starfield />
+      </div>
 
       {/* Full screen 3D React Logo */}
       <div className="fixed inset-0 z-0">
@@ -15,7 +21,7 @@ export default function NotFound() {
       <div className="fixed z-10 flex items-center justify-center px-6 text-center" style={{ bottom: '6rem', left: '0', right: '0' }}>
         <div className="max-w-2xl space-y-8">
           {/* Main message */}
-          <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
+          <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl">
             This page drifted off the{" "}
             <span className="bg-gradient-to-r from-cyan-400 via-yellow-300 to-orange-400 bg-clip-text text-transparent">
               React Fiber
@@ -36,7 +42,7 @@ export default function NotFound() {
               href="/store/collections"
               variant="glass"
               size="lg"
-              className="min-w-[200px]"
+              className="min-w-[200px] !text-white"
             >
               Explore Collections
             </RFDS.ButtonLink>
@@ -49,11 +55,11 @@ export default function NotFound() {
 
 function BackgroundGlow() {
   return (
-    <div aria-hidden className="pointer-events-none fixed inset-0 z-0 bg-muted">
-      {/* Static subtle background gradients */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(56,189,248,0.08),_transparent_55%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_35%,_rgba(76,29,149,0.15),_transparent_50%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_85%_20%,_rgba(14,116,144,0.12),_transparent_45%)]" />
+    <div aria-hidden className="pointer-events-none fixed inset-0 z-0 bg-slate-950">
+      {/* Warm gradient overlays */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(239,68,68,0.08),_transparent_55%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_35%,_rgba(251,146,60,0.15),_transparent_50%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_85%_20%,_rgba(236,72,153,0.12),_transparent_45%)]" />
     </div>
   );
 }

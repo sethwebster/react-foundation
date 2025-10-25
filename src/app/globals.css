@@ -196,12 +196,25 @@ button {
   box-sizing: border-box;
 }
 
-/* Apply transitions only to elements that need them, not globally */
+/* Smooth theme transitions for all elements */
+* {
+  transition: background-color 0.3s ease-in-out,
+              color 0.3s ease-in-out,
+              border-color 0.3s ease-in-out,
+              box-shadow 0.3s ease-in-out,
+              fill 0.3s ease-in-out,
+              stroke 0.3s ease-in-out;
+}
+
+/* Enhanced transitions for interactive elements */
 :where(button, a, input, select, textarea) {
   transition: background-color 0.3s ease-in-out,
               color 0.3s ease-in-out,
               border-color 0.3s ease-in-out,
-              box-shadow 0.3s ease-in-out;
+              box-shadow 0.3s ease-in-out,
+              transform 0.2s ease-in-out,
+              fill 0.3s ease-in-out,
+              stroke 0.3s ease-in-out;
 }
 
 /* Prevent transitions on page load */

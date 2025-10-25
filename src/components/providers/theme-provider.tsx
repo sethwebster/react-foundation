@@ -56,17 +56,7 @@ export function ThemeProvider({
   // Apply theme when it changes
   useEffect(() => {
     if (!hasMounted) return;
-
-    document.documentElement.classList.add('no-transition');
     applyTheme(theme);
-    const timer = window.setTimeout(() => {
-      document.documentElement.classList.remove('no-transition');
-    }, 100);
-
-    return () => {
-      window.clearTimeout(timer);
-      document.documentElement.classList.remove('no-transition');
-    };
   }, [theme, hasMounted]);
 
   // Listen for system theme changes
