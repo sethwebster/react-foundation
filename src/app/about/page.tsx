@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { ButtonLink } from "@/components/ui/button";
 import { Pill } from "@/components/ui/pill";
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
@@ -175,7 +176,68 @@ export default function AboutPage() {
                 decisions, impact reports, and financial details are published quarterly
                 for community review and feedback.
               </p>
-              <div className="grid gap-6 pt-4 sm:grid-cols-2">
+
+              {/* Governance Bodies */}
+              <div className="grid gap-6 pt-6 lg:grid-cols-2">
+                <Link
+                  href="/about/board-of-directors"
+                  className="group block space-y-4 rounded-2xl border border-border/10 bg-card text-card-foreground p-8 transition-all hover:border-primary/20 hover:bg-gradient-to-br hover:from-primary/5 hover:to-accent/5 hover:shadow-lg"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-400 to-blue-500 shadow-lg">
+                      <svg className="h-7 w-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                      </svg>
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-xl font-semibold text-foreground transition-colors group-hover:text-primary">
+                        Board of Directors
+                      </h3>
+                      <p className="mt-1 text-sm text-muted-foreground">
+                        Strategic Leadership · Financial Oversight · Governance
+                      </p>
+                    </div>
+                    <svg className="h-5 w-5 shrink-0 text-muted-foreground transition-all group-hover:translate-x-1 group-hover:text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                  <p className="text-sm leading-relaxed text-foreground/70">
+                    Our Board provides strategic guidance, ensures financial oversight, and
+                    maintains the foundation&apos;s commitment to transparency and community-first values.
+                  </p>
+                </Link>
+
+                <Link
+                  href="/about/technical-steering-committee"
+                  className="group block space-y-4 rounded-2xl border border-border/10 bg-card text-card-foreground p-8 transition-all hover:border-success/20 hover:bg-gradient-to-br hover:from-success/5 hover:to-primary/5 hover:shadow-lg"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-400 to-cyan-500 shadow-lg">
+                      <svg className="h-7 w-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                      </svg>
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-xl font-semibold text-foreground transition-colors group-hover:text-success">
+                        Technical Steering Committee
+                      </h3>
+                      <p className="mt-1 text-sm text-muted-foreground">
+                        Technical Excellence · Innovation · Open Standards
+                      </p>
+                    </div>
+                    <svg className="h-5 w-5 shrink-0 text-muted-foreground transition-all group-hover:translate-x-1 group-hover:text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                  <p className="text-sm leading-relaxed text-foreground/70">
+                    The TSC drives technical excellence across the React ecosystem, establishing
+                    standards, best practices, and supporting innovation in libraries and tools.
+                  </p>
+                </Link>
+              </div>
+
+              {/* Governance Principles */}
+              <div className="grid gap-6 pt-6 sm:grid-cols-2">
                 <div className="space-y-3 rounded-2xl border border-border/10 bg-background/[0.03] p-6">
                   <h3 className="font-semibold text-foreground">Open Financials</h3>
                   <p className="text-sm text-foreground/70">
