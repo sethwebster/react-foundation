@@ -17,6 +17,8 @@ export interface CrawlerOptions {
   allowedPaths?: string[];
   excludePaths?: string[];
   onProgress?: (current: number, total: number, url: string) => void;
+  onError?: (url: string, error: Error) => void;
+  onPageCrawled?: (url: string, linkCount: number, queuedCount: number) => void;
 }
 
 export class SiteCrawler {
@@ -36,8 +38,15 @@ export class SiteCrawler {
     while (this.queue.length > 0 && this.visited.size < maxPages) {
       const url = this.queue.shift()!;
 
-      if (this.visited.has(url)) continue;
-      if (!this.shouldCrawl(url)) continue;
+      if (this.visited.has(url)) {
+        console.log(`[SiteCrawler] Skipping already visited: ${url}`);
+        continue;
+      }
+
+      if (!this.shouldCrawl(url)) {
+        console.log(`[SiteCrawler] Skipping filtered URL: ${url}`);
+        continue;
+      }
 
       this.visited.add(url);
 
@@ -47,22 +56,38 @@ export class SiteCrawler {
         const result = await this.crawlPage(url);
         this.results.push(result);
 
+        console.log(`[SiteCrawler] Successfully crawled ${url}, found ${result.links.length} links`);
+
         // Add discovered links to queue
+        let queuedCount = 0;
         for (const link of result.links) {
           if (!this.visited.has(link) && !this.queue.includes(link)) {
             this.queue.push(link);
+            queuedCount++;
+            console.log(`[SiteCrawler] Queued: ${link}`);
           }
         }
+
+        // Notify about crawl result
+        this.options.onPageCrawled?.(url, result.links.length, queuedCount);
       } catch (error) {
-        const errorMsg = error instanceof Error ? error.message : 'Unknown error';
-        console.error(`[SiteCrawler] Failed to crawl ${url}: ${errorMsg}`);
+        const err = error instanceof Error ? error : new Error('Unknown error');
+        console.error(`[SiteCrawler] Failed to crawl ${url}: ${err.message}`);
+        console.error(`[SiteCrawler] Error stack:`, err.stack);
+
+        // Notify via callback if provided
+        this.options.onError?.(url, err);
 
         // If this is the first page and it fails, we should throw
         if (this.results.length === 0 && this.visited.size === 1) {
-          throw new Error(`Failed to crawl start URL ${url}: ${errorMsg}`);
+          throw new Error(`Failed to crawl start URL ${url}: ${err.message}`);
         }
+
+        // Continue crawling other pages even if one fails
       }
     }
+
+    console.log(`[SiteCrawler] Crawl complete. Queue empty: ${this.queue.length === 0}, Visited: ${this.visited.size}, Max pages: ${maxPages}`);
 
     return this.results;
   }

@@ -202,14 +202,31 @@ export class IngestionService {
         this.progress.crawledPages = current;
         this.progress.totalPages = total;
         this.progress.currentUrl = url;
-        if (current % 5 === 0 || current === total) {
-          this.addLog(`🔍 Crawling: ${url} (${current}/${total})`);
-        }
+        this.addLog(`🔍 Crawling [${current}/${total}]: ${url}`);
+      },
+      onError: (url: string, error: Error) => {
+        this.addLog(`❌ Failed to crawl ${url}: ${error.message}`, 'error');
+      },
+      onPageCrawled: (url: string, linkCount: number, queuedCount: number) => {
+        this.addLog(`  → Found ${linkCount} links, queued ${queuedCount} new URLs`);
       },
     });
 
     const results = await crawler.crawl();
-    this.addLog(`ℹ️ Crawler completed. Visited: ${crawler.getVisitedUrls().length}, Queued: ${crawler.getQueuedUrls().length}`);
+    const visitedUrls = crawler.getVisitedUrls();
+    const queuedUrls = crawler.getQueuedUrls();
+
+    this.addLog(`ℹ️ Crawler completed:`);
+    this.addLog(`  - Visited: ${visitedUrls.length} pages`);
+    this.addLog(`  - Remaining in queue: ${queuedUrls.length} URLs`);
+    this.addLog(`  - Successfully crawled: ${results.length} pages`);
+
+    if (queuedUrls.length > 0) {
+      this.addLog(`ℹ️ Remaining queued URLs (showing first 10):`, 'info');
+      queuedUrls.slice(0, 10).forEach(url => {
+        this.addLog(`  - ${url}`, 'info');
+      });
+    }
 
     return results;
   }
