@@ -47,7 +47,7 @@ const INITIAL_MESSAGES: UIMessage[] = [
     id: 'welcome',
     role: 'assistant',
     content:
-      "Hi! I'm the Foundation assistant. Ask about our programs, funding model, or let me know if something looks off and I can help file a GitHub issue.",
+      "Hi! I'm the React Foundation assistant. Ask about our programs, funding model, or let me know if something looks off and I can help file a GitHub issue.",
   },
 ];
 
@@ -314,9 +314,10 @@ export function SupportChat(): JSX.Element {
                 value={input}
                 onChange={(event) => setInput(event.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="Ask about the foundation..."
+                placeholder="Ask about our foundation..."
                 rows={1}
-                className="flex-1 resize-none rounded-2xl border border-white/15 bg-black/60 px-4 py-2 text-sm text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-cyan-400/60 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-transparent"
+                style={{ overflow: 'hidden' }}
+                className="flex-1 resize-none rounded-2xl border border-white/15 bg-black/60 px-4 py-2 text-sm text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-cyan-400/60"
                 disabled={isSubmitting}
               />
               <Button

@@ -170,6 +170,17 @@ export async function POST(request: Request) {
         await storeContentMap(redis, contentMap);
         addLog(ingestionId, `✅ Content map created with ${contentMap.sections.length} sections`);
 
+        // 7.5. Create index metadata (required for swap)
+        // Using correct metadata key pattern from vector-store.ts
+        const metadataKey = `vector-store:index:${newIndexName}`;
+        await redis.set(metadataKey, JSON.stringify({
+          indexName: newIndexName,
+          prefix: newPrefix,
+          chunkCount: upsertStats.chunks_created,
+          createdAt: new Date().toISOString(),
+          status: 'ready',
+        }));
+
         // 8. Blue-Green: Atomic swap to new index
         addLog(ingestionId, '🔄 Swapping to new index (atomic, zero downtime)...');
         const swappedOldIndex = await swapToNewIndex(redis, newIndexName);

@@ -18,30 +18,25 @@ export class CommunitiesLoader implements ContentLoader {
     const records: RawRecord[] = [];
 
     try {
-      // Get all community keys
-      const keys = await redis.keys('community:*');
-      logger.info(`[${this.name}] Found ${keys.length} communities in Redis`);
+      // Communities are stored in a single key as JSON array
+      const COMMUNITIES_KEY = 'communities:all';
+      const data = await redis.get(COMMUNITIES_KEY);
 
-      for (const key of keys) {
+      if (!data) {
+        logger.warn(`[${this.name}] No communities found at ${COMMUNITIES_KEY}`);
+        return records;
+      }
+
+      // Parse JSON array
+      const communities = JSON.parse(data) as Array<Record<string, unknown>>;
+      logger.info(`[${this.name}] Found ${communities.length} communities in Redis`);
+
+      for (const community of communities) {
+        const communityName = (community.name as string) || 'unknown';
         try {
-          // Get community data
-          const data = await redis.hgetall(key);
-
-          if (!data || Object.keys(data).length === 0) {
-            continue;
-          }
-
-          // Extract slug from key (community:slug)
-          const slug = key.replace('community:', '');
-
-          // Parse JSON fields and create typed community object
-          const community: Record<string, unknown> = {
-            ...data,
-            organizers: data.organizers ? JSON.parse(data.organizers) : [],
-            socialLinks: data.socialLinks ? JSON.parse(data.socialLinks) : {},
-            eventFormats: data.eventFormats ? JSON.parse(data.eventFormats) : [],
-            tags: data.tags ? JSON.parse(data.tags) : [],
-          };
+          // Extract slug - use slug field or generate from name
+          const slug = (community.slug as string) ||
+                       (communityName.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''));
 
           // Build body text from community data
           const body = this.buildCommunityBody(community);
@@ -50,7 +45,7 @@ export class CommunitiesLoader implements ContentLoader {
           const record: RawRecord = {
             id: `community-${slug}`,
             type: 'community',
-            title: (community.name as string) || slug,
+            title: communityName,
             url: `/communities/${slug}`,
             updatedAt: (community.updatedAt as string) || new Date().toISOString(),
             tags: {
@@ -72,7 +67,8 @@ export class CommunitiesLoader implements ContentLoader {
 
           records.push(record);
         } catch (error) {
-          logger.error(`[${this.name}] Failed to load community ${key}:`, error);
+          const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+          logger.error(`[${this.name}] Failed to load community ${communityName}: ${errorMsg}`);
         }
       }
 
