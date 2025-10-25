@@ -1,341 +1,380 @@
-# Automatic Content Ingestion Setup
+# React Foundation – Ingestion, Embedding, and Search System
 
 ## Overview
+This document defines the architecture, workflow, and technical specifications for the **React Foundation Knowledge System** — the ingestion and retrieval backend that powers the **chat bot and semantic search** on [react.foundation](https://react.foundation).
 
-This guide shows you how to set up automatic content ingestion that runs after every production deployment, keeping your chatbot's knowledge base up-to-date.
+The goal is to provide the bot with complete, navigable access to all Foundation content — both static and dynamic (e.g., community data from Redis) — without crawling or scraping the live website.
 
-## How It Works
+---
 
-1. **Deploy to Production**: Push to `main` branch triggers Vercel deployment
-2. **Deployment Completes**: GitHub Actions detects successful deployment
-3. **Auto-Ingest Triggers**: Workflow crawls your production site
-4. **Chatbot Updated**: New content available for chatbot queries
+## Objectives
 
-## Setup Instructions
+1. **Eliminate runtime crawling** — All data is pushed to embeddings at build or update time.
+2. **Single-application architecture** — Everything lives inside one Next.js app (no monorepo).
+3. **Instant updates** — Whenever new content or communities are added, their embeddings are updated automatically.
+4. **Full navigability** — Every embedded chunk contains a canonical URL (and optional anchor) to direct users precisely to the source page.
+5. **Hybrid search** — Use Redis for both vector and keyword search (RediSearch).
 
-### 1. Generate API Token
+---
 
-Generate a secure token for the ingestion API:
+## System Architecture
 
-```bash
-node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
-```
+┌─────────────────────────────┐
+│  React.Foundation Website   │
+│  (Next.js on Vercel)        │
+│                             │
+│  • /app + /pages            │
+│  • /lib/ingest              │
+│  • /pages/api/search.ts     │
+│  • /pages/api/ingest/*.ts   │
+└─────────────┬───────────────┘
+│
+│
+┌─────────────▼───────────────┐
+│         Redis Cloud         │
+│  (Upstash or self-managed)  │
+│                             │
+│  • RediSearch Index         │
+│  • Vector Embeddings        │
+│  • Canonical Items          │
+│  • Chunked Text             │
+│  • Content Map JSON         │
+└─────────────┬───────────────┘
+│
+│
+┌─────────────▼───────────────┐
+│     Embedding Model API     │
+│   (e.g. OpenAI / Anthropic) │
+│                             │
+│  • text-embedding-3-large   │
+│  • Batch Embedding Calls    │
+└─────────────────────────────┘
 
-Example output:
-```
-a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8
-```
+---
 
-### 2. Add Environment Variables
+## Data Model (Redis)
 
-#### Local Development (`.env.local`)
+### 1. Canonical Items
+Each “thing” (page, FAQ, community, policy, etc.) has a canonical record.
 
-```bash
-# For local testing
-INGESTION_API_TOKEN=your-token-from-step-1
-```
+**Key Pattern:**  
+`rf:items:<id>`
 
-#### Production (Vercel)
+**Type:** `HASH`
 
-Add these secrets in your Vercel dashboard:
+| Field | Type | Description |
+|-------|------|-------------|
+| `type` | string | e.g., `page`, `faq`, `community` |
+| `title` | string | Display title |
+| `url` | string | Canonical URL |
+| `source` | string | Origin of data (e.g. `redis`, `mdx`, `cms`) |
+| `updated_at` | ISO string | Last modified timestamp |
+| `tags` | JSON string | Arbitrary metadata |
 
-1. Go to your project settings
-2. Navigate to **Environment Variables**
-3. Add:
+---
 
-```bash
-INGESTION_API_TOKEN=your-token-from-step-1
-CRAWLER_BYPASS_TOKEN=your-crawler-bypass-token
-```
+### 2. Chunks
+Chunks are tokenized segments (≈900–1200 tokens) of canonical items with embeddings.
 
-### 3. Add GitHub Secrets
+**Key Pattern:**  
+`rf:chunks:<itemId>:<ord>`
 
-Add these secrets to your GitHub repository:
+**Type:** `HASH`
 
-1. Go to **Settings** → **Secrets and variables** → **Actions**
-2. Add **Repository secrets**:
+| Field | Type | Description |
+|-------|------|-------------|
+| `item_id` | string | Canonical item reference |
+| `ord` | int | Chunk order |
+| `text` | string | Raw chunk text |
+| `url` | string | Canonical URL |
+| `anchor` | string | Optional anchor (for deep link) |
+| `title` | string | Title of parent item |
+| `type` | string | Type of parent item |
+| `updated_at` | ISO string | Timestamp of ingestion |
+| `tsv` | string | Text for full-text BM25 search |
+| `embed` | BLOB | Vector embedding (Float32Array) |
 
-```bash
-PRODUCTION_URL=https://your-domain.com
-INGESTION_API_TOKEN=your-token-from-step-1
-```
+---
 
-**Important**:
-- `PRODUCTION_URL` should be your production domain (e.g., `https://react.foundation`)
-- Use the same `INGESTION_API_TOKEN` value as in Vercel
-
-### 4. Update Workflow Name (Optional)
-
-If your Vercel deployment workflow has a different name, update `.github/workflows/ingest-content.yml`:
-
-```yaml
-workflow_run:
-  workflows: ["Your Deployment Workflow Name"]  # Change this
-  types:
-    - completed
-```
-
-To find your workflow name:
-1. Go to GitHub → **Actions** tab
-2. Find your deployment workflow
-3. Use that exact name
-
-### 5. Deploy and Test
-
-1. **Push to main branch**:
-   ```bash
-   git push origin main
-   ```
-
-2. **Monitor the workflow**:
-   - Go to GitHub → **Actions** tab
-   - Watch "Ingest Content After Deploy" workflow
-   - Should complete in 2-10 minutes depending on site size
-
-3. **Verify results**:
-   - Go to `/admin/ingest/inspect`
-   - Check that chunks have recent timestamps
-   - Test chatbot with questions about your content
-
-## Configuration Options
-
-### Unlimited Crawling
-
-By default, the workflow crawls all pages. To limit:
-
-```yaml
-# In .github/workflows/ingest-content.yml
-"maxPages": 500  # Change from 0 to a specific number
-```
-
-### Custom Paths
-
-Exclude specific paths:
-
-```yaml
-"excludePaths": ["/api", "/admin", "/_next", "/blog/drafts"]
-```
-
-Or include only specific paths:
-
-```yaml
-"allowedPaths": ["/docs", "/guides", "/about"]
-```
-
-## Manual Trigger
-
-You can manually trigger ingestion from GitHub:
-
-1. Go to **Actions** tab
-2. Select "Ingest Content After Deploy"
-3. Click **Run workflow**
-4. Configure options:
-   - Max pages (0 = unlimited)
-   - Clear existing data (true/false)
-
-## Monitoring
-
-### Check Workflow Status
+### 3. RediSearch Index
 
 ```bash
-gh run list --workflow=ingest-content.yml
-```
+FT.CREATE rf:chunks-idx ON HASH PREFIX 1 "rf:chunks:" SCHEMA \
+  item_id TAG \
+  type TAG \
+  title TEXT \
+  url TEXT \
+  anchor TEXT \
+  updated_at TEXT \
+  tsv TEXT \
+  embed VECTOR HNSW 6 TYPE FLOAT32 DIM 3072 DISTANCE_METRIC COSINE M 16 EF_CONSTRUCTION 200
 
-### View Logs
+	•	DIM = dimension of the embedding model (e.g. 3072 for text-embedding-3-large).
+	•	Supports both KNN vector similarity and keyword (BM25) search.
 
-```bash
-gh run view --log
-```
+⸻
 
-### Admin Dashboard
+4. Content Map
 
-- View status: `/admin/ingest/inspect`
-- See stored chunks and their timestamps
-- Verify content diversity
+Key:
+rf:content-map
 
-## Troubleshooting
+Type: STRING (JSON)
 
-### Workflow Not Triggering
+Stores a lightweight navigation graph for UI and chat navigation.
 
-**Problem**: Workflow doesn't run after deployment
+{
+  "sections": [
+    { "title": "About", "url": "/about" },
+    { "title": "Communities", "url": "/communities", "children": [
+      { "title": "React Bangalore", "url": "/communities/bengaluru" }
+    ]},
+    { "title": "Funding", "url": "/funding", "anchors": [
+      { "text": "Eligibility", "anchor": "#eligibility" },
+      { "text": "Apply", "anchor": "#apply" }
+    ]}
+  ]
+}
 
-**Solutions**:
-1. Check workflow name matches your deployment workflow
-2. Verify workflow is enabled (Actions tab → Enable workflow)
-3. Check that deployment workflow completed successfully
 
-### Authentication Errors
+⸻
 
-**Problem**: `401 Unauthorized` or `Invalid API token`
+Ingestion Flow
 
-**Solutions**:
-1. Verify `INGESTION_API_TOKEN` matches in:
-   - GitHub Secrets
-   - Vercel Environment Variables
-2. Regenerate token if compromised
-3. Check token has no extra spaces or newlines
+1. Sources
 
-### Coming Soon Content
+Source	Description	Loader
+MDX Files	Local documentation, pages, FAQs	/lib/ingest/loaders/mdx.ts
+Redis Communities	Dynamic data from your main app	/lib/ingest/loaders/communities.ts
+External APIs	Optional CMS or partner data	/lib/ingest/loaders/api.ts
 
-**Problem**: Ingestion still getting "Coming Soon" pages
+Each loader outputs an array of RawRecord:
 
-**Solutions**:
-1. Verify `CRAWLER_BYPASS_TOKEN` is set in Vercel
-2. Check proxy middleware has bypass code
-3. Test bypass locally first
-4. Ensure production environment loaded new variables
+type RawRecord = {
+  id: string;
+  type: string;
+  title: string;
+  url: string;
+  updatedAt: string;
+  tags?: Record<string, any>;
+  body: string;
+  anchors?: Array<{ text: string; anchor: string }>;
+};
 
-### Timeout Issues
 
-**Problem**: Workflow times out before completion
+⸻
 
-**Solutions**:
-1. Increase `MAX_WAIT` in workflow (default: 600s)
-2. Reduce `maxPages` to crawl fewer pages
-3. Check for slow-loading pages on production
-4. Monitor ingestion logs for stuck pages
+2. Chunking
 
-### No Content Extracted
+Target size: ~950 tokens
+Overlap: 100 tokens
+Algorithm:
 
-**Problem**: Pages crawled but no content in chunks
+export function chunk(text: string, target = 950, overlap = 100) {
+  const words = text.split(/\s+/);
+  const out: string[] = [];
+  for (let i = 0; i < words.length; ) {
+    const slice = words.slice(i, i + target).join(' ');
+    out.push(slice);
+    i += target - overlap;
+  }
+  return out;
+}
 
-**Solutions**:
-1. Check if pages are client-side rendered (need SSR/SSG)
-2. Verify main content isn't in hidden elements
-3. Check content extraction selectors
-4. Test manually: `/admin/ingest` with low page count
 
-## Best Practices
+⸻
 
-### 1. Test Locally First
+3. Embedding
 
-Before enabling automatic ingestion:
-```bash
-# Test ingestion locally
-# Go to /admin/ingest
-# Run with low page count (10-20)
-# Verify results in /admin/ingest/inspect
-```
+API: OpenAI (or equivalent)
 
-### 2. Use Selective Paths
+const res = await openai.embeddings.create({
+  model: "text-embedding-3-large",
+  input: chunks,
+});
 
-Don't ingest everything:
-```yaml
-"excludePaths": [
-  "/api",           # API endpoints
-  "/admin",         # Admin pages
-  "/_next",         # Next.js internals
-  "/dashboard",     # User-specific pages
-  "/profile",       # User-specific pages
-  "/checkout"       # E-commerce flows
-]
-```
+Each response is converted to a Float32Array and stored in Redis as a binary BLOB:
 
-### 3. Schedule During Low Traffic
+Buffer.from(new Float32Array(vector).buffer);
 
-For large sites, consider scheduling:
-```yaml
-# Add schedule trigger
-on:
-  schedule:
-    - cron: '0 2 * * *'  # 2 AM daily
-  workflow_dispatch:
-```
 
-### 4. Monitor Costs
+⸻
 
-- OpenAI embeddings cost ~$0.13 per 1M tokens
-- 100 pages ≈ 500 chunks ≈ 500K tokens ≈ $0.065
-- Set budget alerts in OpenAI dashboard
+4. Upsert Pipeline
+	1.	Write rf:items:<id> hash (canonical item)
+	2.	Write rf:chunks:<itemId>:<ord> hash for each chunk
+	3.	Add/update RediSearch index automatically
+	4.	Update rf:content-map if relevant
 
-### 5. Rate Limiting
+Batching: Use Redis pipelines for performance.
 
-If you hit rate limits:
-```typescript
-// In src/lib/chatbot/ingest.ts
-const batchSize = 5;  // Reduce from 10
-await new Promise((resolve) => setTimeout(resolve, 2000)); // Increase delay
-```
+⸻
 
-## Security Considerations
+Retrieval (Search API)
 
-### Token Security
+Route: /api/search
 
-✅ **Do:**
-- Store tokens in GitHub Secrets and Vercel Environment Variables
-- Rotate tokens periodically (quarterly)
-- Use different tokens for staging/production
-- Monitor access logs
+Request
 
-❌ **Don't:**
-- Commit tokens to Git
-- Share tokens in Slack/Discord
-- Use same token across multiple projects
-- Log tokens in application logs
+{
+  "query": "How do I start a new React community?",
+  "k": 8
+}
 
-### Access Control
+Steps
+	1.	Embed the query → vector BLOB
+	2.	Run hybrid KNN + BM25 search:
 
-- Only allow ingestion from GitHub Actions IP ranges (optional)
-- Monitor ingestion API usage
-- Set up alerts for failed authentications
-- Review ingestion logs regularly
+FT.SEARCH rf:chunks-idx
+  "(@type:{community}|@type:{page}) => {$YIELD_DISTANCE_AS: score}
+   *=>[KNN 8 @embed $VEC]
+   @tsv:(\"start|community|create\")"
+  PARAMS 2 VEC $BLOB
+  DIALECT 2
+  SORTBY score
+  RETURN 6 item_id ord url anchor title text
 
-## Advanced Configuration
 
-### Multiple Environments
+	3.	Parse results, deduplicate by item_id, and return with url#anchor.
 
-```yaml
-# Staging ingestion
-- name: Ingest Staging
-  if: github.ref == 'refs/heads/develop'
-  run: |
-    curl -X POST "${{ secrets.STAGING_URL }}/api/admin/ingest" \
-      -H "Authorization: Bearer ${{ secrets.STAGING_INGESTION_TOKEN }}"
+Response
 
-# Production ingestion
-- name: Ingest Production
-  if: github.ref == 'refs/heads/main'
-  run: |
-    curl -X POST "${{ secrets.PRODUCTION_URL }}/api/admin/ingest" \
-      -H "Authorization: Bearer ${{ secrets.PRODUCTION_INGESTION_TOKEN }}"
-```
+{
+  "hits": [
+    {
+      "title": "React Bangalore",
+      "url": "/communities/bengaluru#organizers",
+      "snippet": "To start a React community..."
+    }
+  ]
+}
 
-### Notifications
 
-Add Slack notifications:
-```yaml
-- name: Notify Slack
-  if: always()
-  uses: 8398a7/action-slack@v3
-  with:
-    status: ${{ job.status }}
-    text: 'Content ingestion ${{ job.status }}'
-    webhook_url: ${{ secrets.SLACK_WEBHOOK }}
-```
+⸻
 
-## FAQ
+API Endpoints Summary
 
-**Q: How long does ingestion take?**
-A: 2-10 minutes for 50-100 pages. Scales linearly with page count.
+Path	Method	Description	Auth
+/api/ingest/full	POST	Re-ingest all content (MDX + Redis communities)	Bearer Token
+/api/ingest/delta	POST	Re-ingest items changed since timestamp	Bearer Token
+/api/search	POST	Perform hybrid semantic search	Public
+/api/content-map	GET	Return navigable content map	Public
 
-**Q: Will it affect site performance?**
-A: No, it crawls production after deployment is complete. Minimal impact.
 
-**Q: What if ingestion fails?**
-A: Chatbot continues using existing data. Fix issue and manually re-run.
+⸻
 
-**Q: Can I run it more frequently?**
-A: Yes, but be mindful of OpenAI API costs and rate limits.
+Security
+	•	Protect ingestion endpoints with a secret:
 
-**Q: Does it work with static exports?**
-A: Yes, as long as HTML is accessible at the URLs.
+INGEST_TOKEN=supersecretvalue
 
-**Q: What about dynamic content?**
-A: Only content rendered in initial HTML is captured. Use SSR/SSG for dynamic pages.
 
-## Support
+	•	Verify in handler:
 
-- 📖 Documentation: `/docs/CRAWLER_BYPASS_SETUP.md`
-- 🔍 Inspect data: `/admin/ingest/inspect`
-- 🐛 Troubleshooting: `/docs/INGESTION_TROUBLESHOOTING.md`
-- 💬 Issues: GitHub Issues
+if (req.headers.authorization !== `Bearer ${process.env.INGEST_TOKEN}`)
+  return res.status(401).end();
+
+
+
+⸻
+
+Vercel Integration
+
+vercel.json
+
+{
+  "crons": [
+    {
+      "path": "/api/ingest/delta?since=-24h",
+      "schedule": "0 2 * * *"
+    }
+  ]
+}
+
+This ensures daily synchronization of any changed Redis data or content files.
+
+⸻
+
+Example Directory Layout
+
+/lib/
+  redis.ts
+  /ingest/
+    chunk.ts
+    embed.ts
+    upsert.ts
+    contentMap.ts
+    /loaders/
+      communities.ts
+      mdx.ts
+/pages/api/
+  search.ts
+  ingest/full.ts
+  ingest/delta.ts
+/scripts/
+  ingest.ts
+next.config.js
+vercel.json
+
+
+⸻
+
+Deployment Flow
+	1.	Developer pushes to main
+	2.	GitHub Action builds site
+	3.	Vercel deploys site
+	4.	(Optional) GitHub Action calls /api/ingest/full to refresh embeddings for changed content
+	5.	Vercel nightly cron calls /api/ingest/delta
+	6.	Chat bot retrieves via /api/search
+
+⸻
+
+Bot Integration Behavior
+	•	Every response cites url#anchor from rf:chunks.
+	•	The bot can navigate users to exact sections.
+	•	For “browse” queries, it reads rf:content-map and suggests links.
+
+⸻
+
+Future Enhancements
+	•	Add multilingual embeddings (different index per language)
+	•	Integrate reranker (optional LLM re-ranking)
+	•	Add stream-based ingest (Redis Streams rf:events)
+	•	Track coverage metrics (what % of pages are embedded)
+
+⸻
+
+Summary
+
+Component	Description
+Storage	Redis (RediSearch)
+Index	rf:chunks-idx (hybrid: vector + text)
+Embeddings	text-embedding-3-large
+Ingestion	Push-based via API or GitHub Action
+Search	Hybrid KNN + keyword
+Navigation	rf:content-map
+Deployment	Single Next.js app on Vercel
+Security	Bearer token ingestion endpoints
+
+
+⸻
+
+Core Principles
+	1.	Push, don’t crawl
+Every content source pushes its text upstream for embedding.
+	2.	Single source of truth
+Redis stores both the canonical data and the search vectors.
+	3.	Immediate navigability
+Every chunk knows its url and anchor.
+	4.	Zero downtime updates
+Ingestion is incremental, fast, and idempotent.
+
+⸻
+
+Owner: React Foundation Engineering
+Maintainer: Seth Webster
+Last Updated: 2025-10-25
+
+---
+
+Would you like me to generate a **ready-to-deploy folder skeleton** (with all the files mentioned in the spec — stubs for loaders, APIs, and scripts) so you can drop it into your Next.js app immediately?

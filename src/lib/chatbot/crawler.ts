@@ -34,8 +34,16 @@ export class SiteCrawler {
 
   async crawl(): Promise<CrawlResult[]> {
     const maxPages = this.options.maxPages ?? 100;
+    const startTime = Date.now();
+    const MAX_CRAWL_TIME = 120000; // 2 minutes total crawl time
 
     while (this.queue.length > 0 && this.visited.size < maxPages) {
+      // Check total crawl time
+      if (Date.now() - startTime > MAX_CRAWL_TIME) {
+        console.log(`[SiteCrawler] Crawl timeout after ${MAX_CRAWL_TIME / 1000}s`);
+        break;
+      }
+
       const url = this.queue.shift()!;
 
       if (this.visited.has(url)) {
@@ -101,7 +109,7 @@ export class SiteCrawler {
 
     // Fetch with timeout to prevent hanging
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
 
     try {
       const response = await fetch(url, {
