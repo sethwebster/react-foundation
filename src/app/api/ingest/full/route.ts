@@ -11,6 +11,7 @@ import { UserManagementService } from '@/lib/admin/user-management-service';
 import { getRedisClient } from '@/lib/redis';
 import { MDXLoader, CommunitiesLoader, LibrariesLoader, upsertRecords, generateContentMap, storeContentMap } from '@/lib/ingest';
 import { createChunksIndex } from '@/lib/ingest/redis-index';
+import { generateIndexName, generateIndexPrefix, getCurrentIndexName, swapToNewIndex, deleteIndex } from '@/lib/chatbot/vector-store';
 import { logger } from '@/lib/logger';
 
 export const runtime = 'nodejs'; // Requires Node runtime for file system access
@@ -92,21 +93,33 @@ export async function POST(request: Request) {
 
     // Run ingestion in background
     const ingestionPromise = (async () => {
+      let newIndexName: string | null = null;
+      let oldIndexName: string | null = null;
+
       try {
+        // 1. Blue-Green: Get current index (before creating new one)
+        oldIndexName = await getCurrentIndexName(redis);
+        if (oldIndexName) {
+          addLog(ingestionId, `📊 Current active index: ${oldIndexName}`);
+        }
 
-        // 1. Ensure RediSearch index exists
-        addLog(ingestionId, '📊 Ensuring RediSearch index exists');
+        // 2. Blue-Green: Generate new unique index name
+        newIndexName = generateIndexName();
+        const newPrefix = generateIndexPrefix(newIndexName);
+        addLog(ingestionId, `🆕 Creating new index: ${newIndexName}`);
+
+        // 3. Create new RediSearch index
         await createChunksIndex(redis);
-        addLog(ingestionId, '✅ RediSearch index ready');
+        addLog(ingestionId, `✅ New index created: ${newIndexName}`);
 
-        // 2. Initialize loaders
+        // 4. Initialize loaders
         const loaders = [
           new MDXLoader(), // Loads public-context markdown files
           new CommunitiesLoader(), // Loads communities from Redis
           new LibrariesLoader(), // Loads tracked libraries
         ];
 
-        // 3. Load content from all sources
+        // 5. Load content from all sources
         addLog(ingestionId, `📂 Running ${loaders.length} loaders...`);
         const allRecords = [];
         const loaderStats = [];
@@ -141,22 +154,37 @@ export async function POST(request: Request) {
 
         addLog(ingestionId, `📊 Total records loaded: ${allRecords.length}`);
 
-        // 4. Upsert all records (creates canonical items + chunks + embeddings)
-        addLog(ingestionId, `🧠 Generating embeddings and storing ${allRecords.length} records...`);
-        const upsertStats = await upsertRecords(redis, allRecords, 'rf:chunks:');
-        addLog(ingestionId, `✅ Created ${upsertStats.chunks_created} chunks with ${upsertStats.embeddings_generated} embeddings`);
+        // 6. Upsert all records into NEW index (creates canonical items + chunks + embeddings)
+        addLog(ingestionId, `🧠 Generating embeddings and storing into NEW index...`);
+        addLog(ingestionId, `   Building ${allRecords.length} records into: ${newIndexName}`);
+        const upsertStats = await upsertRecords(redis, allRecords, newPrefix);
+        addLog(ingestionId, `✅ Created ${upsertStats.chunks_created} chunks with ${upsertStats.embeddings_generated} embeddings in new index`);
 
         if (upsertStats.errors.length > 0) {
           addLog(ingestionId, `⚠️ ${upsertStats.errors.length} errors occurred`);
         }
 
-        // 5. Generate and store content map
+        // 7. Generate and store content map
         addLog(ingestionId, '🗺️ Generating content map...');
         const contentMap = generateContentMap(allRecords);
         await storeContentMap(redis, contentMap);
         addLog(ingestionId, `✅ Content map created with ${contentMap.sections.length} sections`);
 
-        // 6. Complete
+        // 8. Blue-Green: Atomic swap to new index
+        addLog(ingestionId, '🔄 Swapping to new index (atomic, zero downtime)...');
+        const swappedOldIndex = await swapToNewIndex(redis, newIndexName);
+        addLog(ingestionId, `✅ Swapped to new index: ${newIndexName}`);
+
+        if (swappedOldIndex) {
+          addLog(ingestionId, `   Old index marked inactive: ${swappedOldIndex}`);
+
+          // 9. Blue-Green: Cleanup old index
+          addLog(ingestionId, '🗑️ Cleaning up old index...');
+          await deleteIndex(redis, swappedOldIndex);
+          addLog(ingestionId, `✅ Deleted old index: ${swappedOldIndex}`);
+        }
+
+        // 10. Complete
         const totalDuration = Date.now() - startTime;
 
         const result = {
@@ -200,6 +228,9 @@ export async function POST(request: Request) {
     })();
 
     runningIngestions.set(ingestionId, ingestionPromise);
+
+    // Store as latest ingestion ID in Redis for all admins to see
+    await redis.set('rf:latest-ingestion-id', ingestionId);
 
     return NextResponse.json({
       ingestionId,

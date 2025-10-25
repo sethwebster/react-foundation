@@ -37,6 +37,7 @@ interface IngestionProgress {
 }
 
 interface IndexStats {
+  index_name: string;
   num_docs: number;
   num_records: number;
   indexing: number;
@@ -64,6 +65,35 @@ export default function IngestFullPage() {
       }
     }
     loadStats();
+  }, []);
+
+  // Load latest ingestion from Redis on mount (shared across all admins)
+  useEffect(() => {
+    async function loadLatest() {
+      try {
+        // Get latest ingestion ID
+        const latestResponse = await fetch('/api/ingest/full/latest');
+        const latestData = await latestResponse.json();
+
+        if (latestData.ingestionId) {
+          // Load that ingestion's progress
+          const progressResponse = await fetch(`/api/ingest/full?ingestionId=${latestData.ingestionId}`);
+          const progressData = await progressResponse.json();
+
+          if (progressData.status) {
+            setProgress(progressData);
+            setIngestionId(latestData.ingestionId);
+            // If still running, start polling
+            if (progressData.status === 'running') {
+              setIngesting(true);
+            }
+          }
+        }
+      } catch (err) {
+        // No previous ingestion or error loading - that's ok
+      }
+    }
+    loadLatest();
   }, []);
 
   // Poll for progress updates
@@ -121,6 +151,7 @@ export default function IngestFullPage() {
 
       if (response.ok) {
         setIngestionId(data.ingestionId);
+        // Latest ID is stored in Redis by the API
       } else {
         setError(data.error || 'Failed to start ingestion');
         setIngesting(false);
@@ -154,7 +185,12 @@ export default function IngestFullPage() {
       {/* Current Index Stats */}
       {indexStats && (
         <div className="bg-card border border-border rounded-xl p-4 mb-6">
-          <h3 className="text-sm font-semibold text-foreground mb-3">Current Index Statistics</h3>
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-semibold text-foreground">Current Index Statistics</h3>
+            <code className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded">
+              {indexStats.index_name}
+            </code>
+          </div>
           <div className="grid grid-cols-3 gap-4">
             <div className="text-center">
               <div className="text-2xl font-bold text-primary">{indexStats.num_docs}</div>
