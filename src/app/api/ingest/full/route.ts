@@ -277,11 +277,24 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const ingestionId = searchParams.get('ingestionId');
 
+    // If no ingestionId, check for running ingestion
     if (!ingestionId) {
-      return NextResponse.json(
-        { error: 'ingestionId is required' },
-        { status: 400 }
-      );
+      // Return first running ingestion if any
+      for (const [id, progress] of ingestionProgress.entries()) {
+        if (progress.status === 'running') {
+          return NextResponse.json({
+            ingestionId: id,
+            status: 'running',
+            isRunning: true,
+          });
+        }
+      }
+
+      // No running ingestion
+      return NextResponse.json({
+        ingestionId: null,
+        isRunning: false,
+      });
     }
 
     const progress = ingestionProgress.get(ingestionId);

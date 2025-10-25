@@ -67,11 +67,28 @@ export default function IngestFullPage() {
     loadStats();
   }, []);
 
-  // Load latest ingestion from Redis on mount (shared across all admins)
+  // Check for running ingestion or load latest on mount
   useEffect(() => {
-    async function loadLatest() {
+    async function loadInitialState() {
       try {
-        // Get latest ingestion ID
+        // First check if there's a currently running ingestion
+        const runningResponse = await fetch('/api/ingest/full');
+        const runningData = await runningResponse.json();
+
+        if (runningData.isRunning && runningData.ingestionId) {
+          // There's a running ingestion - load it and start polling
+          const progressResponse = await fetch(`/api/ingest/full?ingestionId=${runningData.ingestionId}`);
+          const progressData = await progressResponse.json();
+
+          if (progressData.status) {
+            setProgress(progressData);
+            setIngestionId(runningData.ingestionId);
+            setIngesting(true); // Start polling
+          }
+          return; // Don't load latest if there's a running one
+        }
+
+        // No running ingestion, load latest completed one
         const latestResponse = await fetch('/api/ingest/full/latest');
         const latestData = await latestResponse.json();
 
@@ -83,17 +100,14 @@ export default function IngestFullPage() {
           if (progressData.status) {
             setProgress(progressData);
             setIngestionId(latestData.ingestionId);
-            // If still running, start polling
-            if (progressData.status === 'running') {
-              setIngesting(true);
-            }
+            // Don't start polling for completed ingestions
           }
         }
       } catch (err) {
         // No previous ingestion or error loading - that's ok
       }
     }
-    loadLatest();
+    loadInitialState();
   }, []);
 
   // Poll for progress updates
