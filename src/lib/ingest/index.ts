@@ -8,6 +8,8 @@ export * from './types';
 export * from './chunk';
 export * from './embed';
 export * from './upsert';
+export * from './content-map';
+export * from './redis-index';
 
 // Loaders
 export { MDXLoader } from './loaders/mdx';
