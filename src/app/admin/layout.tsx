@@ -41,14 +41,16 @@ export default async function AdminLayout({
 
   // Render admin UI for authorized users
   return (
-    <div className="flex min-h-screen">
-      {/* Client-side sidebar for navigation */}
-      <AdminSidebar />
+    <div className="min-h-screen pt-16">
+      <div className="flex">
+        {/* Client-side sidebar for navigation */}
+        <AdminSidebar />
 
-      {/* Main Content - responsive margin (16px icons or 256px full sidebar) */}
-      <main className="flex-1 ml-16 lg:ml-64 pt-16 sm:pt-20">
-        {children}
-      </main>
+        {/* Main Content - takes remaining space */}
+        <main className="flex-1 min-w-0">
+          {children}
+        </main>
+      </div>
     </div>
   );
 }
