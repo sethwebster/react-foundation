@@ -225,13 +225,13 @@ export default async function AdminDataPage() {
       </div>
 
       {/* Communities Data */}
-      {data.communityKeys.length > 0 && (
+      {data.communityKeys > 0 && (
         <div className="bg-card border border-border rounded-xl p-6">
           <h3 className="text-lg font-bold text-foreground mb-4">Communities Data</h3>
           <div className="grid gap-4 md:grid-cols-2">
             <InfoCard
               label="Community Keys"
-              value={data.communityKeys.length.toString()}
+              value={data.communityKeys.toString()}
               detail="Keys starting with communities:*"
             />
             <InfoCard
