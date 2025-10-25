@@ -25,13 +25,15 @@ export function AdminSidebar() {
   return (
     <aside
       className={`
+        sticky top-16 self-start
         border-r border-border bg-background
         transition-all duration-300 ease-in-out
         flex-shrink-0
+        h-[calc(100vh-4rem)]
         ${isExpanded ? 'w-64' : 'w-16 lg:w-64'}
       `}
     >
-      <div className="sticky top-16 p-2 lg:p-6 space-y-4 lg:space-y-6 h-[calc(100vh-4rem)] overflow-y-auto">
+      <div className="p-2 lg:p-6 space-y-4 lg:space-y-6 h-full overflow-y-auto flex flex-col">
         {/* Expand/collapse button (mobile only) */}
         <button
           onClick={() => setIsExpanded(!isExpanded)}
@@ -83,7 +85,7 @@ export function AdminSidebar() {
           </nav>
         </div>
 
-        <div className="border-t border-border pt-4 lg:pt-6 mt-auto">
+        <div className="border-t border-border pt-4 lg:pt-6 mt-auto pb-4">
           <Link
             href="/"
             title="Back to Site"
