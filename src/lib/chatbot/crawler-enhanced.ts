@@ -3,8 +3,18 @@
  * Uses Puppeteer to capture dynamically-rendered content
  */
 
-import puppeteer, { type Browser, type Page } from 'puppeteer';
-import { JSDOM } from 'jsdom';
+import type { Browser } from 'puppeteer';
+
+// Dynamic imports to avoid bundling issues in serverless environments
+async function getPuppeteer() {
+  const puppeteer = await import('puppeteer');
+  return puppeteer.default;
+}
+
+async function getJSDOM() {
+  const { JSDOM } = await import('jsdom');
+  return JSDOM;
+}
 
 export interface CrawlResult {
   url: string;
@@ -39,6 +49,7 @@ export class EnhancedSiteCrawler {
 
     try {
       // Launch browser once for all pages
+      const puppeteer = await getPuppeteer();
       this.browser = await puppeteer.launch({
         headless: true,
         args: [
@@ -127,6 +138,7 @@ export class EnhancedSiteCrawler {
       const html = await page.content();
 
       // Extract title and links using JSDOM (faster than Puppeteer for this)
+      const JSDOM = await getJSDOM();
       const dom = new JSDOM(html);
       const document = dom.window.document;
 
@@ -138,7 +150,7 @@ export class EnhancedSiteCrawler {
       const links: string[] = [];
       const anchorElements = document.querySelectorAll('a[href]');
 
-      for (const anchor of Array.from(anchorElements)) {
+      for (const anchor of Array.from(anchorElements) as HTMLAnchorElement[]) {
         const href = anchor.getAttribute('href');
         if (!href) continue;
 

@@ -191,7 +191,7 @@ export class IngestionService {
 
     for (const result of crawlResults) {
       try {
-        const content = extractor.extractContent(result.html, result.url);
+        const content = await extractor.extractContent(result.html, result.url);
         if (!content) {
           this.addLog(`⚠️ No content extracted from ${result.url}`, 'warn');
           continue;
