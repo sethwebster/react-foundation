@@ -91,12 +91,14 @@ export async function upsertRecord(
  * @param redis - Redis client
  * @param records - Array of raw records
  * @param indexPrefix - Prefix for chunk keys
+ * @param onProgress - Optional callback for progress updates
  * @returns Ingestion statistics
  */
 export async function upsertRecords(
   redis: Redis,
   records: RawRecord[],
-  indexPrefix: string = 'rf:chunks:'
+  indexPrefix: string = 'rf:chunks:',
+  onProgress?: (current: number, total: number, recordTitle: string) => void
 ): Promise<IngestionStats> {
   const stats: IngestionStats = {
     items_created: 0,
@@ -111,8 +113,12 @@ export async function upsertRecords(
 
   const startTime = Date.now();
 
-  for (const record of records) {
+  for (let i = 0; i < records.length; i++) {
+    const record = records[i];
     try {
+      // Notify progress
+      onProgress?.(i + 1, records.length, record.title);
+
       const chunksCreated = await upsertRecord(redis, record, indexPrefix);
       stats.items_created++;
       stats.chunks_created += chunksCreated;

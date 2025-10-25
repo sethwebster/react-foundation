@@ -157,7 +157,19 @@ export async function POST(request: Request) {
         // 6. Upsert all records into NEW index (creates canonical items + chunks + embeddings)
         addLog(ingestionId, `🧠 Generating embeddings and storing into NEW index...`);
         addLog(ingestionId, `   Building ${allRecords.length} records into: ${newIndexName}`);
-        const upsertStats = await upsertRecords(redis, allRecords, newPrefix);
+
+        const upsertStats = await upsertRecords(
+          redis,
+          allRecords,
+          newPrefix,
+          (current: number, total: number, recordTitle: string) => {
+            // Log progress every 5 records or on last record
+            if (current % 5 === 0 || current === total) {
+              addLog(ingestionId, `   Processing [${current}/${total}]: ${recordTitle}`);
+            }
+          }
+        );
+
         addLog(ingestionId, `✅ Created ${upsertStats.chunks_created} chunks with ${upsertStats.embeddings_generated} embeddings in new index`);
 
         if (upsertStats.errors.length > 0) {
