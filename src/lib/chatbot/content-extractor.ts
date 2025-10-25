@@ -3,11 +3,7 @@
  * Extracts main content from HTML and chunks it for embedding
  */
 
-// Dynamic import for jsdom to avoid bundling issues in serverless environments
-async function getJSDOM() {
-  const { JSDOM } = await import('jsdom');
-  return JSDOM;
-}
+import { parseHTML } from 'linkedom';
 
 export interface ContentChunk {
   id: string;
@@ -46,10 +42,8 @@ export class ContentExtractor {
     };
   }
 
-  async extractContent(html: string, url: string): Promise<string> {
-    const JSDOM = await getJSDOM();
-    const dom = new JSDOM(html);
-    const document = dom.window.document;
+  extractContent(html: string, url: string): string {
+    const { document } = parseHTML(html);
 
     // Remove unwanted elements
     for (const selector of this.options.removeSelectors) {

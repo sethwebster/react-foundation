@@ -21,6 +21,13 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  outputFileTracingIncludes: {
+    // This is the route PATH, not a file path:
+    '/api/admin/ingest': ['node_modules/jsdom/**'],
+    // If your cron endpoint (/api/ris/collect) triggers crawling too,
+    // include it as well so it has the files at runtime:
+    '/api/ris/collect': ['node_modules/jsdom/**']
+  }
 };
 
 const withMDX = createMDX({

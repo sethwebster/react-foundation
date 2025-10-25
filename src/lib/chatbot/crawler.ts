@@ -3,11 +3,7 @@
  * Discovers all pages on the site by following internal links
  */
 
-// Dynamic import for jsdom to avoid bundling issues in serverless environments
-async function getJSDOM() {
-  const { JSDOM } = await import('jsdom');
-  return JSDOM;
-}
+import { parseHTML } from 'linkedom';
 
 export interface CrawlResult {
   url: string;
@@ -58,7 +54,13 @@ export class SiteCrawler {
           }
         }
       } catch (error) {
-        console.error(`Failed to crawl ${url}:`, error);
+        const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+        console.error(`[SiteCrawler] Failed to crawl ${url}: ${errorMsg}`);
+
+        // If this is the first page and it fails, we should throw
+        if (this.results.length === 0 && this.visited.size === 1) {
+          throw new Error(`Failed to crawl start URL ${url}: ${errorMsg}`);
+        }
       }
     }
 
@@ -73,10 +75,14 @@ export class SiteCrawler {
     }
 
     const response = await fetch(url, { headers });
+
+    // Check if response is OK
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText} for ${url}`);
+    }
+
     const html = await response.text();
-    const JSDOM = await getJSDOM();
-    const dom = new JSDOM(html);
-    const document = dom.window.document;
+    const { document } = parseHTML(html);
 
     // Extract title
     const title =

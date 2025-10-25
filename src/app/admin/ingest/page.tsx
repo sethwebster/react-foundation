@@ -150,7 +150,7 @@ export default function IngestPage() {
       </div>
 
       {/* Configuration Form */}
-      {!ingesting && !progress && (
+      {!progress && (
         <div className="bg-card border border-border rounded-xl p-6 mb-6">
           <h2 className="text-xl font-bold text-foreground mb-4">
             Configuration
@@ -251,7 +251,7 @@ export default function IngestPage() {
               </p>
               <ul className="text-xs text-muted-foreground space-y-1 list-disc list-inside">
                 <li>Creates new index with unique name</li>
-                <li>Crawls public pages (with JavaScript rendering)</li>
+                <li>Crawls public pages (static HTML via linkedom)</li>
                 <li>Ingests files from public-context/ (server-side)</li>
                 <li>Builds into new index (chatbot uses old)</li>
                 <li>Atomic swap when complete (instant switchover)</li>
@@ -281,7 +281,7 @@ export default function IngestPage() {
       )}
 
       {/* Progress Display */}
-      {ingesting && progress && (
+      {progress && (
         <div className="bg-card border border-border rounded-xl p-6 mb-6">
           <h2 className="text-xl font-bold text-foreground mb-4">
             {progress.status === 'running' && '⏳ Ingestion in Progress'}

@@ -4,7 +4,7 @@
  */
 
 import type Redis from 'ioredis';
-import { EnhancedSiteCrawler, type CrawlerOptions } from './crawler-enhanced';
+import { SiteCrawler, type CrawlerOptions } from './crawler';
 import { ContentExtractor, type ContentChunk } from './content-extractor';
 import { FileIngester } from './file-ingest';
 import { createEmbedding } from './openai';
@@ -94,19 +94,39 @@ export class IngestionService {
       await createVectorIndex(this.redis, newIndexName, newPrefix, dimensions);
       this.addLog(`✅ New index created: ${newIndexName}`);
 
-      // Phase 1: Crawl site
+      // Phase 1: Crawl site (optional - continue if it fails)
       this.progress.phase = 'crawling';
-      this.addLog('🕷️ Phase 1: Crawling site...');
-      const crawlResults = await this.crawlSite(options);
-      this.progress.crawledPages = crawlResults.length;
-      this.addLog(`✅ Crawled ${crawlResults.length} pages`);
+      this.addLog(`🕷️ Phase 1: Crawling site from ${options.baseUrl}...`);
+      let chunks: ContentChunk[] = [];
 
-      // Phase 2: Extract and chunk content
-      this.progress.phase = 'extracting';
-      this.addLog('📄 Phase 2: Extracting and chunking content...');
-      const chunks = await this.extractAndChunk(crawlResults);
-      this.progress.chunksCreated = chunks.length;
-      this.addLog(`✅ Created ${chunks.length} chunks`);
+      try {
+        const crawlResults = await this.crawlSite(options);
+        this.progress.crawledPages = crawlResults.length;
+
+        if (crawlResults.length === 0) {
+          this.addLog(`⚠️ No pages found during crawl. Check URL and network connectivity.`, 'warn');
+        } else {
+          this.addLog(`✅ Crawled ${crawlResults.length} pages`);
+
+          // Phase 2: Extract and chunk content
+          this.progress.phase = 'extracting';
+          this.addLog('📄 Phase 2: Extracting and chunking content...');
+          chunks = await this.extractAndChunk(crawlResults);
+          this.progress.chunksCreated = chunks.length;
+          this.addLog(`✅ Created ${chunks.length} chunks from website`);
+        }
+      } catch (error) {
+        const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+        this.addLog(
+          `⚠️ Website crawling failed: ${errorMsg}`,
+          'warn'
+        );
+        this.addLog(
+          `ℹ️ Continuing with file ingestion only...`,
+          'info'
+        );
+        this.progress.crawledPages = 0;
+      }
 
       // Phase 3: Ingest files from public-context
       this.progress.phase = 'files';
@@ -165,10 +185,20 @@ export class IngestionService {
   }
 
   private async crawlSite(options: IngestionOptions) {
-    const crawler = new EnhancedSiteCrawler(options.baseUrl, {
+    this.addLog('🕸️ Using static HTML crawler (fetch + linkedom)...');
+    this.addLog(`ℹ️ Start URL: ${options.baseUrl}`);
+
+    if (options.excludePaths && options.excludePaths.length > 0) {
+      this.addLog(`ℹ️ Excluding paths: ${options.excludePaths.join(', ')}`);
+    }
+
+    if (options.allowedPaths && options.allowedPaths.length > 0) {
+      this.addLog(`ℹ️ Allowed paths only: ${options.allowedPaths.join(', ')}`);
+    }
+
+    const crawler = new SiteCrawler(options.baseUrl, {
       ...options,
-      waitTime: 2000, // Wait 2 seconds for dynamic content to load
-      onProgress: (current, total, url) => {
+      onProgress: (current: number, total: number, url: string) => {
         this.progress.crawledPages = current;
         this.progress.totalPages = total;
         this.progress.currentUrl = url;
@@ -178,7 +208,10 @@ export class IngestionService {
       },
     });
 
-    return await crawler.crawl();
+    const results = await crawler.crawl();
+    this.addLog(`ℹ️ Crawler completed. Visited: ${crawler.getVisitedUrls().length}, Queued: ${crawler.getQueuedUrls().length}`);
+
+    return results;
   }
 
   private async extractAndChunk(crawlResults: Array<{ url: string; title: string; html: string }>) {
@@ -191,7 +224,7 @@ export class IngestionService {
 
     for (const result of crawlResults) {
       try {
-        const content = await extractor.extractContent(result.html, result.url);
+        const content = extractor.extractContent(result.html, result.url);
         if (!content) {
           this.addLog(`⚠️ No content extracted from ${result.url}`, 'warn');
           continue;

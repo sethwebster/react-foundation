@@ -48,6 +48,7 @@
     "ioredis": "^5.8.2",
     "jsdom": "^27.0.1",
     "leaflet": "^1.9.4",
+    "linkedom": "^0.18.12",
     "next": "^16.0.0",
     "next-auth": "^4.24.11",
     "next-mdx-remote": "^5.0.0",

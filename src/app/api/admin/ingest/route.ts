@@ -11,6 +11,7 @@ import { getRedisClient } from '@/lib/redis';
 import { IngestionService, type IngestionProgress } from '@/lib/chatbot/ingest';
 import { logger } from '@/lib/logger';
 
+export const runtime = 'nodejs'; // jsdom requires Node runtime (not Edge)
 export const dynamic = 'force-dynamic';
 export const maxDuration = 300; // 5 minutes max for ingestion
 
@@ -53,11 +54,12 @@ export async function POST(request: Request) {
     } = body;
 
     // Get base URL from environment or request
+    // Priority: NEXT_PUBLIC_SITE_URL > VERCEL_URL > localhost
     const baseUrl =
       process.env.NEXT_PUBLIC_SITE_URL ||
-      process.env.VERCEL_URL
+      (process.env.VERCEL_URL
         ? `https://${process.env.VERCEL_URL}`
-        : 'http://localhost:3000';
+        : 'http://localhost:3000');
 
     // Generate ingestion ID
     const ingestionId = `ingest-${Date.now()}`;
