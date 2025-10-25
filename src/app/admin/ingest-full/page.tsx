@@ -183,25 +183,21 @@ export default function IngestFullPage() {
       </div>
 
       {/* Current Index Stats */}
-      {indexStats && (
+      {indexStats && indexStats.num_docs > 0 && (
         <div className="bg-card border border-border rounded-xl p-4 mb-6">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-semibold text-foreground">Current Index Statistics</h3>
-            <code className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded">
-              {indexStats.index_name}
-            </code>
-          </div>
-          <div className="grid grid-cols-3 gap-4">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-primary">{indexStats.num_docs}</div>
-              <div className="text-xs text-muted-foreground">Chunks</div>
+          <h3 className="text-sm font-semibold text-foreground mb-1">Current Index Statistics</h3>
+          <p className="text-xs text-muted-foreground mb-4">
+            Index: <code className="bg-muted px-1.5 py-0.5 rounded">{indexStats.index_name}</code>
+          </p>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="text-center bg-muted rounded-lg p-3">
+              <div className="text-2xl font-bold text-primary">{indexStats.num_docs.toLocaleString()}</div>
+              <div className="text-xs text-muted-foreground">Chunks Indexed</div>
             </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-primary">{indexStats.num_records}</div>
-              <div className="text-xs text-muted-foreground">Records</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-primary">{indexStats.indexing === 0 ? '✅' : '⏳'}</div>
+            <div className="text-center bg-muted rounded-lg p-3">
+              <div className="text-2xl font-bold text-primary">
+                {indexStats.indexing === 0 ? '✅ Ready' : '⏳ Indexing'}
+              </div>
               <div className="text-xs text-muted-foreground">Status</div>
             </div>
           </div>
