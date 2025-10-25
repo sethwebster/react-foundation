@@ -27,10 +27,12 @@ export function AdminSidebar() {
       className={`
         fixed left-0 top-16 bottom-0
         border-r border-border bg-background
-        transition-all duration-300 ease-in-out
+        transition-width duration-300 ease-in-out
         z-30
+        will-change-auto
         ${isExpanded ? 'w-64' : 'w-16 lg:w-64'}
       `}
+      style={{ position: 'fixed' }}
     >
       <div className="p-2 lg:p-6 space-y-4 lg:space-y-6 h-full overflow-y-auto flex flex-col">
         {/* Expand/collapse button (mobile only) */}
