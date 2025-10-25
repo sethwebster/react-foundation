@@ -41,14 +41,14 @@ export default async function AdminLayout({
 
   // Render admin UI for authorized users
   return (
-    <>
+    <div className="fixed inset-0 overflow-hidden">
       {/* Client-side sidebar for navigation */}
       <AdminSidebar />
 
-      {/* Main Content - scrollable area with margin for sidebar */}
-      <main className="ml-16 lg:ml-64 pt-16 min-h-screen">
+      {/* Main Content - scrollable area with margin for header and sidebar */}
+      <main className="fixed top-16 right-0 bottom-0 left-16 lg:left-64 overflow-y-auto">
         {children}
       </main>
-    </>
+    </div>
   );
 }
