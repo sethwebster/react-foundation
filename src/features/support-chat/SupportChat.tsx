@@ -109,6 +109,15 @@ export function SupportChat(): JSX.Element {
     textarea.style.height = `${nextHeight}px`;
   }, [input, isOpen]);
 
+  // Auto-focus input when chat opens
+  useEffect(() => {
+    if (isOpen) {
+      setTimeout(() => {
+        textareaRef.current?.focus();
+      }, 100);
+    }
+  }, [isOpen]);
+
   const suggestions = useMemo(
     () => [
       {
@@ -218,6 +227,11 @@ export function SupportChat(): JSX.Element {
       console.error('Chat request failed', fallback);
     } finally {
       setIsSubmitting(false);
+
+      // Refocus the input after sending
+      setTimeout(() => {
+        textareaRef.current?.focus();
+      }, 100);
     }
   }
 

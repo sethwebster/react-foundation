@@ -36,12 +36,35 @@ interface IngestionProgress {
   error?: string;
 }
 
+interface IndexStats {
+  num_docs: number;
+  num_records: number;
+  indexing: number;
+}
+
 export default function IngestFullPage() {
   const [ingesting, setIngesting] = useState(false);
   const [ingestionId, setIngestionId] = useState<string | null>(null);
   const [progress, setProgress] = useState<IngestionProgress | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [autoScroll, setAutoScroll] = useState(true);
+  const [indexStats, setIndexStats] = useState<IndexStats | null>(null);
+
+  // Load current index stats on mount
+  useEffect(() => {
+    async function loadStats() {
+      try {
+        const response = await fetch('/api/ingest/full/stats');
+        if (response.ok) {
+          const data = await response.json();
+          setIndexStats(data);
+        }
+      } catch (err) {
+        // Ignore errors - stats are optional
+      }
+    }
+    loadStats();
+  }, []);
 
   // Poll for progress updates
   useEffect(() => {
@@ -128,15 +151,39 @@ export default function IngestFullPage() {
         </div>
       </div>
 
+      {/* Current Index Stats */}
+      {indexStats && (
+        <div className="bg-card border border-border rounded-xl p-4 mb-6">
+          <h3 className="text-sm font-semibold text-foreground mb-3">Current Index Statistics</h3>
+          <div className="grid grid-cols-3 gap-4">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-primary">{indexStats.num_docs}</div>
+              <div className="text-xs text-muted-foreground">Chunks</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-primary">{indexStats.num_records}</div>
+              <div className="text-xs text-muted-foreground">Records</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-primary">{indexStats.indexing === 0 ? '✅' : '⏳'}</div>
+              <div className="text-xs text-muted-foreground">Status</div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Info Box */}
       <div className="bg-primary/10 border border-primary/20 rounded-lg p-4 mb-6">
         <p className="text-sm font-medium text-foreground mb-2">
-          ℹ️ Loader Architecture (Push-Based)
+          ℹ️ Blue-Green Deployment (Zero Downtime)
         </p>
         <ul className="text-xs text-muted-foreground space-y-1 list-disc list-inside">
+          <li><strong>Creates new index</strong> with unique timestamp</li>
           <li><strong>MDX Loader:</strong> 12 docs from public-context/</li>
           <li><strong>Communities Loader:</strong> ~65 React communities from Redis</li>
           <li><strong>Libraries Loader:</strong> 54 tracked React ecosystem libraries</li>
+          <li><strong>Atomic swap</strong> when complete (instant switchover)</li>
+          <li><strong>Deletes old index</strong> after successful swap</li>
           <li><strong>Total:</strong> ~400-500 chunks of comprehensive knowledge</li>
           <li><strong>No crawling:</strong> All content loaded from structured sources</li>
           <li><strong>Fast:</strong> Completes in 30-90 seconds</li>
