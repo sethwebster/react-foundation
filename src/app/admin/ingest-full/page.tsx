@@ -5,7 +5,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface IngestionResult {
   success: boolean;
@@ -29,15 +29,64 @@ interface IngestionResult {
   error?: string;
 }
 
+interface IngestionProgress {
+  status: 'running' | 'completed' | 'failed';
+  logs: string[];
+  result?: IngestionResult;
+  error?: string;
+}
+
 export default function IngestFullPage() {
   const [ingesting, setIngesting] = useState(false);
-  const [result, setResult] = useState<IngestionResult | null>(null);
+  const [ingestionId, setIngestionId] = useState<string | null>(null);
+  const [progress, setProgress] = useState<IngestionProgress | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [autoScroll, setAutoScroll] = useState(true);
+
+  // Poll for progress updates
+  useEffect(() => {
+    if (!ingestionId || !ingesting) return;
+
+    const interval = setInterval(async () => {
+      try {
+        const response = await fetch(`/api/ingest/full?ingestionId=${ingestionId}`);
+        const data = await response.json();
+
+        if (response.ok) {
+          setProgress(data);
+
+          // Stop polling if completed or failed
+          if (data.status === 'completed' || data.status === 'failed') {
+            setIngesting(false);
+          }
+        } else {
+          setError(data.error || 'Failed to get ingestion status');
+          setIngesting(false);
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Unknown error');
+        setIngesting(false);
+      }
+    }, 1000); // Poll every second
+
+    return () => clearInterval(interval);
+  }, [ingestionId, ingesting]);
+
+  // Auto-scroll logs
+  useEffect(() => {
+    if (autoScroll && progress?.logs.length) {
+      const logsContainer = document.getElementById('ingest-full-logs');
+      if (logsContainer) {
+        logsContainer.scrollTop = logsContainer.scrollHeight;
+      }
+    }
+  }, [progress?.logs, autoScroll]);
 
   const handleIngest = async () => {
     setIngesting(true);
     setError(null);
-    setResult(null);
+    setProgress(null);
+    setIngestionId(null);
 
     try {
       const response = await fetch('/api/ingest/full', {
@@ -48,13 +97,13 @@ export default function IngestFullPage() {
       const data = await response.json();
 
       if (response.ok) {
-        setResult(data);
+        setIngestionId(data.ingestionId);
       } else {
-        setError(data.error || 'Failed to run ingestion');
+        setError(data.error || 'Failed to start ingestion');
+        setIngesting(false);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error');
-    } finally {
       setIngesting(false);
     }
   };
@@ -95,7 +144,7 @@ export default function IngestFullPage() {
       </div>
 
       {/* Action Button */}
-      {!result && !ingesting && (
+      {!progress && (
         <button
           onClick={handleIngest}
           disabled={ingesting}
@@ -112,31 +161,94 @@ export default function IngestFullPage() {
         </div>
       )}
 
+      {/* Live Logs (while running or after completion) */}
+      {progress && (
+        <div className="bg-card border border-border rounded-xl p-6 mb-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold text-foreground">
+              {progress.status === 'running' && '⏳ Ingestion in Progress'}
+              {progress.status === 'completed' && '✅ Ingestion Completed'}
+              {progress.status === 'failed' && '❌ Ingestion Failed'}
+            </h2>
+            {progress.status === 'running' && (
+              <div className="flex items-center gap-2">
+                <div className="animate-spin h-4 w-4 border-2 border-primary border-t-transparent rounded-full"></div>
+                <span className="text-sm text-muted-foreground">Processing...</span>
+              </div>
+            )}
+          </div>
+
+          {/* Live Logs */}
+          {progress.logs.length > 0 && (
+            <div className="bg-muted border border-border rounded-lg overflow-hidden mb-4">
+              <div className="flex items-center justify-between p-3 border-b border-border bg-card">
+                <p className="text-sm font-medium text-foreground">
+                  📝 Live Logs ({progress.logs.length})
+                </p>
+                <label className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={autoScroll}
+                    onChange={(e) => setAutoScroll(e.target.checked)}
+                    className="w-4 h-4 accent-primary"
+                  />
+                  Auto-scroll
+                </label>
+              </div>
+              <div
+                id="ingest-full-logs"
+                className="max-h-96 overflow-y-auto p-3 space-y-1 font-mono text-xs bg-background"
+              >
+                {progress.logs.map((log, i) => (
+                  <div
+                    key={i}
+                    className={`${
+                      log.includes('❌')
+                        ? 'text-red-600 dark:text-red-400'
+                        : log.includes('⚠️')
+                        ? 'text-yellow-600 dark:text-yellow-400'
+                        : log.includes('✅')
+                        ? 'text-green-600 dark:text-green-400'
+                        : 'text-muted-foreground'
+                    }`}
+                  >
+                    {log}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Results Display */}
-      {result && (
+      {progress?.result && (
         <div className="space-y-4">
           {/* Success Banner */}
-          {result.success && (
+          {progress.result?.success && (
             <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-4">
               <p className="text-sm font-medium text-green-600 dark:text-green-400">
-                ✅ Ingestion completed successfully in {(result.duration_ms / 1000).toFixed(1)}s
+                ✅ Ingestion completed successfully in {(progress.result.duration_ms / 1000).toFixed(1)}s
               </p>
             </div>
           )}
 
           {/* Stats Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <StatBox label="Records" value={result.ingestion.records_processed} />
-            <StatBox label="Items" value={result.ingestion.items_created} />
-            <StatBox label="Chunks" value={result.ingestion.chunks_created} />
-            <StatBox label="Embeddings" value={result.ingestion.embeddings_generated} />
-          </div>
+          {progress.result && (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <StatBox label="Records" value={progress.result.ingestion.records_processed} />
+              <StatBox label="Items" value={progress.result.ingestion.items_created} />
+              <StatBox label="Chunks" value={progress.result.ingestion.chunks_created} />
+              <StatBox label="Embeddings" value={progress.result.ingestion.embeddings_generated} />
+            </div>
+          )}
 
           {/* Loader Results */}
-          <div className="bg-card border border-border rounded-xl p-6">
-            <h2 className="text-xl font-bold text-foreground mb-4">Loader Results</h2>
-            <div className="space-y-2">
-              {result.loaders.map((loader, i) => (
+          {progress.result && (
+            <div className="bg-card border border-border rounded-xl p-6">
+              <h2 className="text-xl font-bold text-foreground mb-4">Loader Results</h2>
+              <div className="space-y-2">
+                {progress.result.loaders.map((loader, i) => (
                 <div
                   key={i}
                   className="flex items-center justify-between p-3 bg-muted rounded-lg"
@@ -155,43 +267,50 @@ export default function IngestFullPage() {
                 </div>
               ))}
             </div>
-          </div>
+            </div>
+          )}
 
           {/* Content Map */}
-          <div className="bg-card border border-border rounded-xl p-6">
-            <h2 className="text-xl font-bold text-foreground mb-4">Content Map</h2>
-            <p className="text-sm text-muted-foreground">
-              Generated navigation graph with {result.content_map.sections} sections
-            </p>
-            <a
-              href="/api/content-map"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block mt-2 text-sm text-primary hover:underline"
-            >
-              View Content Map →
-            </a>
-          </div>
+          {progress.result && (
+              <div className="bg-card border border-border rounded-xl p-6">
+                <h2 className="text-xl font-bold text-foreground mb-4">Content Map</h2>
+                <p className="text-sm text-muted-foreground">
+                  Generated navigation graph with {progress.result.content_map.sections} sections
+                </p>
+                <a
+                  href="/api/content-map"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block mt-2 text-sm text-primary hover:underline"
+                >
+                  View Content Map →
+                </a>
+              </div>
+          )}
 
           {/* Errors */}
-          {result.ingestion.errors > 0 && (
+          {progress.result && progress.result.ingestion.errors > 0 && (
             <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-4">
               <p className="text-sm font-medium text-yellow-600 dark:text-yellow-400">
-                ⚠️ {result.ingestion.errors} errors occurred during ingestion
+                ⚠️ {progress.result.ingestion.errors} errors occurred during ingestion
               </p>
             </div>
           )}
 
           {/* Actions */}
-          <button
-            onClick={() => {
-              setResult(null);
-              setError(null);
-            }}
-            className="w-full bg-secondary text-secondary-foreground px-6 py-3 rounded-lg font-semibold hover:bg-secondary/90 transition"
-          >
-            Run Another Ingestion
-          </button>
+          {progress.status !== 'running' && (
+            <button
+              onClick={() => {
+                setProgress(null);
+                setIngestionId(null);
+                setError(null);
+                setIngesting(false);
+              }}
+              className="w-full bg-secondary text-secondary-foreground px-6 py-3 rounded-lg font-semibold hover:bg-secondary/90 transition mt-4"
+            >
+              Run Another Ingestion
+            </button>
+          )}
         </div>
       )}
 
