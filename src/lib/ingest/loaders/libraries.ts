@@ -24,59 +24,83 @@ export class LibrariesLoader implements ContentLoader {
   name = 'LibrariesLoader';
 
   private libraries: LibraryData[] = [
-    // Core React
+    // Core React & React Native (9 repositories)
     { repo: 'facebook/react', name: 'React', category: 'Core React', tier: 'Tier 1' },
     { repo: 'facebook/react-native', name: 'React Native', category: 'Core React', tier: 'Tier 1' },
+    { repo: 'facebook/hermes', name: 'Hermes', category: 'Core React', tier: 'Tier 1' },
     { repo: 'reactjs/react.dev', name: 'React Documentation', category: 'Core React', tier: 'Tier 1' },
+    { repo: 'reactjs/rfcs', name: 'React RFCs', category: 'Core React', tier: 'Tier 1' },
+    { repo: 'react-navigation/react-navigation', name: 'React Navigation', category: 'Core React', tier: 'Tier 1' },
+    { repo: 'facebook/jest', name: 'Jest', category: 'Core React', tier: 'Tier 1' },
+    { repo: 'facebook/relay', name: 'Relay', category: 'Core React', tier: 'Tier 1' },
+    { repo: 'react-native-community/react-native-releases', name: 'React Native Releases', category: 'Core React', tier: 'Tier 2' },
 
-    // Routing
-    { repo: 'remix-run/react-router', name: 'React Router', category: 'Routing', tier: 'Tier 1' },
-    { repo: 'TanStack/router', name: 'TanStack Router', category: 'Routing', tier: 'Tier 2' },
-    { repo: 'molefrog/wouter', name: 'Wouter', category: 'Routing', tier: 'Tier 2' },
-
-    // Frameworks
-    { repo: 'vercel/next.js', name: 'Next.js', category: 'Frameworks', tier: 'Tier 1' },
-    { repo: 'remix-run/remix', name: 'Remix', category: 'Frameworks', tier: 'Tier 1' },
-    { repo: 'gatsbyjs/gatsby', name: 'Gatsby', category: 'Frameworks', tier: 'Tier 2' },
-
-    // State Management
+    // State Management (6 repositories)
     { repo: 'reduxjs/redux', name: 'Redux', category: 'State Management', tier: 'Tier 1' },
     { repo: 'reduxjs/redux-toolkit', name: 'Redux Toolkit', category: 'State Management', tier: 'Tier 1' },
-    { repo: 'pmndrs/zustand', name: 'Zustand', category: 'State Management', tier: 'Tier 1' },
+    { repo: 'pmndrs/zustand', name: 'Zustand', category: 'State Management', tier: 'Tier 2' },
     { repo: 'pmndrs/jotai', name: 'Jotai', category: 'State Management', tier: 'Tier 2' },
-    { repo: 'facebookexperimental/Recoil', name: 'Recoil', category: 'State Management', tier: 'Tier 2' },
     { repo: 'pmndrs/valtio', name: 'Valtio', category: 'State Management', tier: 'Tier 2' },
-    { repo: 'mobxjs/mobx', name: 'MobX', category: 'State Management', tier: 'Tier 2' },
+    { repo: 'statelyai/xstate', name: 'XState', category: 'State Management', tier: 'Tier 2' },
 
-    // Data Fetching
+    // Data Fetching (5 repositories)
     { repo: 'TanStack/query', name: 'TanStack Query', category: 'Data Fetching', tier: 'Tier 1' },
     { repo: 'vercel/swr', name: 'SWR', category: 'Data Fetching', tier: 'Tier 1' },
     { repo: 'apollographql/apollo-client', name: 'Apollo Client', category: 'Data Fetching', tier: 'Tier 1' },
-    { repo: 'facebook/relay', name: 'Relay', category: 'Data Fetching', tier: 'Tier 2' },
+    { repo: 'trpc/trpc', name: 'tRPC', category: 'Data Fetching', tier: 'Tier 2' },
+    { repo: 'urql-graphql/urql', name: 'urql', category: 'Data Fetching', tier: 'Tier 2' },
 
-    // UI Libraries
+    // Routing (3 repositories)
+    { repo: 'remix-run/react-router', name: 'React Router', category: 'Routing', tier: 'Tier 1' },
+    { repo: 'TanStack/router', name: 'TanStack Router', category: 'Routing', tier: 'Tier 2' },
+    { repo: 'molefrog/wouter', name: 'Wouter', category: 'Routing', tier: 'Tier 3' },
+
+    // Meta-frameworks (5 repositories)
+    { repo: 'vercel/next.js', name: 'Next.js', category: 'Meta-frameworks', tier: 'Tier 1' },
+    { repo: 'remix-run/remix', name: 'Remix', category: 'Meta-frameworks', tier: 'Tier 1' },
+    { repo: 'expo/expo', name: 'Expo', category: 'Meta-frameworks', tier: 'Tier 1' },
+    { repo: 'gatsbyjs/gatsby', name: 'Gatsby', category: 'Meta-frameworks', tier: 'Tier 2' },
+    { repo: 'withastro/astro', name: 'Astro', category: 'Meta-frameworks', tier: 'Tier 2' },
+
+    // Forms & Validation (5 repositories)
+    { repo: 'react-hook-form/react-hook-form', name: 'React Hook Form', category: 'Forms & Validation', tier: 'Tier 1' },
+    { repo: 'colinhacks/zod', name: 'Zod', category: 'Forms & Validation', tier: 'Tier 1' },
+    { repo: 'jaredpalmer/formik', name: 'Formik', category: 'Forms & Validation', tier: 'Tier 2' },
+    { repo: 'jquense/yup', name: 'Yup', category: 'Forms & Validation', tier: 'Tier 2' },
+    { repo: 'final-form/react-final-form', name: 'React Final Form', category: 'Forms & Validation', tier: 'Tier 3' },
+
+    // Testing (4 repositories)
+    { repo: 'testing-library/react-testing-library', name: 'React Testing Library', category: 'Testing', tier: 'Tier 1' },
+    { repo: 'vitest-dev/vitest', name: 'Vitest', category: 'Testing', tier: 'Tier 1' },
+    { repo: 'microsoft/playwright', name: 'Playwright', category: 'Testing', tier: 'Tier 1' },
+    { repo: 'testing-library/react-hooks-testing-library', name: 'React Hooks Testing Library', category: 'Testing', tier: 'Tier 2' },
+
+    // UI/Component Libraries (6 repositories)
+    { repo: 'radix-ui/primitives', name: 'Radix UI', category: 'UI Libraries', tier: 'Tier 1' },
+    { repo: 'tailwindlabs/headlessui', name: 'Headless UI', category: 'UI Libraries', tier: 'Tier 1' },
     { repo: 'mui/material-ui', name: 'Material-UI', category: 'UI Libraries', tier: 'Tier 1' },
-    { repo: 'chakra-ui/chakra-ui', name: 'Chakra UI', category: 'UI Libraries', tier: 'Tier 1' },
-    { repo: 'ant-design/ant-design', name: 'Ant Design', category: 'UI Libraries', tier: 'Tier 1' },
-    { repo: 'mantinedev/mantine', name: 'Mantine', category: 'UI Libraries', tier: 'Tier 2' },
-    { repo: 'radix-ui/primitives', name: 'Radix UI', category: 'UI Libraries', tier: 'Tier 2' },
+    { repo: 'adobe/react-spectrum', name: 'React Spectrum', category: 'UI Libraries', tier: 'Tier 2' },
+    { repo: 'ariakit/ariakit', name: 'Ariakit', category: 'UI Libraries', tier: 'Tier 2' },
+    { repo: 'chakra-ui/chakra-ui', name: 'Chakra UI', category: 'UI Libraries', tier: 'Tier 2' },
 
-    // Forms
-    { repo: 'react-hook-form/react-hook-form', name: 'React Hook Form', category: 'Forms', tier: 'Tier 1' },
-    { repo: 'jaredpalmer/formik', name: 'Formik', category: 'Forms', tier: 'Tier 2' },
-
-    // Animation
+    // Animation (3 repositories)
     { repo: 'framer/motion', name: 'Framer Motion', category: 'Animation', tier: 'Tier 1' },
     { repo: 'pmndrs/react-spring', name: 'React Spring', category: 'Animation', tier: 'Tier 2' },
+    { repo: 'formkit/auto-animate', name: 'AutoAnimate', category: 'Animation', tier: 'Tier 3' },
 
-    // Testing
-    { repo: 'testing-library/react-testing-library', name: 'React Testing Library', category: 'Testing', tier: 'Tier 1' },
+    // Dev Tools & Bundling (5 repositories)
+    { repo: 'storybookjs/storybook', name: 'Storybook', category: 'Dev Tools', tier: 'Tier 1' },
+    { repo: 'vitejs/vite', name: 'Vite', category: 'Dev Tools', tier: 'Tier 1' },
+    { repo: 'facebook/react-devtools', name: 'React DevTools', category: 'Dev Tools', tier: 'Tier 1' },
+    { repo: 'facebook/metro', name: 'Metro', category: 'Dev Tools', tier: 'Tier 2' },
+    { repo: 'vercel/turbo', name: 'Turbo', category: 'Dev Tools', tier: 'Tier 2' },
 
-    // 3D Graphics
-    { repo: 'pmndrs/react-three-fiber', name: 'React Three Fiber', category: '3D Graphics', tier: 'Tier 2' },
-    { repo: 'pmndrs/drei', name: 'Drei', category: '3D Graphics', tier: 'Tier 2' },
+    // Data Tables (1 repository)
+    { repo: 'TanStack/table', name: 'TanStack Table', category: 'Data Tables', tier: 'Tier 1' },
 
-    // Add more as needed - this is a subset for initial implementation
+    // Styling (2 repositories)
+    { repo: 'styled-components/styled-components', name: 'styled-components', category: 'Styling', tier: 'Tier 1' },
+    { repo: 'emotion-js/emotion', name: 'Emotion', category: 'Styling', tier: 'Tier 1' },
   ];
 
   async load(): Promise<RawRecord[]> {

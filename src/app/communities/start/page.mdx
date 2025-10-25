@@ -1,0 +1,850 @@
+import { GuideHero, SectionHeader, FeatureGrid, FeatureCard, StepCard, FormatComparison, Checklist, Callout, ResourceGrid, ResourceLink, Quote } from '@/components/communities/guide-components';
+import { ScrollToButton, OpenLinkButton } from '@/components/communities/guide-client-components';
+import { RFDS } from '@/components/rfds';
+
+export const metadata = {
+  title: 'Start Your Own React Community | React Foundation',
+  description: 'A comprehensive guide to starting and growing a successful React community in your area.',
+};
+
+<GuideHero
+  title="Start Your Own React Community"
+  description="Building a thriving React community takes passion, dedication, and the right approach. This guide will help you navigate every step of the journey—from planning your first meetup to sustaining long-term growth."
+>
+  <div className="flex flex-wrap gap-4 justify-center">
+    <ScrollToButton targetId="getting-started">
+      Get Started →
+    </ScrollToButton>
+    <OpenLinkButton url="/communities/add">
+      Submit Your Community
+    </OpenLinkButton>
+  </div>
+</GuideHero>
+
+<SectionHeader
+  title="Why Start a React Community?"
+  description="React communities create lasting impact for developers, organizations, and the ecosystem."
+/>
+
+<FeatureGrid>
+  <FeatureCard
+    icon="🤝"
+    title="Connect Developers"
+    description="Build meaningful relationships with developers who share your passion for React"
+  />
+  <FeatureCard
+    icon="📚"
+    title="Accelerate Learning"
+    description="Share knowledge and experiences to help everyone grow faster together"
+  />
+  <FeatureCard
+    icon="🌐"
+    title="Build Networks"
+    description="Create opportunities for collaboration, hiring, and career advancement"
+  />
+  <FeatureCard
+    icon="💝"
+    title="Give Back"
+    description="Support the ecosystem that powers your career and projects"
+  />
+  <FeatureCard
+    icon="🎯"
+    title="Develop Leadership"
+    description="Grow your leadership and organizational skills through community building"
+  />
+  <FeatureCard
+    icon="🚀"
+    title="Drive Innovation"
+    description="Foster an environment where new ideas and collaborations thrive"
+    highlight
+  />
+</FeatureGrid>
+
+
+<div id="getting-started" />
+
+<SectionHeader
+  title="Getting Started"
+  description="Three essential steps to launch your React community successfully."
+/>
+
+<div className="space-y-6">
+
+<StepCard
+  number={1}
+  title="Define Your Vision"
+  description="Before launching, clarify what makes your community unique and who you're serving."
+>
+  <div className="space-y-4">
+    <Callout variant="tip" title="Key Questions to Answer">
+      <ul className="space-y-2 mt-2">
+        <li>What type of community do you want to build? (meetup, conference, study group, workshop series)</li>
+        <li>Who is your target audience? (beginners, experienced developers, specific industries)</li>
+        <li>What format works best for your area? (in-person, virtual, hybrid)</li>
+        <li>What's your meeting frequency? (weekly, monthly, quarterly)</li>
+        <li>What value will members get from participating?</li>
+      </ul>
+    </Callout>
+
+    <div className="mt-4">
+      <h5 className="font-semibold text-foreground mb-3">Example Visions:</h5>
+      <div className="space-y-3">
+        <RFDS.SemanticCard variant="glass" className="p-4">
+          <p className="text-sm text-foreground">"A monthly meetup for React beginners to learn together in a supportive environment"</p>
+        </RFDS.SemanticCard>
+        <RFDS.SemanticCard variant="glass" className="p-4">
+          <p className="text-sm text-foreground">"A quarterly conference bringing together React developers from across the region"</p>
+        </RFDS.SemanticCard>
+        <RFDS.SemanticCard variant="glass" className="p-4">
+          <p className="text-sm text-foreground">"A weekly study group tackling advanced React patterns and performance optimization"</p>
+        </RFDS.SemanticCard>
+      </div>
+    </div>
+  </div>
+</StepCard>
+
+<StepCard
+  number={2}
+  title="Choose Your Format"
+  description="Different formats serve different needs. We recommend picking one to start that aligns with your vision and resources, and adding more over time as necessary."
+>
+  <FormatComparison
+    formats={[
+      {
+        name: 'Meetups',
+        icon: '👥',
+        best: 'Regular gatherings, networking, talks',
+        frequency: 'Monthly',
+        duration: '2-3 hours',
+        size: '20-100',
+        format: '1-2 talks + networking'
+      },
+      {
+        name: 'Study Groups',
+        icon: '📖',
+        best: 'Deep learning, skill development',
+        frequency: 'Weekly',
+        duration: '1-2 hours',
+        size: '5-20',
+        format: 'Collaborative learning'
+      },
+      {
+        name: 'Conferences',
+        icon: '🎤',
+        best: 'Major events, ecosystem exposure',
+        frequency: 'Annually',
+        duration: '1-3 days',
+        size: '100-1000+',
+        format: 'Multiple tracks'
+      },
+      {
+        name: 'Workshops',
+        icon: '💻',
+        best: 'Hands-on skill building',
+        frequency: 'Monthly',
+        duration: '3-8 hours',
+        size: '15-30',
+        format: 'Instructor-led coding'
+      }
+    ]}
+  />
+</StepCard>
+
+<StepCard
+  number={3}
+  title="Build Your Core Team"
+  description="You don't have to do this alone. Strong communities have teams with clear roles and shared responsibility."
+>
+  <Callout variant="success" title="Key Team Roles">
+    <ul className="space-y-2 mt-2">
+      <li><strong>Lead Organizer:</strong> Overall vision and coordination</li>
+      <li><strong>Speaker Coordinator:</strong> Recruit and support speakers</li>
+      <li><strong>Venue Coordinator:</strong> Secure and manage locations</li>
+      <li><strong>Marketing Lead:</strong> Social media, announcements, outreach</li>
+      <li><strong>Sponsorship Manager:</strong> Build relationships with sponsors</li>
+      <li><strong>Code of Conduct Enforcer:</strong> Ensure safe, inclusive environment</li>
+    </ul>
+  </Callout>
+
+  <div className="mt-4">
+    <h5 className="font-semibold text-foreground mb-3">Where to Find Co-Organizers:</h5>
+    <div className="grid gap-3 sm:grid-cols-2">
+      <RFDS.SemanticCard variant="outlined" className="p-3">
+        <p className="text-sm text-muted-foreground">Local developer meetups</p>
+      </RFDS.SemanticCard>
+      <RFDS.SemanticCard variant="outlined" className="p-3">
+        <p className="text-sm text-muted-foreground">Company internal communities</p>
+      </RFDS.SemanticCard>
+      <RFDS.SemanticCard variant="outlined" className="p-3">
+        <p className="text-sm text-muted-foreground">Bootcamp alumni networks</p>
+      </RFDS.SemanticCard>
+      <RFDS.SemanticCard variant="outlined" className="p-3">
+        <p className="text-sm text-muted-foreground">Existing enthusiastic attendees</p>
+      </RFDS.SemanticCard>
+    </div>
+  </div>
+</StepCard>
+
+</div>
+
+<div className="mt-16">
+<SectionHeader
+  title="Planning Your First Event"
+  description="From venue selection to speaker support, here's everything you need to launch successfully."
+/>
+</div>
+
+<div className="space-y-6">
+
+### Choosing a Venue
+
+<div className="grid gap-6 lg:grid-cols-2">
+  <div>
+    <h4 className="text-lg font-semibold text-foreground mb-4">In-Person Options</h4>
+    <div className="space-y-3">
+      <RFDS.SemanticCard variant="outlined" hover className="p-4">
+        <div className="flex items-start gap-3">
+          <span className="text-2xl">🏢</span>
+          <div>
+            <h5 className="font-semibold text-foreground">Company Offices</h5>
+            <p className="text-sm text-muted-foreground mt-1">Many tech companies offer space for community events</p>
+          </div>
+        </div>
+      </RFDS.SemanticCard>
+      <RFDS.SemanticCard variant="outlined" hover className="p-4">
+        <div className="flex items-start gap-3">
+          <span className="text-2xl">🏪</span>
+          <div>
+            <h5 className="font-semibold text-foreground">Co-working Spaces</h5>
+            <p className="text-sm text-muted-foreground mt-1">Often have community event programs</p>
+          </div>
+        </div>
+      </RFDS.SemanticCard>
+      <RFDS.SemanticCard variant="outlined" hover className="p-4">
+        <div className="flex items-start gap-3">
+          <span className="text-2xl">🎓</span>
+          <div>
+            <h5 className="font-semibold text-foreground">Universities</h5>
+            <p className="text-sm text-muted-foreground mt-1">Computer science departments often have available space</p>
+          </div>
+        </div>
+      </RFDS.SemanticCard>
+    </div>
+  </div>
+
+  <div>
+    <h4 className="text-lg font-semibold text-foreground mb-4">Virtual & Hybrid</h4>
+    <div className="space-y-3">
+      <RFDS.SemanticCard variant="outlined" hover className="p-4">
+        <div className="flex items-start gap-3">
+          <span className="text-2xl">💻</span>
+          <div>
+            <h5 className="font-semibold text-foreground">Zoom / Google Meet</h5>
+            <p className="text-sm text-muted-foreground mt-1">Most popular for virtual events with breakout rooms</p>
+          </div>
+        </div>
+      </RFDS.SemanticCard>
+      <RFDS.SemanticCard variant="outlined" hover className="p-4">
+        <div className="flex items-start gap-3">
+          <span className="text-2xl">💬</span>
+          <div>
+            <h5 className="font-semibold text-foreground">Discord</h5>
+            <p className="text-sm text-muted-foreground mt-1">Great for ongoing community + live events</p>
+          </div>
+        </div>
+      </RFDS.SemanticCard>
+      <RFDS.SemanticCard variant="outlined" hover className="p-4">
+        <div className="flex items-start gap-3">
+          <span className="text-2xl">📺</span>
+          <div>
+            <h5 className="font-semibold text-foreground">YouTube Live</h5>
+            <p className="text-sm text-muted-foreground mt-1">Perfect for larger conferences and streaming</p>
+          </div>
+        </div>
+      </RFDS.SemanticCard>
+    </div>
+  </div>
+</div>
+
+<Checklist
+  title="Venue Checklist"
+  items={[
+    'Reliable WiFi for all attendees',
+    'Power outlets for laptops',
+    'Projector/screen for presentations',
+    'Seating for expected attendance',
+    'Accessible entrance and facilities',
+    'Available on your preferred schedule',
+    'Near public transportation',
+    'Parking availability'
+  ]}
+/>
+
+### Finding & Supporting Speakers
+
+<Callout variant="info" title="Speaker Sources">
+  <div className="grid gap-4 sm:grid-cols-2 mt-3">
+    <div>
+      <h5 className="font-semibold mb-2">Local Sources</h5>
+      <ul className="space-y-1 text-sm">
+        <li>Enthusiastic attendees (first-time speakers!)</li>
+        <li>Local companies using React</li>
+        <li>Bootcamp instructors and graduates</li>
+        <li>University CS departments</li>
+      </ul>
+    </div>
+    <div>
+      <h5 className="font-semibold mb-2">Remote Speakers</h5>
+      <ul className="space-y-1 text-sm">
+        <li>Open source maintainers</li>
+        <li>Conference speaker directories</li>
+        <li>Tech Twitter/LinkedIn communities</li>
+        <li>Previous conference speakers</li>
+      </ul>
+    </div>
+  </div>
+</Callout>
+
+<div className="mt-6 grid gap-4 sm:grid-cols-3">
+  <RFDS.SemanticCard variant="outlined" className="p-4">
+    <div className="text-center">
+      <div className="text-3xl mb-2">⚡</div>
+      <h5 className="font-semibold text-foreground mb-1">Lightning Talks</h5>
+      <p className="text-sm text-muted-foreground">5-10 min • Great for beginners</p>
+    </div>
+  </RFDS.SemanticCard>
+  <RFDS.SemanticCard variant="outlined" className="p-4">
+    <div className="text-center">
+      <div className="text-3xl mb-2">🎯</div>
+      <h5 className="font-semibold text-foreground mb-1">Standard Talks</h5>
+      <p className="text-sm text-muted-foreground">20-30 min • Most common format</p>
+    </div>
+  </RFDS.SemanticCard>
+  <RFDS.SemanticCard variant="outlined" className="p-4">
+    <div className="text-center">
+      <div className="text-3xl mb-2">🔬</div>
+      <h5 className="font-semibold text-foreground mb-1">Deep Dives</h5>
+      <p className="text-sm text-muted-foreground">45-60 min • Complex topics</p>
+    </div>
+  </RFDS.SemanticCard>
+</div>
+
+### Event Schedule
+
+<div className="not-prose">
+  <h4 className="text-lg font-semibold text-foreground mb-6">Typical Meetup Timeline</h4>
+  <RFDS.Timeline>
+    <RFDS.TimelineStep
+      title="Doors open, networking, food arrives"
+      description="6:00-6:30 PM"
+      icon="🚪"
+    />
+    <RFDS.TimelineStep
+      title="Welcome, announcements, sponsor thanks"
+      description="6:30-6:40 PM"
+      icon="👋"
+    />
+    <RFDS.TimelineStep
+      title="First talk"
+      description="6:40-7:10 PM"
+      icon="🎤"
+    />
+    <RFDS.TimelineStep
+      title="Break, networking"
+      description="7:10-7:20 PM"
+      icon="☕"
+    />
+    <RFDS.TimelineStep
+      title="Second talk or extended Q&A"
+      description="7:20-7:50 PM"
+      icon="💬"
+    />
+    <RFDS.TimelineStep
+      title="Open networking, demos"
+      description="7:50-8:30 PM"
+      icon="🤝"
+    />
+  </RFDS.Timeline>
+</div>
+
+</div>
+
+
+<SectionHeader
+  title="Building Your Community"
+  description="Marketing, inclusivity, and sponsorship strategies for sustainable growth."
+/>
+
+### Marketing & Promotion
+
+<FeatureGrid>
+  <FeatureCard
+    icon="📱"
+    title="Meetup.com"
+    description="Primary discovery platform for local events and RSVPs"
+  />
+  <FeatureCard
+    icon="💼"
+    title="LinkedIn Events"
+    description="Professional network reach and company connections"
+  />
+  <FeatureCard
+    icon="🐦"
+    title="Twitter/X"
+    description="Active tech community engagement and real-time updates"
+  />
+  <FeatureCard
+    icon="💬"
+    title="Slack/Discord"
+    description="Direct community engagement and ongoing discussions"
+  />
+</FeatureGrid>
+
+<Callout variant="tip" title="Content Calendar">
+  Create a consistent posting schedule:
+  <ul className="space-y-1 mt-2">
+    <li><strong>4-6 weeks ahead:</strong> Event announcement</li>
+    <li><strong>2-3 weeks ahead:</strong> Speaker spotlights</li>
+    <li><strong>1 week ahead:</strong> Final reminders</li>
+    <li><strong>Next day:</strong> Recap posts with photos</li>
+    <li><strong>Weekly:</strong> Share recordings (if speakers consent)</li>
+  </ul>
+</Callout>
+
+### Creating an Inclusive Environment
+
+<RFDS.SemanticCard variant="outlined" className="p-6">
+  <h4 className="text-lg font-semibold text-foreground mb-4">Code of Conduct Essentials</h4>
+  <div className="space-y-4">
+    <div className="flex items-start gap-3">
+      <span className="text-2xl">📋</span>
+      <div>
+        <h5 className="font-semibold text-foreground">Adopt & Enforce</h5>
+        <p className="text-sm text-muted-foreground mt-1">Use established templates like Contributor Covenant, make it visible, and enforce consistently</p>
+      </div>
+    </div>
+    <RFDS.SemanticSeparator />
+    <div className="flex items-start gap-3">
+      <span className="text-2xl">♿</span>
+      <div>
+        <h5 className="font-semibold text-foreground">Accessibility First</h5>
+        <p className="text-sm text-muted-foreground mt-1">Wheelchair accessible venues, captions for talks, quiet spaces, dietary accommodations</p>
+      </div>
+    </div>
+    <RFDS.SemanticSeparator />
+    <div className="flex items-start gap-3">
+      <span className="text-2xl">🌈</span>
+      <div>
+        <h5 className="font-semibold text-foreground">Diverse & Welcoming</h5>
+        <p className="text-sm text-muted-foreground mt-1">Inclusive language, diverse speakers, scholarships for paid events, welcome all skill levels</p>
+      </div>
+    </div>
+  </div>
+</RFDS.SemanticCard>
+
+### Sponsorship Strategy
+
+<div className="grid gap-6 md:grid-cols-3">
+  <RFDS.SemanticCard variant="outlined" hover className="p-6">
+    <RFDS.SemanticBadge variant="outline" className="mb-4">Community Tier</RFDS.SemanticBadge>
+    <div className="text-3xl font-bold text-foreground mb-2">$250</div>
+    <ul className="space-y-2 text-sm text-muted-foreground">
+      <li>Logo on website</li>
+      <li>Social media mention</li>
+      <li>Event page listing</li>
+    </ul>
+  </RFDS.SemanticCard>
+
+  <RFDS.SemanticCard variant="outlined" hover className="p-6 border-primary/50">
+    <RFDS.SemanticBadge className="mb-4">Pizza Tier</RFDS.SemanticBadge>
+    <div className="text-3xl font-bold text-foreground mb-2">$500</div>
+    <ul className="space-y-2 text-sm text-muted-foreground">
+      <li>All Community benefits</li>
+      <li>Logo on event page</li>
+      <li>2-min speaking slot</li>
+      <li>Food sponsorship credit</li>
+    </ul>
+  </RFDS.SemanticCard>
+
+  <RFDS.SemanticCard variant="outlined" hover className="p-6">
+    <RFDS.SemanticBadge variant="secondary" className="mb-4">Premier Tier</RFDS.SemanticBadge>
+    <div className="text-3xl font-bold text-foreground mb-2">$1000+</div>
+    <ul className="space-y-2 text-sm text-muted-foreground">
+      <li>All Pizza benefits</li>
+      <li>Featured blog post</li>
+      <li>Job posting privileges</li>
+      <li>Quarterly spotlight</li>
+    </ul>
+  </RFDS.SemanticCard>
+</div>
+
+<Callout variant="info" title="What Sponsors Want">
+  Understanding sponsor motivations helps create win-win partnerships:
+  <ul className="space-y-1 mt-2">
+    <li><strong>Talent Access:</strong> Recruiting and hiring opportunities</li>
+    <li><strong>Brand Visibility:</strong> Recognition in the tech community</li>
+    <li><strong>Product Awareness:</strong> Introduce tools and services</li>
+    <li><strong>Community Goodwill:</strong> Support and give back</li>
+  </ul>
+</Callout>
+
+
+<SectionHeader
+  title="Sustaining Long-Term Growth"
+  description="Prevent burnout, measure success, and evolve your community over time."
+/>
+
+### Preventing Organizer Burnout
+
+<Quote author="Anonymous Organizer" role="5-year community leader">
+  The secret to longevity isn't working harder—it's building a team you trust and remembering why you started.
+</Quote>
+
+<div className="grid gap-6 md:grid-cols-2">
+  <RFDS.SemanticCard variant="glass" className="p-6">
+    <h4 className="text-lg font-semibold text-foreground mb-4">Share the Load</h4>
+    <ul className="space-y-2 text-sm text-muted-foreground">
+      <li>Rotate responsibilities among team members</li>
+      <li>Empower attendees to become organizers</li>
+      <li>Take breaks when needed (skip a month if necessary)</li>
+      <li>Celebrate wins together as a team</li>
+    </ul>
+  </RFDS.SemanticCard>
+
+  <RFDS.SemanticCard variant="glass" className="p-6">
+    <h4 className="text-lg font-semibold text-foreground mb-4">Set Boundaries</h4>
+    <ul className="space-y-2 text-sm text-muted-foreground">
+      <li>Define how much time you can commit</li>
+      <li>Don't let community consume all free time</li>
+      <li>It's okay to say no to additional commitments</li>
+      <li>Remember why you started—keep it fun!</li>
+    </ul>
+  </RFDS.SemanticCard>
+</div>
+
+### Measuring Success
+
+<Callout variant="success" title="Quality Over Quantity">
+  A small, engaged community beats a large inactive one every time. Focus on value delivered, not just headcount.
+</Callout>
+
+<div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+  <RFDS.SemanticCard variant="outlined" className="p-4">
+    <h5 className="font-semibold text-foreground mb-2">📈 Attendance Trends</h5>
+    <p className="text-sm text-muted-foreground">Are you growing, steady, or declining?</p>
+  </RFDS.SemanticCard>
+  <RFDS.SemanticCard variant="outlined" className="p-4">
+    <h5 className="font-semibold text-foreground mb-2">🔄 Retention Rate</h5>
+    <p className="text-sm text-muted-foreground">New vs. returning attendees</p>
+  </RFDS.SemanticCard>
+  <RFDS.SemanticCard variant="outlined" className="p-4">
+    <h5 className="font-semibold text-foreground mb-2">🎤 Speaker Diversity</h5>
+    <p className="text-sm text-muted-foreground">Range of companies, backgrounds, experience</p>
+  </RFDS.SemanticCard>
+  <RFDS.SemanticCard variant="outlined" className="p-4">
+    <h5 className="font-semibold text-foreground mb-2">💬 Engagement</h5>
+    <p className="text-sm text-muted-foreground">Slack activity, social interaction</p>
+  </RFDS.SemanticCard>
+  <RFDS.SemanticCard variant="outlined" className="p-4">
+    <h5 className="font-semibold text-foreground mb-2">💼 Career Impact</h5>
+    <p className="text-sm text-muted-foreground">Job placements, connections made</p>
+  </RFDS.SemanticCard>
+  <RFDS.SemanticCard variant="outlined" className="p-4">
+    <h5 className="font-semibold text-foreground mb-2">😊 Satisfaction</h5>
+    <p className="text-sm text-muted-foreground">Post-event surveys and feedback</p>
+  </RFDS.SemanticCard>
+</div>
+
+
+<SectionHeader
+  title="Your First 90 Days"
+  description="A month-by-month roadmap to launch your community successfully."
+/>
+
+<div className="not-prose">
+<RFDS.Timeline>
+  <RFDS.TimelineItem
+    date="Month 1"
+    title="Foundation"
+    subtitle="Laying the groundwork"
+    description="Establish your community's core identity and begin building your team."
+    variant="default"
+    icon="🎯"
+    items={[
+      'Define your community vision and format',
+      'Recruit 1-2 co-organizers',
+      'Research venues (visit 3-5 options)',
+      'Set up social media accounts',
+      'Create Meetup.com or Lu.ma page',
+      'Draft Code of Conduct'
+    ]}
+  />
+  <RFDS.TimelineItem
+    date="Month 2"
+    title="Planning"
+    subtitle="Building momentum"
+    description="Secure your logistics and start building excitement for your launch."
+    variant="default"
+    icon="📋"
+    items={[
+      'Secure venue for first 3 events',
+      'Book first 2-3 speakers',
+      'Set up event registration',
+      'Start building email list',
+      'Create event graphics and branding',
+      'Reach out to potential sponsors'
+    ]}
+  />
+  <RFDS.TimelineItem
+    date="Month 3"
+    title="Launch"
+    subtitle="Going live"
+    description="Execute your first event and celebrate your community's beginning!"
+    variant="default"
+    icon="🚀"
+    items={[
+      'Heavy promotion 3-4 weeks before event',
+      'Confirm all logistics (A/V, food, etc.)',
+      'Send reminder emails to registrants',
+      'Host your first event!',
+      'Collect feedback and photos',
+      'Send thank-you notes to speakers and sponsors',
+      'Publish recap and announce next event'
+    ]}
+  />
+</RFDS.Timeline>
+</div>
+
+
+<SectionHeader
+  title="Essential Resources"
+  description="Tools, platforms, and templates to help you succeed."
+/>
+
+<div className="space-y-8">
+
+### Event Management Tools
+
+<ResourceGrid>
+  <ResourceLink
+    category="Event Platform"
+    title="Meetup.com"
+    description="The most popular platform for discovering and organizing local tech meetups"
+    url="https://meetup.com"
+  />
+  <ResourceLink
+    category="Event Platform"
+    title="Lu.ma"
+    description="Modern, beautiful event pages with built-in ticketing and email"
+    url="https://lu.ma"
+  />
+  <ResourceLink
+    category="Ticketing"
+    title="Eventbrite"
+    description="Professional ticketing platform for larger paid events"
+    url="https://eventbrite.com"
+  />
+</ResourceGrid>
+
+### Communication Platforms
+
+<ResourceGrid>
+  <ResourceLink
+    category="Community Chat"
+    title="Discord"
+    description="Real-time community chat with voice channels and integrations"
+    url="https://discord.com"
+  />
+  <ResourceLink
+    category="Email"
+    title="Mailchimp"
+    description="Email newsletters and automated campaigns for free up to 500 contacts"
+    url="https://mailchimp.com"
+  />
+  <ResourceLink
+    category="Social Media"
+    title="Buffer"
+    description="Schedule social media posts across multiple platforms"
+    url="https://buffer.com"
+  />
+</ResourceGrid>
+
+### Templates & Guidelines
+
+<ResourceGrid>
+  <ResourceLink
+    category="Code of Conduct"
+    title="Conference Code of Conduct"
+    description="Well-tested, community-driven code of conduct template"
+    url="https://confcodeofconduct.com/"
+  />
+  <ResourceLink
+    category="Code of Conduct"
+    title="Contributor Covenant"
+    description="Industry-standard code of conduct for tech communities"
+    url="https://www.contributor-covenant.org/"
+  />
+</ResourceGrid>
+
+</div>
+
+
+<SectionHeader
+  title="Common Challenges & Solutions"
+  description="Learn from the experiences of thousands of community organizers."
+/>
+
+<div className="space-y-6">
+
+<RFDS.SemanticCard variant="outlined" className="p-6">
+  <div className="flex items-start gap-4">
+    <span className="text-3xl">🤔</span>
+    <div className="flex-1">
+      <h4 className="text-lg font-semibold text-foreground mb-2">Challenge: Low Attendance</h4>
+      <RFDS.SemanticSeparator className="my-4" />
+      <div className="space-y-2">
+        <p className="text-sm text-muted-foreground"><strong className="text-foreground">Solutions:</strong></p>
+        <ul className="space-y-1 text-sm text-muted-foreground ml-4">
+          <li>Survey past attendees about preferred topics and times</li>
+          <li>Partner with other local tech groups for co-hosted events</li>
+          <li>Try different days/times to find what works</li>
+          <li>Improve marketing—start promoting earlier</li>
+          <li>Make events more interactive and engaging</li>
+          <li>Focus on quality over quantity</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</RFDS.SemanticCard>
+
+<RFDS.SemanticCard variant="outlined" className="p-6">
+  <div className="flex items-start gap-4">
+    <span className="text-3xl">🎤</span>
+    <div className="flex-1">
+      <h4 className="text-lg font-semibold text-foreground mb-2">Challenge: Finding Speakers</h4>
+      <RFDS.SemanticSeparator className="my-4" />
+      <div className="space-y-2">
+        <p className="text-sm text-muted-foreground"><strong className="text-foreground">Solutions:</strong></p>
+        <ul className="space-y-1 text-sm text-muted-foreground ml-4">
+          <li>Encourage lightning talks (less intimidating for first-timers)</li>
+          <li>Provide speaker mentorship—help people prepare</li>
+          <li>Invite remote speakers to present virtually</li>
+          <li>Organize panel discussions (easier than solo talks)</li>
+          <li>Host show-and-tell nights with projects from attendees</li>
+          <li>Consider talk-free events: hackathons, workshops, social nights</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</RFDS.SemanticCard>
+
+<RFDS.SemanticCard variant="outlined" className="p-6">
+  <div className="flex items-start gap-4">
+    <span className="text-3xl">🏢</span>
+    <div className="flex-1">
+      <h4 className="text-lg font-semibold text-foreground mb-2">Challenge: Venue Costs</h4>
+      <RFDS.SemanticSeparator className="my-4" />
+      <div className="space-y-2">
+        <p className="text-sm text-muted-foreground"><strong className="text-foreground">Solutions:</strong></p>
+        <ul className="space-y-1 text-sm text-muted-foreground ml-4">
+          <li>Approach tech companies for free office space</li>
+          <li>Use public libraries or university rooms</li>
+          <li>Go virtual temporarily to reduce costs</li>
+          <li>Rotate between different company offices</li>
+          <li>Partner with co-working spaces</li>
+          <li>Seek sponsorships specifically for venue</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</RFDS.SemanticCard>
+
+<RFDS.SemanticCard variant="outlined" className="p-6">
+  <div className="flex items-start gap-4">
+    <span className="text-3xl">😓</span>
+    <div className="flex-1">
+      <h4 className="text-lg font-semibold text-foreground mb-2">Challenge: Organizer Burnout</h4>
+      <RFDS.SemanticSeparator className="my-4" />
+      <div className="space-y-2">
+        <p className="text-sm text-muted-foreground"><strong className="text-foreground">Solutions:</strong></p>
+        <ul className="space-y-1 text-sm text-muted-foreground ml-4">
+          <li>Build a co-organizer team immediately</li>
+          <li>Rotate leadership responsibilities</li>
+          <li>Take scheduled breaks (skip a month or quarter)</li>
+          <li>Simplify event format if needed</li>
+          <li>Say no to scope creep</li>
+          <li>Remember it's okay to step back</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</RFDS.SemanticCard>
+
+</div>
+
+
+<SectionHeader
+  title="Connect with React Foundation"
+  description="We're here to support your community journey."
+/>
+
+<FeatureGrid>
+  <FeatureCard
+    icon="📚"
+    title="Resources"
+    description="Access templates, guides, and best practices from successful communities"
+  />
+  <FeatureCard
+    icon="🌐"
+    title="Network"
+    description="Connect with other organizers worldwide and share experiences"
+  />
+  <FeatureCard
+    icon="💰"
+    title="Funding"
+    description="Apply for community grants for special events and initiatives"
+    highlight
+  />
+  <FeatureCard
+    icon="🎤"
+    title="Speakers"
+    description="Get access to React ecosystem maintainers and expert speakers"
+  />
+  <FeatureCard
+    icon="📍"
+    title="Visibility"
+    description="Get featured on the React Foundation website and community map"
+  />
+  <FeatureCard
+    icon="🎁"
+    title="Swag"
+    description="Receive community organizer kits and member materials"
+  />
+</FeatureGrid>
+
+<div className="not-prose mt-12 text-center">
+  <RFDS.SemanticCard variant="glass" className="inline-block p-8 max-w-2xl">
+    <h3 className="text-2xl font-bold text-foreground mb-4">Ready to Get Started?</h3>
+    <div className="text-muted-foreground mb-6 leading-relaxed">
+      Submit your community to get listed on our global community map and access organizer resources.
+    </div>
+    <div className="flex flex-wrap gap-4 justify-center">
+      <OpenLinkButton url="/communities/add" variant="primary">
+        Submit Your Community
+      </OpenLinkButton>
+      <OpenLinkButton url="mailto:community@react.foundation">
+        Contact Us
+      </OpenLinkButton>
+    </div>
+  </RFDS.SemanticCard>
+</div>
+
+
+<div className="not-prose text-center py-12">
+  <div className="text-2xl font-semibold text-foreground mb-4">
+    Let's build something amazing together. 🚀
+  </div>
+  <div className="text-muted-foreground">
+    The React ecosystem thrives because of organizers like you.
+  </div>
+</div>

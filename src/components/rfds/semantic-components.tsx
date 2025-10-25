@@ -199,7 +199,7 @@ export function SemanticAlert({
   const variantClasses = {
     default: "bg-background text-foreground border-border",
     destructive: "bg-destructive/10 text-destructive border-destructive/20",
-    success: "bg-success/10 text-success border-success/20",
+    success: "bg-success/5 text-foreground border-success/10",
     warning: "bg-warning/10 text-warning border-warning/20",
   };
 

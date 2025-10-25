@@ -29,6 +29,7 @@ import { Button, ButtonLink, Pill, Rating, Collapsible, ScrollReveal, SegmentedC
 import { ProductCard, ProductGallery, UserAvatar, LibraryCard, RISScoreBreakdown, RISLibraryRankings, EcosystemLibraries, ByTheNumbers, LimitedDrops, FeaturedLook, FoundationHero, MissionStatement, PastDropsCollections, ExecutiveMessage, BecomeContributor, FeaturedCollections, JoinMovementCTA, HeroBadges, ThreePillars, Hero, FoundingMembers, PastDrops, UsernameInput, MaintainerProgress, ImpactSection, SignInButton, ErrorBoundary } from "./components";
 import { Header, Footer } from "./layouts";
 import { SemanticButton, SemanticCard, SemanticBadge, SemanticInput, SemanticAlert, SemanticAvatar, SemanticSeparator, ContributorIcon, ContributorCard } from "./semantic-components";
+import { Timeline, TimelineItem, TimelineStep, TimelineProgress } from "./timeline";
 
 /**
  * React Foundation Design System namespace
@@ -90,6 +91,12 @@ export const RFDS = {
   SemanticSeparator,
   ContributorIcon,
   ContributorCard,
+
+  // Timeline Components - For roadmaps and progress tracking
+  Timeline,
+  TimelineItem,
+  TimelineStep,
+  TimelineProgress,
 
   // Layers - For advanced usage
   Primitives,
