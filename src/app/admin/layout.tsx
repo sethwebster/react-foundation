@@ -40,15 +40,16 @@ export default async function AdminLayout({
   }
 
   // Render admin UI for authorized users
+  // Classic fixed layout: header (fixed), sidebar (fixed), content (scrollable container)
   return (
     <>
-      {/* Client-side sidebar for navigation - fixed */}
+      {/* Sidebar - fixed to left */}
       <AdminSidebar />
 
-      {/* Main Content - normal flow with margin, min-height for full viewport */}
-      <main className="ml-16 lg:ml-64 pt-16 min-h-screen">
+      {/* Content - fixed container with internal scroll */}
+      <div className="fixed top-16 bottom-0 left-16 lg:left-64 right-0 overflow-y-auto">
         {children}
-      </main>
+      </div>
     </>
   );
 }
