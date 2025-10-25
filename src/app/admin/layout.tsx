@@ -45,8 +45,8 @@ export default async function AdminLayout({
       {/* Client-side sidebar for navigation */}
       <AdminSidebar />
 
-      {/* Main Content */}
-      <main className="ml-64 flex-1 pt-20">
+      {/* Main Content - responsive margin */}
+      <main className="flex-1 lg:ml-64 pt-16 sm:pt-20">
         {children}
       </main>
     </div>
