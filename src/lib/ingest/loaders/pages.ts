@@ -141,12 +141,15 @@ export class PagesLoader implements ContentLoader {
 
         // Render the server component to HTML
         const html = await renderComponentToHTML(pageConfig.component);
+        logger.info(`[${this.name}]   Rendered HTML length: ${html.length} chars`);
 
         // Extract text content
         const body = extractTextContent(html);
+        logger.info(`[${this.name}]   Extracted text length: ${body.length} chars`);
 
         if (!body || body.length < 100) {
-          logger.warn(`[${this.name}] Little content extracted from ${pageConfig.url}`);
+          logger.warn(`[${this.name}] Little content extracted from ${pageConfig.url} (${body.length} chars, min 100 required)`);
+          logger.warn(`[${this.name}]   First 200 chars of body: ${body.substring(0, 200)}`);
           continue;
         }
 
@@ -172,7 +175,10 @@ export class PagesLoader implements ContentLoader {
 
         logger.info(`[${this.name}] ✅ ${pageConfig.title}: ${body.length} chars, ${anchors.length} anchors`);
       } catch (error) {
-        logger.error(`[${this.name}] Failed to render ${pageConfig.url}:`, error);
+        const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+        const stack = error instanceof Error ? error.stack : '';
+        logger.error(`[${this.name}] Failed to render ${pageConfig.url}: ${errorMsg}`);
+        logger.error(`[${this.name}] Stack: ${stack}`);
         // Continue with other pages even if one fails
       }
     }
