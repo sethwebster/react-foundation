@@ -6,7 +6,7 @@ export default function CommunityGuideLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-background pt-16">
+    <div className="min-h-screen bg-background pt-24">
       {/* Removed background gradient as it's handled by GuideHero component */}
 
       <div className="prose prose-lg mx-auto max-w-6xl px-6 pb-24 sm:px-8 lg:px-12">
