@@ -25,7 +25,7 @@ export function AdminSidebar() {
   return (
     <aside
       className={`
-        fixed left-0 top-16 bottom-0
+        fixed left-0 top-0 bottom-0
         border-r border-border bg-background
         transition-width duration-300 ease-in-out
         z-30
@@ -34,7 +34,7 @@ export function AdminSidebar() {
       `}
       style={{ position: 'fixed' }}
     >
-      <div className="p-2 lg:p-6 space-y-4 lg:space-y-6 h-full overflow-y-auto flex flex-col">
+      <div className="pt-16 p-2 lg:p-6 space-y-4 lg:space-y-6 h-full overflow-y-auto flex flex-col">
         {/* Expand/collapse button (mobile only) */}
         <button
           onClick={() => setIsExpanded(!isExpanded)}
