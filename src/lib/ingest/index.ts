@@ -15,3 +15,4 @@ export * from './redis-index';
 export { MDXLoader } from './loaders/mdx';
 export { CommunitiesLoader } from './loaders/communities';
 export { LibrariesLoader } from './loaders/libraries';
+export { PagesLoader } from './loaders/pages';
