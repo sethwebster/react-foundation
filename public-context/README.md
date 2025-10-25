@@ -18,19 +18,25 @@ This directory contains curated documentation for the React Foundation chatbot. 
 
 ### Getting Involved
 
-- **[contributor-tracking.md](./getting-involved/contributor-tracking.md)** *(Coming Soon)* - How GitHub contributions earn store access
-- **[educator-program.md](./getting-involved/educator-program.md)** *(Coming Soon)* - Joining the CIS program as an educator
-- **[community-building-guide.md](./getting-involved/community-building-guide.md)** *(Coming Soon)* - Starting and running React meetups/conferences
+- **[contributor-tracking.md](./getting-involved/contributor-tracking.md)** - How GitHub contributions earn store access
+- **[educator-program.md](./getting-involved/educator-program.md)** - Joining the CIS program as an educator
+- **[community-building-guide.md](./getting-involved/community-building-guide.md)** - Starting and running React meetups/conferences
 
 ### Store & Products
 
-- **[store-overview.md](./store/store-overview.md)** *(Coming Soon)* - How the official store works
-- **[drops-explained.md](./store/drops-explained.md)** *(Coming Soon)* - Time-limited drops and collections
+- **[store-overview.md](./store/store-overview.md)** - How the official store works
+- **[drops-explained.md](./store/drops-explained.md)** - Time-limited drops and collections
 
 ### Development
 
-- **[tech-stack.md](./development/tech-stack.md)** *(Coming Soon)* - Technology overview (Next.js, Shopify, etc.)
-- **[design-system-overview.md](./development/design-system-overview.md)** *(Coming Soon)* - React Foundation Design System (RFDS)
+- **[tech-stack.md](./development/tech-stack.md)** - Technology overview (Next.js, Shopify, etc.)
+- **[design-system-overview.md](./development/design-system-overview.md)** - React Foundation Design System (RFDS)
+
+### Page Content
+
+- **[homepage.md](./page-content/homepage.md)** - Homepage hero, mission, three pillars
+- **[about.md](./page-content/about.md)** - About page with governance details
+- **[store-page.md](./page-content/store-page.md)** - Store introduction and tiers
 
 ## 🎯 Purpose
 

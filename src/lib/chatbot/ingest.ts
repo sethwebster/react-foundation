@@ -94,38 +94,50 @@ export class IngestionService {
       await createVectorIndex(this.redis, newIndexName, newPrefix, dimensions);
       this.addLog(`✅ New index created: ${newIndexName}`);
 
-      // Phase 1: Crawl site (optional - continue if it fails)
+      // Phase 1: Crawl site (optional - disabled in production due to self-crawling issues)
       this.progress.phase = 'crawling';
-      this.addLog(`🕷️ Phase 1: Crawling site from ${options.baseUrl}...`);
       let chunks: ContentChunk[] = [];
 
-      try {
-        const crawlResults = await this.crawlSite(options);
-        this.progress.crawledPages = crawlResults.length;
+      // Skip website crawling in production (self-crawling causes deadlocks on Vercel)
+      // Use public-context files instead which have comprehensive documentation
+      const isProduction = process.env.VERCEL === '1' || process.env.NODE_ENV === 'production';
 
-        if (crawlResults.length === 0) {
-          this.addLog(`⚠️ No pages found during crawl. Check URL and network connectivity.`, 'warn');
-        } else {
-          this.addLog(`✅ Crawled ${crawlResults.length} pages`);
-
-          // Phase 2: Extract and chunk content
-          this.progress.phase = 'extracting';
-          this.addLog('📄 Phase 2: Extracting and chunking content...');
-          chunks = await this.extractAndChunk(crawlResults);
-          this.progress.chunksCreated = chunks.length;
-          this.addLog(`✅ Created ${chunks.length} chunks from website`);
-        }
-      } catch (error) {
-        const errorMsg = error instanceof Error ? error.message : 'Unknown error';
-        this.addLog(
-          `⚠️ Website crawling failed: ${errorMsg}`,
-          'warn'
-        );
-        this.addLog(
-          `ℹ️ Continuing with file ingestion only...`,
-          'info'
-        );
+      if (isProduction) {
+        this.addLog(`ℹ️ Phase 1: Skipping website crawl in production (self-crawling causes deadlocks)`);
+        this.addLog(`ℹ️ Relying on public-context/ documentation instead`);
         this.progress.crawledPages = 0;
+      } else {
+        // Only crawl in local development
+        this.addLog(`🕷️ Phase 1: Crawling site from ${options.baseUrl}...`);
+
+        try {
+          const crawlResults = await this.crawlSite(options);
+          this.progress.crawledPages = crawlResults.length;
+
+          if (crawlResults.length === 0) {
+            this.addLog(`⚠️ No pages found during crawl. Check URL and network connectivity.`, 'warn');
+          } else {
+            this.addLog(`✅ Crawled ${crawlResults.length} pages`);
+
+            // Phase 2: Extract and chunk content
+            this.progress.phase = 'extracting';
+            this.addLog('📄 Phase 2: Extracting and chunking content...');
+            chunks = await this.extractAndChunk(crawlResults);
+            this.progress.chunksCreated = chunks.length;
+            this.addLog(`✅ Created ${chunks.length} chunks from website`);
+          }
+        } catch (error) {
+          const errorMsg = error instanceof Error ? error.message : 'Unknown error';
+          this.addLog(
+            `⚠️ Website crawling failed: ${errorMsg}`,
+            'warn'
+          );
+          this.addLog(
+            `ℹ️ Continuing with file ingestion only...`,
+            'info'
+          );
+          this.progress.crawledPages = 0;
+        }
       }
 
       // Phase 3: Ingest files from public-context

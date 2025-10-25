@@ -188,10 +188,16 @@ export async function swapToNewIndex(
   // Swap to new index
   await setCurrentIndex(redis, newIndexName);
 
-  // Mark old index as inactive
+  // Mark old index as inactive (tolerate missing metadata for old indexes)
   if (oldIndexName) {
     try {
-      await updateIndexMetadata(redis, oldIndexName, { status: 'inactive' });
+      // Check if metadata exists first
+      const oldMetadata = await getIndexMetadata(redis, oldIndexName);
+      if (oldMetadata) {
+        await updateIndexMetadata(redis, oldIndexName, { status: 'inactive' });
+      } else {
+        logger.info(`Old index ${oldIndexName} has no metadata (pre-blue-green index), skipping status update`);
+      }
     } catch (error) {
       logger.warn(`Could not mark old index as inactive: ${oldIndexName}`, error);
     }
