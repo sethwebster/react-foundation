@@ -36,7 +36,7 @@ async function getRedisInspection() {
     let dbSize = 0;
     let memoryUsed = 'N/A';
     try {
-      dbSize = await client.dbSize();
+      dbSize = await client.dbsize();
       const info = await client.info('memory');
       const match = info.match(/used_memory_human:(\S+)/);
       if (match) memoryUsed = match[1];
