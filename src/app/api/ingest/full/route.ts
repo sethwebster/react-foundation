@@ -115,7 +115,7 @@ export async function POST(request: Request) {
         // 4. Initialize loaders
         const loaders = [
           new MDXLoader(), // Loads public-context markdown files
-          new PagesLoader(), // Renders and extracts TSX page content (RSC)
+          // new PagesLoader(), // TODO: Disabled - pages have client components that can't render server-side
           new CommunitiesLoader(), // Loads communities from Redis
           new LibrariesLoader(), // Loads tracked libraries
         ];
