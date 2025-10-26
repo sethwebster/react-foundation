@@ -32,10 +32,7 @@ async function getRedisInspection(): Promise<RedisInspectionData | null> {
       let cursor = '0';
 
       do {
-        const result = await client.scan(cursor, {
-          MATCH: pattern,
-          COUNT: 100,
-        });
+        const result = await client.scan(cursor, 'MATCH', pattern, 'COUNT', 100);
         cursor = result[0];
         keys.push(...result[1]);
       } while (cursor !== '0');
