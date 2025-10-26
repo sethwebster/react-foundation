@@ -422,10 +422,26 @@ npm run dev
 ## 📚 DOCUMENTATION
 
 ### Key Documentation
-- **[Store Management Guide](./docs/store/STORE_MANAGEMENT.md)** - Complete store reference
-- **[Metafields Reference](./docs/store/METAFIELDS_REFERENCE.md)** - All 26 metafields
-- **[Quick Start Guide](./docs/store/QUICK_START.md)** - Daily tasks cheat sheet
-- **[RIS System](./src/lib/ris/README.md)** - React Impact Score documentation
+
+**Main Documentation Index:**
+- **[docs/README.md](./docs/README.md)** - Start here for all internal developer documentation
+
+**Most Used:**
+- **[Store Management Guide](./docs/store/store-management.md)** - Complete store reference
+- **[Metafields Reference](./docs/store/metafields-reference.md)** - All 26 metafields
+- **[Quick Start Guide](./docs/store/quick-start.md)** - Daily tasks cheat sheet
+- **[Shopify Scripts](./docs/store/shopify-scripts.md)** - CLI tools and setup
+- **[Theming Guide](./docs/development/theming.md)** - Semantic theming system
+- **[RIS Setup](./docs/development/ris-setup.md)** - React Impact Score setup
+- **[RIS System](./src/lib/ris/README.md)** - RIS implementation details
+
+**Documentation Sections:**
+- [Getting Started](./docs/getting-started/) - Setup, deployment, troubleshooting
+- [Store](./docs/store/) - Store management and operations
+- [Foundation](./docs/foundation/) - Impact systems and design
+- [Chatbot](./docs/chatbot/) - Content ingestion system
+- [Community](./docs/community/) - Educator & community systems
+- [Development](./docs/development/) - Development guides and best practices
 
 ### Routes
 **Foundation Routes:**
