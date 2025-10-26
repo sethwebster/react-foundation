@@ -15,6 +15,7 @@ const PUBLIC_ROUTES = [
   '/auth',
   '/api/request-access',
   '/api/check-access', // Prevent infinite loop
+  '/api/webhooks', // GitHub webhooks (have their own security)
   '/privacy',
   '/terms',
   '/_next',

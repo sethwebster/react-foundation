@@ -7,15 +7,32 @@
 
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Pie } from 'react-chartjs-2';
-import { useTheme } from '@/components/providers/theme-provider';
+import { useEffect, useState } from 'react';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 export function ScoringWeightsPieChart() {
-  const { effectiveTheme } = useTheme();
+  const [labelColor, setLabelColor] = useState('#1f2937'); // Default light mode
 
-  // Use theme-aware colors for labels
-  const labelColor = effectiveTheme === 'dark' ? '#e5e7eb' : '#1f2937';
+  // Detect theme on mount (client-side only)
+  useEffect(() => {
+    const isDark = document.documentElement.classList.contains('dark');
+    setLabelColor(isDark ? '#e5e7eb' : '#1f2937');
+
+    // Watch for theme changes
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.attributeName === 'class') {
+          const isDark = document.documentElement.classList.contains('dark');
+          setLabelColor(isDark ? '#e5e7eb' : '#1f2937');
+        }
+      });
+    });
+
+    observer.observe(document.documentElement, { attributes: true });
+
+    return () => observer.disconnect();
+  }, []);
 
   const data = {
     labels: [
