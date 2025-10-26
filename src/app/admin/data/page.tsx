@@ -4,26 +4,56 @@
  */
 
 import { getRedisClient } from '@/lib/redis';
-import { UserManagementService } from '@/lib/admin/user-management-service';
-import { AccessRequestsService } from '@/lib/admin/access-requests-service';
+import { UserManagementService, type User } from '@/lib/admin/user-management-service';
+import { AccessRequestsService, type AccessRequest } from '@/lib/admin/access-requests-service';
+import { logger } from '@/lib/logger';
 
 export const dynamic = 'force-dynamic';
 
-async function getRedisInspection() {
+interface RedisInspectionData {
+  totalKeys: number;
+  userKeys: number;
+  requestKeys: number;
+  communityKeys: number;
+  dbSize: number;
+  memoryUsed: string;
+  users: User[];
+  requests: AccessRequest[];
+  keysByNamespace: Record<string, number>;
+}
+
+async function getRedisInspection(): Promise<RedisInspectionData | null> {
   try {
     const client = getRedisClient();
 
-    // Get all keys with different patterns
+    // Helper function to scan keys with a pattern (non-blocking)
+    const scanKeys = async (pattern: string): Promise<string[]> => {
+      const keys: string[] = [];
+      let cursor = '0';
+
+      do {
+        const result = await client.scan(cursor, {
+          MATCH: pattern,
+          COUNT: 100,
+        });
+        cursor = result[0];
+        keys.push(...result[1]);
+      } while (cursor !== '0');
+
+      return keys;
+    };
+
+    // Get all keys with different patterns using SCAN (non-blocking)
     const [
       userKeys,
       requestKeys,
       communityKeys,
       allKeys,
     ] = await Promise.all([
-      client.keys('admin:user:*'),
-      client.keys('admin:request:*'),
-      client.keys('communities:*'),
-      client.keys('*'),
+      scanKeys('admin:user:*'),
+      scanKeys('admin:request:*'),
+      scanKeys('communities:*'),
+      scanKeys('*'),
     ]);
 
     // Get specific data
@@ -40,8 +70,8 @@ async function getRedisInspection() {
       const info = await client.info('memory');
       const match = info.match(/used_memory_human:(\S+)/);
       if (match) memoryUsed = match[1];
-    } catch {
-      // Ignore errors
+    } catch (error) {
+      logger.warn('Unable to fetch Redis memory stats:', error);
     }
 
     return {
@@ -62,7 +92,7 @@ async function getRedisInspection() {
       },
     };
   } catch (error) {
-    console.error('Error inspecting Redis:', error);
+    logger.error('Error inspecting Redis:', error);
     return null;
   }
 }
@@ -146,7 +176,11 @@ export default async function AdminDataPage() {
           <InfoCard
             label="Total Users"
             value={data.users.length.toString()}
-            detail={`${data.users.filter(u => u.role === 'admin').length} admins, ${data.users.filter(u => u.role === 'user').length} users`}
+            detail={(() => {
+              const adminCount = data.users.filter((u: User) => u.role === 'admin').length;
+              const userCount = data.users.filter((u: User) => u.role === 'user').length;
+              return `${adminCount} admins, ${userCount} users`;
+            })()}
           />
           <InfoCard
             label="Redis Keys"
