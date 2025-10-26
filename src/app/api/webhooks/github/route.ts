@@ -154,6 +154,68 @@ export async function POST(request: NextRequest) {
         break;
       }
 
+      case 'installation_repositories': {
+        // Repositories added/removed from existing installation
+        const action = data.action as string;
+        const installation = data.installation as Record<string, unknown>;
+        const installationId = installation?.id as number;
+
+        if (action === 'added') {
+          // Handle newly added repositories
+          const repositoriesAdded = data.repositories_added as Array<Record<string, unknown>> | undefined;
+          if (repositoriesAdded) {
+            for (const repo of repositoriesAdded) {
+              const owner = (repo.owner as Record<string, unknown>)?.login as string;
+              const name = repo.name as string;
+              const fullName = repo.full_name as string;
+              const htmlUrl = repo.html_url as string;
+              const description = repo.description as string | undefined;
+              const stars = repo.stargazers_count as number | undefined;
+              const language = repo.language as string | undefined;
+              const topics = repo.topics as string[] | undefined;
+
+              // Check if library is already approved
+              const status = await getLibraryStatus(owner, name);
+
+              if (status === 'approved') {
+                await trackInstallation(owner, name, installationId);
+                logger.info(`✅ Repository added to app (approved): ${owner}/${name}`);
+              } else if (status === 'pending') {
+                logger.info(`⏳ Repository added to app (already pending): ${owner}/${name}`);
+              } else if (status === 'rejected') {
+                logger.info(`❌ Repository added to app (rejected): ${owner}/${name}`);
+              } else {
+                // Add to pending queue
+                await addPendingLibrary({
+                  owner,
+                  repo: name,
+                  installationId,
+                  installedAt: new Date().toISOString(),
+                  githubUrl: htmlUrl,
+                  description,
+                  stars,
+                  topics,
+                  language,
+                });
+                logger.info(`📝 Repository added - added to pending queue: ${owner}/${name}`);
+              }
+            }
+          }
+        } else if (action === 'removed') {
+          // Handle removed repositories
+          const repositoriesRemoved = data.repositories_removed as Array<Record<string, unknown>> | undefined;
+          if (repositoriesRemoved) {
+            for (const repo of repositoriesRemoved) {
+              const owner = (repo.owner as Record<string, unknown>)?.login as string;
+              const name = repo.name as string;
+              await removeInstallation(owner, name);
+              logger.info(`❌ Repository removed from app: ${owner}/${name}`);
+            }
+          }
+        }
+        break;
+      }
+
       case 'push':
       case 'pull_request':
       case 'issues':
