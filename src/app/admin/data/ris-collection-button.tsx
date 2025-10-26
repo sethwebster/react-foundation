@@ -4,33 +4,79 @@
 
 'use client';
 
-import { useState, useTransition } from 'react';
-import { startRISCollectionAction } from './actions';
+import { useState, useEffect } from 'react';
+
+interface CollectionStatus {
+  status: string;
+  message: string;
+  progress?: number;
+  total?: number;
+  startedAt?: string;
+  completedAt?: string;
+}
 
 export function RISCollectionButton() {
-  const [isPending, startTransition] = useTransition();
-  const [result, setResult] = useState<string | null>(null);
+  const [isRunning, setIsRunning] = useState(false);
+  const [status, setStatus] = useState<CollectionStatus | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const handleStartCollection = (forceRefresh = false) => {
-    setResult(null);
-    setError(null);
+  // Poll for status updates while collection is running
+  useEffect(() => {
+    if (!isRunning) return;
 
-    startTransition(async () => {
+    const pollStatus = async () => {
       try {
-        const response = await startRISCollectionAction(forceRefresh);
+        const response = await fetch('/api/ris/status');
+        const data = await response.json();
 
-        if (response.success) {
-          setResult(
-            `✅ Collection ${response.mode}: ${response.collected} full, ${response.cached} cached, ${response.failed} failed / ${response.total} total`
-          );
-        } else {
-          setError(response.error || 'Collection failed');
+        if (data.status) {
+          setStatus(data.status);
+
+          // Stop polling if completed or failed
+          if (data.status.status === 'completed' || data.status.status === 'failed') {
+            setIsRunning(false);
+
+            // Refresh the page to show updated data
+            if (data.status.status === 'completed') {
+              setTimeout(() => {
+                window.location.reload();
+              }, 2000);
+            }
+          }
         }
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Unknown error');
+        console.error('Error polling status:', err);
       }
-    });
+    };
+
+    // Poll every 2 seconds
+    const interval = setInterval(pollStatus, 2000);
+
+    // Poll immediately
+    pollStatus();
+
+    return () => clearInterval(interval);
+  }, [isRunning]);
+
+  const handleStartCollection = async (forceRefresh = false) => {
+    setError(null);
+    setStatus(null);
+    setIsRunning(true);
+
+    try {
+      const url = `/api/ris/collect${forceRefresh ? '?force=true' : ''}`;
+      const response = await fetch(url, { method: 'POST' });
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to start collection');
+      }
+
+      // Collection started successfully - polling will handle updates
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Unknown error');
+      setIsRunning(false);
+    }
   };
 
   return (
@@ -38,23 +84,52 @@ export function RISCollectionButton() {
       <div className="flex gap-3">
         <button
           onClick={() => handleStartCollection(false)}
-          disabled={isPending}
+          disabled={isRunning}
           className="flex-1 rounded-lg bg-primary px-4 py-2 font-semibold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-50"
         >
-          {isPending ? '🔄 Running...' : '▶️ Start Collection (Incremental)'}
+          {isRunning ? '🔄 Running...' : '▶️ Start Collection (Incremental)'}
         </button>
         <button
           onClick={() => handleStartCollection(true)}
-          disabled={isPending}
+          disabled={isRunning}
           className="flex-1 rounded-lg bg-destructive px-4 py-2 font-semibold text-destructive-foreground transition hover:bg-destructive/90 disabled:opacity-50"
         >
-          {isPending ? '🔄 Running...' : '🔥 Force Full Refresh'}
+          {isRunning ? '🔄 Running...' : '🔥 Force Full Refresh'}
         </button>
       </div>
 
-      {result && (
-        <div className="rounded-lg border border-success/50 bg-success/10 p-3 text-sm text-success-foreground">
-          {result}
+      {status && (
+        <div className={`rounded-lg border p-3 text-sm ${
+          status.status === 'completed'
+            ? 'border-success/50 bg-success/10 text-success-foreground'
+            : status.status === 'failed'
+            ? 'border-destructive/50 bg-destructive/10 text-destructive-foreground'
+            : 'border-primary/50 bg-primary/10 text-primary-foreground'
+        }`}>
+          <div className="flex items-center justify-between mb-2">
+            <span className="font-semibold">
+              {status.status === 'completed' ? '✅ Completed' :
+               status.status === 'failed' ? '❌ Failed' :
+               '⏳ Running'}
+            </span>
+            {status.progress !== undefined && status.total !== undefined && (
+              <span className="text-xs">
+                {status.progress}/{status.total} libraries
+              </span>
+            )}
+          </div>
+          <p className="text-xs mb-2">{status.message}</p>
+          {status.progress !== undefined && status.total !== undefined && (
+            <div className="w-full bg-muted-foreground/20 rounded-full h-2">
+              <div
+                className="bg-primary h-2 rounded-full transition-all duration-300"
+                style={{ width: `${(status.progress / status.total) * 100}%` }}
+              />
+            </div>
+          )}
+          {status.status === 'completed' && (
+            <p className="text-xs mt-2 opacity-70">Page will refresh in 2 seconds...</p>
+          )}
         </div>
       )}
 
@@ -64,9 +139,9 @@ export function RISCollectionButton() {
         </div>
       )}
 
-      {isPending && (
+      {isRunning && !status && (
         <div className="rounded-lg bg-muted p-3 text-sm text-muted-foreground">
-          ⏳ Collection in progress... This may take up to 5 minutes. You can refresh the page to see updated status.
+          ⏳ Starting collection... First-time collection may take 10-30 minutes for all 54 libraries.
         </div>
       )}
     </div>
