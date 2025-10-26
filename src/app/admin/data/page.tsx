@@ -3,9 +3,10 @@
  * Real-time Redis data and statistics
  */
 
-import { getRedisClient } from '@/lib/redis';
+import { getRedisClient, getCachedQuarterlyAllocation, getLastUpdated, getCollectionStatus } from '@/lib/redis';
 import { UserManagementService } from '@/lib/admin/user-management-service';
 import { AccessRequestsService } from '@/lib/admin/access-requests-service';
+import { ecosystemLibraries } from '@/lib/maintainer-tiers';
 
 export const dynamic = 'force-dynamic';
 
@@ -18,18 +19,25 @@ async function getRedisInspection() {
       userKeys,
       requestKeys,
       communityKeys,
+      risMetricsKeys,
+      risActivityKeys,
       allKeys,
     ] = await Promise.all([
       client.keys('admin:user:*'),
       client.keys('admin:request:*'),
       client.keys('communities:*'),
+      client.keys('ris:metrics:*'),
+      client.keys('ris:activity:*'),
       client.keys('*'),
     ]);
 
     // Get specific data
-    const [users, requests] = await Promise.all([
+    const [users, requests, allocation, lastUpdated, collectionStatus] = await Promise.all([
       UserManagementService.getAllUsers(),
       AccessRequestsService.getAllRequests(),
+      getCachedQuarterlyAllocation(),
+      getLastUpdated(),
+      getCollectionStatus(),
     ]);
 
     // Get Redis info
@@ -49,16 +57,24 @@ async function getRedisInspection() {
       userKeys: userKeys.length,
       requestKeys: requestKeys.length,
       communityKeys: communityKeys.length,
+      risMetricsKeys: risMetricsKeys.length,
+      risActivityKeys: risActivityKeys.length,
       dbSize,
       memoryUsed,
       users,
       requests,
+      allocation,
+      lastUpdated,
+      collectionStatus,
       keysByNamespace: {
         'admin:user': userKeys.length,
         'admin:request': requestKeys.length,
         'admin:users': allKeys.filter(k => k.startsWith('admin:users:')).length,
         'admin:requests': allKeys.filter(k => k.startsWith('admin:requests:')).length,
         'communities': communityKeys.length,
+        'ris:metrics': risMetricsKeys.length,
+        'ris:activity': risActivityKeys.length,
+        'ris:allocation': allKeys.filter(k => k.startsWith('ris:allocation:')).length,
       },
     };
   } catch (error) {
@@ -243,6 +259,105 @@ export default async function AdminDataPage() {
         </div>
       )}
 
+      {/* RIS Data */}
+      <div className="bg-card border border-border rounded-xl p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-bold text-foreground">React Impact Score (RIS) Data</h3>
+          {data.lastUpdated && (
+            <span className="text-sm text-muted-foreground">
+              Updated {new Date(data.lastUpdated).toLocaleString()}
+            </span>
+          )}
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-3 mb-4">
+          <InfoCard
+            label="Libraries with Metrics"
+            value={data.risMetricsKeys.toString()}
+            detail={`Out of ${ecosystemLibraries.length} ecosystem libraries`}
+            color={data.risMetricsKeys === ecosystemLibraries.length ? 'success' : 'primary'}
+          />
+          <InfoCard
+            label="Libraries with Activity"
+            value={data.risActivityKeys.toString()}
+            detail="Permanent cached activity data"
+            color={data.risActivityKeys === ecosystemLibraries.length ? 'success' : 'primary'}
+          />
+          <InfoCard
+            label="Quarterly Allocations"
+            value={data.keysByNamespace['ris:allocation'].toString()}
+            detail="Cached allocation calculations"
+          />
+        </div>
+
+        {data.collectionStatus && (
+          <div className="mb-4 p-3 bg-muted rounded-lg">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-semibold text-foreground">Collection Status</span>
+              <span
+                className={`text-xs px-2 py-1 rounded-full font-medium ${
+                  (data.collectionStatus.status as string) === 'completed'
+                    ? 'bg-success/20 text-success-foreground'
+                    : (data.collectionStatus.status as string) === 'running'
+                    ? 'bg-primary/20 text-primary-foreground'
+                    : (data.collectionStatus.status as string) === 'failed'
+                    ? 'bg-destructive/20 text-destructive-foreground'
+                    : 'bg-muted-foreground/20 text-muted-foreground'
+                }`}
+              >
+                {String(data.collectionStatus.status || 'unknown')}
+              </span>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              {String(data.collectionStatus.message || 'No status message')}
+            </p>
+            {data.collectionStatus.progress !== undefined && data.collectionStatus.total !== undefined && (
+              <div className="mt-2 flex items-center gap-2">
+                <div className="flex-1 bg-muted-foreground/20 rounded-full h-2">
+                  <div
+                    className="bg-primary h-2 rounded-full transition-all"
+                    style={{ width: `${((data.collectionStatus.progress as number) / (data.collectionStatus.total as number)) * 100}%` }}
+                  />
+                </div>
+                <span className="text-xs text-muted-foreground">
+                  {String(data.collectionStatus.progress)}/{String(data.collectionStatus.total)}
+                </span>
+              </div>
+            )}
+          </div>
+        )}
+
+        {data.allocation && (
+          <div>
+            <h4 className="text-sm font-semibold text-muted-foreground mb-2">
+              Current Quarter Allocation ({data.allocation.period})
+            </h4>
+            <div className="grid gap-4 md:grid-cols-4">
+              <InfoCard
+                label="Total Pool"
+                value={`$${(data.allocation.totalPool / 1000).toFixed(0)}K`}
+                detail="Total allocation amount"
+              />
+              <InfoCard
+                label="Libraries Scored"
+                value={data.allocation.libraries.length.toString()}
+                detail="Libraries in allocation"
+              />
+              <InfoCard
+                label="Average Allocation"
+                value={`$${Math.round(data.allocation.totalPool / data.allocation.libraries.length / 1000)}K`}
+                detail="Per library average"
+              />
+              <InfoCard
+                label="Top Library"
+                value={data.allocation.libraries[0]?.name || 'N/A'}
+                detail={data.allocation.libraries[0] ? `$${Math.round(data.allocation.libraries[0].allocation / 1000)}K` : ''}
+              />
+            </div>
+          </div>
+        )}
+      </div>
+
       {/* Redis Configuration */}
       <div className="bg-card border border-border rounded-xl p-6">
         <h3 className="text-lg font-bold text-foreground mb-4">Redis Configuration</h3>
@@ -300,6 +415,26 @@ export default async function AdminDataPage() {
           <KeyReference
             pattern="communities:seeded"
             description="Flag indicating communities are seeded"
+          />
+          <KeyReference
+            pattern="ris:metrics:[owner]:[repo]"
+            description="Calculated RIS metrics for a library (7-day TTL)"
+          />
+          <KeyReference
+            pattern="ris:activity:[owner]:[repo]"
+            description="Raw activity data for a library (permanent)"
+          />
+          <KeyReference
+            pattern="ris:allocation:[period]"
+            description="Quarterly allocation (e.g., 2025-Q4)"
+          />
+          <KeyReference
+            pattern="ris:last_updated"
+            description="Timestamp of last RIS collection"
+          />
+          <KeyReference
+            pattern="ris:collection_status"
+            description="Current collection status and progress"
           />
         </div>
       </div>
