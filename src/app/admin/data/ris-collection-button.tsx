@@ -28,6 +28,7 @@ export function RISCollectionButton() {
       try {
         const response = await fetch('/api/ris/status');
         const data = await response.json();
+        console.log('Status poll:', data);
 
         if (data.status) {
           setStatus(data.status);
@@ -65,15 +66,23 @@ export function RISCollectionButton() {
 
     try {
       const url = `/api/ris/collect${forceRefresh ? '?force=true' : ''}`;
+      console.log('Starting collection:', url);
+
       const response = await fetch(url, { method: 'POST' });
+      console.log('Collection response status:', response.status);
 
       if (!response.ok) {
         const data = await response.json();
+        console.error('Collection failed:', data);
         throw new Error(data.error || 'Failed to start collection');
       }
 
+      const data = await response.json();
+      console.log('Collection started:', data);
+
       // Collection started successfully - polling will handle updates
     } catch (err) {
+      console.error('Collection error:', err);
       setError(err instanceof Error ? err.message : 'Unknown error');
       setIsRunning(false);
     }
