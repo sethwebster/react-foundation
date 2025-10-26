@@ -84,12 +84,23 @@ export class AccessRequestsService {
     const client = getRedisClient();
 
     const ids = await client.smembers(REDIS_KEYS.pendingRequests);
-    const requests: AccessRequest[] = [];
 
-    for (const id of ids) {
-      const request = await this.getRequest(id);
-      if (request) {
+    if (ids.length === 0) return [];
+
+    // Batch fetch all request data with MGET (single Redis call)
+    const keys = ids.map(id => REDIS_KEYS.request(id));
+    const values = await client.mget(...keys);
+
+    const requests: AccessRequest[] = [];
+    for (let i = 0; i < values.length; i++) {
+      const data = values[i];
+      if (!data) continue;
+
+      try {
+        const request = JSON.parse(data);
         requests.push(request);
+      } catch (error) {
+        logger.error(`Error parsing request ${ids[i]}:`, error);
       }
     }
 
@@ -105,12 +116,23 @@ export class AccessRequestsService {
     const client = getRedisClient();
 
     const ids = await client.smembers(REDIS_KEYS.allRequests);
-    const requests: AccessRequest[] = [];
 
-    for (const id of ids) {
-      const request = await this.getRequest(id);
-      if (request) {
+    if (ids.length === 0) return [];
+
+    // Batch fetch all request data with MGET (single Redis call)
+    const keys = ids.map(id => REDIS_KEYS.request(id));
+    const values = await client.mget(...keys);
+
+    const requests: AccessRequest[] = [];
+    for (let i = 0; i < values.length; i++) {
+      const data = values[i];
+      if (!data) continue;
+
+      try {
+        const request = JSON.parse(data);
         requests.push(request);
+      } catch (error) {
+        logger.error(`Error parsing request ${ids[i]}:`, error);
       }
     }
 

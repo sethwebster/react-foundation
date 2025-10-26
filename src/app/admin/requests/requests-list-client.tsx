@@ -70,12 +70,12 @@ export function RequestsListClient({
   return (
     <>
       {error && (
-        <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-red-300">
+        <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-destructive-foreground">
           {error}
         </div>
       )}
       {status && !error && (
-        <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-4 text-emerald-100">
+        <div className="rounded-lg border border-success/30 bg-success/10 p-4 text-success-foreground">
           {status}
         </div>
       )}
@@ -97,7 +97,7 @@ export function RequestsListClient({
               className={`rounded-xl border p-6 ${
                 req.id === highlightId
                   ? 'border-primary bg-primary/10'
-                  : 'border-border/10 bg-foreground/30'
+                  : 'border-border bg-card'
               }`}
             >
               <div className="space-y-4">
@@ -108,8 +108,8 @@ export function RequestsListClient({
                   </p>
                 </div>
 
-                <div className="rounded-lg border border-border/10 bg-foreground/50 p-4">
-                  <p className="text-sm text-foreground/80">{req.message}</p>
+                <div className="rounded-lg border border-border bg-muted p-4">
+                  <p className="text-sm text-muted-foreground">{req.message}</p>
                 </div>
 
                 <div className="flex gap-3">
@@ -123,14 +123,14 @@ export function RequestsListClient({
                   <button
                     onClick={() => handleApprove(req.id, 'admin')}
                     disabled={isPending}
-                    className="flex-1 rounded-lg bg-accent px-4 py-2 font-semibold text-foreground transition hover:bg-accent/50 disabled:opacity-50"
+                    className="flex-1 rounded-lg bg-accent px-4 py-2 font-semibold text-accent-foreground transition hover:bg-accent/80 disabled:opacity-50"
                   >
                     👑 Approve as Admin
                   </button>
                   <button
                     onClick={() => handleDeny(req.id)}
                     disabled={isPending}
-                    className="rounded-lg bg-destructive/20 px-4 py-2 font-semibold text-red-300 transition hover:bg-destructive/30 disabled:opacity-50"
+                    className="rounded-lg bg-destructive/20 px-4 py-2 font-semibold text-destructive-foreground transition hover:bg-destructive/30 disabled:opacity-50"
                   >
                     ❌ Deny
                   </button>
@@ -139,7 +139,7 @@ export function RequestsListClient({
                   <button
                     onClick={() => handleResendNotification(req.id)}
                     disabled={isPending}
-                    className="mt-3 inline-flex items-center gap-2 rounded-lg border border-border/30 px-4 py-2 text-sm font-semibold text-foreground transition hover:bg-foreground/20 disabled:opacity-50"
+                    className="mt-3 inline-flex items-center gap-2 rounded-lg border border-border px-4 py-2 text-sm font-semibold text-foreground transition hover:bg-muted disabled:opacity-50"
                   >
                     📧 Resend Admin Email
                   </button>
@@ -160,7 +160,7 @@ export function RequestsListClient({
           {processedRequests.slice(0, 20).map((req) => (
             <div
               key={req.id}
-              className="flex items-center justify-between rounded-lg border border-border/10 bg-foreground/20 p-4"
+              className="flex items-center justify-between rounded-lg border border-border bg-card p-4"
             >
               <div>
                 <p className="font-medium text-foreground">{req.email}</p>
@@ -173,8 +173,8 @@ export function RequestsListClient({
               <span
                 className={`rounded px-3 py-1 text-sm font-semibold ${
                   req.status === 'approved'
-                    ? 'bg-success/20 text-green-300'
-                    : 'bg-destructive/20 text-red-300'
+                    ? 'bg-success/20 text-success-foreground'
+                    : 'bg-destructive/20 text-destructive-foreground'
                 }`}
               >
                 {req.status}

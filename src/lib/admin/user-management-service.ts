@@ -127,12 +127,23 @@ export class UserManagementService {
     const client = getRedisClient();
 
     const emails = await client.smembers(REDIS_KEYS.allUsers);
-    const users: User[] = [];
 
-    for (const email of emails) {
-      const user = await this.getUser(email);
-      if (user) {
+    if (emails.length === 0) return [];
+
+    // Batch fetch all user data with MGET (single Redis call)
+    const keys = emails.map(email => REDIS_KEYS.user(email));
+    const values = await client.mget(...keys);
+
+    const users: User[] = [];
+    for (let i = 0; i < values.length; i++) {
+      const data = values[i];
+      if (!data) continue;
+
+      try {
+        const user = JSON.parse(data);
         users.push(user);
+      } catch (error) {
+        logger.error(`Error parsing user data for ${emails[i]}:`, error);
       }
     }
 
