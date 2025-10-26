@@ -18,7 +18,7 @@ export default function AboutPage() {
   return (
     <div className="min-h-screen bg-background pt-24 text-muted-foreground">
       <div className="absolute inset-x-0 top-[-6rem] -z-10 flex justify-center blur-3xl">
-        <div className="h-[24rem] w-[60rem] bg-gradient-to-r from-emerald-400 via-cyan-500 to-blue-600 opacity-30" />
+        <div className="h-[24rem] w-[60rem] bg-gradient-to-r from-success/50 via-primary/60 to-primary/70 opacity-30" />
       </div>
 
       <div className="mx-auto flex max-w-6xl flex-col px-6 pb-24 sm:px-8 lg:px-12">
@@ -99,8 +99,8 @@ export default function AboutPage() {
               </h2>
               <div className="grid gap-6 lg:grid-cols-2">
                 <div className="space-y-4 rounded-2xl border border-border/10 bg-background/[0.03] p-8">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-400 to-blue-500">
-                    <span className="text-xl font-bold text-foreground">1</span>
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/80">
+                    <span className="text-xl font-bold text-primary-foreground">1</span>
                   </div>
                   <h3 className="text-xl font-semibold text-foreground">
                     Shop the Store
@@ -112,8 +112,8 @@ export default function AboutPage() {
                 </div>
 
                 <div className="space-y-4 rounded-2xl border border-border/10 bg-background/[0.03] p-8">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-400 to-cyan-500">
-                    <span className="text-xl font-bold text-foreground">2</span>
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-success to-primary">
+                    <span className="text-xl font-bold text-success-foreground">2</span>
                   </div>
                   <h3 className="text-xl font-semibold text-foreground">
                     Revenue Distribution
@@ -125,8 +125,8 @@ export default function AboutPage() {
                 </div>
 
                 <div className="space-y-4 rounded-2xl border border-border/10 bg-background/[0.03] p-8">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-yellow-300 to-orange-500">
-                    <span className="text-xl font-bold text-foreground">3</span>
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-warning to-warning/80">
+                    <span className="text-xl font-bold text-warning-foreground">3</span>
                   </div>
                   <h3 className="text-xl font-semibold text-foreground">
                     Contributor Recognition
@@ -138,8 +138,8 @@ export default function AboutPage() {
                 </div>
 
                 <div className="space-y-4 rounded-2xl border border-border/10 bg-background/[0.03] p-8">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-sky-400 to-indigo-500">
-                    <span className="text-xl font-bold text-foreground">4</span>
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary/80 to-accent">
+                    <span className="text-xl font-bold text-primary-foreground">4</span>
                   </div>
                   <h3 className="text-xl font-semibold text-foreground">
                     Transparent Reporting
@@ -184,8 +184,8 @@ export default function AboutPage() {
                   className="group block space-y-4 rounded-2xl border border-border/10 bg-card text-card-foreground p-8 transition-all hover:border-primary/20 hover:bg-gradient-to-br hover:from-primary/5 hover:to-accent/5 hover:shadow-lg"
                 >
                   <div className="flex items-center gap-4">
-                    <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-400 to-blue-500 shadow-lg">
-                      <svg className="h-7 w-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-primary/80 shadow-lg">
+                      <svg className="h-7 w-7 text-primary-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                       </svg>
                     </div>
@@ -212,8 +212,8 @@ export default function AboutPage() {
                   className="group block space-y-4 rounded-2xl border border-border/10 bg-card text-card-foreground p-8 transition-all hover:border-success/20 hover:bg-gradient-to-br hover:from-success/5 hover:to-primary/5 hover:shadow-lg"
                 >
                   <div className="flex items-center gap-4">
-                    <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-400 to-cyan-500 shadow-lg">
-                      <svg className="h-7 w-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-success to-primary shadow-lg">
+                      <svg className="h-7 w-7 text-success-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
                       </svg>
                     </div>
@@ -273,7 +273,7 @@ export default function AboutPage() {
 
           {/* CTA */}
           <ScrollReveal animation="fade-up">
-            <section className="scroll-mt-32 space-y-8 rounded-3xl border border-border/10 bg-gradient-to-br from-cyan-500/10 via-yellow-400/10 to-orange-500/10 p-12 text-center">
+            <section className="scroll-mt-32 space-y-8 rounded-3xl border border-border/10 bg-gradient-to-br from-primary/10 via-warning/10 to-warning/5 p-12 text-center">
               <h2 className="text-3xl font-semibold text-foreground sm:text-4xl">
                 Ready to Make an Impact?
               </h2>

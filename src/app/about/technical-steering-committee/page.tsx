@@ -81,7 +81,7 @@ export default function TechnicalSteeringCommitteePage() {
     <div className="min-h-screen bg-background pt-24 text-muted-foreground">
       {/* Hero Gradient */}
       <div className="absolute inset-x-0 top-[-6rem] -z-10 flex justify-center blur-3xl">
-        <div className="h-[24rem] w-[60rem] bg-gradient-to-r from-emerald-400 via-cyan-500 to-blue-600 opacity-30" />
+        <div className="h-[24rem] w-[60rem] bg-gradient-to-r from-success/50 via-primary/60 to-primary/70 opacity-30" />
       </div>
 
       <div className="mx-auto flex max-w-7xl flex-col px-6 pb-24 sm:px-8 lg:px-12">
@@ -157,9 +157,9 @@ export default function TechnicalSteeringCommitteePage() {
               </div>
 
               <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-                {committeeMembers.map((member, index) => (
+                {committeeMembers.map((member) => (
                   <div
-                    key={index}
+                    key={member.title}
                     className="group relative overflow-hidden rounded-3xl border border-border/10 bg-card transition-all hover:border-success/20 hover:shadow-lg"
                   >
                     {/* Card Gradient Background */}
@@ -231,8 +231,8 @@ export default function TechnicalSteeringCommitteePage() {
               </h2>
               <div className="grid gap-6 lg:grid-cols-2">
                 <div className="space-y-4 rounded-2xl border border-border/10 bg-background/[0.03] p-8">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-400 to-cyan-500">
-                    <svg className="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-success to-primary">
+                    <svg className="h-6 w-6 text-success-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
                     </svg>
                   </div>
@@ -246,8 +246,8 @@ export default function TechnicalSteeringCommitteePage() {
                 </div>
 
                 <div className="space-y-4 rounded-2xl border border-border/10 bg-background/[0.03] p-8">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-400 to-blue-500">
-                    <svg className="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/80">
+                    <svg className="h-6 w-6 text-primary-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                     </svg>
                   </div>
@@ -261,8 +261,8 @@ export default function TechnicalSteeringCommitteePage() {
                 </div>
 
                 <div className="space-y-4 rounded-2xl border border-border/10 bg-background/[0.03] p-8">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-blue-400 to-indigo-500">
-                    <svg className="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary/80 to-accent">
+                    <svg className="h-6 w-6 text-primary-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                     </svg>
                   </div>
@@ -276,8 +276,8 @@ export default function TechnicalSteeringCommitteePage() {
                 </div>
 
                 <div className="space-y-4 rounded-2xl border border-border/10 bg-background/[0.03] p-8">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-400 to-purple-500">
-                    <svg className="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-accent to-accent/80">
+                    <svg className="h-6 w-6 text-accent-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
                     </svg>
                   </div>
@@ -291,8 +291,8 @@ export default function TechnicalSteeringCommitteePage() {
                 </div>
 
                 <div className="space-y-4 rounded-2xl border border-border/10 bg-background/[0.03] p-8">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-purple-400 to-pink-500">
-                    <svg className="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-success/80 to-success">
+                    <svg className="h-6 w-6 text-success-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                     </svg>
                   </div>
@@ -306,8 +306,8 @@ export default function TechnicalSteeringCommitteePage() {
                 </div>
 
                 <div className="space-y-4 rounded-2xl border border-border/10 bg-background/[0.03] p-8">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-pink-400 to-rose-500">
-                    <svg className="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-warning to-warning/80">
+                    <svg className="h-6 w-6 text-warning-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                     </svg>
                   </div>
@@ -376,7 +376,7 @@ export default function TechnicalSteeringCommitteePage() {
 
           {/* CTA Section */}
           <ScrollReveal animation="fade-up">
-            <section className="rounded-3xl border border-border/10 bg-gradient-to-br from-emerald-500/10 via-cyan-500/10 to-blue-500/10 p-12 text-center">
+            <section className="rounded-3xl border border-border/10 bg-gradient-to-br from-success/10 via-primary/5 to-primary/10 p-12 text-center">
               <h2 className="text-3xl font-semibold text-foreground sm:text-4xl">
                 Get Involved in Technical Discussions
               </h2>
