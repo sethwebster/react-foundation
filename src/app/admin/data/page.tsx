@@ -10,6 +10,14 @@ import { ecosystemLibraries } from '@/lib/maintainer-tiers';
 
 export const dynamic = 'force-dynamic';
 
+function getCurrentQuarter(): string {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth() + 1;
+  const quarter = Math.ceil(month / 3);
+  return `${year}-Q${quarter}`;
+}
+
 async function getRedisInspection() {
   try {
     const client = getRedisClient();
@@ -31,11 +39,14 @@ async function getRedisInspection() {
       client.keys('*'),
     ]);
 
+    // Get current quarter for allocation lookup
+    const currentQuarter = getCurrentQuarter();
+
     // Get specific data
     const [users, requests, allocation, lastUpdated, collectionStatus] = await Promise.all([
       UserManagementService.getAllUsers(),
       AccessRequestsService.getAllRequests(),
-      getCachedQuarterlyAllocation(),
+      getCachedQuarterlyAllocation(currentQuarter).catch(() => null),
       getLastUpdated(),
       getCollectionStatus(),
     ]);
