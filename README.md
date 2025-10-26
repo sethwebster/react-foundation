@@ -63,15 +63,39 @@ react-foundation-store/
 
 ## Documentation
 
-📚 **[Complete Documentation](./docs/)**
+📚 **[Complete Documentation](./docs/)** - Start here for internal developer documentation
 
-### Foundation
-- **[Foundation Docs](./docs/foundation/)** - Content taxonomy, design system
+### Quick Links
 
-### Store
-- **[Store Management Guide](./docs/store/STORE_MANAGEMENT.md)** - Complete store reference
-- **[Metafields Reference](./docs/store/METAFIELDS_REFERENCE.md)** - All 26 metafields
-- **[Quick Start Guide](./docs/store/QUICK_START.md)** - Daily tasks cheat sheet
+**Getting Started:**
+- **[Getting Started Guide](./docs/getting-started/)** - Setup, deployment, troubleshooting
+- **[Deployment Guide](./docs/getting-started/deployment.md)** - Deploy to production
+
+**Store Management:**
+- **[Store Documentation](./docs/store/)** - Complete store documentation index
+- **[Store Management Guide](./docs/store/store-management.md)** - Complete store reference
+- **[Metafields Reference](./docs/store/metafields-reference.md)** - All 26 metafields
+- **[Quick Start Guide](./docs/store/quick-start.md)** - Daily tasks cheat sheet
+- **[Shopify Scripts](./docs/store/shopify-scripts.md)** - CLI tools and setup
+
+**Foundation Systems:**
+- **[Foundation Documentation](./docs/foundation/)** - Foundation-specific dev docs
+- **[Impact Systems](./docs/foundation/impact-systems.md)** - RIS, CIS, CoIS
+- **[Revenue Distribution](./docs/foundation/revenue-distribution.md)** - Allocation model
+- **[Design System](./docs/foundation/design-system.md)** - RFDS components
+
+**Development:**
+- **[Development Guides](./docs/development/)** - Dev best practices
+- **[Theming Guide](./docs/development/theming.md)** - Semantic theming system
+- **[RIS Setup](./docs/development/ris-setup.md)** - React Impact Score setup
+
+**Chatbot & Ingestion:**
+- **[Chatbot Documentation](./docs/chatbot/)** - Content ingestion system
+- **[Architecture](./docs/chatbot/architecture.md)** - Loader-based ingestion
+- **[Troubleshooting](./docs/chatbot/troubleshooting.md)** - Fix ingestion issues
+
+**Community:**
+- **[Community Documentation](./docs/community/)** - Educator & community systems
 
 ## Management Scripts
 
@@ -94,7 +118,7 @@ npm run dev    # Start dev server
 npm run build  # Build for production
 ```
 
-See [docs/store/QUICK_START.md](./docs/store/QUICK_START.md) for more commands.
+See [docs/store/quick-start.md](./docs/store/quick-start.md) for more commands.
 
 ## Routes
 
@@ -213,4 +237,4 @@ Proprietary - React Foundation
 
 ---
 
-**Documentation:** [docs/](./docs/) | **Store Guide:** [docs/store/STORE_MANAGEMENT.md](./docs/store/STORE_MANAGEMENT.md)
+**Documentation:** [docs/](./docs/) | **Store Guide:** [docs/store/](./docs/store/) | **Contributing:** [CONTRIBUTING.md](./CONTRIBUTING.md)

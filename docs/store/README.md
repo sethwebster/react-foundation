@@ -6,7 +6,7 @@ Complete documentation for managing and developing the React Foundation Shopify 
 
 ## Documentation Index
 
-### 📚 [STORE_MANAGEMENT.md](./STORE_MANAGEMENT.md)
+### 📚 [Store Management Guide](./store-management.md)
 **Complete store management guide** - 150+ page comprehensive reference
 
 **Use this when:**
@@ -29,7 +29,7 @@ Complete documentation for managing and developing the React Foundation Shopify 
 
 ---
 
-### 📖 [METAFIELDS_REFERENCE.md](./METAFIELDS_REFERENCE.md)
+### 📖 [Metafields Reference](./metafields-reference.md)
 **Quick metafield reference** - All 26 metafields at a glance
 
 **Use this when:**
@@ -50,7 +50,7 @@ Complete documentation for managing and developing the React Foundation Shopify 
 
 ---
 
-### ⚡ [QUICK_START.md](./QUICK_START.md)
+### ⚡ [Quick Start Guide](./quick-start.md)
 **Fast reference for daily tasks** - Cheat sheet
 
 **Use this when:**
@@ -72,36 +72,58 @@ Complete documentation for managing and developing the React Foundation Shopify 
 
 ---
 
+### 🔧 [Shopify Scripts](./shopify-scripts.md)
+**CLI tools for managing Shopify** - Script reference and guide
+
+**Use this when:**
+- Running management scripts
+- Need Shopify setup instructions
+- Creating drops via command line
+- Seeding products
+- Managing images
+- Troubleshooting API issues
+
+**Covers:**
+- Getting API credentials
+- All management scripts
+- Drop workflow automation
+- Product seeding
+- Image management
+- Troubleshooting guide
+- Metafield setup
+
+---
+
 ## Quick Navigation
 
 ### I want to...
 
 **Set up the store from scratch**
-→ Start with [STORE_MANAGEMENT.md](./STORE_MANAGEMENT.md#initial-setup)
+→ Start with [Store Management Guide](./store-management.md#initial-setup)
 
 **Create a new drop collection**
-→ [QUICK_START.md](./QUICK_START.md#create-a-new-drop) or [STORE_MANAGEMENT.md](./STORE_MANAGEMENT.md#creating-a-new-drop)
+→ [Quick Start](./quick-start.md#create-a-new-drop) or [Store Management Guide](./store-management.md#creating-a-new-drop)
 
 **Add metafields to a product**
-→ [METAFIELDS_REFERENCE.md](./METAFIELDS_REFERENCE.md#product-metafields-12) or [STORE_MANAGEMENT.md](./STORE_MANAGEMENT.md#adding-products-to-a-drop)
+→ [Metafields Reference](./metafields-reference.md#product-metafields-12) or [Store Management Guide](./store-management.md#adding-products-to-a-drop)
 
 **Generate collection images**
-→ [QUICK_START.md](./QUICK_START.md#generate-collection-image) or [STORE_MANAGEMENT.md](./STORE_MANAGEMENT.md#collection-images)
+→ [Quick Start](./quick-start.md#generate-collection-image) or [Store Management Guide](./store-management.md#collection-images)
 
 **Understand drop lifecycle**
-→ [STORE_MANAGEMENT.md](./STORE_MANAGEMENT.md#drop-lifecycle)
+→ [Store Management Guide](./store-management.md#drop-lifecycle)
 
 **Troubleshoot metafields not showing**
-→ [STORE_MANAGEMENT.md](./STORE_MANAGEMENT.md#metafields-not-showing-on-frontend) or [QUICK_START.md](./QUICK_START.md#troubleshooting)
+→ [Store Management Guide](./store-management.md#metafields-not-showing-on-frontend) or [Quick Start](./quick-start.md#troubleshooting)
 
 **Look up a script command**
-→ [QUICK_START.md](./QUICK_START.md#scripts-reference)
+→ [Quick Start](./quick-start.md#scripts-reference) or [Shopify Scripts](./shopify-scripts.md)
 
 **See metafield examples**
-→ [METAFIELDS_REFERENCE.md](./METAFIELDS_REFERENCE.md#json-field-examples)
+→ [Metafields Reference](./metafields-reference.md#json-field-examples)
 
 **Understand inventory display**
-→ [QUICK_START.md](./QUICK_START.md#inventory-display-rules) or [STORE_MANAGEMENT.md](./STORE_MANAGEMENT.md#inventory-management)
+→ [Quick Start](./quick-start.md#inventory-display-rules) or [Store Management Guide](./store-management.md#inventory-management)
 
 ---
 
@@ -171,22 +193,24 @@ npm run build
 
 ## Getting Help
 
-1. **Quick answer:** Check [QUICK_START.md](./QUICK_START.md)
-2. **Need details:** Check [STORE_MANAGEMENT.md](./STORE_MANAGEMENT.md)
-3. **Metafield info:** Check [METAFIELDS_REFERENCE.md](./METAFIELDS_REFERENCE.md)
-4. **API issues:** Run `npm run shopify:test-storefront`
-5. **Still stuck:** Check troubleshooting sections
+1. **Quick answer:** Check [Quick Start Guide](./quick-start.md)
+2. **Need details:** Check [Store Management Guide](./store-management.md)
+3. **Metafield info:** Check [Metafields Reference](./metafields-reference.md)
+4. **Script help:** Check [Shopify Scripts](./shopify-scripts.md)
+5. **API issues:** Run `npm run shopify:test-storefront`
+6. **Still stuck:** Check troubleshooting sections
 
 ---
 
 ## Documentation Structure
 
 ```
-docs/
+docs/store/
 ├── README.md                   # This file - documentation index
-├── STORE_MANAGEMENT.md         # Complete guide (150+ pages)
-├── METAFIELDS_REFERENCE.md     # Metafield reference (~20 pages)
-└── QUICK_START.md              # Quick reference (~10 pages)
+├── store-management.md         # Complete guide (150+ pages)
+├── metafields-reference.md     # Metafield reference (~20 pages)
+├── quick-start.md              # Quick reference (~10 pages)
+└── shopify-scripts.md          # Script reference and guide
 ```
 
 ---
@@ -195,10 +219,11 @@ docs/
 
 **Recommended reading order:**
 
-1. **[QUICK_START.md](./QUICK_START.md)** - Get oriented (10 min)
-2. **[STORE_MANAGEMENT.md](./STORE_MANAGEMENT.md) - Setup section** - Configure environment (30 min)
-3. **[STORE_MANAGEMENT.md](./STORE_MANAGEMENT.md) - Drop Management** - Learn drop workflow (20 min)
-4. **[METAFIELDS_REFERENCE.md](./METAFIELDS_REFERENCE.md)** - Bookmark for daily use (5 min)
+1. **[Quick Start Guide](./quick-start.md)** - Get oriented (10 min)
+2. **[Store Management Guide](./store-management.md) - Setup section** - Configure environment (30 min)
+3. **[Store Management Guide](./store-management.md) - Drop Management** - Learn drop workflow (20 min)
+4. **[Metafields Reference](./metafields-reference.md)** - Bookmark for daily use (5 min)
+5. **[Shopify Scripts](./shopify-scripts.md)** - Learn CLI tools (10 min)
 
 Then use as reference material.
 
