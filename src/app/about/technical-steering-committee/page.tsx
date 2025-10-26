@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import { ButtonLink } from "@/components/ui/button";
 import { Pill } from "@/components/ui/pill";
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
@@ -20,11 +19,11 @@ interface CommitteeMember {
 
 const committeeMembers: CommitteeMember[] = [
   {
-    name: "Joe Savona",
+    name: "To Be Announced",
     title: "TSC Chair",
     role: "Technical Leadership",
-    bio: "Leading technical strategy and architectural decisions, ensuring the React ecosystem maintains excellence and innovation at its core. Joe is a core member of the React team at Meta, working on React Compiler and advancing the future of React.",
-    expertise: ["React Compiler", "Technical Strategy", "React Core"],
+    bio: "Leading technical strategy and architectural decisions, ensuring the React ecosystem maintains excellence and innovation at its core.",
+    expertise: ["Architecture", "Technical Strategy", "Open Source Governance"],
   },
   {
     name: "To Be Announced",
@@ -169,35 +168,23 @@ export default function TechnicalSteeringCommitteePage() {
                     <div className="relative p-6">
                       {/* Headshot Placeholder */}
                       <div className="mb-4 flex justify-center">
-                        {member.name === "Joe Savona" ? (
-                          <div className="relative h-24 w-24 overflow-hidden rounded-full border-2 border-border/20">
-                            <Image
-                              src="/images/team/joe-savona.webp"
-                              alt="Joe Savona"
-                              width={96}
-                              height={96}
-                              className="h-full w-full object-cover"
-                            />
+                        <div className="flex h-24 w-24 items-center justify-center rounded-full border-2 border-border/20 bg-gradient-to-br from-muted to-muted/50">
+                          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-muted">
+                            <svg
+                              className="h-12 w-12 text-muted-foreground/40"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={1.5}
+                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                              />
+                            </svg>
                           </div>
-                        ) : (
-                          <div className="flex h-24 w-24 items-center justify-center rounded-full border-2 border-border/20 bg-gradient-to-br from-muted to-muted/50">
-                            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-muted">
-                              <svg
-                                className="h-12 w-12 text-muted-foreground/40"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={1.5}
-                                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                                />
-                              </svg>
-                            </div>
-                          </div>
-                        )}
+                        </div>
                       </div>
 
                       {/* Member Info */}
