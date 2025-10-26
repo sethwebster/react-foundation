@@ -107,11 +107,17 @@ export class RISScoringService {
    *
    * @param scores - Library scores from calculateScores()
    * @param totalPoolUsd - Total pool available for allocation
+   * @param quarterStartDate - Optional quarter start date for proration (defaults to beginning of current quarter)
+   * @param quarterEndDate - Optional quarter end date for proration (defaults to end of current quarter)
+   * @param libraryApprovalDates - Optional map of library name to approval date (for mid-quarter proration)
    * @returns Updated scores with allocation amounts
    */
   public allocateRevenue(
     scores: LibraryScore[],
-    totalPoolUsd: number
+    totalPoolUsd: number,
+    quarterStartDate?: Date,
+    quarterEndDate?: Date,
+    libraryApprovalDates?: Map<string, Date>
   ): LibraryScore[] {
     if (scores.length === 0) return [];
 
@@ -153,12 +159,42 @@ export class RISScoringService {
     }
 
     // Calculate proportional allocations (only for eligible libraries)
-    let updatedScores = eligibleScores.map((s) => ({
-      ...s,
-      allocation_usd: (s.ris / totalRIS) * availablePool,
-      floor_applied: false,
-      cap_applied: false,
-    }));
+    let updatedScores = eligibleScores.map((s) => {
+      const baseAllocation = (s.ris / totalRIS) * availablePool;
+
+      // Apply proration for mid-quarter approved libraries
+      let proratedAllocation = baseAllocation;
+      if (libraryApprovalDates && quarterStartDate && quarterEndDate) {
+        const approvalDate = libraryApprovalDates.get(s.libraryName);
+
+        if (approvalDate) {
+          const totalDays = Math.ceil(
+            (quarterEndDate.getTime() - quarterStartDate.getTime()) / (1000 * 60 * 60 * 24)
+          );
+
+          const daysRemaining = Math.ceil(
+            (quarterEndDate.getTime() - approvalDate.getTime()) / (1000 * 60 * 60 * 24)
+          );
+
+          // Proration factor = days remaining / total days in quarter
+          const prorationFactor = Math.max(0, Math.min(1, daysRemaining / totalDays));
+
+          proratedAllocation = baseAllocation * prorationFactor;
+
+          console.log(
+            `📊 Prorating ${s.libraryName}: ${(prorationFactor * 100).toFixed(1)}% ` +
+            `(${daysRemaining}/${totalDays} days)`
+          );
+        }
+      }
+
+      return {
+        ...s,
+        allocation_usd: proratedAllocation,
+        floor_applied: false,
+        cap_applied: false,
+      };
+    });
 
     // Apply floor (if configured, though default is 0)
     const floor = this.config.minimum_floor_usd;
@@ -204,10 +240,20 @@ export class RISScoringService {
     rawMetrics: LibraryRawMetrics[],
     totalPoolUsd: number,
     period: string,
-    previousScores?: Map<string, number>
+    previousScores?: Map<string, number>,
+    quarterStartDate?: Date,
+    quarterEndDate?: Date,
+    libraryApprovalDates?: Map<string, Date>
   ): QuarterlyAllocation {
     const scores = this.calculateScores(rawMetrics, previousScores);
-    const libraries = this.allocateRevenue(scores, totalPoolUsd);
+
+    const libraries = this.allocateRevenue(
+      scores,
+      totalPoolUsd,
+      quarterStartDate,
+      quarterEndDate,
+      libraryApprovalDates
+    );
 
     return {
       period,

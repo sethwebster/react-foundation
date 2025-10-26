@@ -8,6 +8,7 @@ import { UserManagementService } from '@/lib/admin/user-management-service';
 import { AccessRequestsService } from '@/lib/admin/access-requests-service';
 import { ecosystemLibraries } from '@/lib/maintainer-tiers';
 import { RISCollectionButton } from './ris-collection-button';
+import { LibraryApprovalQueue } from '@/components/admin/LibraryApprovalQueue';
 
 export const dynamic = 'force-dynamic';
 
@@ -270,6 +271,11 @@ export default async function AdminDataPage() {
           </div>
         </div>
       )}
+
+      {/* Library Approval Queue */}
+      <div className="bg-card border border-border rounded-xl p-6">
+        <LibraryApprovalQueue />
+      </div>
 
       {/* RIS Data */}
       <div className="bg-card border border-border rounded-xl p-6">

@@ -13,6 +13,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createHmac, timingSafeEqual } from 'crypto';
 import { queueWebhookEvent, trackInstallation, removeInstallation } from '@/lib/ris/webhook-queue';
+import { addPendingLibrary, getLibraryStatus, isLibraryApproved } from '@/lib/ris/library-approval';
 import { logger } from '@/lib/logger';
 
 /**
@@ -95,14 +96,47 @@ export async function POST(request: NextRequest) {
         const installationId = installation?.id as number;
 
         if (action === 'created' || action === 'added') {
-          // Track newly installed repos
+          // Check if repos are already approved or add to pending
           const repositories = data.repositories as Array<Record<string, unknown>> | undefined;
           if (repositories) {
             for (const repo of repositories) {
               const owner = (repo.owner as Record<string, unknown>)?.login as string;
               const name = repo.name as string;
-              await trackInstallation(owner, name, installationId);
-              logger.info(`✅ App installed: ${owner}/${name}`);
+              const fullName = repo.full_name as string;
+              const htmlUrl = repo.html_url as string;
+              const description = repo.description as string | undefined;
+              const stars = repo.stargazers_count as number | undefined;
+              const language = repo.language as string | undefined;
+              const topics = repo.topics as string[] | undefined;
+
+              // Check if library is already approved
+              const status = await getLibraryStatus(owner, name);
+
+              if (status === 'approved') {
+                // Already approved - track installation immediately
+                await trackInstallation(owner, name, installationId);
+                logger.info(`✅ App installed on approved library: ${owner}/${name}`);
+              } else if (status === 'pending') {
+                // Already pending - do nothing
+                logger.info(`⏳ App installed on pending library (already in queue): ${owner}/${name}`);
+              } else if (status === 'rejected') {
+                // Previously rejected - do nothing (admin must re-approve)
+                logger.info(`❌ App installed on rejected library: ${owner}/${name}`);
+              } else {
+                // New installation - add to pending queue for admin approval
+                await addPendingLibrary({
+                  owner,
+                  repo: name,
+                  installationId,
+                  installedAt: new Date().toISOString(),
+                  githubUrl: htmlUrl,
+                  description,
+                  stars,
+                  topics,
+                  language,
+                });
+                logger.info(`📝 App installed - added to pending queue: ${owner}/${name}`);
+              }
             }
           }
         } else if (action === 'deleted' || action === 'removed') {
@@ -124,12 +158,23 @@ export async function POST(request: NextRequest) {
       case 'pull_request':
       case 'issues':
       case 'release': {
-        // Queue event for processing
+        // Only queue events for approved libraries
         const repository = data.repository as Record<string, unknown>;
         const owner = (repository?.owner as Record<string, unknown>)?.login as string;
         const name = repository?.name as string;
 
         if (owner && name) {
+          // Check if library is approved before queuing event
+          const approved = await isLibraryApproved(owner, name);
+
+          if (!approved) {
+            logger.info(`⏸️ Skipping event for non-approved library: ${owner}/${name}`);
+            return NextResponse.json({
+              received: true,
+              message: 'Library not yet approved - event ignored'
+            });
+          }
+
           await queueWebhookEvent({
             eventId: deliveryId,
             type: eventType,

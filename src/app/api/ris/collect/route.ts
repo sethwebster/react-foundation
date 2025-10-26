@@ -242,10 +242,19 @@ export async function POST(request: NextRequest) {
     const currentQuarter = getCurrentQuarter();
     const totalPool = 1_000_000; // $1M default pool
 
+    // Get proration data for mid-quarter approved libraries
+    const { getQuarterDates, getLibraryApprovalDates } = await import('@/lib/ris/proration-helpers');
+    const { start: quarterStart, end: quarterEnd } = getQuarterDates(currentQuarter);
+    const approvalDates = await getLibraryApprovalDates(currentQuarter);
+
     const allocation = scoringService.generateQuarterlyAllocation(
       allMetrics,
       totalPool,
-      currentQuarter
+      currentQuarter,
+      undefined, // previousScores
+      quarterStart,
+      quarterEnd,
+      approvalDates
     );
 
     // Cache the allocation
