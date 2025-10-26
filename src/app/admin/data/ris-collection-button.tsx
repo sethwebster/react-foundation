@@ -79,6 +79,25 @@ export function RISCollectionButton() {
     }
   };
 
+  const handleReleaseLock = async () => {
+    if (!confirm('Release the collection lock? Only do this if a collection is truly stuck.')) {
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/ris/release-lock', { method: 'POST' });
+      if (!response.ok) {
+        throw new Error('Failed to release lock');
+      }
+      setError(null);
+      setStatus(null);
+      setIsRunning(false);
+      alert('Lock released. You can now start a new collection.');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to release lock');
+    }
+  };
+
   return (
     <div className="space-y-3">
       <div className="flex gap-3">
@@ -135,7 +154,17 @@ export function RISCollectionButton() {
 
       {error && (
         <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive-foreground">
-          ❌ {error}
+          <div className="flex items-center justify-between">
+            <span>❌ {error}</span>
+            {error.includes('already in progress') && (
+              <button
+                onClick={handleReleaseLock}
+                className="ml-2 text-xs underline hover:no-underline"
+              >
+                Release Lock
+              </button>
+            )}
+          </div>
         </div>
       )}
 
