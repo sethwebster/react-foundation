@@ -7,6 +7,7 @@ import { getRedisClient, getCachedQuarterlyAllocation, getLastUpdated, getCollec
 import { UserManagementService } from '@/lib/admin/user-management-service';
 import { AccessRequestsService } from '@/lib/admin/access-requests-service';
 import { ecosystemLibraries } from '@/lib/maintainer-tiers';
+import { RISCollectionButton } from './ris-collection-button';
 
 export const dynamic = 'force-dynamic';
 
@@ -279,6 +280,11 @@ export default async function AdminDataPage() {
               Updated {new Date(data.lastUpdated).toLocaleString()}
             </span>
           )}
+        </div>
+
+        {/* Collection Button */}
+        <div className="mb-6">
+          <RISCollectionButton />
         </div>
 
         <div className="grid gap-4 md:grid-cols-3 mb-4">
