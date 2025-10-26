@@ -5,6 +5,8 @@
  */
 
 import { Metadata } from 'next';
+import { InstallationStatusDashboard } from '@/components/ris/InstallationStatusDashboard';
+import { ScoringWeightsPieChart } from '@/components/ris/ScoringWeightsPieChart';
 
 export const metadata: Metadata = {
   title: 'How Library Scoring Works | React Foundation Store',
@@ -13,20 +15,21 @@ export const metadata: Metadata = {
 
 export default function ScoringPage() {
   return (
-    <div className="container mx-auto max-w-4xl px-4 py-12">
-      <div className="space-y-8">
-        {/* Hero */}
-        <div className="text-center">
-          <h1 className="text-4xl font-bold text-foreground sm:text-5xl">
-            How Library Scoring Works
-          </h1>
-          <p className="mt-4 text-xl text-foreground/70">
-            A simple explanation of how we measure impact and share funding fairly
-          </p>
-        </div>
+    <div className="min-h-screen bg-background pt-20">
+      <div className="container mx-auto max-w-4xl px-4 py-12">
+        <div className="space-y-8">
+          {/* Hero */}
+          <div className="text-center">
+            <h1 className="text-4xl font-bold text-foreground sm:text-5xl">
+              How Library Scoring Works
+            </h1>
+            <p className="mt-4 text-xl text-foreground/70">
+              A simple explanation of how we measure impact and share funding fairly
+            </p>
+          </div>
 
-        {/* Main Content */}
-        <div className="space-y-12 rounded-3xl border border-border/10 bg-muted/60 p-8 sm:p-12">
+          {/* Main Content */}
+          <div className="space-y-12 rounded-3xl border border-border bg-card p-8 sm:p-12">
 
           {/* The Big Idea */}
           <Section
@@ -155,22 +158,31 @@ export default function ScoringPage() {
             title="How We Calculate the Score 🧮"
             icon="📐"
           >
-            <div className="rounded-xl border border-border/10 bg-background/[0.03] p-6">
-              <p className="mb-4">Here's the math, but explained simply:</p>
-              <div className="space-y-3 text-sm">
-                <FormulaStep weight={30} label="Ecosystem Footprint" />
-                <FormulaStep weight={25} label="Contribution Quality" />
-                <FormulaStep weight={20} label="Maintainer Health" />
-                <FormulaStep weight={15} label="Community Benefit" />
-                <FormulaStep weight={10} label="Mission Alignment" />
-                <div className="border-t border-border/10 pt-3">
-                  <p className="font-semibold text-foreground">
-                    = <span className="text-cyan-400">Your Library's Impact Score</span> (0-100%)
-                  </p>
+            <div className="grid gap-6 lg:grid-cols-2">
+              {/* Pie Chart */}
+              <div className="rounded-xl border border-border/10 bg-background/[0.03] p-6">
+                <p className="mb-4 text-center font-semibold text-foreground">Component Weights</p>
+                <ScoringWeightsPieChart />
+              </div>
+
+              {/* Formula */}
+              <div className="rounded-xl border border-border/10 bg-background/[0.03] p-6">
+                <p className="mb-4 font-semibold text-foreground">The Math, Simplified:</p>
+                <div className="space-y-3 text-sm">
+                  <FormulaStep weight={30} label="Ecosystem Footprint" />
+                  <FormulaStep weight={25} label="Contribution Quality" />
+                  <FormulaStep weight={20} label="Maintainer Health" />
+                  <FormulaStep weight={15} label="Community Benefit" />
+                  <FormulaStep weight={10} label="Mission Alignment" />
+                  <div className="border-t border-border/10 pt-3">
+                    <p className="font-semibold text-foreground">
+                      = <span className="text-cyan-400">Your Library's Impact Score</span> (0-100%)
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
-            <p className="mt-4">
+            <p className="mt-4 text-center">
               Each library gets a score from 0% to 100%. The higher the score, the bigger the impact!
             </p>
           </Section>
@@ -196,10 +208,15 @@ export default function ScoringPage() {
             <div className="mt-6 rounded-xl border border-warning/30 bg-warning/10 p-6">
               <p className="font-semibold text-yellow-300">⚠️ Fair Play Rules:</p>
               <ul className="mt-3 list-disc space-y-2 pl-6 text-sm text-foreground/80">
-                <li><strong>Minimum guarantee:</strong> Every library gets at least $5,000—even small helpers matter!</li>
+                <li><strong>Eligibility threshold:</strong> Only libraries with meaningful impact qualify for funding—quality over quantity!</li>
+                <li><strong>Minimum score:</strong> Must have a RIS score above the baseline threshold to receive any allocation</li>
                 <li><strong>Maximum cap:</strong> No library can take more than 12% of the total pool—we share fairly!</li>
                 <li><strong>Emergency fund:</strong> We save 10% for urgent fixes and special situations</li>
               </ul>
+              <p className="mt-4 text-sm italic text-foreground/70">
+                💡 <strong>Why no guaranteed minimum?</strong> With limited funds, we focus on libraries making the biggest impact.
+                This ensures funds go where they create the most value for the ecosystem, not spread thin across everyone.
+              </p>
             </div>
           </Section>
 
@@ -245,8 +262,118 @@ export default function ScoringPage() {
               By measuring impact fairly and sharing funding transparently, we help amazing open source projects thrive!
             </p>
           </div>
+
+          <div className="border-t border-border/20 pt-12"></div>
+
+          {/* GitHub App Installation Section */}
+          <Section
+            title="Want Your Library Included? 📲"
+            icon="🚀"
+          >
+            <div className="space-y-6">
+              <p className="text-lg">
+                <strong>Maintainers:</strong> Install our GitHub App to get <em>real-time score updates</em> and increase your library's visibility for funding opportunities!
+              </p>
+
+              {/* Benefits */}
+              <div className="grid gap-4 sm:grid-cols-2">
+                <BenefitCard
+                  emoji="⚡"
+                  title="Real-time Updates"
+                >
+                  See your score update immediately when you merge PRs, close issues, or publish releases. No waiting for monthly collection!
+                </BenefitCard>
+                <BenefitCard
+                  emoji="💰"
+                  title="Funding Opportunities"
+                >
+                  Higher scores mean larger funding allocations. Track your progress and optimize your impact!
+                </BenefitCard>
+                <BenefitCard
+                  emoji="🔍"
+                  title="Full Transparency"
+                >
+                  See exactly how your work impacts your score. Verify all calculations yourself!
+                </BenefitCard>
+                <BenefitCard
+                  emoji="🎯"
+                  title="Public Visibility"
+                >
+                  Show up on the libraries dashboard and demonstrate your project's impact to the community!
+                </BenefitCard>
+              </div>
+
+              {/* Install Button */}
+              <div className="text-center">
+                <a
+                  href={process.env.NEXT_PUBLIC_GITHUB_APP_INSTALL_URL || 'https://github.com/apps/react-foundation-ris-collector/installations/new'}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-xl bg-primary px-8 py-4 text-lg font-semibold text-primary-foreground transition-transform hover:scale-105"
+                >
+                  <span>📲</span>
+                  Install React Foundation RIS Collector
+                </a>
+                <p className="mt-3 text-sm text-foreground/60">
+                  Free • 2-minute setup • Read-only access
+                </p>
+              </div>
+
+              {/* Privacy & Data Transparency */}
+              <div className="rounded-xl border border-border/10 bg-background/30 p-6">
+                <h4 className="mb-4 font-semibold text-foreground">🔒 Privacy & Data Transparency</h4>
+                <div className="space-y-3 text-sm text-foreground/80">
+                  <div>
+                    <strong className="text-foreground">What we collect:</strong>
+                    <ul className="mt-1 list-disc pl-6 text-foreground/70">
+                      <li>Pull requests (title, state, merged date, size)</li>
+                      <li>Issues (title, state, created/closed dates, labels)</li>
+                      <li>Commits (date, author, message)</li>
+                      <li>Releases (version, publish date)</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <strong className="text-foreground">What we DON'T collect:</strong>
+                    <ul className="mt-1 list-disc pl-6 text-foreground/70">
+                      <li>Your code or file contents</li>
+                      <li>Secrets, credentials, or environment variables</li>
+                      <li>Private repository data</li>
+                      <li>Personal information beyond public GitHub profiles</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <strong className="text-foreground">How it's used:</strong>
+                    <p className="mt-1 text-foreground/70">
+                      All data is used solely to calculate RIS scores and distribute funding fairly.
+                      Historical activity is cached for score calculation over 12-month windows.
+                    </p>
+                  </div>
+                  <div>
+                    <strong className="text-foreground">Your control:</strong>
+                    <p className="mt-1 text-foreground/70">
+                      You can uninstall the app at any time. We'll stop collecting new data immediately,
+                      though historical data remains for score calculation consistency.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Section>
+        </div>
+
+        {/* Live Status Dashboard */}
+        <div className="mt-12">
+          <h2 className="mb-6 flex items-center gap-3 text-2xl font-bold text-foreground sm:text-3xl">
+            <span className="text-3xl">📊</span>
+            Live Library Status
+          </h2>
+          <p className="mb-6 text-foreground/70">
+            See which React ecosystem libraries have real-time updates enabled and their current scores.
+          </p>
+          <InstallationStatusDashboard />
         </div>
       </div>
+    </div>
     </div>
   );
 }

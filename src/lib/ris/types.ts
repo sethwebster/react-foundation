@@ -162,8 +162,11 @@ export interface RISConfig {
   // Component weights
   weights: ComponentWeights;
 
+  // Eligibility threshold (only libraries above this RIS score get funding)
+  eligibility_threshold: number; // Default: 0.15 (must have 15% or higher RIS score)
+
   // Floors, caps, and guards
-  minimum_floor_usd: number; // Default: 5000
+  minimum_floor_usd: number; // Default: 0 (no guaranteed minimum)
   maximum_cap_percent: number; // Default: 0.12 (12%)
   reserve_percent: number; // Default: 0.10 (10%)
 
@@ -188,7 +191,8 @@ export const DEFAULT_RIS_CONFIG: RISConfig = {
     CB: 0.15,
     MA: 0.10,
   },
-  minimum_floor_usd: 5000,
+  eligibility_threshold: 0.15, // 15% - Libraries must show meaningful impact
+  minimum_floor_usd: 0, // No guaranteed minimum (use threshold instead)
   maximum_cap_percent: 0.12,
   reserve_percent: 0.10,
   ris_smoothing_current: 0.7,

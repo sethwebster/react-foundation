@@ -352,7 +352,7 @@ export default async function AdminDataPage() {
             <div className="grid gap-4 md:grid-cols-4">
               <InfoCard
                 label="Total Pool"
-                value={`$${(data.allocation.totalPool / 1000).toFixed(0)}K`}
+                value={`$${(data.allocation.total_pool_usd / 1000).toFixed(0)}K`}
                 detail="Total allocation amount"
               />
               <InfoCard
@@ -362,13 +362,13 @@ export default async function AdminDataPage() {
               />
               <InfoCard
                 label="Average Allocation"
-                value={`$${Math.round(data.allocation.totalPool / data.allocation.libraries.length / 1000)}K`}
+                value={`$${Math.round(data.allocation.total_pool_usd / data.allocation.libraries.length / 1000)}K`}
                 detail="Per library average"
               />
               <InfoCard
                 label="Top Library"
-                value={data.allocation.libraries[0]?.name || 'N/A'}
-                detail={data.allocation.libraries[0] ? `$${Math.round(data.allocation.libraries[0].allocation / 1000)}K` : ''}
+                value={data.allocation.libraries[0]?.libraryName || 'N/A'}
+                detail={data.allocation.libraries[0] ? `$${Math.round(data.allocation.libraries[0].allocation_usd / 1000)}K` : ''}
               />
             </div>
           </div>

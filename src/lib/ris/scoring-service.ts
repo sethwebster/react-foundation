@@ -118,35 +118,57 @@ export class RISScoringService {
     // Calculate pool after reserve
     const availablePool = totalPoolUsd * (1 - this.config.reserve_percent);
 
-    // Calculate total RIS sum for proportional allocation
-    const totalRIS = scores.reduce((sum, s) => sum + s.ris, 0);
+    // Filter to only eligible libraries (above threshold)
+    const eligibleScores = scores.filter(s => s.ris >= this.config.eligibility_threshold);
+    const ineligibleScores = scores.filter(s => s.ris < this.config.eligibility_threshold);
 
-    if (totalRIS === 0) {
-      // If no scores, distribute equally
-      const equalShare = availablePool / scores.length;
-      return scores.map((s) => ({
-        ...s,
-        allocation_usd: equalShare,
-        floor_applied: false,
-        cap_applied: false,
-      }));
+    // Set ineligible libraries to $0 allocation
+    const ineligibleWithZero = ineligibleScores.map(s => ({
+      ...s,
+      allocation_usd: 0,
+      floor_applied: false,
+      cap_applied: false,
+    }));
+
+    if (eligibleScores.length === 0) {
+      // No libraries meet threshold - return all with $0
+      return [...ineligibleWithZero];
     }
 
-    // Calculate proportional allocations
-    let updatedScores = scores.map((s) => ({
+    // Calculate total RIS sum for proportional allocation (only eligible libraries)
+    const totalRIS = eligibleScores.reduce((sum, s) => sum + s.ris, 0);
+
+    if (totalRIS === 0) {
+      // If no scores, distribute equally among eligible
+      const equalShare = availablePool / eligibleScores.length;
+      return [
+        ...eligibleScores.map((s) => ({
+          ...s,
+          allocation_usd: equalShare,
+          floor_applied: false,
+          cap_applied: false,
+        })),
+        ...ineligibleWithZero,
+      ];
+    }
+
+    // Calculate proportional allocations (only for eligible libraries)
+    let updatedScores = eligibleScores.map((s) => ({
       ...s,
       allocation_usd: (s.ris / totalRIS) * availablePool,
       floor_applied: false,
       cap_applied: false,
     }));
 
-    // Apply floor
+    // Apply floor (if configured, though default is 0)
     const floor = this.config.minimum_floor_usd;
-    updatedScores = updatedScores.map((s) => ({
-      ...s,
-      allocation_usd: Math.max(s.allocation_usd, floor),
-      floor_applied: s.allocation_usd < floor,
-    }));
+    if (floor > 0) {
+      updatedScores = updatedScores.map((s) => ({
+        ...s,
+        allocation_usd: Math.max(s.allocation_usd, floor),
+        floor_applied: s.allocation_usd < floor,
+      }));
+    }
 
     // Apply cap
     const cap = totalPoolUsd * this.config.maximum_cap_percent;
@@ -171,7 +193,8 @@ export class RISScoringService {
       }));
     }
 
-    return updatedScores;
+    // Combine eligible and ineligible libraries
+    return [...updatedScores, ...ineligibleWithZero];
   }
 
   /**

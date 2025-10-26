@@ -19,6 +19,7 @@ import {
   setLastUpdated,
   acquireCollectionLock,
   releaseCollectionLock,
+  keepCollectionLockAlive,
   setCollectionStatus,
   logCollectionError,
 } from '@/lib/redis';
@@ -26,6 +27,21 @@ import type { LibraryRawMetrics } from '@/lib/ris/types';
 import { calculateMetricsFromActivity } from '@/lib/ris/activity-calculator';
 
 export const maxDuration = 300; // 5 minutes max execution time
+
+/**
+ * Parse GitHub tokens from environment
+ */
+function parseGitHubTokens(): string[] {
+  return process.env.GITHUB_TOKENS
+    ? process.env.GITHUB_TOKENS
+        .replace(/^\[|\]$/g, '') // Remove surrounding brackets if present
+        .split(',')
+        .map(t => t.trim())
+        .filter(Boolean) // Remove empty strings
+    : process.env.GITHUB_TOKEN
+      ? [process.env.GITHUB_TOKEN]
+      : [];
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -57,27 +73,6 @@ export async function POST(request: NextRequest) {
     logger.info(`RIS collection started by ${session.user.email}: ${forceRefresh ? 'FORCE' : 'INCREMENTAL'}`);
     logger.debug(`Max cache age: ${maxAgeHours} hours`);
 
-    // Parse GitHub tokens (supports both single and multiple)
-    const githubTokens = process.env.GITHUB_TOKENS
-      ? process.env.GITHUB_TOKENS
-          .replace(/^\[|\]$/g, '') // Remove surrounding brackets if present
-          .split(',')
-          .map(t => t.trim())
-          .filter(Boolean) // Remove empty strings
-      : process.env.GITHUB_TOKEN
-        ? [process.env.GITHUB_TOKEN]
-        : [];
-
-    if (githubTokens.length === 0) {
-      logger.error('GITHUB_TOKEN not configured');
-      return NextResponse.json(
-        { error: 'GITHUB_TOKEN or GITHUB_TOKENS environment variable not set' },
-        { status: 500 }
-      );
-    }
-
-    logger.info(`Using ${githubTokens.length} GitHub token(s) for collection`);
-
     // Try to acquire lock
     const lockAcquired = await acquireCollectionLock();
     if (!lockAcquired) {
@@ -96,71 +91,149 @@ export async function POST(request: NextRequest) {
       startedAt: new Date().toISOString(),
     });
 
-    // Create aggregator with token rotation
-    const aggregator = new MetricsAggregator({
-      githubToken: githubTokens[0],
-      githubTokens
-    });
+    // Create aggregator (try GitHub App first, then fall back to PATs)
+    let aggregator: MetricsAggregator;
 
-    // Collect metrics for all libraries
+    if (process.env.GITHUB_APP_ID && process.env.GITHUB_APP_PRIVATE_KEY) {
+      // Use GitHub App (better rate limits: 5,000/hour per installation)
+      logger.info(`Using GitHub App authentication (App ID: ${process.env.GITHUB_APP_ID})`);
+
+      try {
+        aggregator = await MetricsAggregator.fromGitHubApp(
+          process.env.GITHUB_APP_ID,
+          process.env.GITHUB_APP_PRIVATE_KEY
+        );
+      } catch (error) {
+        logger.error('Failed to initialize GitHub App, falling back to PAT:', error);
+
+        // Fall back to PATs if App fails
+        const githubTokens = parseGitHubTokens();
+        if (githubTokens.length === 0) {
+          logger.error('GitHub App failed and no PAT configured');
+          await releaseCollectionLock();
+          return NextResponse.json(
+            { error: 'GitHub App failed and no GITHUB_TOKEN configured' },
+            { status: 500 }
+          );
+        }
+
+        logger.info(`Falling back to ${githubTokens.length} GitHub PAT(s)`);
+        aggregator = new MetricsAggregator({
+          githubToken: githubTokens[0],
+          githubTokens
+        });
+      }
+    } else {
+      // Use PATs (original behavior)
+      const githubTokens = parseGitHubTokens();
+
+      if (githubTokens.length === 0) {
+        logger.error('GITHUB_TOKEN not configured');
+        await releaseCollectionLock();
+        return NextResponse.json(
+          { error: 'GITHUB_TOKEN or GITHUB_TOKENS environment variable not set' },
+          { status: 500 }
+        );
+      }
+
+      logger.info(`Using ${githubTokens.length} GitHub PAT(s) for collection`);
+
+      aggregator = new MetricsAggregator({
+        githubToken: githubTokens[0],
+        githubTokens
+      });
+    }
+
+    // Collect metrics for all libraries (in parallel batches)
     const allMetrics: LibraryRawMetrics[] = [];
     let collected = 0;
     let skipped = 0;
     let failed = 0;
 
-    for (const library of ecosystemLibraries) {
-      try {
-        // Get cached activity data (permanent storage)
-        const cachedActivity = await getCachedLibraryActivity(library.owner, library.name);
+    // Process in batches (match number of collectors for optimal throughput)
+    const batchSize = aggregator.getCollectorCount();
+    logger.info(`Processing libraries in batches of ${batchSize}`);
 
-        // Collect or update activity
-        const activity = await aggregator.collectLibraryActivity(
-          library.owner,
-          library.name,
-          library.name,
-          forceRefresh ? null : cachedActivity // Force refresh ignores cache
-        );
-
-        // Cache activity data (permanent, no TTL)
-        await cacheLibraryActivity(library.owner, library.name, activity);
-
-        // Convert activity to metrics (applies 12-month window)
-        const metrics = calculateMetricsFromActivity(activity);
-
-        // Cache calculated metrics (7 day TTL)
-        await cacheLibraryMetrics(library.owner, library.name, metrics);
-
-        if (cachedActivity && !forceRefresh) {
-          skipped++; // Incremental update
-        } else {
-          collected++; // Full collection
-        }
-
-        allMetrics.push(metrics);
-
-        // Update progress
-        await setCollectionStatus({
-          status: 'running',
-          message: `Progress: ${collected} full, ${skipped} incremental, ${failed} failed / ${ecosystemLibraries.length} total`,
-          progress: collected + skipped,
-          total: ecosystemLibraries.length,
-          startedAt: new Date().toISOString(),
-        });
-
-        logger.debug(`Progress: ${collected} full, ${skipped} incremental / ${ecosystemLibraries.length} total`);
-      } catch (error) {
-        logger.error(`Error collecting ${library.owner}/${library.name}:`, error);
-
-        // Log error to Redis for admin review
-        await logCollectionError(
-          `${library.owner}/${library.name}`,
-          error instanceof Error ? error.message : String(error),
-          { owner: library.owner, repo: library.name }
-        );
-
-        failed++;
-        // Continue with other libraries even if one fails
+    for (let i = 0; i < ecosystemLibraries.length; i += batchSize) {
+      // Keep lock alive at start of each batch
+      const lockAlive = await keepCollectionLockAlive();
+      if (!lockAlive) {
+        logger.warn('Collection lock expired during processing - attempting to continue');
       }
+
+      const batch = ecosystemLibraries.slice(i, i + batchSize);
+
+      // Process batch in parallel
+      const batchResults = await Promise.allSettled(
+        batch.map(async (library) => {
+          try {
+            // Get cached activity data (permanent storage)
+            const cachedActivity = await getCachedLibraryActivity(library.owner, library.name);
+
+            // Collect or update activity (skip NPM for infrastructure repos)
+            const activity = await aggregator.collectLibraryActivity(
+              library.owner,
+              library.name,
+              library.name,
+              forceRefresh ? null : cachedActivity, // Force refresh ignores cache
+              library.hasNpmPackage !== false // Default to true if not specified
+            );
+
+            // Cache activity data (permanent, no TTL)
+            await cacheLibraryActivity(library.owner, library.name, activity);
+
+            // Convert activity to metrics (applies 12-month window)
+            const metrics = calculateMetricsFromActivity(activity);
+
+            // Cache calculated metrics (7 day TTL)
+            await cacheLibraryMetrics(library.owner, library.name, metrics);
+
+            return {
+              library,
+              metrics,
+              wasIncremental: !!(cachedActivity && !forceRefresh),
+            };
+          } catch (error) {
+            logger.error(`Error collecting ${library.owner}/${library.name}:`, error);
+
+            // Log error to Redis for admin review
+            await logCollectionError(
+              `${library.owner}/${library.name}`,
+              error instanceof Error ? error.message : String(error),
+              { owner: library.owner, repo: library.name }
+            );
+
+            throw error;
+          }
+        })
+      );
+
+      // Process results
+      for (const result of batchResults) {
+        if (result.status === 'fulfilled') {
+          const { metrics, wasIncremental } = result.value;
+          allMetrics.push(metrics);
+
+          if (wasIncremental) {
+            skipped++;
+          } else {
+            collected++;
+          }
+        } else {
+          failed++;
+        }
+      }
+
+      // Update progress after batch
+      await setCollectionStatus({
+        status: 'running',
+        message: `Progress: ${collected} full, ${skipped} incremental, ${failed} failed / ${ecosystemLibraries.length} total`,
+        progress: collected + skipped + failed,
+        total: ecosystemLibraries.length,
+        startedAt: new Date().toISOString(),
+      });
+
+      logger.debug(`Batch complete: ${collected} full, ${skipped} incremental, ${failed} failed / ${ecosystemLibraries.length} total`);
     }
 
     // Calculate RIS scores and allocation

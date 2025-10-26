@@ -5,31 +5,49 @@
 
 import type { LibraryRawMetrics } from '../types';
 import type { LibraryActivityData } from '../activity-types';
-import { GitHubActivityCollector } from './github-activity-collector';
+import { GitHubActivityCollector, type GitHubCollectorOptions } from './github-activity-collector';
 import { NPMCollector } from './npm-collector';
 import { CDNCollector } from './cdn-collector';
 import { OSSFCollector } from './ossf-collector';
 import { calculateMetricsFromActivity } from '../activity-calculator';
 import { mergeActivityData, pruneOldActivity } from '../activity-merge';
+import { Octokit } from '@octokit/rest';
+import { App } from '@octokit/app';
 
 export interface AggregatorOptions {
-  githubToken: string;
-  githubTokens?: string[]; // Optional: array of tokens for rotation
+  githubToken?: string;
+  githubTokens?: string[]; // Array of PATs for rotation
+  githubAppId?: string; // GitHub App ID
+  githubAppPrivateKey?: string; // GitHub App private key
+  githubCollectors?: GitHubActivityCollector[]; // Pre-configured collectors
 }
 
 export class MetricsAggregator {
   private githubCollectors: GitHubActivityCollector[];
   private currentCollectorIndex = 0;
+  private exhaustedUntil: Map<number, number> = new Map(); // Maps collector index to reset timestamp
   private npmCollector: NPMCollector;
   private cdnCollector: CDNCollector;
   private ossfCollector: OSSFCollector;
 
   constructor(options: AggregatorOptions) {
-    // Support multiple tokens for rate limit rotation
-    const tokens = options.githubTokens || [options.githubToken];
-    this.githubCollectors = tokens.map(token => new GitHubActivityCollector(token));
-
-    console.log(`🔑 Initialized with ${this.githubCollectors.length} GitHub token(s)`);
+    if (options.githubCollectors) {
+      // Use pre-configured collectors (for advanced use cases)
+      this.githubCollectors = options.githubCollectors;
+      console.log(`🔑 Initialized with ${this.githubCollectors.length} pre-configured GitHub collector(s)`);
+    } else if (options.githubTokens) {
+      // Use PAT array
+      this.githubCollectors = options.githubTokens.map(token =>
+        new GitHubActivityCollector({ token })
+      );
+      console.log(`🔑 Initialized with ${this.githubCollectors.length} GitHub PAT(s)`);
+    } else if (options.githubToken) {
+      // Use single PAT
+      this.githubCollectors = [new GitHubActivityCollector({ token: options.githubToken })];
+      console.log(`🔑 Initialized with 1 GitHub PAT`);
+    } else {
+      throw new Error('GitHub authentication required (token, tokens, appId, or collectors)');
+    }
 
     this.npmCollector = new NPMCollector();
     this.cdnCollector = new CDNCollector();
@@ -37,12 +55,107 @@ export class MetricsAggregator {
   }
 
   /**
-   * Get next GitHub collector (round-robin rotation)
+   * Get number of GitHub collectors (for determining batch size)
    */
-  private getNextGitHubCollector(): GitHubActivityCollector {
-    const collector = this.githubCollectors[this.currentCollectorIndex];
-    this.currentCollectorIndex = (this.currentCollectorIndex + 1) % this.githubCollectors.length;
-    return collector;
+  getCollectorCount(): number {
+    return this.githubCollectors.length;
+  }
+
+  /**
+   * Create aggregator from GitHub App
+   * Each installation gets its own rate limit (5,000/hour per installation)
+   */
+  static async fromGitHubApp(
+    appId: string,
+    privateKey: string
+  ): Promise<MetricsAggregator> {
+    console.log(`🤖 Initializing GitHub App authentication (App ID: ${appId})...`);
+
+    const app = new App({
+      appId,
+      privateKey,
+    });
+
+    // Get all installations
+    const { data: installations } = await app.octokit.request('GET /app/installations');
+
+    console.log(`   Found ${installations.length} installation(s)`);
+
+    // Create a collector for each installation
+    const collectors = await Promise.all(
+      installations.map(async (installation, index) => {
+        const appOctokit = await app.getInstallationOctokit(installation.id);
+
+        // Convert to standard Octokit instance
+        const octokit = new Octokit({
+          auth: await appOctokit.auth(),
+        });
+
+        console.log(`   ✓ Installation ${index + 1}: ${installation.account?.login || 'unknown'}`);
+
+        return new GitHubActivityCollector({ octokit });
+      })
+    );
+
+    console.log(`✅ GitHub App ready with ${collectors.length} installation(s) (${collectors.length * 5000}/hour total)`);
+
+    return new MetricsAggregator({
+      githubCollectors: collectors,
+    });
+  }
+
+  /**
+   * Get next available GitHub collector (skips exhausted tokens)
+   * Returns the collector and its index
+   */
+  private getNextGitHubCollector(): { collector: GitHubActivityCollector; index: number } {
+    const now = Date.now();
+    const totalCollectors = this.githubCollectors.length;
+
+    // Try each collector starting from current index
+    for (let i = 0; i < totalCollectors; i++) {
+      const index = (this.currentCollectorIndex + i) % totalCollectors;
+      const resetTime = this.exhaustedUntil.get(index);
+
+      // Check if this token is available (not exhausted or reset time passed)
+      if (!resetTime || now >= resetTime) {
+        // Clear the exhaustion flag if reset time passed
+        if (resetTime && now >= resetTime) {
+          this.exhaustedUntil.delete(index);
+          console.log(`✅ Token ${index + 1} rate limit reset, back in rotation`);
+        }
+
+        // Update index for next call
+        this.currentCollectorIndex = (index + 1) % totalCollectors;
+        return { collector: this.githubCollectors[index], index };
+      }
+    }
+
+    // All tokens exhausted - return the one that resets soonest
+    let soonestIndex = 0;
+    let soonestReset = Infinity;
+
+    this.exhaustedUntil.forEach((resetTime, index) => {
+      if (resetTime < soonestReset) {
+        soonestReset = resetTime;
+        soonestIndex = index;
+      }
+    });
+
+    const waitMinutes = Math.ceil((soonestReset - now) / 60000);
+    console.warn(`⚠️  All ${totalCollectors} tokens exhausted. Soonest reset: ${waitMinutes} min`);
+
+    this.currentCollectorIndex = (soonestIndex + 1) % totalCollectors;
+    return { collector: this.githubCollectors[soonestIndex], index: soonestIndex };
+  }
+
+  /**
+   * Mark a collector as exhausted until the specified reset time
+   */
+  private markCollectorExhausted(index: number, resetTimestamp: number): void {
+    this.exhaustedUntil.set(index, resetTimestamp);
+    const waitMinutes = Math.ceil((resetTimestamp - Date.now()) / 60000);
+    console.warn(`⚠️  Token ${index + 1}/${this.githubCollectors.length} exhausted. Resets in ${waitMinutes} min`);
   }
 
   /**
@@ -53,28 +166,39 @@ export class MetricsAggregator {
     owner: string,
     repo: string,
     libraryName: string,
-    cachedActivity?: LibraryActivityData | null
+    cachedActivity?: LibraryActivityData | null,
+    hasNpmPackage: boolean = true
   ): Promise<LibraryActivityData> {
     console.log(`Collecting activity for ${owner}/${repo}...`);
 
-    // Determine NPM package name
-    const npmPackageName = NPMCollector.getPackageName(owner, repo);
-
-    // Get next GitHub collector for round-robin rotation
-    const githubCollector = this.getNextGitHubCollector();
+    // Determine NPM package name (null for repos without NPM packages)
+    const npmPackageName = hasNpmPackage ? NPMCollector.getPackageName(owner, repo) : null;
 
     let activity: LibraryActivityData;
+    let lastError: Error | null = null;
+    let collectorIndex = 0;
+
+    // Retry with different tokens if rate limited (max: number of tokens available)
+    const maxRetries = this.githubCollectors.length;
+
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
+      try {
+        // Get next available GitHub collector (skips exhausted tokens)
+        const collectorInfo = this.getNextGitHubCollector();
+        const githubCollector = collectorInfo.collector;
+        collectorIndex = collectorInfo.index;
 
     // Decide: full collection or incremental update
     if (!cachedActivity) {
       // Cold start: fetch ALL historical activity
       console.log(`  🆕 First collection (fetching all history)...`);
 
-      const [githubActivity, npm, cdn, ossf] = await Promise.allSettled([
+      // Collect GitHub and OSSF data (always needed)
+      const [githubActivity, ossf, npm, cdn] = await Promise.allSettled([
         githubCollector.fetchAllActivity(owner, repo, libraryName),
-        this.npmCollector.collectMetrics(npmPackageName),
-        this.cdnCollector.collectMetrics(npmPackageName),
         this.ossfCollector.collectMetrics(owner, repo),
+        npmPackageName ? this.npmCollector.collectMetrics(npmPackageName) : Promise.resolve({ downloads_12mo: 0, downloads_last_month: 0, package_name: '', latest_version: '', license: '', dependents_count: 0, typescript_support: false }),
+        npmPackageName ? this.cdnCollector.collectMetrics(npmPackageName) : Promise.resolve({ jsdelivr_hits_12mo: 0, jsdelivr_hits_last_month: 0 }),
       ]);
 
       if (githubActivity.status === 'rejected') {
@@ -83,12 +207,12 @@ export class MetricsAggregator {
 
       activity = githubActivity.value;
 
-      // Add external metrics
-      if (npm.status === 'fulfilled') {
+      // Add external metrics (only if NPM package exists and collection succeeded)
+      if (npmPackageName && npm.status === 'fulfilled') {
         activity.npm_downloads_12mo = npm.value.downloads_12mo;
         activity.npm_dependents = npm.value.dependents_count;
       }
-      if (cdn.status === 'fulfilled') {
+      if (npmPackageName && cdn.status === 'fulfilled') {
         activity.cdn_hits_12mo = cdn.value.jsdelivr_hits_12mo;
       }
       if (ossf.status === 'fulfilled') {
@@ -99,12 +223,13 @@ export class MetricsAggregator {
       // Incremental update: fetch only new activity
       console.log(`  ⚡ Incremental update (since ${cachedActivity.last_updated_at})...`);
 
-      const [delta, npm, cdn, ossf, basicStats] = await Promise.allSettled([
+      // Collect delta and updated stats
+      const [delta, ossf, basicStats, npm, cdn] = await Promise.allSettled([
         githubCollector.fetchIncrementalActivity(owner, repo, cachedActivity.last_updated_at),
-        this.npmCollector.collectMetrics(npmPackageName),
-        this.cdnCollector.collectMetrics(npmPackageName),
         this.ossfCollector.collectMetrics(owner, repo),
         githubCollector.fetchBasicStats(owner, repo),
+        npmPackageName ? this.npmCollector.collectMetrics(npmPackageName) : Promise.resolve({ downloads_12mo: 0, downloads_last_month: 0, package_name: '', latest_version: '', license: '', dependents_count: 0, typescript_support: false }),
+        npmPackageName ? this.cdnCollector.collectMetrics(npmPackageName) : Promise.resolve({ jsdelivr_hits_12mo: 0, jsdelivr_hits_last_month: 0 }),
       ]);
 
       if (delta.status === 'rejected') {
@@ -116,9 +241,9 @@ export class MetricsAggregator {
         forks: basicStats.status === 'fulfilled' ? basicStats.value.forks : cachedActivity.forks,
         is_archived: basicStats.status === 'fulfilled' ? basicStats.value.is_archived : cachedActivity.is_archived,
         last_commit_date: basicStats.status === 'fulfilled' ? basicStats.value.last_commit_date : cachedActivity.last_commit_date,
-        npm_downloads_12mo: npm.status === 'fulfilled' ? npm.value.downloads_12mo : cachedActivity.npm_downloads_12mo,
-        npm_dependents: npm.status === 'fulfilled' ? npm.value.dependents_count : cachedActivity.npm_dependents,
-        cdn_hits_12mo: cdn.status === 'fulfilled' ? cdn.value.jsdelivr_hits_12mo : cachedActivity.cdn_hits_12mo,
+        npm_downloads_12mo: npmPackageName && npm.status === 'fulfilled' ? npm.value.downloads_12mo : cachedActivity.npm_downloads_12mo,
+        npm_dependents: npmPackageName && npm.status === 'fulfilled' ? npm.value.dependents_count : cachedActivity.npm_dependents,
+        cdn_hits_12mo: npmPackageName && cdn.status === 'fulfilled' ? cdn.value.jsdelivr_hits_12mo : cachedActivity.cdn_hits_12mo,
         ossf_score: ossf.status === 'fulfilled' ? ossf.value.normalized_score : cachedActivity.ossf_score,
       };
 
@@ -131,8 +256,38 @@ export class MetricsAggregator {
       console.log(`  ✓ Added ${delta.value.total_new_items} new items`);
     }
 
-    console.log(`✓ Activity data complete for ${owner}/${repo}`);
-    return activity;
+        console.log(`✓ Activity data complete for ${owner}/${repo}`);
+        return activity; // Success - return the activity
+
+      } catch (error) {
+        lastError = error as Error;
+
+        // Check if it's a rate limit error
+        const isRateLimitError = error instanceof Error && error.message.includes('rate limit exceeded');
+
+        if (isRateLimitError) {
+          // Extract reset timestamp from error message or default to 1 hour from now
+          const resetMatch = error.message.match(/Resets in (\d+) minutes?/);
+          const resetMinutes = resetMatch ? parseInt(resetMatch[1], 10) : 60;
+          const resetTimestamp = Date.now() + (resetMinutes * 60 * 1000);
+
+          // Mark this collector as exhausted
+          this.markCollectorExhausted(collectorIndex, resetTimestamp);
+
+          // Try next token if available
+          if (attempt < maxRetries - 1) {
+            console.log(`  🔄 Retrying with next token (attempt ${attempt + 2}/${maxRetries})...`);
+            continue;
+          }
+        }
+
+        // If not a rate limit error or last attempt, throw
+        throw error;
+      }
+    }
+
+    // All tokens exhausted - throw the last error
+    throw lastError || new Error('Collection failed with unknown error');
   }
 
   /**

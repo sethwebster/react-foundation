@@ -14,18 +14,34 @@ import type {
   ActivityDelta,
 } from '../activity-types';
 
+export interface GitHubCollectorOptions {
+  /** Personal Access Token (string) */
+  token?: string;
+  /** Pre-configured Octokit instance (for GitHub App auth) */
+  octokit?: Octokit;
+}
+
 export class GitHubActivityCollector {
   private restClient: Octokit;
   private rateLimitWarningShown = false;
 
-  constructor(githubToken: string) {
-    if (!githubToken) {
-      throw new Error('GitHub token is required');
+  constructor(options: GitHubCollectorOptions | string) {
+    // Support legacy string token or new options object
+    if (typeof options === 'string') {
+      this.restClient = new Octokit({
+        auth: options,
+      });
+    } else if (options.octokit) {
+      // Use provided Octokit instance (for GitHub App)
+      this.restClient = options.octokit;
+    } else if (options.token) {
+      // Use PAT
+      this.restClient = new Octokit({
+        auth: options.token,
+      });
+    } else {
+      throw new Error('GitHub token or Octokit instance is required');
     }
-
-    this.restClient = new Octokit({
-      auth: githubToken,
-    });
   }
 
   /**
@@ -110,38 +126,74 @@ export class GitHubActivityCollector {
   // =========================================================================
 
   /**
-   * Fetch ALL pull requests (paginate completely)
+   * Fetch pull requests from last 24 months (sufficient for 12-month RIS calculation)
+   * Much faster than fetching all history for large repos
    */
   private async fetchAllPRs(owner: string, repo: string): Promise<PullRequestActivity[]> {
-    console.log(`    → Fetching all PRs...`);
+    console.log(`    → Fetching PRs (last 24 months)...`);
 
     try {
-      const prs = await this.restClient.paginate(
+      // Only fetch PRs from last 24 months (gives us buffer for 12-month calculation)
+      const twentyFourMonthsAgo = new Date();
+      twentyFourMonthsAgo.setMonth(twentyFourMonthsAgo.getMonth() - 24);
+      const cutoffDate = twentyFourMonthsAgo.toISOString();
+
+      let allPrs: unknown[] = [];
+      const iterator = this.restClient.paginate.iterator(
         this.restClient.pulls.list,
         {
           owner,
           repo,
           state: 'all',
-          sort: 'created',
+          sort: 'updated',
           direction: 'desc',
           per_page: 100,
         }
       );
 
-      return prs.map(pr => {
+      for await (const response of iterator) {
+        const prs = response.data as Array<Record<string, unknown>>;
+
+        // Stop if we've gone past our 24-month cutoff
+        const oldestInPage = prs[prs.length - 1];
+        const oldestDate = oldestInPage?.updated_at as string | undefined;
+
+        // Add PRs from this page
+        allPrs.push(...prs);
+
+        // Break if we've reached old PRs or hit reasonable limit
+        if (oldestDate && oldestDate < cutoffDate) {
+          // Filter out PRs older than cutoff
+          allPrs = allPrs.filter(pr => {
+            const updatedAt = (pr as Record<string, unknown>).updated_at as string | undefined;
+            return updatedAt && updatedAt >= cutoffDate;
+          });
+          break;
+        }
+
+        // Safety: cap at 1000 PRs max (even for very active repos)
+        if (allPrs.length >= 1000) {
+          allPrs = allPrs.slice(0, 1000);
+          break;
+        }
+      }
+
+      console.log(`    → Found ${allPrs.length} PRs in last 24 months`);
+
+      return allPrs.map((pr: unknown) => {
         const prData = pr as Record<string, unknown>;
         const getNum = (key: string) => typeof prData[key] === 'number' ? prData[key] as number : 0;
 
         return {
-          id: pr.id,
-          number: pr.number,
-          title: pr.title,
-          created_at: pr.created_at,
-          merged_at: pr.merged_at,
-          closed_at: pr.closed_at,
-          state: pr.state as 'open' | 'closed',
-          merged: pr.merged_at !== null,
-          author: pr.user?.login || 'unknown',
+          id: prData.id as number,
+          number: prData.number as number,
+          title: prData.title as string,
+          created_at: prData.created_at as string,
+          merged_at: prData.merged_at as string | null,
+          closed_at: prData.closed_at as string | null,
+          state: prData.state as 'open' | 'closed',
+          merged: prData.merged_at !== null,
+          author: (prData.user as Record<string, unknown> | undefined)?.login as string || 'unknown',
           additions: getNum('additions'),
           deletions: getNum('deletions'),
           changed_files: getNum('changed_files'),
@@ -154,39 +206,59 @@ export class GitHubActivityCollector {
   }
 
   /**
-   * Fetch ALL issues (paginate completely)
+   * Fetch issues from last 24 months (sufficient for 12-month RIS calculation)
+   * Uses 'since' parameter for efficient filtering
    */
   private async fetchAllIssues(owner: string, repo: string): Promise<IssueActivity[]> {
-    console.log(`    → Fetching all issues...`);
+    console.log(`    → Fetching issues (last 24 months)...`);
 
     try {
-      const issues = await this.restClient.paginate(
+      // GitHub API supports 'since' for issues - much more efficient!
+      const twentyFourMonthsAgo = new Date();
+      twentyFourMonthsAgo.setMonth(twentyFourMonthsAgo.getMonth() - 24);
+
+      let allIssues: unknown[] = [];
+      const iterator = this.restClient.paginate.iterator(
         this.restClient.issues.listForRepo,
         {
           owner,
           repo,
           state: 'all',
-          sort: 'created',
-          direction: 'desc',
+          since: twentyFourMonthsAgo.toISOString(),
           per_page: 100,
-        },
-        (response) => response.data.filter((issue: Record<string, unknown>) => !issue.pull_request)
+        }
       );
 
-      return issues.map(issue => {
-        const labels = Array.isArray(issue.labels) ?
-          issue.labels.map(l => (typeof l === 'object' && l !== null && 'name' in l ? String(l.name) : '')).filter(Boolean) :
+      for await (const response of iterator) {
+        const items = response.data as Array<Record<string, unknown>>;
+        // Filter out pull requests (they also appear in issues API)
+        const issues = items.filter(item => !item.pull_request);
+        allIssues.push(...issues);
+
+        // Safety: cap at 1000 issues
+        if (allIssues.length >= 1000) {
+          allIssues = allIssues.slice(0, 1000);
+          break;
+        }
+      }
+
+      console.log(`    → Found ${allIssues.length} issues in last 24 months`);
+
+      return allIssues.map((issue: unknown) => {
+        const issueData = issue as Record<string, unknown>;
+        const labels = Array.isArray(issueData.labels) ?
+          issueData.labels.map((l: unknown) => (typeof l === 'object' && l !== null && 'name' in l ? String((l as Record<string, unknown>).name) : '')).filter(Boolean) :
           [];
 
         return {
-          id: issue.id,
-          number: issue.number,
-          title: issue.title,
-          created_at: issue.created_at,
-          closed_at: issue.closed_at,
-          state: issue.state as 'open' | 'closed',
-          author: issue.user?.login || 'unknown',
-          comments: issue.comments,
+          id: issueData.id as number,
+          number: issueData.number as number,
+          title: issueData.title as string,
+          created_at: issueData.created_at as string,
+          closed_at: issueData.closed_at as string | null,
+          state: issueData.state as 'open' | 'closed',
+          author: (issueData.user as Record<string, unknown> | undefined)?.login as string || 'unknown',
+          comments: issueData.comments as number,
           labels,
         };
       });
@@ -228,20 +300,21 @@ export class GitHubActivityCollector {
   }
 
   /**
-   * Fetch ALL releases
+   * Fetch releases (limited to last 100)
+   * 100 releases covers years of history for most repos
    */
   private async fetchAllReleases(owner: string, repo: string): Promise<ReleaseActivity[]> {
-    console.log(`    → Fetching all releases...`);
+    console.log(`    → Fetching releases (max 100)...`);
 
     try {
-      const releases = await this.restClient.paginate(
-        this.restClient.repos.listReleases,
-        {
-          owner,
-          repo,
-          per_page: 100,
-        }
-      );
+      // Fetch first page only (100 releases is plenty)
+      const { data: releases } = await this.restClient.repos.listReleases({
+        owner,
+        repo,
+        per_page: 100,
+      });
+
+      console.log(`    → Found ${releases.length} releases`);
 
       return releases.map(release => ({
         id: release.id,

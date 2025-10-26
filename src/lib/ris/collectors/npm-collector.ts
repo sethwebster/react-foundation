@@ -158,18 +158,20 @@ export class NPMCollector {
   /**
    * Map repository name to NPM package name
    * Some repos have different NPM package names
+   * Returns null for repos that don't have NPM packages
    */
-  static getPackageName(owner: string, repo: string): string {
+  static getPackageName(owner: string, repo: string): string | null {
     // Special cases where repo name !== package name
-    const specialCases: Record<string, string> = {
+    const specialCases: Record<string, string | null> = {
       'facebook/react': 'react',
       'facebook/react-native': 'react-native',
       'facebook/jest': 'jest',
       'facebook/relay': 'react-relay',
-      'facebook/hermes': 'facebook/hermes',
+      'facebook/hermes': null, // JavaScript engine (C++ binary, not on NPM)
       'facebook/metro': 'metro',
       'facebook/react-devtools': 'react-devtools',
-      'reactjs/react.dev': '@reactjs/react.dev',
+      'reactjs/react.dev': null, // Documentation website (not a library)
+      'reactjs/rfcs': null, // RFC repository (not a library)
       'reduxjs/redux': 'redux',
       'reduxjs/redux-toolkit': '@reduxjs/toolkit',
       'pmndrs/zustand': 'zustand',
@@ -216,8 +218,13 @@ export class NPMCollector {
       'tailwindlabs/tailwindcss': 'tailwindcss',
       'marklawlor/nativewind': 'nativewind',
       'react-navigation/react-navigation': '@react-navigation/native',
+      'react-native-community/react-native-releases': null, // Release notes repository (not a library)
     };
 
-    return specialCases[`${owner}/${repo}`] || repo;
+    const key = `${owner}/${repo}`;
+    if (key in specialCases) {
+      return specialCases[key];
+    }
+    return repo;
   }
 }

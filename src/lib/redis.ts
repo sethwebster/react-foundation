@@ -111,7 +111,7 @@ export const CACHE_TTL = {
   libraryActivity: 0, // NO EXPIRATION (historical data is immutable)
   libraryMetrics: 7 * 24 * 60 * 60, // 7 days (calculated from activity)
   allocation: 7 * 24 * 60 * 60, // 7 days
-  collectionLock: 10 * 60, // 10 minutes
+  collectionLock: 30, // 30 seconds (ephemeral, kept alive per library iteration)
 };
 
 /**
@@ -276,6 +276,33 @@ export async function releaseCollectionLock(): Promise<void> {
 }
 
 /**
+ * Keep collection lock alive by refreshing its TTL
+ * Call this periodically during long-running collections
+ * Returns true if lock still exists and was refreshed, false otherwise
+ */
+export async function keepCollectionLockAlive(): Promise<boolean> {
+  const client = getRedisClient();
+  const key = REDIS_KEYS.collectionLock;
+
+  // Use EXPIRE to refresh TTL only if key exists
+  const result = await client.expire(key, CACHE_TTL.collectionLock);
+
+  return result === 1; // Returns 1 if key exists and TTL was set, 0 otherwise
+}
+
+/**
+ * Check if collection lock exists
+ * Returns true if a collection is actively running (lock held)
+ */
+export async function isCollectionLocked(): Promise<boolean> {
+  const client = getRedisClient();
+  const key = REDIS_KEYS.collectionLock;
+
+  const exists = await client.exists(key);
+  return exists === 1;
+}
+
+/**
  * Set collection status
  */
 export async function setCollectionStatus(status: {
@@ -289,9 +316,12 @@ export async function setCollectionStatus(status: {
   const client = getRedisClient();
   const key = REDIS_KEYS.collectionStatus;
 
+  // Status TTL: 5 minutes for completed/failed, kept alive during running
+  const ttl = status.status === 'running' ? 30 : 5 * 60;
+
   await client.setex(
     key,
-    60 * 60, // 1 hour
+    ttl,
     JSON.stringify(status)
   );
 }
