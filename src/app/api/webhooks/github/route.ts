@@ -4,9 +4,11 @@
  *
  * Supported events:
  * - installation (app installed/uninstalled)
+ * - installation_repositories (repos added/removed from app)
  * - push (new commits)
  * - pull_request (PRs opened/closed/merged)
  * - issues (issues opened/closed)
+ * - issue_comment (comments on issues/PRs)
  * - release (releases published)
  */
 
@@ -144,10 +146,20 @@ export async function POST(request: NextRequest) {
           const repositories = data.repositories as Array<Record<string, unknown>> | undefined;
           if (repositories) {
             for (const repo of repositories) {
-              const owner = (repo.owner as Record<string, unknown>)?.login as string;
-              const name = repo.name as string;
-              await removeInstallation(owner, name);
-              logger.info(`❌ App uninstalled: ${owner}/${name}`);
+              // Extract owner from nested object or fall back to full_name
+              const ownerLogin = (repo.owner as Record<string, unknown>)?.login as string | undefined;
+              const fullName = repo.full_name as string;
+              const [fullNameOwner, fullNameRepo] = fullName ? fullName.split('/') : [undefined, undefined];
+
+              const owner = ownerLogin || fullNameOwner;
+              const name = (repo.name as string) || fullNameRepo;
+
+              if (owner && name) {
+                await removeInstallation(owner, name);
+                logger.info(`❌ App uninstalled: ${owner}/${name}`);
+              } else {
+                logger.warn(`⚠️ Could not extract owner/name from uninstalled repository: ${JSON.stringify(repo)}`);
+              }
             }
           }
         }
@@ -206,10 +218,16 @@ export async function POST(request: NextRequest) {
           const repositoriesRemoved = data.repositories_removed as Array<Record<string, unknown>> | undefined;
           if (repositoriesRemoved) {
             for (const repo of repositoriesRemoved) {
-              const owner = (repo.owner as Record<string, unknown>)?.login as string;
-              const name = repo.name as string;
-              await removeInstallation(owner, name);
-              logger.info(`❌ Repository removed from app: ${owner}/${name}`);
+              // repositories_removed might not have nested owner object, use full_name
+              const fullName = repo.full_name as string;
+              const [owner, name] = fullName ? fullName.split('/') : [undefined, repo.name as string];
+
+              if (owner && name) {
+                await removeInstallation(owner, name);
+                logger.info(`❌ Repository removed from app: ${owner}/${name}`);
+              } else {
+                logger.warn(`⚠️ Could not extract owner/name from removed repository: ${JSON.stringify(repo)}`);
+              }
             }
           }
         }
@@ -219,6 +237,7 @@ export async function POST(request: NextRequest) {
       case 'push':
       case 'pull_request':
       case 'issues':
+      case 'issue_comment':
       case 'release': {
         // Only queue events for approved libraries
         const repository = data.repository as Record<string, unknown>;

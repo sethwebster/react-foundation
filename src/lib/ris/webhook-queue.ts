@@ -8,7 +8,7 @@ import { logger } from '../logger';
 
 export interface WebhookEvent {
   eventId: string;
-  type: 'push' | 'pull_request' | 'issues' | 'release';
+  type: 'push' | 'pull_request' | 'issues' | 'issue_comment' | 'release';
   owner: string;
   repo: string;
   payload: Record<string, unknown>;

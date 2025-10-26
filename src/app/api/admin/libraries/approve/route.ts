@@ -10,14 +10,12 @@ import { approveLibrary } from '@/lib/ris/library-approval';
 import { trackInstallation } from '@/lib/ris/webhook-queue';
 
 export async function POST(request: NextRequest) {
-  // TEMPORARY: Auth disabled for testing
-  // TODO: Re-enable after testing
-  // const session = await getServerSession(authOptions);
-  // if (!session?.user?.email) {
-  //   return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  // }
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.email) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
 
-  const approvedBy = 'test-admin@react.foundation'; // Temporary for testing
+  const approvedBy = session.user.email;
 
   try {
     const { owner, repo } = await request.json();
