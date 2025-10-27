@@ -114,8 +114,9 @@ export function RISCollectionButton() {
           onClick={() => handleStartCollection(false)}
           disabled={isRunning}
           className="flex-1 rounded-lg bg-primary px-4 py-2 font-semibold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-50"
+          title="Prioritizes new libraries first, then updates existing data"
         >
-          {isRunning ? '🔄 Running...' : '▶️ Start Collection (Incremental)'}
+          {isRunning ? '🔄 Running...' : '▶️ Start Collection (Smart)'}
         </button>
         <button
           onClick={() => handleStartCollection(true)}
@@ -179,7 +180,7 @@ export function RISCollectionButton() {
 
       {isRunning && !status && (
         <div className="rounded-lg bg-muted p-3 text-sm text-muted-foreground">
-          ⏳ Starting collection... First-time collection may take 10-30 minutes for all 54 libraries.
+          ⏳ Starting collection... Prioritizing libraries with no data first, then updating existing libraries. This may take 10-30 minutes for all 54 libraries.
         </div>
       )}
     </div>

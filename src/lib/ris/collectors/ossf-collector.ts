@@ -3,6 +3,8 @@
  * Fetches security and best practices scores from OpenSSF Scorecard
  */
 
+import { logger } from '@/lib/logger';
+
 export interface OSSFMetrics {
   overall_score: number; // 0-10
   normalized_score: number; // 0-1
@@ -41,12 +43,12 @@ export class OSSFCollector {
       if (!response.ok) {
         // Many repos may not have scorecard data yet
         if (response.status === 404) {
-          console.log(`OSSF Scorecard not found for ${owner}/${repo}`);
+          logger.debug(`OSSF Scorecard not available for ${owner}/${repo} (using default metrics)`);
           return this.getDefaultMetrics();
         }
 
-        console.error(
-          `OSSF Scorecard API error for ${owner}/${repo}: ${response.statusText}`
+        logger.warn(
+          `OSSF Scorecard API error for ${owner}/${repo}: ${response.status} ${response.statusText}`
         );
         return this.getDefaultMetrics();
       }
@@ -66,7 +68,7 @@ export class OSSFCollector {
         checks,
       };
     } catch (error) {
-      console.error(`Error fetching OSSF Scorecard for ${owner}/${repo}:`, error);
+      logger.error(`Error fetching OSSF Scorecard for ${owner}/${repo}:`, error);
       return this.getDefaultMetrics();
     }
   }

@@ -241,6 +241,7 @@ export class MetricsAggregator {
         forks: basicStats.status === 'fulfilled' ? basicStats.value.forks : cachedActivity.forks,
         is_archived: basicStats.status === 'fulfilled' ? basicStats.value.is_archived : cachedActivity.is_archived,
         last_commit_date: basicStats.status === 'fulfilled' ? basicStats.value.last_commit_date : cachedActivity.last_commit_date,
+        gh_dependents: basicStats.status === 'fulfilled' ? basicStats.value.gh_dependents : (cachedActivity.gh_dependents ?? 0),
         npm_downloads_12mo: npmPackageName && npm.status === 'fulfilled' ? npm.value.downloads_12mo : cachedActivity.npm_downloads_12mo,
         npm_dependents: npmPackageName && npm.status === 'fulfilled' ? npm.value.dependents_count : cachedActivity.npm_dependents,
         cdn_hits_12mo: npmPackageName && cdn.status === 'fulfilled' ? cdn.value.jsdelivr_hits_12mo : cachedActivity.cdn_hits_12mo,

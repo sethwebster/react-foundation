@@ -52,7 +52,6 @@ export async function proxy(request: NextRequest) {
   const crawlerBypassToken = request.headers.get('X-Crawler-Bypass');
   if (crawlerBypassToken && process.env.CRAWLER_BYPASS_TOKEN) {
     if (crawlerBypassToken === process.env.CRAWLER_BYPASS_TOKEN) {
-      logger.debug(`  Crawler bypass granted for ${pathname}`);
       return NextResponse.next();
     }
   }
@@ -79,12 +78,9 @@ export async function proxy(request: NextRequest) {
     secureCookie: process.env.NODE_ENV === 'production',
   });
 
-  logger.debug(`Proxy check for ${pathname}`);
-  logger.debug(`  Token exists: ${!!token}, Email: ${token?.email || 'none'}`);
-
   // If not authenticated, redirect to coming soon
   if (!token || !token.email) {
-    logger.debug(`  Not authenticated, redirecting to /coming-soon`);
+    logger.info(`Access denied (not authenticated): ${pathname}`);
     const url = request.nextUrl.clone();
     url.pathname = '/coming-soon';
     return NextResponse.redirect(url);
@@ -95,7 +91,6 @@ export async function proxy(request: NextRequest) {
   // Super admin check - environment variable failsafe
   const SUPER_ADMIN = process.env.SUPER_ADMIN_EMAIL?.toLowerCase();
   if (SUPER_ADMIN && userEmail === SUPER_ADMIN) {
-    logger.debug(`  Super admin access granted: ${userEmail}`);
     return NextResponse.next();
   }
 
@@ -118,13 +113,12 @@ export async function proxy(request: NextRequest) {
     const checkData = await checkResponse.json();
 
     if (!checkData.isAllowed) {
-      logger.debug(`  User not on allowlist: ${userEmail}`);
+      logger.info(`Access denied (not on allowlist): ${userEmail} -> ${pathname}`);
       const url = request.nextUrl.clone();
       url.pathname = '/coming-soon';
       return NextResponse.redirect(url);
     }
 
-    logger.debug(`  Access granted: ${userEmail}`);
     return NextResponse.next();
   } catch (error) {
     logger.error('Error checking access:', error);

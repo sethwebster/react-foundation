@@ -111,7 +111,7 @@ export const CACHE_TTL = {
   libraryActivity: 0, // NO EXPIRATION (historical data is immutable)
   libraryMetrics: 7 * 24 * 60 * 60, // 7 days (calculated from activity)
   allocation: 7 * 24 * 60 * 60, // 7 days
-  collectionLock: 30, // 30 seconds (ephemeral, kept alive per library iteration)
+  collectionLock: 120, // 2 minutes (kept alive during batches, allows for slow API calls)
 };
 
 /**

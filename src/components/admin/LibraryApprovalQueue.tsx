@@ -106,37 +106,44 @@ export function LibraryApprovalQueue() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="animate-pulse space-y-4">
-        <div className="h-8 bg-muted rounded w-1/3"></div>
-        <div className="h-64 bg-muted rounded"></div>
-      </div>
-    );
-  }
-
-  if (!data) {
-    return (
-      <div className="text-center py-8 text-muted-foreground">
-        Failed to load library approvals
-      </div>
-    );
-  }
-
-  const currentList =
-    activeTab === 'pending' ? data.pending :
-    activeTab === 'approved' ? data.approved :
-    data.rejected;
+  const currentList = data
+    ? (activeTab === 'pending' ? data.pending :
+       activeTab === 'approved' ? data.approved :
+       data.rejected)
+    : [];
 
   return (
     <div className="space-y-6">
-      {/* Header */}
+      {/* Header - always visible */}
       <div>
         <h2 className="text-2xl font-bold text-foreground">Library Approval Queue</h2>
         <p className="text-sm text-muted-foreground mt-1">
           Review and approve libraries that have installed the GitHub App
         </p>
       </div>
+
+      {/* Loading state */}
+      {loading && (
+        <div className="animate-pulse space-y-4">
+          <div className="flex gap-4 border-b border-border pb-2">
+            <div className="h-10 w-32 bg-muted rounded" />
+            <div className="h-10 w-32 bg-muted rounded" />
+            <div className="h-10 w-32 bg-muted rounded" />
+          </div>
+          <div className="h-64 bg-muted rounded"></div>
+        </div>
+      )}
+
+      {/* Error state */}
+      {!loading && !data && (
+        <div className="text-center py-8 text-muted-foreground">
+          Failed to load library approvals
+        </div>
+      )}
+
+      {/* Data loaded */}
+      {!loading && data && (
+        <>
 
       {/* Tabs */}
       <div className="flex gap-4 border-b border-border">
@@ -298,6 +305,8 @@ export function LibraryApprovalQueue() {
             );
           })}
         </div>
+      )}
+        </>
       )}
     </div>
   );

@@ -119,10 +119,14 @@ export async function collectBaselineForLibrary(
       forks: 0,
       is_archived: false,
       last_commit_date: new Date().toISOString(),
+      gh_dependents: 0,
       npm_downloads_12mo: 0,
       npm_dependents: 0,
       cdn_hits_12mo: 0,
       ossf_score: 0,
+      typescript_support: false,
+      import_mentions: 0,
+      tutorial_references: 0,
       total_items: 0,
       is_complete: false,
     };
@@ -206,6 +210,7 @@ export async function collectBaselineForLibrary(
             const npm = await npmCollector.collectMetrics(packageName);
             activity.npm_downloads_12mo = npm.downloads_12mo;
             activity.npm_dependents = npm.dependents_count;
+            activity.typescript_support = npm.typescript_support;
             await markSourceCompleted(owner, repo, 'npm_metrics');
             break;
           }

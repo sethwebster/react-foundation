@@ -160,7 +160,18 @@ export class RISScoringService {
 
     // Calculate proportional allocations (only for eligible libraries)
     let updatedScores = eligibleScores.map((s) => {
-      const baseAllocation = (s.ris / totalRIS) * availablePool;
+      let baseAllocation = (s.ris / totalRIS) * availablePool;
+
+      // Apply sponsorship adjustment (eligibility-based funding weight)
+      // This adjusts funding based on existing corporate support
+      const sponsorshipAdjustment = s.raw.sponsorship_adjustment ?? 1.0;
+      if (sponsorshipAdjustment < 1.0) {
+        baseAllocation = baseAllocation * sponsorshipAdjustment;
+        console.log(
+          `📊 Sponsorship adjustment for ${s.libraryName}: ${(sponsorshipAdjustment * 100).toFixed(0)}% ` +
+          `(${baseAllocation.toFixed(2)} USD)`
+        );
+      }
 
       // Apply proration for mid-quarter approved libraries
       let proratedAllocation = baseAllocation;

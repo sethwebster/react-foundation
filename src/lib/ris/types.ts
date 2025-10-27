@@ -17,6 +17,7 @@ export interface LibraryRawMetrics {
 
   // Metadata
   collected_at: string; // ISO timestamp when data was collected
+  sponsorship_adjustment?: number; // Funding eligibility adjustment (0.0-1.0), default 1.0
 
   // Ecosystem Footprint (EF) signals
   npm_downloads: number; // Last 12-month sum (bot-filtered)

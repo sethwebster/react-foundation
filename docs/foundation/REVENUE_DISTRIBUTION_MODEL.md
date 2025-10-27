@@ -170,14 +170,23 @@ RIS = 0.30 × EF + 0.25 × CQ + 0.20 × MH + 0.15 × CB + 0.10 × MA
 ### Allocation Formula
 
 ```
-Allocation(library_i) = (RIS_i / Σ RIS_all) × TotalPool
+Allocation(library_i) = (RIS_i / Σ RIS_all) × TotalPool × SponsorshipAdjustment
 ```
+
+Where `SponsorshipAdjustment` is the eligibility-based funding weight (0.0-1.0) based on existing corporate support. See **[Eligibility Policy](./ELIGIBILITY_POLICY.md)** for details.
+
+**Key Principles:**
+- **RIS scores remain pure** - Impact measurement is not affected by funding eligibility
+- **Funding adjustments are transparent** - Sponsorship adjustments are applied separately and documented
+- **Community-maintained projects receive full funding** - Libraries with no corporate support get 1.0x adjustment
+- **Corporate-backed projects may be ineligible** - Projects with substantial dedicated resources get 0.0x adjustment
 
 ### Floors, Caps, and Guards
 
 | Rule | Description |
 |------|-------------|
-| **Floor** | Each included library gets a minimum $5k/yr "maintenance floor" |
+| **Eligibility Threshold** | Libraries must have a RIS score ≥ 0.15 (15%) to qualify for funding - ensures meaningful impact |
+| **No Guaranteed Minimum** | No floor payment - funds are distributed proportionally based on RIS score above threshold |
 | **Cap** | No library may exceed 12% of the annual pool unless approved by the board after public comment |
 | **Reserve** | Hold 10% of the pool for Appeals & Extraordinary Grants (e.g., critical zero-day work) |
 | **Stability** | Apply EMA smoothing: `FinalRIS = 0.7 × RIS_this_quarter + 0.3 × RIS_last_quarter` |
@@ -190,6 +199,45 @@ Allocation(library_i) = (RIS_i / Σ RIS_all) × TotalPool
 - **Coordination filters**: sudden spike in tiny PRs from new accounts triggers a review queue
 - **Label honesty**: sampling audits compare PR labels vs. content; mislabeling leads to quarter penalties (-10% RIS)
 - **Public Reports**: per-library CSV/JSON of raw metrics + scoring; anyone can reproduce
+
+---
+
+## Funding Eligibility Policy
+
+Not all libraries are eligible for direct RIS-based grants. The Foundation focuses resources on projects that depend on community support to remain viable.
+
+### Eligibility Categories
+
+| Category | Funding Eligibility | Adjustment |
+|----------|---------------------|------------|
+| **Community-maintained** | ✅ Fully eligible | 1.0x (100% funding) |
+| **Partially-sponsored** | 🟡 Eligible with adjustment | 0.4x-0.9x based on support level |
+| **Corporate-maintained** | ❌ Ineligible for direct grants | 0.0x (may participate in Strategic Collaboration Program) |
+
+### Sponsorship Adjustment Factors
+
+| Sponsorship Level | Adjustment | Description |
+|-------------------|------------|-------------|
+| **None** | 1.0x (100%) | No corporate support - full funding |
+| **Minimal** | 0.9x (90%) | <$50k/year or volunteer-only |
+| **Moderate** | 0.7x (70%) | $50k-$200k/year or part-time support |
+| **Substantial** | 0.4x (40%) | $200k-$500k/year or 1-2 dedicated FTE |
+| **Exclusive** | 0.0x (0%) | $500k+/year or 3+ FTE - ineligible |
+
+### Rationale
+
+Corporate-backed frameworks already benefit from:
+- Dedicated full-time engineering teams
+- Marketing budgets and promotional resources
+- Internal funding ensuring long-term sustainability
+- Enterprise support contracts and consulting revenue
+
+By focusing RIS funding on independent and under-resourced projects, the Foundation:
+- Strengthens the open source commons around React
+- Supports independent innovation
+- Ensures funding decisions reflect genuine need
+
+**Full Policy**: See **[ELIGIBILITY_POLICY.md](./ELIGIBILITY_POLICY.md)** for complete details, examples, FAQ, and review process.
 
 ---
 
@@ -289,13 +337,22 @@ function allocate(libs, totalPool, prevRIS = {}) {
     lib.RIS = prevRIS[lib.name] ? 0.7*RIS_now + 0.3*prevRIS[lib.name] : RIS_now;
   }
 
-  // 4) proportional allocation
-  const sumRIS = sum(libs.map(l => l.RIS));
-  for (lib of libs) lib.allocation = (lib.RIS / sumRIS) * (totalPool * 0.90); // 10% reserve
+  // 4) filter to eligible libraries (RIS >= 0.15)
+  const eligible = libs.filter(l => l.RIS >= 0.15);
+  const sumRIS = sum(eligible.map(l => l.RIS));
 
-  // 5) floors and caps
-  for (lib of libs) lib.allocation = Math.max(lib.allocation, 5000);
-  enforceCap(libs, 0.12 * totalPool);
+  // 5) proportional allocation (only eligible libraries)
+  for (lib of eligible) {
+    lib.allocation = (lib.RIS / sumRIS) * (totalPool * 0.90); // 10% reserve
+  }
+
+  // Ineligible libraries get $0
+  for (lib of libs) {
+    if (lib.RIS < 0.15) lib.allocation = 0;
+  }
+
+  // 6) enforce cap
+  enforceCap(eligible, 0.12 * totalPool);
 
   return libs;
 }

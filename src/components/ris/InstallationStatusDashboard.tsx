@@ -3,11 +3,12 @@
 /**
  * Installation Status Dashboard
  * Shows which libraries have the GitHub App installed
- * and displays their current RIS scores
+ * and displays their current RIS scores and eligibility status
  */
 
 import { useEffect, useState } from 'react';
 import type { LibraryInstallationStatus } from '@/app/api/ris/installations/route';
+import { getEligibilityBadgeInfo, type EligibilityStatus } from '@/lib/ris/eligibility';
 
 interface InstallationStatusResponse {
   success: boolean;
@@ -218,6 +219,9 @@ export function InstallationStatusDashboard() {
                   Status
                 </SortButton>
               </th>
+              <th className="p-4 text-left">
+                Eligibility
+              </th>
               <th className="p-4 text-right">
                 <SortButton
                   active={sortField === 'score'}
@@ -256,6 +260,16 @@ export function InstallationStatusDashboard() {
                 </td>
                 <td className="p-4">
                   <StatusBadge updateMethod={lib.updateMethod} />
+                </td>
+                <td className="p-4">
+                  {lib.eligibility ? (
+                    <EligibilityBadge
+                      status={lib.eligibility.status}
+                      adjustment={lib.eligibility.adjustment}
+                    />
+                  ) : (
+                    <span className="text-xs text-foreground/40">Not set</span>
+                  )}
                 </td>
                 <td className="p-4 text-right">
                   {lib.score !== null ? (
@@ -393,6 +407,33 @@ function StatusBadge({ updateMethod }: { updateMethod: 'realtime' | 'monthly' | 
   return (
     <span className="inline-flex items-center gap-1 rounded-full bg-foreground/10 px-3 py-1 text-xs font-medium text-foreground/60">
       ⏳ Not tracked
+    </span>
+  );
+}
+
+function EligibilityBadge({
+  status,
+  adjustment,
+}: {
+  status: EligibilityStatus;
+  adjustment: number;
+}) {
+  const badgeInfo = getEligibilityBadgeInfo(status);
+
+  return (
+    <span
+      className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium ${
+        badgeInfo.color === 'success'
+          ? 'bg-success/20 text-success-foreground'
+          : badgeInfo.color === 'warning'
+          ? 'bg-yellow-500/20 text-yellow-600 dark:text-yellow-400'
+          : 'bg-destructive/20 text-destructive-foreground'
+      }`}
+    >
+      {badgeInfo.emoji} {badgeInfo.label}
+      {adjustment < 1.0 && (
+        <span className="opacity-70">({(adjustment * 100).toFixed(0)}%)</span>
+      )}
     </span>
   );
 }

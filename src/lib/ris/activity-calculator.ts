@@ -6,6 +6,9 @@
 import type { LibraryActivityData, TimeWindow } from './activity-types';
 import type { LibraryRawMetrics } from './types';
 import { get12MonthWindow, filterByWindow } from './activity-types';
+import { calculateWeightedPRPoints, analyzePRQuality } from './pr-quality';
+import { applyAuthorCaps } from './author-caps';
+import { detectActivitySpikes, applySpikeDetectionPenalty } from './spike-detection';
 
 /**
  * Calculate RIS metrics from activity data
@@ -19,10 +22,23 @@ export function calculateMetricsFromActivity(
   const timeWindow = window || get12MonthWindow();
 
   // Filter activity to time window
-  const recentPRs = filterByWindow(activity.prs, timeWindow);
+  let recentPRs = filterByWindow(activity.prs, timeWindow);
   const recentIssues = filterByWindow(activity.issues, timeWindow);
-  const recentCommits = filterByWindow(activity.commits, timeWindow);
+  let recentCommits = filterByWindow(activity.commits, timeWindow);
   const recentReleases = filterByWindow(activity.releases, timeWindow);
+
+  // Apply per-author caps at 90th percentile to prevent gaming
+  // This prevents any single author from dominating the score
+  const calculatePRPointsForAuthor = (pr: typeof recentPRs[0]) => {
+    if (!pr.merged) return 0;
+    const analysis = analyzePRQuality(pr);
+    if (analysis.isTrivial) return 0;
+    return Math.log10(1 + analysis.locChanged) * analysis.weight;
+  };
+
+  const cappingResult = applyAuthorCaps(recentPRs, recentCommits, calculatePRPointsForAuthor);
+  recentPRs = cappingResult.cappedPRs;
+  recentCommits = cappingResult.cappedCommits;
 
   // Calculate Contribution Quality (CQ) metrics
   const pr_count = recentPRs.length;
@@ -36,12 +52,19 @@ export function calculateMetricsFromActivity(
 
   const issue_resolution_rate = issues_opened > 0 ? issues_closed / issues_opened : 0;
 
-  // Calculate PR points (simplified - based on size and merge status)
-  const pr_points = recentPRs.reduce((sum, pr) => {
-    if (!pr.merged) return sum;
-    const loc_changed = pr.additions + pr.deletions;
-    return sum + Math.log10(1 + loc_changed);
-  }, 0);
+  // Calculate PR points with quality filtering and impact weighting
+  // Filters out trivial PRs (< 6 lines) and applies impact weights:
+  // - High impact (500+ lines): 1.0x
+  // - Medium impact (50-499 lines): 0.6x
+  // - Low impact (6-49 lines): 0.1x
+  // - Trivial (< 6 lines): 0x (excluded)
+  let pr_points = calculateWeightedPRPoints(recentPRs);
+
+  // Apply spike detection to identify coordination attacks
+  // Penalizes libraries with suspicious activity patterns (0.7-0.85x multiplier)
+  const spikeResult = detectActivitySpikes(recentPRs, recentCommits);
+  const penaltyResult = applySpikeDetectionPenalty(pr_points, spikeResult);
+  pr_points = penaltyResult.adjustedPoints;
 
   // Calculate median response times
   const prResponseTimes = recentPRs
@@ -95,8 +118,9 @@ export function calculateMetricsFromActivity(
   // Estimate docs completeness (heuristic based on repo characteristics)
   const docs_completeness = estimateDocsCompleteness(activity);
 
-  // Estimate tutorial refs and helpful events
-  const tutorials_refs = Math.floor(activity.stars / 10);
+  // Tutorial references (from collector) and helpful events
+  // Default to 0 if not yet collected (external enrichment data)
+  const tutorials_refs = activity.tutorial_references ?? 0;
   const helpful_events = issues_closed;
 
   // Estimate user satisfaction
@@ -115,11 +139,12 @@ export function calculateMetricsFromActivity(
     owner: activity.owner,
     repo: activity.repo,
     collected_at: activity.last_updated_at,
+    sponsorship_adjustment: activity.sponsorship_adjustment ?? 1.0, // Default to fully eligible
 
     // Ecosystem Footprint (EF)
     npm_downloads: activity.npm_downloads_12mo,
-    gh_dependents: activity.npm_dependents,
-    import_mentions: Math.floor(activity.stars / 100), // Heuristic
+    gh_dependents: activity.gh_dependents ?? 0, // GitHub "Used by" count from dependency graph
+    import_mentions: activity.import_mentions ?? 0, // Default to 0 (external enrichment data)
     cdn_hits: activity.cdn_hits_12mo,
 
     // Contribution Quality (CQ)
@@ -141,11 +166,11 @@ export function calculateMetricsFromActivity(
     helpful_events,
     user_satisfaction,
 
-    // Mission Alignment (MA) - would need manual curation
-    a11y_advances: 0,
-    perf_concurrency_support: 0,
-    typescript_strictness: 0, // Set from NPM data
-    rsc_compat_progress: 0,
+    // Mission Alignment (MA) - some need manual curation
+    a11y_advances: 0, // TODO: Manual curation needed
+    perf_concurrency_support: 0, // TODO: Manual curation needed
+    typescript_strictness: activity.typescript_support ? 1 : 0, // From NPM package data
+    rsc_compat_progress: 0, // TODO: Manual curation needed
     security_practices: activity.ossf_score,
   };
 }

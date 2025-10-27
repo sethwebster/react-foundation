@@ -78,12 +78,15 @@ export class GitHubActivityCollector {
       issues,
       commits,
       releases,
-      ...basicStats,
+      ...basicStats, // Includes gh_dependents
       // External metrics (set later by aggregator)
       npm_downloads_12mo: 0,
       npm_dependents: 0,
       cdn_hits_12mo: 0,
       ossf_score: 0,
+      typescript_support: false,
+      import_mentions: 0,
+      tutorial_references: 0,
       total_items: prs.length + issues.length + commits.length,
       is_complete: true,
     };
@@ -489,13 +492,24 @@ export class GitHubActivityCollector {
     console.log(`    → Fetching current stats...`);
 
     try {
-      const { data } = await this.restClient.repos.get({ owner, repo });
+      const [repoData, dependents] = await Promise.allSettled([
+        this.restClient.repos.get({ owner, repo }),
+        this.fetchDependentsCount(owner, repo),
+      ]);
+
+      const data = repoData.status === 'fulfilled' ? repoData.value.data : null;
+      const dependentsCount = dependents.status === 'fulfilled' ? dependents.value : 0;
+
+      if (!data) {
+        throw new Error('Failed to fetch repo data');
+      }
 
       return {
         stars: data.stargazers_count,
         forks: data.forks_count,
         is_archived: data.archived,
         last_commit_date: data.pushed_at || new Date().toISOString(),
+        gh_dependents: dependentsCount,
       };
     } catch (error) {
       console.error(`Error fetching basic stats for ${owner}/${repo}:`, error);
@@ -504,7 +518,38 @@ export class GitHubActivityCollector {
         forks: 0,
         is_archived: false,
         last_commit_date: new Date().toISOString(),
+        gh_dependents: 0,
       };
+    }
+  }
+
+  /**
+   * Fetch GitHub dependents count (repositories that depend on this repo)
+   * Uses GraphQL API to get the "Used by" count
+   */
+  async fetchDependentsCount(owner: string, repo: string): Promise<number> {
+    try {
+      // GitHub's GraphQL API can give us the dependents count
+      // This is the "Used by X" number shown on the repo page
+      const query = `
+        query($owner: String!, $repo: String!) {
+          repository(owner: $owner, name: $repo) {
+            dependencyGraphManifests(first: 1) {
+              totalCount
+            }
+          }
+        }
+      `;
+
+      const result: any = await this.restClient.graphql(query, { owner, repo });
+
+      // The totalCount gives us how many manifests reference this repo
+      return result?.repository?.dependencyGraphManifests?.totalCount || 0;
+    } catch (error) {
+      // GraphQL errors are common for repos without dependency graph enabled
+      // Don't log as error, just return 0
+      console.log(`    → Dependents count not available for ${owner}/${repo} (dependency graph may be disabled)`);
+      return 0;
     }
   }
 

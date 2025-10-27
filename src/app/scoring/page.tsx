@@ -7,16 +7,36 @@
 import { Metadata } from 'next';
 import { InstallationStatusDashboard } from '@/components/ris/InstallationStatusDashboard';
 import { ScoringWeightsPieChart } from '@/components/ris/ScoringWeightsPieChart';
+import { RFDS } from '@/components/rfds';
 
 export const metadata: Metadata = {
   title: 'How Library Scoring Works | React Foundation Store',
   description: 'Understanding how we measure library impact and distribute funding fairly',
 };
 
+const sections = [
+  { id: 'big-idea', title: 'The Big Idea', level: 1 as const },
+  { id: 'what-we-measure', title: 'What We Measure', level: 1 as const },
+  { id: 'how-we-calculate', title: 'How We Calculate', level: 1 as const },
+  { id: 'how-we-share', title: 'How We Share Funding', level: 1 as const },
+  { id: 'why-fair', title: 'Why This Is Fair', level: 1 as const },
+  { id: 'eligibility', title: 'Eligibility for Funding', level: 1 as const },
+  { id: 'implementation', title: 'Implementation Status', level: 1 as const },
+  { id: 'tracked-libraries', title: 'Tracked Libraries', level: 1 as const },
+];
+
 export default function ScoringPage() {
   return (
     <div className="min-h-screen bg-background pt-20">
-      <div className="container mx-auto max-w-4xl px-4 py-12">
+      <div className="container mx-auto max-w-7xl px-4 py-12">
+        <div className="flex gap-8">
+          {/* Sidebar TOC - hidden on mobile */}
+          <aside className="hidden lg:block w-64 flex-shrink-0">
+            <RFDS.TableOfContents sections={sections} />
+          </aside>
+
+          {/* Main content */}
+          <div className="flex-1 max-w-4xl">
         <div className="space-y-8">
           {/* Hero */}
           <div className="text-center">
@@ -32,6 +52,7 @@ export default function ScoringPage() {
           <div className="space-y-12 rounded-3xl border border-border bg-card p-8 sm:p-12">
 
           {/* The Big Idea */}
+          <div id="big-idea">
           <Section
             title="The Big Idea 💡"
             icon="🎯"
@@ -48,8 +69,10 @@ export default function ScoringPage() {
               Instead of just counting how many nails someone hammered, we look at the <em>full picture</em> of their contribution.
             </p>
           </Section>
+          </div>
 
           {/* What We Measure */}
+          <div id="what-we-measure">
           <Section
             title="What We Measure 📊"
             icon="🔍"
@@ -152,8 +175,10 @@ export default function ScoringPage() {
               </ScoreComponent>
             </div>
           </Section>
+          </div>
 
           {/* How We Calculate */}
+          <div id="how-we-calculate">
           <Section
             title="How We Calculate the Score 🧮"
             icon="📐"
@@ -186,8 +211,10 @@ export default function ScoringPage() {
               Each library gets a score from 0% to 100%. The higher the score, the bigger the impact!
             </p>
           </Section>
+          </div>
 
           {/* How We Share Money */}
+          <div id="how-we-share">
           <Section
             title="How We Share Funding 💰"
             icon="🤝"
@@ -219,8 +246,10 @@ export default function ScoringPage() {
               </p>
             </div>
           </Section>
+          </div>
 
           {/* Why This Is Fair */}
+          <div id="why-fair">
           <Section
             title="Why This System Is Fair 🌟"
             icon="⚖️"
@@ -252,6 +281,7 @@ export default function ScoringPage() {
               </BenefitCard>
             </div>
           </Section>
+          </div>
 
           {/* Final Thought */}
           <div className="rounded-2xl border border-primary/30 bg-primary/10 p-8 text-center">
@@ -262,6 +292,304 @@ export default function ScoringPage() {
               By measuring impact fairly and sharing funding transparently, we help amazing open source projects thrive!
             </p>
           </div>
+
+          <div className="border-t border-border/20 pt-12"></div>
+
+          {/* Eligibility for RIS Funding */}
+          <div id="eligibility">
+          <Section
+            title="Eligibility for RIS Funding 🧭"
+            icon="✅"
+          >
+            <div className="space-y-6">
+              {/* Guiding Principle */}
+              <div className="rounded-xl border border-primary/20 bg-primary/5 p-6">
+                <h4 className="mb-3 text-lg font-semibold text-foreground">Guiding Principle</h4>
+                <p className="text-foreground/80">
+                  RIS funding is designed to help <strong>sustain independent, community-maintained, and under-resourced projects</strong> that
+                  are critical to the health and innovation of the React ecosystem.
+                </p>
+                <p className="mt-3 text-foreground/80">
+                  It is <strong>not</strong> intended to subsidize projects that already benefit from significant, ongoing corporate investment.
+                </p>
+              </div>
+
+              {/* Overview */}
+              <div>
+                <h4 className="mb-4 text-lg font-semibold text-foreground">Eligibility Overview</h4>
+                <p className="mb-4 text-foreground/80">
+                  The React Foundation exists to strengthen the React ecosystem in the places that need it most — ensuring that
+                  open source libraries, tools, and maintainers who make React possible have the support to continue their work.
+                </p>
+              </div>
+
+              {/* Eligibility Table */}
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse">
+                  <thead>
+                    <tr className="border-b border-border">
+                      <th className="p-3 text-left font-semibold text-foreground">Category</th>
+                      <th className="p-3 text-left font-semibold text-foreground">Description</th>
+                      <th className="p-3 text-left font-semibold text-foreground">Funding Eligibility</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {/* Community-maintained */}
+                    <tr className="border-b border-border/50">
+                      <td className="p-3 align-top">
+                        <span className="font-medium text-foreground">Community-maintained libraries</span>
+                      </td>
+                      <td className="p-3 align-top text-sm text-foreground/80">
+                        Independent maintainers or small teams sustaining libraries widely used in the React ecosystem.
+                      </td>
+                      <td className="p-3 align-top">
+                        <span className="inline-flex items-center gap-1 rounded-full bg-success/20 px-3 py-1 text-sm font-medium text-success-foreground">
+                          ✅ Fully eligible
+                        </span>
+                      </td>
+                    </tr>
+
+                    {/* Partially-sponsored */}
+                    <tr className="border-b border-border/50">
+                      <td className="p-3 align-top">
+                        <span className="font-medium text-foreground">Collaborative or partially-sponsored projects</span>
+                      </td>
+                      <td className="p-3 align-top text-sm text-foreground/80">
+                        Independent projects with limited or non-exclusive corporate support (e.g. shared maintainership, open governance).
+                      </td>
+                      <td className="p-3 align-top">
+                        <span className="inline-flex items-center gap-1 rounded-full bg-warning/20 px-3 py-1 text-sm font-medium text-warning-foreground">
+                          🟡 Eligible with adjusted weighting
+                        </span>
+                      </td>
+                    </tr>
+
+                    {/* Corporate-maintained */}
+                    <tr>
+                      <td className="p-3 align-top">
+                        <span className="font-medium text-foreground">Corporate-maintained frameworks or products</span>
+                      </td>
+                      <td className="p-3 align-top text-sm text-foreground/80">
+                        Projects primarily funded and maintained by large commercial entities with substantial engineering resources.
+                        Examples include Next.js (Vercel), Remix (Shopify), and Expo (Expo.dev).
+                      </td>
+                      <td className="p-3 align-top">
+                        <span className="inline-flex items-center gap-1 rounded-full bg-destructive/20 px-3 py-1 text-sm font-medium text-destructive-foreground">
+                          ❌ Ineligible for direct grants
+                        </span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Why Certain Libraries Are Ineligible */}
+              <div className="rounded-xl border border-accent/30 bg-accent/5 p-6">
+                <h4 className="mb-3 font-semibold text-foreground flex items-center gap-2">
+                  <span>🤔</span> Why Certain Libraries Are Ineligible
+                </h4>
+                <p className="text-sm text-foreground/80 mb-4">
+                  To keep RIS funding equitable and impactful, we focus our resources on projects that <strong>depend on community
+                  support to remain viable</strong>. Corporate-backed frameworks already benefit from dedicated full-time engineering teams,
+                  marketing budgets, and internal funding that ensure their long-term sustainability.
+                </p>
+                <p className="text-sm font-medium text-foreground mb-2">This approach allows the Foundation to:</p>
+                <ul className="space-y-2 text-sm text-foreground/80 ml-4">
+                  <li>• Strengthen the open source commons around React</li>
+                  <li>• Support independent innovation</li>
+                  <li>• Ensure that funding decisions reflect genuine need and ecosystem impact</li>
+                </ul>
+              </div>
+
+              {/* Strategic Collaboration Program */}
+              <div className="rounded-xl border border-primary/30 bg-primary/5 p-6">
+                <h4 className="mb-3 font-semibold text-foreground flex items-center gap-2">
+                  <span>🤝</span> Strategic Collaboration Program
+                </h4>
+                <p className="text-sm text-foreground/80 mb-4">
+                  Corporate-maintained projects remain <strong>essential partners</strong> in the React ecosystem.
+                  While they are not eligible for direct RIS-based grants, they may participate through the
+                  <strong> Strategic Collaboration Program</strong>, which focuses on:
+                </p>
+                <ul className="space-y-2 text-sm text-foreground/80 ml-4">
+                  <li>• Ecosystem alignment and standards</li>
+                  <li>• Interoperability initiatives</li>
+                  <li>• Shared infrastructure and community events</li>
+                </ul>
+                <p className="mt-4 text-sm text-foreground/80">
+                  This ensures continued collaboration without diverting limited grant resources away from independent maintainers.
+                </p>
+              </div>
+
+              {/* Transparency and Review */}
+              <div className="rounded-xl border border-border/10 bg-muted/30 p-6">
+                <h4 className="mb-3 font-semibold text-foreground flex items-center gap-2">
+                  <span>🔍</span> Transparency and Review
+                </h4>
+                <p className="text-sm text-foreground/80">
+                  Eligibility decisions are reviewed annually as part of the Foundation's open governance process.
+                  If your project's structure or sponsorship model changes, you may request a reevaluation of your eligibility status.
+                </p>
+              </div>
+            </div>
+          </Section>
+          </div>
+
+          <div className="border-t border-border/20 pt-12"></div>
+
+          {/* Current Implementation Status */}
+          <div id="implementation">
+          <Section
+            title="Current Implementation Status 🚧"
+            icon="📋"
+          >
+            <div className="space-y-6">
+              <p className="text-foreground/80">
+                We're committed to transparency about our scoring system's current capabilities and limitations.
+                Here's what's working now and what's still being developed:
+              </p>
+
+              {/* Fully Implemented */}
+              <div className="rounded-xl border border-success/30 bg-success/10 p-6">
+                <h4 className="mb-4 font-semibold text-success-foreground flex items-center gap-2">
+                  <span>✅</span> Fully Implemented
+                </h4>
+                <ul className="space-y-2 text-sm text-foreground/80">
+                  <li><strong>Ecosystem Footprint:</strong> NPM downloads, GitHub dependents, CDN hits, <span className="text-success">import mentions (45 probe repos)</span> ✓</li>
+                  <li><strong>Contribution Quality:</strong> PR analysis, issue resolution, response times, contributor counts ✓</li>
+                  <li><strong>Maintainer Health:</strong> Active maintainers, release cadence, bus factor analysis ✓</li>
+                  <li><strong>Community Benefit:</strong> <span className="text-success">Tutorial references (30 learning sites)</span> ✓, helpful events ✓</li>
+                  <li><strong>Mission Alignment:</strong> TypeScript support detection ✓, OSSF security scores ✓</li>
+                  <li><strong>Core Scoring:</strong> Normalization, winsorization, weighted calculations, EMA smoothing ✓</li>
+                </ul>
+              </div>
+
+              {/* Using Heuristics */}
+              <div className="rounded-xl border border-warning/30 bg-warning/10 p-6">
+                <h4 className="mb-4 font-semibold text-warning-foreground flex items-center gap-2">
+                  <span>⚙️</span> Using Heuristics (Good Approximations)
+                </h4>
+                <ul className="space-y-2 text-sm text-foreground/80">
+                  <li><strong>Documentation Completeness:</strong> Using activity-based heuristics; plan to integrate doc linters</li>
+                  <li><strong>User Satisfaction:</strong> Estimated from issue metrics; plan to launch quarterly surveys</li>
+                  <li><strong>Maintainer Health Survey:</strong> Estimated from activity; plan to launch maintainer check-ins</li>
+                </ul>
+                <p className="mt-4 text-xs italic text-foreground/70">
+                  These heuristics provide reasonable estimates but will be replaced with direct measurements as infrastructure develops.
+                </p>
+              </div>
+
+              {/* Manual Curation Needed */}
+              <div className="rounded-xl border border-accent/30 bg-accent/10 p-6">
+                <h4 className="mb-4 font-semibold text-accent-foreground flex items-center gap-2">
+                  <span>🔍</span> Manual Curation (Coming Soon)
+                </h4>
+                <ul className="space-y-2 text-sm text-foreground/80">
+                  <li><strong>Accessibility Advances:</strong> Requires quarterly review for a11y improvements</li>
+                  <li><strong>Performance & Concurrency:</strong> Requires assessment of React 19 concurrent features</li>
+                  <li><strong>RSC Compatibility:</strong> Requires evaluation of React Server Components support</li>
+                </ul>
+                <p className="mt-4 text-xs italic text-foreground/70">
+                  These metrics require expert human judgment and will be added through quarterly reviews starting in Q2 2025.
+                </p>
+              </div>
+
+              {/* Impact on Scores */}
+              <div className="rounded-xl border border-border/10 bg-muted/30 p-6">
+                <h4 className="mb-4 font-semibold text-foreground">What This Means for Current Scores</h4>
+                <p className="text-sm text-foreground/80 mb-3">
+                  Right now, scores are based on <strong>about 75-80% of the ideal data</strong>. This means:
+                </p>
+                <ul className="space-y-2 text-sm text-foreground/80">
+                  <li>• <strong>NEW:</strong> Import mentions now use real probe repo scanning (45 top React projects)</li>
+                  <li>• <strong>NEW:</strong> Tutorial references check 30+ reputable learning sites</li>
+                  <li>• Scores are highly accurate for most metrics</li>
+                  <li>• Rankings are reliable - libraries with higher impact score higher</li>
+                  <li>• As we add remaining data sources, scores will become even more precise</li>
+                  <li>• The 15% eligibility threshold ensures only meaningful contributors receive funding</li>
+                </ul>
+              </div>
+            </div>
+          </Section>
+          </div>
+
+          <div className="border-t border-border/20 pt-12"></div>
+
+          {/* Anti-Gaming Measures */}
+          <Section
+            title="Anti-Gaming & Fair Play 🛡️"
+            icon="🔒"
+          >
+            <div className="space-y-6">
+              <p className="text-foreground/80">
+                To ensure scores reflect genuine impact rather than gaming attempts, we've implemented
+                multiple layers of protection:
+              </p>
+
+              {/* PR Quality Filtering */}
+              <div className="rounded-xl border border-primary/30 bg-primary/5 p-6">
+                <h4 className="mb-3 font-semibold text-primary-foreground flex items-center gap-2">
+                  <span>📊</span> PR Quality Filtering
+                </h4>
+                <p className="text-sm text-foreground/80 mb-3">
+                  Not all contributions are equal. We apply impact weighting based on substance:
+                </p>
+                <ul className="space-y-2 text-sm text-foreground/80 ml-4">
+                  <li>• <strong>Trivial PRs excluded:</strong> PRs with &lt; 6 lines or rename-only changes receive zero weight</li>
+                  <li>• <strong>Low impact (6-49 lines):</strong> 0.1x weight - small fixes and tweaks</li>
+                  <li>• <strong>Medium impact (50-499 lines):</strong> 0.6x weight - moderate features and improvements</li>
+                  <li>• <strong>High impact (500+ lines):</strong> 1.0x weight - substantial contributions</li>
+                </ul>
+              </div>
+
+              {/* Per-Author Caps */}
+              <div className="rounded-xl border border-primary/30 bg-primary/5 p-6">
+                <h4 className="mb-3 font-semibold text-primary-foreground flex items-center gap-2">
+                  <span>👤</span> Per-Author Contribution Caps
+                </h4>
+                <p className="text-sm text-foreground/80 mb-3">
+                  Prevents any single author from dominating scores:
+                </p>
+                <ul className="space-y-2 text-sm text-foreground/80 ml-4">
+                  <li>• <strong>90th percentile caps:</strong> Authors limited to 90th percentile of contributions</li>
+                  <li>• <strong>Applies to PRs and commits:</strong> Both contribution types are capped independently</li>
+                  <li>• <strong>Recency preference:</strong> If over cap, most recent contributions are kept</li>
+                  <li>• <strong>Fair distribution:</strong> Encourages diverse contributor base over single-author domination</li>
+                </ul>
+              </div>
+
+              {/* Spike Detection */}
+              <div className="rounded-xl border border-primary/30 bg-primary/5 p-6">
+                <h4 className="mb-3 font-semibold text-primary-foreground flex items-center gap-2">
+                  <span>📈</span> Coordination Attack Detection
+                </h4>
+                <p className="text-sm text-foreground/80 mb-3">
+                  Identifies suspicious activity patterns that may indicate gaming:
+                </p>
+                <ul className="space-y-2 text-sm text-foreground/80 ml-4">
+                  <li>• <strong>Activity spike detection:</strong> Flags activity &gt; 3x baseline rate in 7-day windows</li>
+                  <li>• <strong>Coordination patterns:</strong> Multiple new contributors (3+) in same week with low individual contributions</li>
+                  <li>• <strong>Burst after inactivity:</strong> Sudden activity after 90+ days of silence</li>
+                  <li>• <strong>Automatic penalties:</strong> Suspicious activity receives 0.7-0.85x multiplier on scores</li>
+                </ul>
+              </div>
+
+              {/* Why This Matters */}
+              <div className="rounded-xl border border-border/10 bg-muted/30 p-6">
+                <h4 className="mb-3 font-semibold text-foreground">Why These Measures Matter</h4>
+                <p className="text-sm text-foreground/80 mb-3">
+                  Our goal is to reward <strong>genuine ecosystem impact</strong>, not gaming behavior:
+                </p>
+                <ul className="space-y-2 text-sm text-foreground/80">
+                  <li>• Libraries that truly help the community score higher</li>
+                  <li>• Quality contributions count more than quantity</li>
+                  <li>• Diverse contributor bases are valued over single-author dominance</li>
+                  <li>• Organic growth patterns score better than coordinated campaigns</li>
+                  <li>• Fair distribution ensures funding goes to real impact</li>
+                </ul>
+              </div>
+            </div>
+          </Section>
 
           <div className="border-t border-border/20 pt-12"></div>
 
@@ -362,6 +690,7 @@ export default function ScoringPage() {
         </div>
 
         {/* Live Status Dashboard */}
+        <div id="tracked-libraries">
         <div className="mt-12">
           <h2 className="mb-6 flex items-center gap-3 text-2xl font-bold text-foreground sm:text-3xl">
             <span className="text-3xl">📊</span>
@@ -372,9 +701,12 @@ export default function ScoringPage() {
           </p>
           <InstallationStatusDashboard />
         </div>
+        </div>
+        </div>
+      </div>
       </div>
     </div>
-    </div>
+  </div>
   );
 }
 
