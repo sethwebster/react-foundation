@@ -490,7 +490,7 @@ async function handleToolCalls(
           title: `Community submission: ${parsed.data.name}`,
           body,
           labels: ['community-submission'],
-          assignees: ['claude'],
+          // Don't assign to anyone by default - let GitHub notifications handle it
         });
 
         issue = result;

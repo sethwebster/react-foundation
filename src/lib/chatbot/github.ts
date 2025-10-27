@@ -38,17 +38,32 @@ export async function createIssue(payload: IssuePayload): Promise<{ url: string;
     labels.add('bug');
   }
 
-  const assignees = input.assignees && input.assignees.length > 0 ? input.assignees : ['claude'];
+  // Only include assignees if they are explicitly provided
+  // Don't default to 'claude' as that user doesn't exist
+  const assignees = input.assignees && input.assignees.length > 0 ? input.assignees : [];
 
   try {
-    const response = await octokit.issues.create({
+    const issueData: {
+      owner: string;
+      repo: string;
+      title: string;
+      body: string;
+      labels: string[];
+      assignees?: string[];
+    } = {
       owner: env.githubOwner,
       repo: env.githubRepo,
       title: input.title,
       body: input.body,
       labels: Array.from(labels),
-      assignees,
-    });
+    };
+
+    // Only add assignees if there are any to add
+    if (assignees.length > 0) {
+      issueData.assignees = assignees;
+    }
+
+    const response = await octokit.issues.create(issueData);
 
     logger.info('Chatbot created GitHub issue', {
       issue: response.data.number,
