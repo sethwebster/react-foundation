@@ -30,13 +30,17 @@ export default function ScoringPage() {
     <div className="min-h-screen bg-background pt-20">
       <div className="container mx-auto max-w-7xl px-4 py-12">
         <div className="flex gap-8">
-          {/* Sidebar TOC - hidden on mobile */}
+          {/* Sidebar TOC - sticky on desktop */}
           <aside className="hidden lg:block w-64 flex-shrink-0">
             <RFDS.TableOfContents sections={sections} />
           </aside>
 
           {/* Main content */}
           <div className="flex-1 max-w-4xl">
+            {/* Mobile TOC - shown at top on mobile/tablet */}
+            <div className="lg:hidden mb-8">
+              <RFDS.TableOfContents sections={sections} />
+            </div>
         <div className="space-y-8">
           {/* Hero */}
           <div className="text-center">
