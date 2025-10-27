@@ -107,7 +107,7 @@ export async function GET(request: NextRequest) {
               <div class="icon">${statusEmoji}</div>
               <h1>Already Processed</h1>
               <p>This request was <span class="status">${statusText}</span> on ${new Date(accessRequest.reviewedAt!).toLocaleDateString()} at ${new Date(accessRequest.reviewedAt!).toLocaleTimeString()}</p>
-              <a href="/admin/requests" class="button">View All Requests</a>
+              <a href="/admin/users/requests" class="button">View All Requests</a>
             </div>
           </body>
         </html>`,
@@ -258,7 +258,7 @@ export async function GET(request: NextRequest) {
               <div class="denied-icon">&#x274C;</div>
               <h1>Request Denied</h1>
               <p>Request from <span class="email">${accessRequest.email}</span> has been denied</p>
-              <a href="/admin/requests" class="button">View Requests</a>
+              <a href="/admin/users/requests" class="button">View Requests</a>
             </div>
           </body>
         </html>`,
