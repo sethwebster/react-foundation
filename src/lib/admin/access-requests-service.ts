@@ -13,9 +13,13 @@ export interface AccessRequest {
   email: string;
   message: string;
   requestedAt: string;
-  status: 'pending' | 'approved' | 'denied';
+  status: 'pending' | 'approved' | 'denied' | 'bucketed';
   reviewedAt?: string;
   reviewedBy?: string;
+  bucket?: string;
+  replyMessage?: string;
+  replySentAt?: string;
+  seededBy?: string;
 }
 
 const REDIS_KEYS = {
@@ -147,7 +151,7 @@ export class AccessRequestsService {
   static async approveRequest(
     id: string,
     reviewedBy: string,
-    role: 'user' | 'admin' = 'user'
+    roles: import('./types').UserRole | import('./types').UserRole[] = 'user'
   ): Promise<void> {
     const request = await this.getRequest(id);
     if (!request) {
@@ -166,9 +170,9 @@ export class AccessRequestsService {
     // Remove from pending
     await client.srem(REDIS_KEYS.pendingRequests, id);
 
-    // Add user with specified role
+    // Add user with specified role(s)
     const { UserManagementService } = await import('./user-management-service');
-    await UserManagementService.addUser(request.email, role, reviewedBy);
+    await UserManagementService.addUser(request.email, roles, reviewedBy);
 
     // Send approval email
     await this.sendApprovalEmail(request.email);
@@ -204,6 +208,40 @@ export class AccessRequestsService {
   }
 
   /**
+   * Reply to a request and assign a bucket
+   */
+  static async replyToRequest(
+    id: string,
+    reviewedBy: string,
+    replyMessage: string,
+    bucket: string
+  ): Promise<void> {
+    const request = await this.getRequest(id);
+    if (!request) {
+      throw new Error('Request not found');
+    }
+
+    const client = getRedisClient();
+    const now = new Date().toISOString();
+    const normalizedBucket = bucket.trim() || 'General waitlist';
+    const trimmedMessage = replyMessage.trim();
+
+    request.status = 'bucketed';
+    request.reviewedAt = now;
+    request.reviewedBy = reviewedBy;
+    request.replyMessage = trimmedMessage;
+    request.replySentAt = now;
+    request.bucket = normalizedBucket;
+
+    await client.set(REDIS_KEYS.request(id), JSON.stringify(request));
+    await client.srem(REDIS_KEYS.pendingRequests, id);
+
+    await this.sendReplyEmail(request.email, trimmedMessage, normalizedBucket);
+
+    logger.info(`✅ Request ${id} bucketed (${normalizedBucket}) for ${request.email}`);
+  }
+
+  /**
    * Send notification email to admins for a specific request
    */
   static async sendAdminNotificationEmail(request: AccessRequest): Promise<string | undefined> {
@@ -234,7 +272,7 @@ export class AccessRequestsService {
     const denyToken = this.generateActionToken(request.id, 'deny');
     const approveUrl = `${baseUrl}/api/admin/request-action?token=${approveToken}`;
     const denyUrl = `${baseUrl}/api/admin/request-action?token=${denyToken}`;
-    const reviewUrl = `${baseUrl}/admin/requests?id=${request.id}`;
+    const reviewUrl = `${baseUrl}/admin/users/requests?id=${request.id}`;
     const formattedMessage = request.message.replace(/\n/g, '<br>');
 
     logger.info(`📧 Sending admin notification for request ${request.id}`);
@@ -300,7 +338,7 @@ export class AccessRequestsService {
               </div>
 
               <div class="footer">
-                <p>Click a button above to take action, or visit the <a href="${baseUrl}/admin/requests" style="color: #06b6d4;">admin panel</a> to review.</p>
+                <p>Click a button above to take action, or visit the <a href="${baseUrl}/admin/users/requests" style="color: #06b6d4;">admin panel</a> to review.</p>
                 <p style="margin-top: 10px; font-size: 10px; color: #444;">Request ID: ${request.id}</p>
               </div>
             </div>
@@ -425,6 +463,72 @@ export class AccessRequestsService {
   }
 
   /**
+   * Send custom reply email with bucket information
+   */
+  private static async sendReplyEmail(email: string, replyMessage: string, bucket: string): Promise<void> {
+    try {
+      logger.info(`📧 Sending bucket reply email to ${email}...`);
+
+      const { Resend } = await import('resend');
+      const resend = new Resend(process.env.RESEND_API_KEY);
+
+      if (!process.env.RESEND_API_KEY) {
+        logger.error('❌ RESEND_API_KEY not configured - skipping email');
+        return;
+      }
+
+      const fromDomain = process.env.RESEND_FROM_DOMAIN || 'yourdomain.com';
+      const safeMessage = (replyMessage ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/\n/g, '<br>');
+      const safeBucket = bucket?.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') || 'General waitlist';
+
+      const result = await resend.emails.send({
+        from: `React Foundation <noreply@${fromDomain}>`,
+        to: [email],
+        subject: 'Access Request Update - React Foundation',
+        html: `
+          <!DOCTYPE html>
+          <html>
+            <body style="font-family: system-ui; background: #000; color: #fff; padding: 40px;">
+              <div style="max-width: 500px; margin: 0 auto; text-align: left;">
+                <h1 style="color: #06b6d4; font-size: 28px; margin-bottom: 16px;">Access Request Update</h1>
+                <p style="color: #fff; font-size: 16px; line-height: 1.5;">
+                  Thank you for your request—here&apos;s the latest update.
+                </p>
+                <div style="background: #111; border: 1px solid #1f2937; border-radius: 8px; padding: 20px; margin: 24px 0;">
+                  <p style="color: #06b6d4; text-transform: uppercase; letter-spacing: 1px; font-size: 12px; margin: 0 0 8px;">
+                    Message
+                  </p>
+                  <p style="color: #e5e7eb; font-size: 16px; line-height: 1.6; white-space: pre-wrap;">
+                    ${safeMessage}
+                  </p>
+                </div>
+                <p style="color: #a855f7; font-weight: bold; font-size: 14px;">
+                  You&apos;re currently in: ${safeBucket}
+                </p>
+                <p style="color: #9ca3af; font-size: 14px; margin-top: 24px;">
+                  We&apos;ll reach out as soon as it&apos;s your turn.
+                </p>
+              </div>
+            </body>
+          </html>
+        `,
+      });
+
+      if (result.data) {
+        logger.info(`✅ Bucket reply email sent! ID: ${result.data.id}`);
+      } else if (result.error) {
+        logger.error(`❌ Resend error:`, result.error);
+      }
+    } catch (_error) {
+      logger.error(`❌ Error sending bucket reply email to ${email}:`, _error);
+    }
+  }
+
+  /**
    * Generate action token for email links
    */
   static generateActionToken(requestId: string, action: 'approve' | 'deny'): string {
@@ -446,7 +550,7 @@ export class AccessRequestsService {
       }
 
       return { requestId, action };
-    } catch (_error) {
+    } catch {
       return null;
     }
   }

@@ -7,18 +7,32 @@ import Link from 'next/link';
 import { UserManagementService } from '@/lib/admin/user-management-service';
 import { AccessRequestsService } from '@/lib/admin/access-requests-service';
 import { getRedisClient } from '@/lib/redis';
+import type { User } from '@/lib/admin/types';
+import type { AccessRequest } from '@/lib/admin/access-requests-service';
 
 export const dynamic = 'force-dynamic';
 
-async function getSystemStats() {
+interface SystemStats {
+  totalUsers: number;
+  totalAdmins: number;
+  pendingRequests: number;
+  totalRequests: number;
+  approvedRequests: number;
+  bucketedRequests: number;
+  deniedRequests: number;
+  redisConnected: boolean;
+  recentUsers: User[];
+  recentRequests: AccessRequest[];
+}
+
+async function getSystemStats(): Promise<SystemStats | null> {
   try {
-    const [users, pendingRequests, allRequests] = await Promise.all([
+    const [users, admins, pendingRequests, allRequests] = await Promise.all([
       UserManagementService.getAllUsers(),
+      UserManagementService.getAdmins(),
       AccessRequestsService.getPendingRequests(),
       AccessRequestsService.getAllRequests(),
     ]);
-
-    const admins = users.filter(u => u.role === 'admin');
     const processedRequests = allRequests.filter(r => r.status !== 'pending');
 
     // Test Redis connection
@@ -37,6 +51,7 @@ async function getSystemStats() {
       pendingRequests: pendingRequests.length,
       totalRequests: allRequests.length,
       approvedRequests: processedRequests.filter(r => r.status === 'approved').length,
+      bucketedRequests: processedRequests.filter(r => r.status === 'bucketed').length,
       deniedRequests: processedRequests.filter(r => r.status === 'denied').length,
       redisConnected,
       recentUsers: users.slice(-5).reverse(),
@@ -87,7 +102,7 @@ export default async function AdminHomePage() {
                 {stats.pendingRequests} access {stats.pendingRequests === 1 ? 'request' : 'requests'} waiting for review
               </p>
               <Link
-                href="/admin/requests"
+                href="/admin/users/requests"
                 className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-lg font-semibold hover:bg-primary/90 transition"
               >
                 Review Requests →
@@ -115,14 +130,14 @@ export default async function AdminHomePage() {
           label="Pending Requests"
           value={stats.pendingRequests.toString()}
           icon="📧"
-          href="/admin/requests"
+          href="/admin/users/requests"
           highlight={stats.pendingRequests > 0}
         />
         <MetricCard
           label="Total Requests"
           value={stats.totalRequests.toString()}
           icon="📊"
-          href="/admin/requests"
+          href="/admin/users/requests"
         />
       </div>
 
@@ -156,7 +171,7 @@ export default async function AdminHomePage() {
               label="Manage Users"
             />
             <QuickActionButton
-              href="/admin/requests"
+              href="/admin/users/requests"
               icon="📧"
               label="View Requests"
             />
@@ -181,7 +196,7 @@ export default async function AdminHomePage() {
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-bold text-foreground">Recent Pending Requests</h3>
             <Link
-              href="/admin/requests"
+              href="/admin/users/requests"
               className="text-sm text-primary hover:text-primary/80 transition"
             >
               View All →
@@ -200,7 +215,7 @@ export default async function AdminHomePage() {
                   </p>
                 </div>
                 <Link
-                  href={`/admin/requests?id=${req.id}`}
+                  href={`/admin/users/requests?id=${req.id}`}
                   className="ml-4 text-sm bg-primary text-primary-foreground px-3 py-1 rounded hover:bg-primary/90 transition"
                 >
                   Review
@@ -214,11 +229,16 @@ export default async function AdminHomePage() {
       {/* Request Stats */}
       <div className="bg-card border border-border rounded-xl p-6">
         <h3 className="text-lg font-bold text-foreground mb-4">Request Statistics</h3>
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <StatItem
             label="Approved"
             value={stats.approvedRequests}
             color="success"
+          />
+          <StatItem
+            label="Bucketed"
+            value={stats.bucketedRequests}
+            color="accent"
           />
           <StatItem
             label="Denied"
@@ -251,21 +271,34 @@ export default async function AdminHomePage() {
                 key={user.email}
                 className="flex items-center justify-between p-3 bg-muted rounded-lg"
               >
-                <div>
+                <div className="flex-1">
                   <p className="font-medium text-foreground">{user.email}</p>
                   <p className="text-sm text-muted-foreground">
                     Added {new Date(user.addedAt).toLocaleDateString()}
                   </p>
                 </div>
-                <span
-                  className={`px-2 py-1 rounded text-xs font-semibold ${
-                    user.role === 'admin'
-                      ? 'bg-accent/20 text-accent-foreground'
-                      : 'bg-primary/20 text-primary-foreground'
-                  }`}
-                >
-                  {user.role}
-                </span>
+                <div className="flex flex-wrap gap-1 justify-end">
+                  {(user.roles || []).filter(role => role !== 'user').length === 0 ? (
+                    <span className="text-xs text-muted-foreground italic">Basic User</span>
+                  ) : (
+                    (user.roles || []).filter(role => role !== 'user').map(role => (
+                      <span
+                        key={role}
+                        className={`px-2 py-1 rounded text-xs font-semibold ${
+                          role === 'admin'
+                            ? 'bg-accent/20 text-accent-foreground'
+                            : role === 'community_manager'
+                            ? 'bg-primary/20 text-primary-foreground'
+                            : role === 'library_manager'
+                            ? 'bg-success/20 text-success-foreground'
+                            : 'bg-muted/60 text-muted-foreground'
+                        }`}
+                      >
+                        {role}
+                      </span>
+                    ))
+                  )}
+                </div>
               </div>
             ))}
           </div>
@@ -373,12 +406,13 @@ function StatItem({
 }: {
   label: string;
   value: number;
-  color: 'success' | 'destructive' | 'primary';
+  color: 'success' | 'destructive' | 'primary' | 'accent';
 }) {
   const colorClass = {
     success: 'text-success-foreground',
     destructive: 'text-destructive-foreground',
     primary: 'text-primary-foreground',
+    accent: 'text-accent-foreground',
   }[color];
 
   return (

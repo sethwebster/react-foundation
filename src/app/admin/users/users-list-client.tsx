@@ -6,8 +6,10 @@
 'use client';
 
 import { useState, useTransition } from 'react';
-import { addUserAction, removeUserAction, updateUserRoleAction } from '../actions';
-import type { User } from '@/lib/admin/user-management-service';
+import { addUserAction, removeUserAction, updateUserRolesAction } from '../actions';
+import type { User, UserRole } from '@/lib/admin/types';
+import { ROLE_LABELS } from '@/lib/admin/types';
+import { RoleSelector } from '@/components/admin/role-selector';
 
 export function UsersListClient({
   users: initialUsers,
@@ -17,18 +19,29 @@ export function UsersListClient({
   currentUserEmail: string;
 }) {
   const [newEmail, setNewEmail] = useState('');
-  const [newRole, setNewRole] = useState<'user' | 'admin'>('user');
+  const [newRoles, setNewRoles] = useState<UserRole[]>([]); // Empty by default, 'user' is implicit
+  const [editingUser, setEditingUser] = useState<string | null>(null);
+  const [editRoles, setEditRoles] = useState<UserRole[]>([]);
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+
+  // Filter out 'user' role as it's implicit for all users
+  const getVisibleRoles = (roles: UserRole[]): UserRole[] => {
+    return roles.filter(role => role !== 'user');
+  };
 
   const handleAddUser = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
+    // Add 'user' role implicitly if no roles selected
+    const rolesToAdd: UserRole[] = newRoles.length === 0 ? ['user'] : newRoles;
+
     startTransition(async () => {
       try {
-        await addUserAction(newEmail, newRole);
+        await addUserAction(newEmail, rolesToAdd);
         setNewEmail('');
+        setNewRoles([]);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to add user');
       }
@@ -47,14 +60,32 @@ export function UsersListClient({
     });
   };
 
-  const handleChangeRole = (email: string, role: 'user' | 'admin') => {
+  const handleEditRoles = (email: string, currentRoles: UserRole[]) => {
+    setEditingUser(email);
+    // Only show assignable roles for editing
+    setEditRoles(getVisibleRoles(currentRoles));
+  };
+
+  const handleSaveRoles = (email: string) => {
+    // Add 'user' role implicitly if no roles selected
+    const rolesToSave: UserRole[] = editRoles.length === 0 ? ['user'] : editRoles;
+
+    setError(null);
     startTransition(async () => {
       try {
-        await updateUserRoleAction(email, role);
+        await updateUserRolesAction(email, rolesToSave);
+        setEditingUser(null);
+        setEditRoles([]);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to update role');
+        setError(err instanceof Error ? err.message : 'Failed to update roles');
       }
     });
+  };
+
+  const handleCancelEdit = () => {
+    setEditingUser(null);
+    setEditRoles([]);
+    setError(null);
   };
 
   return (
@@ -67,25 +98,33 @@ export function UsersListClient({
             {error}
           </div>
         )}
-        <form onSubmit={handleAddUser} className="flex gap-4">
-          <input
-            type="email"
-            required
-            value={newEmail}
-            onChange={(e) => setNewEmail(e.target.value)}
-            placeholder="user@example.com"
-            disabled={isPending}
-            className="flex-1 rounded-lg border border-border bg-input px-4 py-2 text-foreground outline-none focus:border-ring focus:ring-2 focus:ring-ring/50 disabled:opacity-50"
-          />
-          <select
-            value={newRole}
-            onChange={(e) => setNewRole(e.target.value as 'user' | 'admin')}
-            disabled={isPending}
-            className="rounded-lg border border-border bg-input px-4 py-2 text-foreground outline-none focus:border-ring disabled:opacity-50"
-          >
-            <option value="user">User</option>
-            <option value="admin">Admin</option>
-          </select>
+        <form onSubmit={handleAddUser} className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-semibold text-foreground mb-2">
+                Email
+              </label>
+              <input
+                type="email"
+                required
+                value={newEmail}
+                onChange={(e) => setNewEmail(e.target.value)}
+                placeholder="user@example.com"
+                disabled={isPending}
+                className="w-full rounded-lg border border-border bg-input px-4 py-2 text-foreground outline-none focus:border-ring focus:ring-2 focus:ring-ring/50 disabled:opacity-50"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-foreground mb-2">
+                Roles
+              </label>
+              <RoleSelector
+                selectedRoles={newRoles}
+                onChange={setNewRoles}
+                disabled={isPending}
+              />
+            </div>
+          </div>
           <button
             type="submit"
             disabled={isPending}
@@ -106,65 +145,104 @@ export function UsersListClient({
           <p className="text-center text-foreground/60">No users yet</p>
         )}
 
-        <div className="space-y-2">
-          {initialUsers.map((user) => (
-            <div
-              key={user.email}
-              className="flex items-center justify-between rounded-lg border border-border bg-card p-4"
-            >
-              <div className="flex-1">
-                <p className="font-medium text-foreground">{user.email}</p>
-                <p className="text-sm text-foreground/50">
-                  Added {new Date(user.addedAt).toLocaleDateString()}
-                  {user.addedBy && ` by ${user.addedBy}`}
-                </p>
+        <div className="space-y-4">
+          {initialUsers.map((user) => {
+            const isEditing = editingUser === user.email;
+
+            return (
+              <div
+                key={user.email}
+                className="rounded-lg border border-border bg-card p-4"
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-2">
+                      <p className="font-medium text-foreground">{user.email}</p>
+                      {user.email === currentUserEmail && (
+                        <span className="text-xs text-muted-foreground">(You)</span>
+                      )}
+                    </div>
+                    <p className="text-sm text-muted-foreground mb-3">
+                      Added {new Date(user.addedAt).toLocaleDateString()}
+                      {user.addedBy && ` by ${user.addedBy}`}
+                    </p>
+
+                    {/* Display or Edit Roles */}
+                    {isEditing ? (
+                      <div className="space-y-3">
+                        <RoleSelector
+                          selectedRoles={editRoles}
+                          onChange={setEditRoles}
+                          disabled={isPending}
+                        />
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => handleSaveRoles(user.email)}
+                            disabled={isPending}
+                            className="rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition hover:bg-primary/80 disabled:opacity-50"
+                          >
+                            Save
+                          </button>
+                          <button
+                            onClick={handleCancelEdit}
+                            disabled={isPending}
+                            className="rounded-lg border border-border px-4 py-2 text-sm font-semibold text-foreground transition hover:bg-muted disabled:opacity-50"
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="flex flex-wrap gap-2">
+                        {getVisibleRoles(user.roles || []).length === 0 ? (
+                          <span className="text-sm text-muted-foreground italic">
+                            No special roles (basic user)
+                          </span>
+                        ) : (
+                          getVisibleRoles(user.roles || []).map(role => (
+                            <span
+                              key={role}
+                              className={`inline-flex items-center rounded px-2 py-1 text-xs font-semibold ${
+                                role === 'admin'
+                                  ? 'bg-accent/20 text-accent-foreground'
+                                  : role === 'community_manager'
+                                  ? 'bg-primary/20 text-primary-foreground'
+                                  : role === 'library_manager'
+                                  ? 'bg-success/20 text-success-foreground'
+                                  : 'bg-muted/60 text-muted-foreground'
+                              }`}
+                            >
+                              {ROLE_LABELS[role]}
+                            </span>
+                          ))
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Action Buttons */}
+                  {!isEditing && user.email !== currentUserEmail && (
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleEditRoles(user.email, user.roles)}
+                        disabled={isPending}
+                        className="rounded bg-muted px-3 py-1 text-sm font-semibold text-foreground transition hover:bg-muted/70 disabled:opacity-50"
+                      >
+                        Edit Roles
+                      </button>
+                      <button
+                        onClick={() => handleRemoveUser(user.email)}
+                        disabled={isPending}
+                        className="rounded bg-destructive/20 px-3 py-1 text-sm text-destructive-foreground transition hover:bg-destructive/30 disabled:opacity-50"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
-
-              <div className="flex items-center gap-3">
-                {/* Role Badge */}
-                <span
-                  className={`rounded px-3 py-1 text-sm font-semibold ${
-                    user.role === 'admin'
-                      ? 'bg-accent/20 text-accent-foreground'
-                      : 'bg-primary/20 text-primary-foreground'
-                  }`}
-                >
-                  {user.role}
-                </span>
-
-                {/* Change Role */}
-                {user.email !== currentUserEmail && (
-                  <button
-                    onClick={() =>
-                      handleChangeRole(
-                        user.email,
-                        user.role === 'admin' ? 'user' : 'admin'
-                      )
-                    }
-                    disabled={isPending}
-                    className="rounded bg-background/10 px-3 py-1 text-sm text-foreground/70 transition hover:bg-background/20 hover:text-foreground disabled:opacity-50"
-                  >
-                    Make {user.role === 'admin' ? 'User' : 'Admin'}
-                  </button>
-                )}
-
-                {/* Remove */}
-                {user.email !== currentUserEmail && (
-                  <button
-                    onClick={() => handleRemoveUser(user.email)}
-                    disabled={isPending}
-                    className="rounded bg-destructive/20 px-3 py-1 text-sm text-destructive-foreground transition hover:bg-destructive/30 disabled:opacity-50"
-                  >
-                    Remove
-                  </button>
-                )}
-
-                {user.email === currentUserEmail && (
-                  <span className="text-sm text-foreground/40">(You)</span>
-                )}
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </>

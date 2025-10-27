@@ -1,47 +1,48 @@
 /**
- * Admin User Management Page - Server Component
- * Manages user access and roles with Server Actions
+ * Admin Users Tab - Server Component
+ * Displays and manages user access and roles
  */
 
-import { redirect } from 'next/navigation';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { UserManagementService } from '@/lib/admin/user-management-service';
 import { UsersListClient } from './users-list-client';
+import { Suspense } from 'react';
 
-export default async function AdminUsersPage() {
+async function UsersContent() {
   const session = await getServerSession(authOptions);
-
-  if (!session?.user?.email) {
-    redirect('/api/auth/signin');
-  }
-
-  const isAdmin = await UserManagementService.isAdmin(session.user.email);
-
-  if (!isAdmin) {
-    return (
-      <div className="container mx-auto max-w-4xl px-4 py-12">
-        <div className="rounded-xl border border-destructive/50 bg-destructive/10 p-6 text-center">
-          <p className="text-red-400">Access Denied - Admin role required</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Fetch users server-side
   const users = await UserManagementService.getAllUsers();
 
   return (
-    <div className="container mx-auto max-w-6xl px-4 pb-12 mt-20">
-      <div className="space-y-8">
-        {/* Header */}
-        <div>
-          <h1 className="text-4xl font-bold text-foreground">User Management</h1>
-          <p className="mt-2 text-foreground/70">Manage user access and roles</p>
-        </div>
+    <UsersListClient
+      users={users}
+      currentUserEmail={session?.user?.email ?? ''}
+    />
+  );
+}
 
-        {/* Client component handles interactivity */}
-        <UsersListClient users={users} currentUserEmail={session.user.email} />
+export default async function AdminUsersPage() {
+  return (
+    <Suspense fallback={<UsersLoadingFallback />}>
+      <UsersContent />
+    </Suspense>
+  );
+}
+
+function UsersLoadingFallback() {
+  return (
+    <div className="space-y-8">
+      <div className="rounded-2xl border border-border/10 bg-muted/60 p-6">
+        <div className="h-8 w-32 bg-muted animate-pulse rounded mb-4" />
+        <div className="h-12 bg-muted animate-pulse rounded" />
+      </div>
+      <div className="rounded-2xl border border-border/10 bg-muted/60 p-6">
+        <div className="h-8 w-32 bg-muted animate-pulse rounded mb-4" />
+        <div className="space-y-2">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="h-16 bg-muted animate-pulse rounded" />
+          ))}
+        </div>
       </div>
     </div>
   );

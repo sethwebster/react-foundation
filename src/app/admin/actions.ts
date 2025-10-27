@@ -10,11 +10,12 @@ import { authOptions } from '@/lib/auth';
 import { UserManagementService } from '@/lib/admin/user-management-service';
 import { AccessRequestsService } from '@/lib/admin/access-requests-service';
 import { revalidatePath } from 'next/cache';
+import type { UserRole } from '@/lib/admin/types';
 
 /**
- * Add or update a user
+ * Add or update a user with roles
  */
-export async function addUserAction(email: string, role: 'user' | 'admin') {
+export async function addUserAction(email: string, roles: UserRole[]) {
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.email) {
@@ -26,7 +27,7 @@ export async function addUserAction(email: string, role: 'user' | 'admin') {
     throw new Error('Admin access required');
   }
 
-  await UserManagementService.addUser(email, role, session.user.email);
+  await UserManagementService.addUser(email, roles, session.user.email);
 
   revalidatePath('/admin/users');
 
@@ -61,9 +62,9 @@ export async function removeUserAction(email: string) {
 }
 
 /**
- * Update user role
+ * Update user roles
  */
-export async function updateUserRoleAction(email: string, role: 'user' | 'admin') {
+export async function updateUserRolesAction(email: string, roles: UserRole[]) {
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.email) {
@@ -75,7 +76,7 @@ export async function updateUserRoleAction(email: string, role: 'user' | 'admin'
     throw new Error('Admin access required');
   }
 
-  await UserManagementService.updateUserRole(email, role, session.user.email);
+  await UserManagementService.updateUserRoles(email, roles, session.user.email);
 
   revalidatePath('/admin/users');
 
@@ -99,8 +100,9 @@ export async function approveRequestAction(id: string, role: 'user' | 'admin' = 
 
   await AccessRequestsService.approveRequest(id, session.user.email, role);
 
-  revalidatePath('/admin/requests');
+  revalidatePath('/admin/users/requests');
   revalidatePath('/admin/users');
+  revalidatePath('/admin');
 
   return { success: true };
 }
@@ -122,7 +124,40 @@ export async function denyRequestAction(id: string) {
 
   await AccessRequestsService.denyRequest(id, session.user.email);
 
-  revalidatePath('/admin/requests');
+  revalidatePath('/admin/users/requests');
+  revalidatePath('/admin');
+
+  return { success: true };
+}
+
+/**
+ * Reply to request and bucket
+ */
+export async function replyToRequestAction(id: string, replyMessage: string, bucket: string) {
+  const session = await getServerSession(authOptions);
+
+  if (!session?.user?.email) {
+    throw new Error('Not authenticated');
+  }
+
+  const isAdmin = await UserManagementService.isAdmin(session.user.email);
+  if (!isAdmin) {
+    throw new Error('Admin access required');
+  }
+
+  if (!replyMessage || !replyMessage.trim()) {
+    throw new Error('Reply message is required');
+  }
+
+  await AccessRequestsService.replyToRequest(
+    id,
+    session.user.email,
+    replyMessage,
+    bucket ?? ''
+  );
+
+  revalidatePath('/admin/users/requests');
+  revalidatePath('/admin');
 
   return { success: true };
 }

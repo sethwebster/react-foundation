@@ -222,8 +222,8 @@ See [docs/store/quick-start.md](./docs/store/quick-start.md) for more commands.
 
 ### Admin Routes (Protected)
 - `/admin` - Admin dashboard
-- `/admin/users` - User management
-- `/admin/requests` - Access request management
+- `/admin/users` - User management (includes Users and Requests tabs)
+- `/admin/users/requests` - Access request management
 - `/admin/data` - Redis data inspection & RIS collection
 - `/admin/ingest` - Content ingestion (legacy)
 - `/admin/ingest-full` - Full content ingestion
@@ -262,6 +262,19 @@ See [docs/store/quick-start.md](./docs/store/quick-start.md) for more commands.
 ## Environment Variables
 
 Copy `.env.example` to `.env` and provide:
+
+### Admin Test Data
+
+To populate Redis with sample admin/user accounts and pending access requests for development, run:
+
+```bash
+npm run admin:seed-test-users
+```
+
+Optional flags:
+
+- `--refresh` — clear previously seeded data before recreating it
+- `--extra-pending=5` — append additional random pending requests (use any number)
 
 **Shopify (required for store):**
 - `SHOPIFY_STORE_DOMAIN` - your-store.myshopify.com
