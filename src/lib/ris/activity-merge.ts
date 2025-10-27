@@ -56,6 +56,12 @@ export function mergeActivityData(
     // Update always-current stats
     ...updatedStats,
     total_items: prs.length + issues.length + commits.length,
+    // IMPORTANT: Preserve eligibility fields (don't let updatedStats overwrite them)
+    eligibility_status: cached.eligibility_status,
+    sponsorship_level: cached.sponsorship_level,
+    sponsorship_adjustment: cached.sponsorship_adjustment,
+    eligibility_notes: cached.eligibility_notes,
+    eligibility_last_reviewed: cached.eligibility_last_reviewed,
   };
 }
 

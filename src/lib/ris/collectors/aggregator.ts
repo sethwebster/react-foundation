@@ -193,6 +193,18 @@ export class MetricsAggregator {
       // Cold start: fetch ALL historical activity
       console.log(`  🆕 First collection (fetching all history)...`);
 
+      // IMPORTANT: Try to get cached activity to preserve eligibility fields
+      // This handles the case where force refresh is run and cachedActivity is null
+      const { getCachedLibraryActivity } = await import('@/lib/redis');
+      const existingActivity = await getCachedLibraryActivity(owner, repo);
+      const eligibilityFields = existingActivity ? {
+        eligibility_status: existingActivity.eligibility_status,
+        sponsorship_level: existingActivity.sponsorship_level,
+        sponsorship_adjustment: existingActivity.sponsorship_adjustment,
+        eligibility_notes: existingActivity.eligibility_notes,
+        eligibility_last_reviewed: existingActivity.eligibility_last_reviewed,
+      } : {};
+
       // Collect GitHub and OSSF data (always needed)
       const [githubActivity, ossf, npm, cdn] = await Promise.allSettled([
         githubCollector.fetchAllActivity(owner, repo, libraryName),
@@ -205,7 +217,11 @@ export class MetricsAggregator {
         throw new Error(`GitHub collection failed: ${githubActivity.reason}`);
       }
 
-      activity = githubActivity.value;
+      activity = {
+        ...githubActivity.value,
+        // Preserve eligibility fields if they existed
+        ...eligibilityFields,
+      };
 
       // Add external metrics (only if NPM package exists and collection succeeded)
       if (npmPackageName && npm.status === 'fulfilled') {

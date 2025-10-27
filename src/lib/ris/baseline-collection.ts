@@ -103,6 +103,15 @@ export async function collectBaselineForLibrary(
     const ossfCollector = new OSSFCollector();
 
     // Get or initialize activity data
+    // IMPORTANT: Preserve eligibility fields from existing data if available
+    const eligibilityFields = existing ? {
+      eligibility_status: existing.eligibility_status,
+      sponsorship_level: existing.sponsorship_level,
+      sponsorship_adjustment: existing.sponsorship_adjustment,
+      eligibility_notes: existing.eligibility_notes,
+      eligibility_last_reviewed: existing.eligibility_last_reviewed,
+    } : {};
+
     let activity: LibraryActivityData = existing || {
       libraryName,
       owner,
@@ -129,6 +138,8 @@ export async function collectBaselineForLibrary(
       tutorial_references: 0,
       total_items: 0,
       is_complete: false,
+      // Preserve eligibility fields if they existed
+      ...eligibilityFields,
     };
 
     // Determine what sources need collection
