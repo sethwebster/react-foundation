@@ -143,7 +143,7 @@ export default async function OverviewPage() {
           <InfoCard
             label="Total Users"
             value={data.users.length.toString()}
-            detail={`${data.users.filter(u => u.role === 'admin').length} admins, ${data.users.filter(u => u.role === 'user').length} users`}
+            detail={`${data.users.filter(u => u.roles.includes('admin')).length} admins, ${data.users.filter(u => u.roles.includes('user')).length} users`}
           />
           <InfoCard
             label="Redis Keys"

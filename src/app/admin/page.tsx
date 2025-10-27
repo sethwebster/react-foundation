@@ -18,7 +18,7 @@ async function getSystemStats() {
       AccessRequestsService.getAllRequests(),
     ]);
 
-    const admins = users.filter(u => u.role === 'admin');
+    const admins = users.filter(u => u.roles.includes('admin'));
     const processedRequests = allRequests.filter(r => r.status !== 'pending');
 
     // Test Redis connection
@@ -87,7 +87,7 @@ export default async function AdminHomePage() {
                 {stats.pendingRequests} access {stats.pendingRequests === 1 ? 'request' : 'requests'} waiting for review
               </p>
               <Link
-                href="/admin/requests"
+                href="/admin/users/requests"
                 className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-lg font-semibold hover:bg-primary/90 transition"
               >
                 Review Requests →
@@ -115,14 +115,14 @@ export default async function AdminHomePage() {
           label="Pending Requests"
           value={stats.pendingRequests.toString()}
           icon="📧"
-          href="/admin/requests"
+          href="/admin/users/requests"
           highlight={stats.pendingRequests > 0}
         />
         <MetricCard
           label="Total Requests"
           value={stats.totalRequests.toString()}
           icon="📊"
-          href="/admin/requests"
+          href="/admin/users/requests"
         />
       </div>
 
@@ -156,7 +156,7 @@ export default async function AdminHomePage() {
               label="Manage Users"
             />
             <QuickActionButton
-              href="/admin/requests"
+              href="/admin/users/requests"
               icon="📧"
               label="View Requests"
             />
@@ -181,7 +181,7 @@ export default async function AdminHomePage() {
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-bold text-foreground">Recent Pending Requests</h3>
             <Link
-              href="/admin/requests"
+              href="/admin/users/requests"
               className="text-sm text-primary hover:text-primary/80 transition"
             >
               View All →
@@ -200,7 +200,7 @@ export default async function AdminHomePage() {
                   </p>
                 </div>
                 <Link
-                  href={`/admin/requests?id=${req.id}`}
+                  href={`/admin/users/requests?id=${req.id}`}
                   className="ml-4 text-sm bg-primary text-primary-foreground px-3 py-1 rounded hover:bg-primary/90 transition"
                 >
                   Review
@@ -259,12 +259,12 @@ export default async function AdminHomePage() {
                 </div>
                 <span
                   className={`px-2 py-1 rounded text-xs font-semibold ${
-                    user.role === 'admin'
+                    user.roles.includes('admin')
                       ? 'bg-accent/20 text-accent-foreground'
                       : 'bg-primary/20 text-primary-foreground'
                   }`}
                 >
-                  {user.role}
+                  {user.roles.includes('admin') ? 'admin' : user.roles.filter(r => r !== 'user')[0] || 'user'}
                 </span>
               </div>
             ))}

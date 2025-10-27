@@ -24,6 +24,8 @@
     "drops:create": "node --env-file=.env scripts/shopify-create-drop.mjs",
     "collections:generate-images": "node --env-file=.env scripts/generate-collection-images.mjs",
     "admin:bootstrap": "node --env-file=.env scripts/bootstrap-admin.mjs",
+    "admin:seed-test-users": "node --env-file=.env scripts/seed-admin-test-users.mjs",
+    "admin:migrate-users": "node --env-file=.env scripts/migrate-users-to-roles-array.mjs",
     "seed:communities": "npx tsx scripts/seed-communities.ts"
   },
   "dependencies": {

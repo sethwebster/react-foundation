@@ -1,19 +1,17 @@
 /**
  * User Management Service
  * Handles user roles and access control stored in Redis
+ * Supports multiple roles per user with hierarchical permissions
  */
 
 import { getRedisClient } from '@/lib/redis';
 import { logger } from '@/lib/logger';
 
-export type UserRole = 'admin' | 'user';
+// Re-export types and constants from shared types file
+export type { User, UserRole } from './types';
+export { ROLE_HIERARCHY, ROLE_LABELS, ROLE_DESCRIPTIONS } from './types';
 
-export interface User {
-  email: string;
-  role: UserRole;
-  addedAt: string;
-  addedBy?: string;
-}
+import { ROLE_HIERARCHY, type UserRole, type User } from './types';
 
 const REDIS_KEYS = {
   user: (email: string) => `admin:user:${email.toLowerCase()}`,
@@ -22,23 +20,50 @@ const REDIS_KEYS = {
 };
 
 export class UserManagementService {
-  // Super admin - always has access even if Redis is empty
+  /**
+   * Super admin email from environment variable
+   * This user always has full admin access, even if not in Redis
+   * Useful for initial setup and emergency access
+   * Set via SUPER_ADMIN_EMAIL environment variable
+   */
   private static get SUPER_ADMIN(): string | undefined {
     return process.env.SUPER_ADMIN_EMAIL?.toLowerCase();
   }
 
   /**
-   * Add or update a user
+   * Check if a super admin is configured
    */
-  static async addUser(email: string, role: UserRole, addedBy?: string): Promise<void> {
+  static isSuperAdminConfigured(): boolean {
+    return !!process.env.SUPER_ADMIN_EMAIL;
+  }
+
+  /**
+   * Check if email is the super admin
+   */
+  static isSuperAdmin(email: string): boolean {
+    const superAdmin = this.SUPER_ADMIN;
+    if (!superAdmin) return false;
+    return email.toLowerCase().trim() === superAdmin;
+  }
+
+  /**
+   * Add or update a user with multiple roles
+   */
+  static async addUser(email: string, roles: UserRole | UserRole[], addedBy?: string): Promise<void> {
     const client = getRedisClient();
     const normalizedEmail = email.toLowerCase().trim();
 
+    // Normalize roles to array
+    const rolesArray = Array.isArray(roles) ? roles : [roles];
+
+    // Get existing user to preserve addedAt if updating
+    const existing = await this.getUser(normalizedEmail);
+
     const user: User = {
       email: normalizedEmail,
-      role,
-      addedAt: new Date().toISOString(),
-      addedBy,
+      roles: rolesArray,
+      addedAt: existing?.addedAt ?? new Date().toISOString(),
+      addedBy: existing?.addedBy ?? addedBy,
     };
 
     // Store user data
@@ -47,15 +72,29 @@ export class UserManagementService {
     // Add to all users set
     await client.sadd(REDIS_KEYS.allUsers, normalizedEmail);
 
-    // Add to admins set if admin role
-    if (role === 'admin') {
+    // Add to admins set if has admin role
+    if (rolesArray.includes('admin')) {
       await client.sadd(REDIS_KEYS.admins, normalizedEmail);
     } else {
-      // Remove from admins if downgraded
+      // Remove from admins if no longer admin
       await client.srem(REDIS_KEYS.admins, normalizedEmail);
     }
 
-    logger.info(`✅ User ${normalizedEmail} added with role: ${role}`);
+    logger.info(`✅ User ${normalizedEmail} ${existing ? 'updated' : 'added'} with roles: ${rolesArray.join(', ')}`);
+  }
+
+  /**
+   * Update user roles (replaces all existing roles)
+   */
+  static async updateUserRoles(email: string, roles: UserRole[], updatedBy?: string): Promise<void> {
+    const normalizedEmail = email.toLowerCase().trim();
+    const existing = await this.getUser(normalizedEmail);
+
+    if (!existing) {
+      throw new Error(`User ${normalizedEmail} not found`);
+    }
+
+    await this.addUser(normalizedEmail, roles, updatedBy);
   }
 
   /**
@@ -83,7 +122,18 @@ export class UserManagementService {
     if (!data) return null;
 
     try {
-      return JSON.parse(data);
+      const parsed = JSON.parse(data);
+
+      // Backward compatibility: migrate old 'role' field to 'roles' array
+      if (parsed.role && !parsed.roles) {
+        parsed.roles = [parsed.role];
+        delete parsed.role;
+        // Auto-save the migrated data
+        await client.set(REDIS_KEYS.user(normalizedEmail), JSON.stringify(parsed));
+        logger.info(`🔄 Migrated user ${normalizedEmail} from role to roles array`);
+      }
+
+      return parsed;
     } catch (error) {
       logger.error(`Error parsing user data for ${normalizedEmail}:`, error);
       return null;
@@ -98,6 +148,7 @@ export class UserManagementService {
 
     // Super admin always has access
     if (this.SUPER_ADMIN && normalizedEmail === this.SUPER_ADMIN) {
+      logger.info(`✅ Super admin access granted: ${normalizedEmail}`);
       return true;
     }
 
@@ -113,6 +164,7 @@ export class UserManagementService {
 
     // Super admin is always admin
     if (this.SUPER_ADMIN && normalizedEmail === this.SUPER_ADMIN) {
+      logger.info(`✅ Super admin detected: ${normalizedEmail} (from SUPER_ADMIN_EMAIL)`);
       return true;
     }
 
@@ -135,16 +187,38 @@ export class UserManagementService {
     const values = await client.mget(...keys);
 
     const users: User[] = [];
+    const migratedKeys: string[] = [];
+    const migratedValues: string[] = [];
+
     for (let i = 0; i < values.length; i++) {
       const data = values[i];
       if (!data) continue;
 
       try {
         const user = JSON.parse(data);
+
+        // Backward compatibility: migrate old 'role' field to 'roles' array
+        if (user.role && !user.roles) {
+          user.roles = [user.role];
+          delete user.role;
+          migratedKeys.push(REDIS_KEYS.user(emails[i]));
+          migratedValues.push(JSON.stringify(user));
+        }
+
         users.push(user);
       } catch (error) {
         logger.error(`Error parsing user data for ${emails[i]}:`, error);
       }
+    }
+
+    // Batch save migrated users
+    if (migratedKeys.length > 0) {
+      const pipeline = client.pipeline();
+      for (let i = 0; i < migratedKeys.length; i++) {
+        pipeline.set(migratedKeys[i], migratedValues[i]);
+      }
+      await pipeline.exec();
+      logger.info(`🔄 Migrated ${migratedKeys.length} users from role to roles array`);
     }
 
     return users.sort((a, b) => a.email.localeCompare(b.email));
@@ -155,19 +229,52 @@ export class UserManagementService {
    */
   static async getAdmins(): Promise<User[]> {
     const users = await this.getAllUsers();
-    return users.filter(u => u.role === 'admin');
+    return users.filter(u => u.roles.includes('admin'));
   }
 
   /**
-   * Update user role
+   * Check if user has a specific role
    */
-  static async updateUserRole(email: string, role: UserRole, updatedBy?: string): Promise<void> {
+  static async hasRole(email: string, role: UserRole): Promise<boolean> {
     const user = await this.getUser(email);
-    if (!user) {
-      throw new Error('User not found');
+    if (!user) return false;
+    return user.roles.includes(role);
+  }
+
+  /**
+   * Check if user has permission level (considering hierarchy)
+   * @param email User email
+   * @param requiredRole The minimum role required
+   * @returns true if user has this role or a higher role in the hierarchy
+   */
+  static async hasPermission(email: string, requiredRole: UserRole): Promise<boolean> {
+    const normalizedEmail = email.toLowerCase().trim();
+
+    // Super admin has all permissions
+    if (this.SUPER_ADMIN && normalizedEmail === this.SUPER_ADMIN) {
+      return true;
     }
 
-    await this.addUser(email, role, updatedBy || user.addedBy);
+    const user = await this.getUser(normalizedEmail);
+    if (!user) return false;
+
+    const requiredLevel = ROLE_HIERARCHY[requiredRole];
+
+    // Check if user has any role that meets or exceeds the required level
+    return user.roles.some(userRole => {
+      const userLevel = ROLE_HIERARCHY[userRole];
+      return userLevel >= requiredLevel;
+    });
+  }
+
+  /**
+   * Get user's highest role level
+   */
+  static async getHighestRoleLevel(email: string): Promise<number> {
+    const user = await this.getUser(email);
+    if (!user || user.roles.length === 0) return 0;
+
+    return Math.max(...user.roles.map(role => ROLE_HIERARCHY[role]));
   }
 
   /**
