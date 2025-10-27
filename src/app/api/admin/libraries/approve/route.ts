@@ -8,6 +8,8 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { approveLibrary } from '@/lib/ris/library-approval';
 import { trackInstallation } from '@/lib/ris/webhook-queue';
+import { collectBaselineForLibrary } from '@/lib/ris/baseline-collection';
+import { logger } from '@/lib/logger';
 
 export async function POST(request: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -40,15 +42,31 @@ export async function POST(request: NextRequest) {
     // Track installation (now that it's approved)
     await trackInstallation(owner, repo, approvedLib.installationId);
 
-    console.log(`✅ Library approved and installation tracked: ${owner}/${repo}`);
+    logger.info(`✅ Library approved and installation tracked: ${owner}/${repo}`);
+
+    // Trigger baseline collection asynchronously (don't wait)
+    // This runs in the background and won't block the response
+    collectBaselineForLibrary(owner, repo, repo, { resume: true })
+      .then((result) => {
+        if (result.success && !result.isPartial) {
+          logger.info(`✅ Baseline collection completed for ${owner}/${repo}`);
+        } else if (result.isPartial) {
+          logger.warn(`⚠️  Baseline collection partial for ${owner}/${repo} - will retry failed sources`);
+        } else {
+          logger.error(`❌ Baseline collection failed for ${owner}/${repo} - will retry: ${result.error}`);
+        }
+      })
+      .catch((error) => {
+        logger.error(`❌ Baseline collection crashed for ${owner}/${repo}:`, error);
+      });
 
     return NextResponse.json({
       success: true,
       library: approvedLib,
-      message: `${owner}/${repo} has been approved and added to the RIS system`,
+      message: `${owner}/${repo} has been approved and added to the RIS system. Data collection started in background.`,
     });
   } catch (error) {
-    console.error('Error approving library:', error);
+    logger.error('Error approving library:', error);
     return NextResponse.json(
       { error: 'Failed to approve library' },
       { status: 500 }
