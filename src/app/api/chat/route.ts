@@ -258,7 +258,9 @@ function formatIssueBody(payload: z.infer<typeof IssueToolSchema>, metadata: Rec
     lines.push('', `**Severity**: ${payload.severity}`);
   }
 
-  lines.push('', '---', 'Chatbot metadata:');
+  lines.push('', '---', '');
+  lines.push('cc @claude - This issue was created by the chatbot based on user feedback.');
+  lines.push('', 'Chatbot metadata:');
   for (const [key, value] of Object.entries(metadata)) {
     if (value == null) continue;
     lines.push(`- ${key}: ${String(value)}`);
@@ -300,7 +302,9 @@ function formatCommunitySubmissionBody(
     lines.push('### Additional notes', data.additionalNotes, '');
   }
 
-  lines.push('---', 'Chatbot metadata:');
+  lines.push('---', '');
+  lines.push('cc @claude - This community submission was created by the chatbot.');
+  lines.push('', 'Chatbot metadata:');
 
   for (const [key, value] of Object.entries(options.metadata)) {
     if (value == null || value === '') continue;
