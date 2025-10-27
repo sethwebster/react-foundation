@@ -51,6 +51,13 @@ export default function ComingSoonPage() {
     return () => clearTimeout(timer);
   }, []);
 
+  // Auto-show request form when user signs in
+  React.useEffect(() => {
+    if (isAuthenticated && userEmail) {
+      setShowRequestForm(true);
+    }
+  }, [isAuthenticated, userEmail]);
+
   return (
     <div className={`dark fixed inset-0 overflow-hidden bg-slate-950 transition-opacity duration-1000 ${isLoaded ? 'opacity-100' : 'opacity-0'}`}>
       {/* Cyberpunk Grid Background */}
@@ -152,7 +159,7 @@ export default function ComingSoonPage() {
               </div>
             )}
 
-            {isAuthenticated && (
+            {isAuthenticated && !showRequestForm && (
               <div className="space-y-4">
                 <div className="rounded-lg border border-pink-500/50 bg-accent/10 p-6 backdrop-blur-sm">
                   <p className="font-semibold text-pink-400">Access Restricted</p>
@@ -161,12 +168,6 @@ export default function ComingSoonPage() {
                     you&apos;re not on the allowlist yet.
                   </p>
                 </div>
-                <button
-                  onClick={() => setShowRequestForm(true)}
-                  className="w-full rounded-lg border-2 border-pink-400 bg-slate-900/80 px-6 py-3 font-bold uppercase tracking-wider text-pink-400 shadow-[0_0_20px_rgba(236,72,153,0.3)] transition hover:bg-accent/50/10"
-                >
-                  Request Access
-                </button>
               </div>
             )}
 

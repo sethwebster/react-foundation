@@ -16,6 +16,7 @@ const PUBLIC_ROUTES = [
   '/api/request-access',
   '/api/check-access', // Prevent infinite loop
   '/api/webhooks', // GitHub webhooks (have their own security)
+  '/api/ris/process-webhooks', // RIS webhook processor (has CRON_SECRET auth)
   '/privacy',
   '/terms',
   '/_next',
