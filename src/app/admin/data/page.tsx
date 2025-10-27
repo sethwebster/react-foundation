@@ -9,6 +9,7 @@ import { AccessRequestsService } from '@/lib/admin/access-requests-service';
 import { ecosystemLibraries } from '@/lib/maintainer-tiers';
 import { RISCollectionButton } from './ris-collection-button';
 import { LibraryApprovalQueue } from '@/components/admin/LibraryApprovalQueue';
+import { DataTabs } from '@/components/admin/DataTabs';
 
 export const dynamic = 'force-dynamic';
 
@@ -110,18 +111,9 @@ export default async function AdminDataPage() {
     );
   }
 
-  return (
-    <div className="space-y-6 p-6 md:p-8">
-      {/* Header */}
-      <div>
-        <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
-          Data Inspection
-        </h1>
-        <p className="text-muted-foreground">
-          Real-time Redis database statistics and contents
-        </p>
-      </div>
-
+  // Overview Content
+  const overviewContent = (
+    <div className="space-y-6">
       {/* Redis Overview */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <StatCard
@@ -253,25 +245,92 @@ export default async function AdminDataPage() {
         )}
       </div>
 
-      {/* Communities Data */}
-      {data.communityKeys > 0 && (
-        <div className="bg-card border border-border rounded-xl p-6">
-          <h3 className="text-lg font-bold text-foreground mb-4">Communities Data</h3>
-          <div className="grid gap-4 md:grid-cols-2">
-            <InfoCard
-              label="Community Keys"
-              value={data.communityKeys.toString()}
-              detail="Keys starting with communities:*"
-            />
-            <InfoCard
-              label="Key Patterns"
-              value="2"
-              detail="communities:all, communities:seeded"
-            />
-          </div>
+      {/* Redis Configuration */}
+      <div className="bg-card border border-border rounded-xl p-6">
+        <h3 className="text-lg font-bold text-foreground mb-4">Redis Configuration</h3>
+        <div className="space-y-3">
+          <ConfigRow
+            label="Connection URL"
+            value={process.env.REDIS_URL ? '✓ Configured' : '✗ Not Set'}
+            status={process.env.REDIS_URL ? 'success' : 'error'}
+          />
+          <ConfigRow
+            label="Environment"
+            value={process.env.NODE_ENV || 'development'}
+            status="info"
+          />
+          <ConfigRow
+            label="Total Keys in DB"
+            value={data.totalKeys.toString()}
+            status="info"
+          />
         </div>
-      )}
+      </div>
 
+      {/* Key Namespace Reference */}
+      <div className="bg-muted/30 border border-border rounded-xl p-6">
+        <h3 className="text-lg font-bold text-foreground mb-4">Redis Key Reference</h3>
+        <div className="space-y-2 text-sm">
+          <KeyReference
+            pattern="admin:user:[email]"
+            description="Individual user data (email, role, timestamps)"
+          />
+          <KeyReference
+            pattern="admin:users:all"
+            description="Set of all user emails"
+          />
+          <KeyReference
+            pattern="admin:users:admins"
+            description="Set of admin user emails"
+          />
+          <KeyReference
+            pattern="admin:request:[id]"
+            description="Individual access request data"
+          />
+          <KeyReference
+            pattern="admin:requests:pending"
+            description="Set of pending request IDs"
+          />
+          <KeyReference
+            pattern="admin:requests:all"
+            description="Set of all request IDs"
+          />
+          <KeyReference
+            pattern="communities:all"
+            description="JSON array of all community data"
+          />
+          <KeyReference
+            pattern="communities:seeded"
+            description="Flag indicating communities are seeded"
+          />
+          <KeyReference
+            pattern="ris:metrics:[owner]:[repo]"
+            description="Calculated RIS metrics for a library (7-day TTL)"
+          />
+          <KeyReference
+            pattern="ris:activity:[owner]:[repo]"
+            description="Raw activity data for a library (permanent)"
+          />
+          <KeyReference
+            pattern="ris:allocation:[period]"
+            description="Quarterly allocation (e.g., 2025-Q4)"
+          />
+          <KeyReference
+            pattern="ris:last_updated"
+            description="Timestamp of last RIS collection"
+          />
+          <KeyReference
+            pattern="ris:collection_status"
+            description="Current collection status and progress"
+          />
+        </div>
+      </div>
+    </div>
+  );
+
+  // Libraries Content
+  const librariesContent = (
+    <div className="space-y-6">
       {/* Library Approval Queue */}
       <div className="bg-card border border-border rounded-xl p-6">
         <LibraryApprovalQueue />
@@ -380,87 +439,66 @@ export default async function AdminDataPage() {
           </div>
         )}
       </div>
+    </div>
+  );
 
-      {/* Redis Configuration */}
-      <div className="bg-card border border-border rounded-xl p-6">
-        <h3 className="text-lg font-bold text-foreground mb-4">Redis Configuration</h3>
-        <div className="space-y-3">
-          <ConfigRow
-            label="Connection URL"
-            value={process.env.REDIS_URL ? '✓ Configured' : '✗ Not Set'}
-            status={process.env.REDIS_URL ? 'success' : 'error'}
-          />
-          <ConfigRow
-            label="Environment"
-            value={process.env.NODE_ENV || 'development'}
-            status="info"
-          />
-          <ConfigRow
-            label="Total Keys in DB"
-            value={data.totalKeys.toString()}
-            status="info"
-          />
+  // Communities Content
+  const communitiesContent = (
+    <div className="space-y-6">
+      {/* Communities Data */}
+      {data.communityKeys > 0 && (
+        <div className="bg-card border border-border rounded-xl p-6">
+          <h3 className="text-lg font-bold text-foreground mb-4">Communities Data</h3>
+          <div className="grid gap-4 md:grid-cols-2">
+            <InfoCard
+              label="Community Keys"
+              value={data.communityKeys.toString()}
+              detail="Keys starting with communities:*"
+            />
+            <InfoCard
+              label="Key Patterns"
+              value="2"
+              detail="communities:all, communities:seeded"
+            />
+          </div>
         </div>
-      </div>
+      )}
 
-      {/* Key Namespace Reference */}
       <div className="bg-muted/30 border border-border rounded-xl p-6">
-        <h3 className="text-lg font-bold text-foreground mb-4">Redis Key Reference</h3>
-        <div className="space-y-2 text-sm">
-          <KeyReference
-            pattern="admin:user:[email]"
-            description="Individual user data (email, role, timestamps)"
-          />
-          <KeyReference
-            pattern="admin:users:all"
-            description="Set of all user emails"
-          />
-          <KeyReference
-            pattern="admin:users:admins"
-            description="Set of admin user emails"
-          />
-          <KeyReference
-            pattern="admin:request:[id]"
-            description="Individual access request data"
-          />
-          <KeyReference
-            pattern="admin:requests:pending"
-            description="Set of pending request IDs"
-          />
-          <KeyReference
-            pattern="admin:requests:all"
-            description="Set of all request IDs"
-          />
-          <KeyReference
-            pattern="communities:all"
-            description="JSON array of all community data"
-          />
-          <KeyReference
-            pattern="communities:seeded"
-            description="Flag indicating communities are seeded"
-          />
-          <KeyReference
-            pattern="ris:metrics:[owner]:[repo]"
-            description="Calculated RIS metrics for a library (7-day TTL)"
-          />
-          <KeyReference
-            pattern="ris:activity:[owner]:[repo]"
-            description="Raw activity data for a library (permanent)"
-          />
-          <KeyReference
-            pattern="ris:allocation:[period]"
-            description="Quarterly allocation (e.g., 2025-Q4)"
-          />
-          <KeyReference
-            pattern="ris:last_updated"
-            description="Timestamp of last RIS collection"
-          />
-          <KeyReference
-            pattern="ris:collection_status"
-            description="Current collection status and progress"
-          />
+        <h3 className="text-lg font-bold text-foreground mb-4">Community Management</h3>
+        <p className="text-sm text-muted-foreground mb-4">
+          Community data is managed through the Context ingestion system. Use the Context page to update community information.
+        </p>
+        <div className="flex gap-4">
+          <a
+            href="/admin/ingest-full"
+            className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition text-sm font-medium"
+          >
+            Go to Context Manager
+          </a>
         </div>
       </div>
+    </div>
+  );
+
+  return (
+    <div className="space-y-6 p-6 md:p-8">
+      {/* Header */}
+      <div>
+        <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
+          Data Inspection
+        </h1>
+        <p className="text-muted-foreground">
+          Real-time Redis database statistics and contents
+        </p>
+      </div>
+
+      {/* Tabs */}
+      <DataTabs
+        overviewContent={overviewContent}
+        librariesContent={librariesContent}
+        communitiesContent={communitiesContent}
+      />
     </div>
   );
 }

@@ -16,7 +16,7 @@ export function AdminSidebar() {
   const navItems = [
     { href: '/admin', label: 'Home', icon: '🏠', exact: true },
     { href: '/admin/data', label: 'Data', icon: '📊' },
-    { href: '/admin/ingest-full', label: 'Ingest', icon: '🤖' },
+    { href: '/admin/ingest-full', label: 'Context', icon: '🤖' },
     { href: '/admin/users', label: 'Users', icon: '👥' },
     { href: '/admin/requests', label: 'Requests', icon: '📧' },
     { href: '/admin/reset', label: 'Reset', icon: '⚠️', dangerous: true },
