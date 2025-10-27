@@ -30,16 +30,22 @@ export const authOptions: NextAuthOptions = {
     signOut: "/", // Redirect to home after signout (no confirmation page)
   },
   callbacks: {
-    async jwt({ token, profile }) {
+    async jwt({ token, account, profile }) {
+      // Store access token and GitHub login in JWT
+      if (account?.access_token) {
+        token.accessToken = account.access_token;
+      }
       if (profile && typeof profile === "object" && "login" in profile) {
         token.githubLogin = String((profile as { login?: string }).login ?? "");
       }
       return token;
     },
     async session({ session, token }) {
+      // Pass access token and GitHub login to session
       if (session.user) {
         session.user.githubLogin = token.githubLogin as string | undefined;
       }
+      session.accessToken = token.accessToken as string | undefined;
       return session;
     },
   },

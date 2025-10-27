@@ -28,10 +28,17 @@ function getOctokit(): Octokit {
   return client;
 }
 
-export async function createIssue(payload: IssuePayload): Promise<{ url: string; number: number }> {
+export async function createIssue(
+  payload: IssuePayload,
+  options?: { userToken?: string }
+): Promise<{ url: string; number: number }> {
   const env = getChatbotEnv();
   const input = IssuePayloadSchema.parse(payload);
-  const octokit = getOctokit();
+
+  // Use user's token if provided, otherwise use bot token
+  const octokit = options?.userToken
+    ? new Octokit({ auth: options.userToken })
+    : getOctokit();
 
   const labels = new Set<string>(['from-chatbot', ...(input.labels ?? [])]);
   if (!input.labels || input.labels.length === 0) {
@@ -65,10 +72,16 @@ export async function createIssue(payload: IssuePayload): Promise<{ url: string;
 
     const response = await octokit.issues.create(issueData);
 
-    logger.info('Chatbot created GitHub issue', {
-      issue: response.data.number,
-      url: response.data.html_url,
-    });
+    logger.info(
+      options?.userToken
+        ? 'User created GitHub issue via chatbot'
+        : 'Chatbot created GitHub issue',
+      {
+        issue: response.data.number,
+        url: response.data.html_url,
+        createdAs: options?.userToken ? 'user' : 'bot',
+      }
+    );
 
     return {
       url: response.data.html_url,
