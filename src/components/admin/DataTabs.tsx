@@ -1,11 +1,11 @@
 /**
  * Admin Data Page Tabs
- * Client component for tab navigation
+ * Client component for tab navigation with URL state
  */
 
 'use client';
 
-import { useState } from 'react';
+import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 
 type TabType = 'overview' | 'libraries' | 'communities';
 
@@ -16,13 +16,28 @@ interface DataTabsProps {
 }
 
 export function DataTabs({ overviewContent, librariesContent, communitiesContent }: DataTabsProps) {
-  const [activeTab, setActiveTab] = useState<TabType>('overview');
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const activeTab = (searchParams.get('tab') as TabType) || 'overview';
 
   const tabs: { id: TabType; label: string; icon: string }[] = [
     { id: 'overview', label: 'Overview', icon: '📊' },
     { id: 'libraries', label: 'Libraries', icon: '📚' },
     { id: 'communities', label: 'Communities', icon: '🌐' },
   ];
+
+  const handleTabChange = (tabId: TabType) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (tabId === 'overview') {
+      params.delete('tab'); // Remove tab param for default
+    } else {
+      params.set('tab', tabId);
+    }
+    const queryString = params.toString();
+    router.push(queryString ? `${pathname}?${queryString}` : pathname);
+  };
 
   return (
     <div className="space-y-6">
@@ -32,7 +47,7 @@ export function DataTabs({ overviewContent, librariesContent, communitiesContent
           {tabs.map((tab) => (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
+              onClick={() => handleTabChange(tab.id)}
               className={`flex items-center gap-2 px-4 py-3 text-sm font-medium transition-colors border-b-2 whitespace-nowrap ${
                 activeTab === tab.id
                   ? 'border-primary text-primary'
