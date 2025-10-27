@@ -30,6 +30,7 @@ import { ProductCard, ProductGallery, UserAvatar, LibraryCard, RISScoreBreakdown
 import { Header, Footer } from "./layouts";
 import { SemanticButton, SemanticCard, SemanticBadge, SemanticInput, SemanticAlert, SemanticAvatar, SemanticSeparator, ContributorIcon, ContributorCard } from "./semantic-components";
 import { Timeline, TimelineItem, TimelineStep, TimelineProgress } from "./timeline";
+import { TableOfContents } from "./TableOfContents";
 
 /**
  * React Foundation Design System namespace
@@ -97,6 +98,9 @@ export const RFDS = {
   TimelineItem,
   TimelineStep,
   TimelineProgress,
+
+  // Navigation Components
+  TableOfContents,
 
   // Layers - For advanced usage
   Primitives,

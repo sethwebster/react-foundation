@@ -23,6 +23,7 @@ type RepoTarget = {
   category: LibraryCategory;
   tier: 1 | 2 | 3; // For potential future weighting
   provider?: 'github' | 'gitlab' | 'bitbucket' | 'gitea'; // Default: github
+  hasNpmPackage?: boolean; // Default: true. Set to false for infrastructure projects without NPM packages
 };
 
 export type MaintainerTier = {
@@ -52,10 +53,10 @@ export const ecosystemLibraries: RepoTarget[] = [
   { owner: "facebook", name: "relay", category: "data", tier: 1 },
   { owner: "facebook", name: "jest", category: "testing", tier: 1 },
   { owner: "facebook", name: "react-native", category: "core", tier: 1 },
-  { owner: "facebook", name: "hermes", category: "core", tier: 1 },
-  { owner: "reactjs", name: "react.dev", category: "core", tier: 1 },
-  { owner: "reactjs", name: "rfcs", category: "core", tier: 1 },
-  { owner: "react-native-community", name: "react-native-releases", category: "core", tier: 2 },
+  { owner: "facebook", name: "hermes", category: "core", tier: 1, hasNpmPackage: false }, // JavaScript engine (C++ binary, not on NPM)
+  { owner: "reactjs", name: "react.dev", category: "core", tier: 1, hasNpmPackage: false }, // Documentation website (not a library)
+  { owner: "reactjs", name: "rfcs", category: "core", tier: 1, hasNpmPackage: false }, // RFC repository (not a library)
+  { owner: "react-native-community", name: "react-native-releases", category: "core", tier: 2, hasNpmPackage: false }, // Release notes repository (not a library)
   { owner: "react-navigation", name: "react-navigation", category: "routing", tier: 1 },
 
   // State Management (6 repos)

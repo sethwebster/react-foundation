@@ -44,6 +44,9 @@ export class NPMCollector {
    */
   private async fetchDownloads(packageName: string) {
     try {
+      // Encode package name for URL (required for scoped packages)
+      const encodedPackageName = encodeURIComponent(packageName);
+
       // Get last 12 months of downloads
       const endDate = new Date();
       const startDate = new Date();
@@ -53,7 +56,7 @@ export class NPMCollector {
       const end = endDate.toISOString().split('T')[0];
 
       const response = await fetch(
-        `${this.NPM_DOWNLOADS_API}/point/${start}:${end}/${packageName}`
+        `${this.NPM_DOWNLOADS_API}/point/${start}:${end}/${encodedPackageName}`
       );
 
       if (!response.ok) {
@@ -70,7 +73,7 @@ export class NPMCollector {
       const lastMonthEndStr = endDate.toISOString().split('T')[0];
 
       const lastMonthResponse = await fetch(
-        `${this.NPM_DOWNLOADS_API}/point/${lastMonthStartStr}:${lastMonthEndStr}/${packageName}`
+        `${this.NPM_DOWNLOADS_API}/point/${lastMonthStartStr}:${lastMonthEndStr}/${encodedPackageName}`
       );
 
       const lastMonthData = lastMonthResponse.ok
@@ -92,7 +95,9 @@ export class NPMCollector {
    */
   private async fetchPackageInfo(packageName: string) {
     try {
-      const response = await fetch(`${this.NPM_REGISTRY_API}/${packageName}`);
+      // Encode package name for URL (required for scoped packages)
+      const encodedPackageName = encodeURIComponent(packageName);
+      const response = await fetch(`${this.NPM_REGISTRY_API}/${encodedPackageName}`);
 
       if (!response.ok) {
         console.error(`NPM registry error for ${packageName}: ${response.statusText}`);
@@ -137,7 +142,9 @@ export class NPMCollector {
    */
   private async fetchNpmsInfo(packageName: string) {
     try {
-      const response = await fetch(`${this.NPMS_IO_API}/package/${packageName}`);
+      // Encode package name for URL (especially important for scoped packages like @tanstack/react-table)
+      const encodedPackageName = encodeURIComponent(packageName);
+      const response = await fetch(`${this.NPMS_IO_API}/package/${encodedPackageName}`);
 
       if (!response.ok) {
         console.error(`npms.io API error for ${packageName}: ${response.statusText}`);
@@ -158,18 +165,20 @@ export class NPMCollector {
   /**
    * Map repository name to NPM package name
    * Some repos have different NPM package names
+   * Returns null for repos that don't have NPM packages
    */
-  static getPackageName(owner: string, repo: string): string {
+  static getPackageName(owner: string, repo: string): string | null {
     // Special cases where repo name !== package name
-    const specialCases: Record<string, string> = {
+    const specialCases: Record<string, string | null> = {
       'facebook/react': 'react',
       'facebook/react-native': 'react-native',
       'facebook/jest': 'jest',
       'facebook/relay': 'react-relay',
-      'facebook/hermes': 'facebook/hermes',
+      'facebook/hermes': null, // JavaScript engine (C++ binary, not on NPM)
       'facebook/metro': 'metro',
       'facebook/react-devtools': 'react-devtools',
-      'reactjs/react.dev': '@reactjs/react.dev',
+      'reactjs/react.dev': null, // Documentation website (not a library)
+      'reactjs/rfcs': null, // RFC repository (not a library)
       'reduxjs/redux': 'redux',
       'reduxjs/redux-toolkit': '@reduxjs/toolkit',
       'pmndrs/zustand': 'zustand',
@@ -216,8 +225,13 @@ export class NPMCollector {
       'tailwindlabs/tailwindcss': 'tailwindcss',
       'marklawlor/nativewind': 'nativewind',
       'react-navigation/react-navigation': '@react-navigation/native',
+      'react-native-community/react-native-releases': null, // Release notes repository (not a library)
     };
 
-    return specialCases[`${owner}/${repo}`] || repo;
+    const key = `${owner}/${repo}`;
+    if (key in specialCases) {
+      return specialCases[key];
+    }
+    return repo;
   }
 }

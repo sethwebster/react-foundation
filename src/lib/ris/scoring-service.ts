@@ -107,46 +107,115 @@ export class RISScoringService {
    *
    * @param scores - Library scores from calculateScores()
    * @param totalPoolUsd - Total pool available for allocation
+   * @param quarterStartDate - Optional quarter start date for proration (defaults to beginning of current quarter)
+   * @param quarterEndDate - Optional quarter end date for proration (defaults to end of current quarter)
+   * @param libraryApprovalDates - Optional map of library name to approval date (for mid-quarter proration)
    * @returns Updated scores with allocation amounts
    */
   public allocateRevenue(
     scores: LibraryScore[],
-    totalPoolUsd: number
+    totalPoolUsd: number,
+    quarterStartDate?: Date,
+    quarterEndDate?: Date,
+    libraryApprovalDates?: Map<string, Date>
   ): LibraryScore[] {
     if (scores.length === 0) return [];
 
     // Calculate pool after reserve
     const availablePool = totalPoolUsd * (1 - this.config.reserve_percent);
 
-    // Calculate total RIS sum for proportional allocation
-    const totalRIS = scores.reduce((sum, s) => sum + s.ris, 0);
+    // Filter to only eligible libraries (above threshold)
+    const eligibleScores = scores.filter(s => s.ris >= this.config.eligibility_threshold);
+    const ineligibleScores = scores.filter(s => s.ris < this.config.eligibility_threshold);
 
-    if (totalRIS === 0) {
-      // If no scores, distribute equally
-      const equalShare = availablePool / scores.length;
-      return scores.map((s) => ({
-        ...s,
-        allocation_usd: equalShare,
-        floor_applied: false,
-        cap_applied: false,
-      }));
-    }
-
-    // Calculate proportional allocations
-    let updatedScores = scores.map((s) => ({
+    // Set ineligible libraries to $0 allocation
+    const ineligibleWithZero = ineligibleScores.map(s => ({
       ...s,
-      allocation_usd: (s.ris / totalRIS) * availablePool,
+      allocation_usd: 0,
       floor_applied: false,
       cap_applied: false,
     }));
 
-    // Apply floor
+    if (eligibleScores.length === 0) {
+      // No libraries meet threshold - return all with $0
+      return [...ineligibleWithZero];
+    }
+
+    // Calculate total RIS sum for proportional allocation (only eligible libraries)
+    const totalRIS = eligibleScores.reduce((sum, s) => sum + s.ris, 0);
+
+    if (totalRIS === 0) {
+      // If no scores, distribute equally among eligible
+      const equalShare = availablePool / eligibleScores.length;
+      return [
+        ...eligibleScores.map((s) => ({
+          ...s,
+          allocation_usd: equalShare,
+          floor_applied: false,
+          cap_applied: false,
+        })),
+        ...ineligibleWithZero,
+      ];
+    }
+
+    // Calculate proportional allocations (only for eligible libraries)
+    let updatedScores = eligibleScores.map((s) => {
+      let baseAllocation = (s.ris / totalRIS) * availablePool;
+
+      // Apply sponsorship adjustment (eligibility-based funding weight)
+      // This adjusts funding based on existing corporate support
+      const sponsorshipAdjustment = s.raw.sponsorship_adjustment ?? 1.0;
+      if (sponsorshipAdjustment < 1.0) {
+        baseAllocation = baseAllocation * sponsorshipAdjustment;
+        console.log(
+          `📊 Sponsorship adjustment for ${s.libraryName}: ${(sponsorshipAdjustment * 100).toFixed(0)}% ` +
+          `(${baseAllocation.toFixed(2)} USD)`
+        );
+      }
+
+      // Apply proration for mid-quarter approved libraries
+      let proratedAllocation = baseAllocation;
+      if (libraryApprovalDates && quarterStartDate && quarterEndDate) {
+        const approvalDate = libraryApprovalDates.get(s.libraryName);
+
+        if (approvalDate) {
+          const totalDays = Math.ceil(
+            (quarterEndDate.getTime() - quarterStartDate.getTime()) / (1000 * 60 * 60 * 24)
+          );
+
+          const daysRemaining = Math.ceil(
+            (quarterEndDate.getTime() - approvalDate.getTime()) / (1000 * 60 * 60 * 24)
+          );
+
+          // Proration factor = days remaining / total days in quarter
+          const prorationFactor = Math.max(0, Math.min(1, daysRemaining / totalDays));
+
+          proratedAllocation = baseAllocation * prorationFactor;
+
+          console.log(
+            `📊 Prorating ${s.libraryName}: ${(prorationFactor * 100).toFixed(1)}% ` +
+            `(${daysRemaining}/${totalDays} days)`
+          );
+        }
+      }
+
+      return {
+        ...s,
+        allocation_usd: proratedAllocation,
+        floor_applied: false,
+        cap_applied: false,
+      };
+    });
+
+    // Apply floor (if configured, though default is 0)
     const floor = this.config.minimum_floor_usd;
-    updatedScores = updatedScores.map((s) => ({
-      ...s,
-      allocation_usd: Math.max(s.allocation_usd, floor),
-      floor_applied: s.allocation_usd < floor,
-    }));
+    if (floor > 0) {
+      updatedScores = updatedScores.map((s) => ({
+        ...s,
+        allocation_usd: Math.max(s.allocation_usd, floor),
+        floor_applied: s.allocation_usd < floor,
+      }));
+    }
 
     // Apply cap
     const cap = totalPoolUsd * this.config.maximum_cap_percent;
@@ -171,7 +240,8 @@ export class RISScoringService {
       }));
     }
 
-    return updatedScores;
+    // Combine eligible and ineligible libraries
+    return [...updatedScores, ...ineligibleWithZero];
   }
 
   /**
@@ -181,10 +251,20 @@ export class RISScoringService {
     rawMetrics: LibraryRawMetrics[],
     totalPoolUsd: number,
     period: string,
-    previousScores?: Map<string, number>
+    previousScores?: Map<string, number>,
+    quarterStartDate?: Date,
+    quarterEndDate?: Date,
+    libraryApprovalDates?: Map<string, Date>
   ): QuarterlyAllocation {
     const scores = this.calculateScores(rawMetrics, previousScores);
-    const libraries = this.allocateRevenue(scores, totalPoolUsd);
+
+    const libraries = this.allocateRevenue(
+      scores,
+      totalPoolUsd,
+      quarterStartDate,
+      quarterEndDate,
+      libraryApprovalDates
+    );
 
     return {
       period,

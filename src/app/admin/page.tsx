@@ -4,26 +4,13 @@
  */
 
 import Link from 'next/link';
-import { UserManagementService, type User } from '@/lib/admin/user-management-service';
-import { AccessRequestsService, type AccessRequest } from '@/lib/admin/access-requests-service';
+import { UserManagementService } from '@/lib/admin/user-management-service';
+import { AccessRequestsService } from '@/lib/admin/access-requests-service';
 import { getRedisClient } from '@/lib/redis';
-import { logger } from '@/lib/logger';
 
 export const dynamic = 'force-dynamic';
 
-interface SystemStats {
-  totalUsers: number;
-  totalAdmins: number;
-  pendingRequests: number;
-  totalRequests: number;
-  approvedRequests: number;
-  deniedRequests: number;
-  redisConnected: boolean;
-  recentUsers: User[];
-  recentRequests: AccessRequest[];
-}
-
-async function getSystemStats(): Promise<SystemStats | null> {
+async function getSystemStats() {
   try {
     const [users, pendingRequests, allRequests] = await Promise.all([
       UserManagementService.getAllUsers(),
@@ -40,8 +27,7 @@ async function getSystemStats(): Promise<SystemStats | null> {
     try {
       await client.ping();
       redisConnected = true;
-    } catch (error) {
-      logger.warn('Redis connection check failed:', error);
+    } catch {
       redisConnected = false;
     }
 
@@ -57,7 +43,7 @@ async function getSystemStats(): Promise<SystemStats | null> {
       recentRequests: pendingRequests.slice(0, 3),
     };
   } catch (error) {
-    logger.error('Error fetching admin stats:', error);
+    console.error('Error fetching admin stats:', error);
     return null;
   }
 }

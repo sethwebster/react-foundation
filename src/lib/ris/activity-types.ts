@@ -78,16 +78,27 @@ export interface LibraryActivityData {
   forks: number;
   is_archived: boolean;
   last_commit_date: string;
+  gh_dependents: number; // GitHub "Used by" count from dependency graph
 
   // External metrics (updated each run)
   npm_downloads_12mo: number;
-  npm_dependents: number;
+  npm_dependents: number; // NPM dependents count
   cdn_hits_12mo: number;
   ossf_score: number;
+  typescript_support: boolean; // Has types, typings, or @types/* package
+  import_mentions: number; // Number of probe repos that depend on this library
+  tutorial_references: number; // Number of tutorial sites that mention this library
 
   // Metadata
   total_items: number; // Total PRs + issues + commits
   is_complete: boolean; // True if we fetched all history
+
+  // Eligibility metadata (for funding decisions)
+  eligibility_status?: 'fully_eligible' | 'partially_sponsored' | 'ineligible';
+  sponsorship_level?: 'none' | 'minimal' | 'moderate' | 'substantial' | 'exclusive';
+  sponsorship_adjustment?: number; // 0.0-1.0 multiplier applied to scores
+  eligibility_notes?: string; // Admin notes on eligibility decision
+  eligibility_last_reviewed?: string; // ISO date of last review
 }
 
 // ============================================================================

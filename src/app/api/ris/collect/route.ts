@@ -19,6 +19,7 @@ import {
   setLastUpdated,
   acquireCollectionLock,
   releaseCollectionLock,
+  keepCollectionLockAlive,
   setCollectionStatus,
   logCollectionError,
 } from '@/lib/redis';
@@ -26,6 +27,21 @@ import type { LibraryRawMetrics } from '@/lib/ris/types';
 import { calculateMetricsFromActivity } from '@/lib/ris/activity-calculator';
 
 export const maxDuration = 300; // 5 minutes max execution time
+
+/**
+ * Parse GitHub tokens from environment
+ */
+function parseGitHubTokens(): string[] {
+  return process.env.GITHUB_TOKENS
+    ? process.env.GITHUB_TOKENS
+        .replace(/^\[|\]$/g, '') // Remove surrounding brackets if present
+        .split(',')
+        .map(t => t.trim())
+        .filter(Boolean) // Remove empty strings
+    : process.env.GITHUB_TOKEN
+      ? [process.env.GITHUB_TOKEN]
+      : [];
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -57,27 +73,6 @@ export async function POST(request: NextRequest) {
     logger.info(`RIS collection started by ${session.user.email}: ${forceRefresh ? 'FORCE' : 'INCREMENTAL'}`);
     logger.debug(`Max cache age: ${maxAgeHours} hours`);
 
-    // Parse GitHub tokens (supports both single and multiple)
-    const githubTokens = process.env.GITHUB_TOKENS
-      ? process.env.GITHUB_TOKENS
-          .replace(/^\[|\]$/g, '') // Remove surrounding brackets if present
-          .split(',')
-          .map(t => t.trim())
-          .filter(Boolean) // Remove empty strings
-      : process.env.GITHUB_TOKEN
-        ? [process.env.GITHUB_TOKEN]
-        : [];
-
-    if (githubTokens.length === 0) {
-      logger.error('GITHUB_TOKEN not configured');
-      return NextResponse.json(
-        { error: 'GITHUB_TOKEN or GITHUB_TOKENS environment variable not set' },
-        { status: 500 }
-      );
-    }
-
-    logger.info(`Using ${githubTokens.length} GitHub token(s) for collection`);
-
     // Try to acquire lock
     const lockAcquired = await acquireCollectionLock();
     if (!lockAcquired) {
@@ -90,120 +85,328 @@ export async function POST(request: NextRequest) {
     // Set initial status
     await setCollectionStatus({
       status: 'running',
-      message: 'Starting data collection',
+      message: 'Analyzing library data status...',
       progress: 0,
       total: ecosystemLibraries.length,
       startedAt: new Date().toISOString(),
     });
 
-    // Create aggregator with token rotation
-    const aggregator = new MetricsAggregator({
-      githubToken: githubTokens[0],
-      githubTokens
-    });
+    // Create aggregator (try GitHub App first, then fall back to PATs)
+    let aggregator: MetricsAggregator;
 
-    // Collect metrics for all libraries
+    if (process.env.GITHUB_APP_ID && process.env.GITHUB_APP_PRIVATE_KEY) {
+      // Use GitHub App (better rate limits: 5,000/hour per installation)
+      logger.info(`Using GitHub App authentication (App ID: ${process.env.GITHUB_APP_ID})`);
+
+      try {
+        aggregator = await MetricsAggregator.fromGitHubApp(
+          process.env.GITHUB_APP_ID,
+          process.env.GITHUB_APP_PRIVATE_KEY
+        );
+      } catch (error) {
+        logger.error('Failed to initialize GitHub App, falling back to PAT:', error);
+
+        // Fall back to PATs if App fails
+        const githubTokens = parseGitHubTokens();
+        if (githubTokens.length === 0) {
+          logger.error('GitHub App failed and no PAT configured');
+          await releaseCollectionLock();
+          return NextResponse.json(
+            { error: 'GitHub App failed and no GITHUB_TOKEN configured' },
+            { status: 500 }
+          );
+        }
+
+        logger.info(`Falling back to ${githubTokens.length} GitHub PAT(s)`);
+        aggregator = new MetricsAggregator({
+          githubToken: githubTokens[0],
+          githubTokens
+        });
+      }
+    } else {
+      // Use PATs (original behavior)
+      const githubTokens = parseGitHubTokens();
+
+      if (githubTokens.length === 0) {
+        logger.error('GITHUB_TOKEN not configured');
+        await releaseCollectionLock();
+        return NextResponse.json(
+          { error: 'GITHUB_TOKEN or GITHUB_TOKENS environment variable not set' },
+          { status: 500 }
+        );
+      }
+
+      logger.info(`Using ${githubTokens.length} GitHub PAT(s) for collection`);
+
+      aggregator = new MetricsAggregator({
+        githubToken: githubTokens[0],
+        githubTokens
+      });
+    }
+
+    // Collect metrics for all libraries (in parallel batches)
     const allMetrics: LibraryRawMetrics[] = [];
     let collected = 0;
     let skipped = 0;
     let failed = 0;
 
+    // Prioritize libraries with no data first, then process libraries with existing data
+    // This ensures that new libraries get baseline collection before incremental updates run
+    // Strategy: Check cache, separate into two groups, process no-data group first
+    logger.info('Checking which libraries have existing data...');
+    const librariesWithData: typeof ecosystemLibraries = [];
+    const librariesWithoutData: typeof ecosystemLibraries = [];
+
     for (const library of ecosystemLibraries) {
-      try {
-        // Get cached activity data (permanent storage)
-        const cachedActivity = await getCachedLibraryActivity(library.owner, library.name);
-
-        // Collect or update activity
-        const activity = await aggregator.collectLibraryActivity(
-          library.owner,
-          library.name,
-          library.name,
-          forceRefresh ? null : cachedActivity // Force refresh ignores cache
-        );
-
-        // Cache activity data (permanent, no TTL)
-        await cacheLibraryActivity(library.owner, library.name, activity);
-
-        // Convert activity to metrics (applies 12-month window)
-        const metrics = calculateMetricsFromActivity(activity);
-
-        // Cache calculated metrics (7 day TTL)
-        await cacheLibraryMetrics(library.owner, library.name, metrics);
-
-        if (cachedActivity && !forceRefresh) {
-          skipped++; // Incremental update
-        } else {
-          collected++; // Full collection
-        }
-
-        allMetrics.push(metrics);
-
-        // Update progress
-        await setCollectionStatus({
-          status: 'running',
-          message: `Progress: ${collected} full, ${skipped} incremental, ${failed} failed / ${ecosystemLibraries.length} total`,
-          progress: collected + skipped,
-          total: ecosystemLibraries.length,
-          startedAt: new Date().toISOString(),
-        });
-
-        logger.debug(`Progress: ${collected} full, ${skipped} incremental / ${ecosystemLibraries.length} total`);
-      } catch (error) {
-        logger.error(`Error collecting ${library.owner}/${library.name}:`, error);
-
-        // Log error to Redis for admin review
-        await logCollectionError(
-          `${library.owner}/${library.name}`,
-          error instanceof Error ? error.message : String(error),
-          { owner: library.owner, repo: library.name }
-        );
-
-        failed++;
-        // Continue with other libraries even if one fails
+      const cachedActivity = await getCachedLibraryActivity(library.owner, library.name);
+      if (cachedActivity) {
+        librariesWithData.push(library);
+      } else {
+        librariesWithoutData.push(library);
       }
     }
 
-    // Calculate RIS scores and allocation
-    logger.debug('Calculating RIS scores and allocation...');
-    const scoringService = new RISScoringService();
-    const currentQuarter = getCurrentQuarter();
-    const totalPool = 1_000_000; // $1M default pool
+    logger.info(`Prioritizing ${librariesWithoutData.length} libraries with no data, then ${librariesWithData.length} with existing data`);
 
-    const allocation = scoringService.generateQuarterlyAllocation(
-      allMetrics,
-      totalPool,
-      currentQuarter
-    );
+    // Combine: no-data libraries first (baseline collection), then existing-data libraries (incremental updates)
+    const orderedLibraries = [...librariesWithoutData, ...librariesWithData];
 
-    // Cache the allocation
-    await cacheQuarterlyAllocation(allocation);
+    // Create initial status message
+    const initialMessage = librariesWithoutData.length > 0
+      ? `Prioritizing ${librariesWithoutData.length} new libraries, then updating ${librariesWithData.length} existing`
+      : `Updating ${librariesWithData.length} existing libraries`;
 
-    // Update last updated timestamp
-    await setLastUpdated();
-
-    // Release lock
-    await releaseCollectionLock();
-
-    // Set completion status
+    // Update status with prioritization info
     await setCollectionStatus({
-      status: 'completed',
-      message: `Completed: ${collected} collected, ${skipped} cached, ${failed} failed`,
-      progress: allMetrics.length,
-      total: ecosystemLibraries.length,
+      status: 'running',
+      message: initialMessage,
+      progress: 0,
+      total: orderedLibraries.length,
       startedAt: new Date().toISOString(),
-      completedAt: new Date().toISOString(),
     });
 
-    return NextResponse.json({
-      success: true,
-      mode: forceRefresh ? 'force' : 'incremental',
-      collected: collected,
-      cached: skipped,
-      failed: failed,
-      total: ecosystemLibraries.length,
-      period: currentQuarter,
-      timestamp: new Date().toISOString(),
-    });
+    // Start heartbeat to keep lock alive during long-running collection
+    // Refresh lock every 60 seconds (lock TTL is 120 seconds)
+    const lockHeartbeat = setInterval(async () => {
+      const lockAlive = await keepCollectionLockAlive();
+      if (!lockAlive) {
+        logger.warn('Collection lock heartbeat: Lock expired, attempting to reacquire');
+        const reacquired = await acquireCollectionLock();
+        if (reacquired) {
+          logger.info('Collection lock heartbeat: Successfully reacquired lock');
+        } else {
+          logger.error('Collection lock heartbeat: Failed to reacquire lock - another collection may have started');
+        }
+      } else {
+        logger.debug('Collection lock heartbeat: Lock refreshed');
+      }
+    }, 60000); // Every 60 seconds
+
+    // Start heartbeat to keep status alive during long-running collection
+    // Refresh status every 20 seconds (status TTL is 30 seconds)
+    let currentProgress = 0;
+    let currentTotal = orderedLibraries.length;
+    let currentMessage = initialMessage;
+
+    const statusHeartbeat = setInterval(async () => {
+      await setCollectionStatus({
+        status: 'running',
+        message: currentMessage,
+        progress: currentProgress,
+        total: currentTotal,
+        startedAt: new Date().toISOString(),
+      });
+      logger.debug('Collection status heartbeat: Status refreshed');
+    }, 20000); // Every 20 seconds
+
+    // Ensure heartbeats are cleared on exit
+    const cleanupHeartbeat = () => {
+      clearInterval(lockHeartbeat);
+      clearInterval(statusHeartbeat);
+      logger.debug('Collection heartbeats stopped');
+    };
+
+    try {
+      // Process in batches (match number of collectors for optimal throughput)
+      const batchSize = aggregator.getCollectorCount();
+      logger.info(`Processing libraries in batches of ${batchSize}`);
+
+      for (let i = 0; i < orderedLibraries.length; i += batchSize) {
+        const batch = orderedLibraries.slice(i, i + batchSize);
+
+      // Process batch in parallel
+      const batchResults = await Promise.allSettled(
+        batch.map(async (library) => {
+          try {
+            // Get cached activity data (permanent storage)
+            const cachedActivity = await getCachedLibraryActivity(library.owner, library.name);
+
+            // Collect or update activity (skip NPM for infrastructure repos)
+            const activity = await aggregator.collectLibraryActivity(
+              library.owner,
+              library.name,
+              library.name,
+              forceRefresh ? null : cachedActivity, // Force refresh ignores cache
+              library.hasNpmPackage !== false // Default to true if not specified
+            );
+
+            // Cache activity data (permanent, no TTL)
+            await cacheLibraryActivity(library.owner, library.name, activity);
+
+            // Convert activity to metrics (applies 12-month window)
+            const metrics = calculateMetricsFromActivity(activity);
+
+            // Cache calculated metrics (7 day TTL)
+            await cacheLibraryMetrics(library.owner, library.name, metrics);
+
+            return {
+              library,
+              metrics,
+              wasIncremental: !!(cachedActivity && !forceRefresh),
+            };
+          } catch (error) {
+            logger.error(`Error collecting ${library.owner}/${library.name}:`, error);
+
+            // Log error to Redis for admin review
+            await logCollectionError(
+              `${library.owner}/${library.name}`,
+              error instanceof Error ? error.message : String(error),
+              { owner: library.owner, repo: library.name }
+            );
+
+            throw error;
+          }
+        })
+      );
+
+      // Process results
+      for (const result of batchResults) {
+        if (result.status === 'fulfilled') {
+          const { metrics, wasIncremental } = result.value;
+          allMetrics.push(metrics);
+
+          if (wasIncremental) {
+            skipped++;
+          } else {
+            collected++;
+          }
+        } else {
+          failed++;
+        }
+      }
+
+      // Update progress after batch
+      currentProgress = collected + skipped + failed;
+
+      if (librariesWithoutData.length === 0) {
+        // Only updating existing libraries
+        currentMessage = `Updating existing: ${currentProgress}/${librariesWithData.length}`;
+      } else {
+        // Processing both new and existing
+        const isProcessingNewLibraries = currentProgress <= librariesWithoutData.length;
+        currentMessage = isProcessingNewLibraries
+          ? `Collecting new libraries: ${currentProgress}/${librariesWithoutData.length} (${librariesWithData.length} existing will be updated next)`
+          : `Updating existing: ${currentProgress - librariesWithoutData.length}/${librariesWithData.length} (${librariesWithoutData.length} new libraries collected)`;
+      }
+
+      await setCollectionStatus({
+        status: 'running',
+        message: currentMessage,
+        progress: currentProgress,
+        total: currentTotal,
+        startedAt: new Date().toISOString(),
+      });
+
+        logger.debug(`Batch complete: ${collected} full, ${skipped} incremental, ${failed} failed / ${orderedLibraries.length} total`);
+      }
+
+      // Calculate RIS scores and allocation
+      logger.debug('Calculating RIS scores and allocation...');
+      const scoringService = new RISScoringService();
+      const currentQuarter = getCurrentQuarter();
+      const totalPool = 1_000_000; // $1M default pool
+
+      // Get proration data for mid-quarter approved libraries
+      const { getQuarterDates, getLibraryApprovalDates } = await import('@/lib/ris/proration-helpers');
+      const { start: quarterStart, end: quarterEnd } = getQuarterDates(currentQuarter);
+      const approvalDates = await getLibraryApprovalDates(currentQuarter);
+
+      // Calculate all scores (including ineligible ones for debugging)
+      const allScores = scoringService.calculateScores(allMetrics);
+      logger.info(`📊 RIS Score Calculation Results:
+  - Total libraries processed: ${allScores.length}
+  - Eligibility threshold: 0.15 (15%)
+  - Libraries above threshold: ${allScores.filter(s => s.ris >= 0.15).length}
+  - Libraries below threshold: ${allScores.filter(s => s.ris < 0.15).length}
+`);
+
+      // Log top 5 scores
+      const sortedScores = [...allScores].sort((a, b) => b.ris - a.ris);
+      logger.info(`🏆 Top 5 RIS Scores:
+${sortedScores.slice(0, 5).map((s, i) => `  ${i + 1}. ${s.libraryName}: ${(s.ris * 100).toFixed(2)}%`).join('\n')}`);
+
+      // Log bottom 5 scores
+      logger.warn(`⚠️ Bottom 5 RIS Scores:
+${sortedScores.slice(-5).reverse().map((s, i) => `  ${i + 1}. ${s.libraryName}: ${(s.ris * 100).toFixed(2)}%`).join('\n')}`);
+
+      // Log libraries filtered out by eligibility threshold
+      const belowThreshold = allScores.filter(s => s.ris < 0.15);
+      if (belowThreshold.length > 0) {
+        logger.warn(`❌ ${belowThreshold.length} libraries below 15% threshold will receive $0 allocation`);
+      }
+
+      const allocation = scoringService.generateQuarterlyAllocation(
+        allMetrics,
+        totalPool,
+        currentQuarter,
+        undefined, // previousScores
+        quarterStart,
+        quarterEnd,
+        approvalDates
+      );
+
+      // Log allocation results
+      logger.info(`💰 Allocation Results:
+  - Libraries receiving funding: ${allocation.libraries.length}
+  - Total pool: $${(allocation.total_pool_usd / 1000).toFixed(0)}K
+  - Average allocation: ${allocation.libraries.length > 0 ? `$${Math.round(allocation.total_pool_usd / allocation.libraries.length / 1000)}K` : 'N/A'}
+`);
+
+      // Cache the allocation
+      await cacheQuarterlyAllocation(allocation);
+
+      // Update last updated timestamp
+      await setLastUpdated();
+
+      // Release lock
+      await releaseCollectionLock();
+
+      // Set completion status
+      await setCollectionStatus({
+        status: 'completed',
+        message: `Completed: ${librariesWithoutData.length} new libraries collected, ${librariesWithData.length} existing updated (${failed} failed)`,
+        progress: allMetrics.length,
+        total: orderedLibraries.length,
+        startedAt: new Date().toISOString(),
+        completedAt: new Date().toISOString(),
+      });
+
+      return NextResponse.json({
+        success: true,
+        mode: forceRefresh ? 'force' : 'incremental',
+        collected: collected,
+        cached: skipped,
+        failed: failed,
+        newLibraries: librariesWithoutData.length,
+        existingLibraries: librariesWithData.length,
+        total: orderedLibraries.length,
+        period: currentQuarter,
+        timestamp: new Date().toISOString(),
+      });
+    } finally {
+      // Always cleanup heartbeat, even on error
+      cleanupHeartbeat();
+    }
   } catch (error) {
     logger.error('Collection error:', error);
 

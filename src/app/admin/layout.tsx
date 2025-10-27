@@ -1,54 +1,37 @@
 /**
- * Admin Layout - Server Component
- * Checks admin access before rendering admin UI
+ * Admin Layout
+ * Renders admin shell immediately, checks auth in background
  */
 
-import { redirect } from 'next/navigation';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/lib/auth';
-import { UserManagementService } from '@/lib/admin/user-management-service';
+import { Suspense } from 'react';
 import { AdminSidebar } from './admin-sidebar';
+import { AdminAuthGuard } from './admin-auth-guard';
 
-export default async function AdminLayout({
+/**
+ * Layout renders immediately - just the shell
+ * Auth check happens inside Suspense boundary
+ */
+export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const session = await getServerSession(authOptions);
-
-  // Redirect to sign in if not authenticated
-  if (!session?.user?.email) {
-    redirect('/api/auth/signin');
-  }
-
-  // Check if user is admin
-  const isAdmin = await UserManagementService.isAdmin(session.user.email);
-
-  // Show access denied if not admin
-  if (!isAdmin) {
-    return (
-      <div className="container mx-auto max-w-4xl px-4 py-12 mt-20">
-        <div className="rounded-xl border border-destructive/50 bg-destructive/10 p-6 text-center">
-          <h1 className="text-2xl font-bold text-red-400 mb-2">Access Denied</h1>
-          <p className="text-red-400/80">Admin role required to access this area.</p>
-          <p className="text-foreground/60 mt-4 text-sm">
-            If you believe you should have access, please contact the administrator.
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  // Render admin UI for authorized users
-  // Classic fixed layout: header (fixed), sidebar (fixed), content (scrollable container)
   return (
     <>
-      {/* Sidebar - fixed to left */}
+      {/* Sidebar - renders immediately */}
       <AdminSidebar />
 
-      {/* Content - fixed container with internal scroll */}
+      {/* Content - streams in after auth check */}
       <div className="fixed top-16 bottom-0 left-16 lg:left-64 right-0 overflow-y-auto bg-background">
-        {children}
+        <Suspense
+          fallback={
+            <div className="flex items-center justify-center h-full">
+              <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
+            </div>
+          }
+        >
+          <AdminAuthGuard>{children}</AdminAuthGuard>
+        </Suspense>
       </div>
     </>
   );

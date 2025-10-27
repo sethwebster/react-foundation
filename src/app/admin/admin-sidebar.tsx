@@ -16,7 +16,7 @@ export function AdminSidebar() {
   const navItems = [
     { href: '/admin', label: 'Home', icon: '🏠', exact: true },
     { href: '/admin/data', label: 'Data', icon: '📊' },
-    { href: '/admin/ingest-full', label: 'Ingest', icon: '🤖' },
+    { href: '/admin/ingest-full', label: 'Context', icon: '🤖' },
     { href: '/admin/users', label: 'Users', icon: '👥' },
     { href: '/admin/requests', label: 'Requests', icon: '📧' },
     { href: '/admin/reset', label: 'Reset', icon: '⚠️', dangerous: true },
@@ -66,6 +66,7 @@ export function AdminSidebar() {
                 <Link
                   key={item.href}
                   href={item.href}
+                  prefetch={false}
                   onClick={() => setIsExpanded(false)}
                   title={!isExpanded ? item.label : undefined}
                   className={`flex items-center ${isExpanded ? 'gap-3' : 'justify-center lg:justify-start lg:gap-3'} rounded-lg px-2 lg:px-4 py-2 lg:py-3 text-sm font-medium transition ${
@@ -89,6 +90,7 @@ export function AdminSidebar() {
         <div className="border-t border-border pt-4 lg:pt-6 mt-auto pb-4">
           <Link
             href="/"
+            prefetch={false}
             title="Back to Site"
             className={`flex items-center ${isExpanded ? 'gap-2' : 'justify-center lg:justify-start lg:gap-2'} text-sm text-muted-foreground transition hover:text-foreground`}
           >

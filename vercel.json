@@ -3,6 +3,10 @@
     {
       "path": "/api/ris/collect",
       "schedule": "0 2 * * *"
+    },
+    {
+      "path": "/api/ris/process-webhooks",
+      "schedule": "*/2 * * * *"
     }
   ]
 }

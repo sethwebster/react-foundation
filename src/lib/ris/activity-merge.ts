@@ -23,6 +23,7 @@ export function mergeActivityData(
     forks: number;
     is_archived: boolean;
     last_commit_date: string;
+    gh_dependents: number;
     npm_downloads_12mo: number;
     npm_dependents: number;
     cdn_hits_12mo: number;
