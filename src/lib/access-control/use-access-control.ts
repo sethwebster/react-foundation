@@ -12,16 +12,47 @@ import { AccessControlService } from './access-control-service';
 
 /**
  * Hook to check if current user has access
+ * Uses server-side API to check Redis allowlist (consistent with proxy)
  */
 export function useAccessControl() {
   const { data: session, status } = useSession();
+  const [isAllowed, setIsAllowed] = useState(false);
+  const [reason, setReason] = useState<'not-authenticated' | 'not-on-allowlist' | 'allowed'>('not-authenticated');
 
-  const accessCheck = AccessControlService.checkUserAccess(session);
+  useEffect(() => {
+    async function checkAccess() {
+      if (status === 'loading') {
+        return;
+      }
+
+      if (status === 'unauthenticated') {
+        setIsAllowed(false);
+        setReason('not-authenticated');
+        return;
+      }
+
+      if (status === 'authenticated') {
+        try {
+          const response = await fetch('/api/check-access');
+          const data = await response.json();
+
+          setIsAllowed(data.isAllowed);
+          setReason(data.reason);
+        } catch {
+          console.error('Error checking access');
+          setIsAllowed(false);
+          setReason('not-on-allowlist');
+        }
+      }
+    }
+
+    checkAccess();
+  }, [status]);
 
   return {
-    isAllowed: accessCheck.isAllowed,
-    reason: accessCheck.reason,
-    userEmail: accessCheck.userEmail,
+    isAllowed,
+    reason,
+    userEmail: session?.user?.email,
     isLoading: status === 'loading',
     isAuthenticated: status === 'authenticated',
   };

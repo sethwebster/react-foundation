@@ -25,7 +25,6 @@ export default function ComingSoonPage() {
   useComingSoonRedirect(); // Auto-redirects if allowlisted
 
   const {
-    email,
     setEmail,
     message,
     setMessage,
