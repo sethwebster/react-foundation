@@ -306,17 +306,18 @@ export async function isCollectionLocked(): Promise<boolean> {
  * Set collection status
  */
 export async function setCollectionStatus(status: {
-  status: 'running' | 'completed' | 'failed';
+  status: 'running' | 'completed' | 'failed' | 'rate_limited';
   message?: string;
   progress?: number;
   total?: number;
   startedAt?: string;
   completedAt?: string;
+  rateLimitResetAt?: string;
 }): Promise<void> {
   const client = getRedisClient();
   const key = REDIS_KEYS.collectionStatus;
 
-  // Status TTL: 5 minutes for completed/failed, kept alive during running
+  // Status TTL: 5 minutes for completed/failed/rate_limited, kept alive during running
   const ttl = status.status === 'running' ? 30 : 5 * 60;
 
   await client.setex(

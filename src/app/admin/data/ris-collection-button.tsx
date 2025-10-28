@@ -13,6 +13,7 @@ interface CollectionStatus {
   total?: number;
   startedAt?: string;
   completedAt?: string;
+  rateLimitResetAt?: string;
 }
 
 export function RISCollectionButton() {
@@ -44,6 +45,12 @@ export function RISCollectionButton() {
               }, 2000);
             }
           }
+
+          // For rate_limited, keep polling to check if we can auto-resume
+          if (data.status.status === 'rate_limited') {
+            setIsRunning(false); // Stop the "running" indicator
+            // Don't stop polling - we'll check for auto-resume below
+          }
         }
       } catch (err) {
         console.error('Error polling status:', err);
@@ -58,6 +65,32 @@ export function RISCollectionButton() {
 
     return () => clearInterval(interval);
   }, [isRunning]);
+
+  // Separate effect for auto-resuming after rate limit
+  useEffect(() => {
+    if (!status || status.status !== 'rate_limited' || !status.rateLimitResetAt) return;
+
+    const checkAndResume = async () => {
+      const resetTime = new Date(status.rateLimitResetAt!).getTime();
+      const now = Date.now();
+
+      // If reset time has passed, automatically restart collection
+      if (now >= resetTime) {
+        console.log('Rate limit has expired, auto-resuming collection...');
+        setStatus(null);
+        setError(null);
+        await handleStartCollection(false);
+      }
+    };
+
+    // Check every 30 seconds if we can resume
+    const interval = setInterval(checkAndResume, 30000);
+
+    // Check immediately in case reset time already passed
+    checkAndResume();
+
+    return () => clearInterval(interval);
+  }, [status]);
 
   const handleStartCollection = async (forceRefresh = false) => {
     setError(null);
@@ -133,12 +166,15 @@ export function RISCollectionButton() {
             ? 'border-success/50 bg-success/10 text-success-foreground'
             : status.status === 'failed'
             ? 'border-destructive/50 bg-destructive/10 text-destructive-foreground'
+            : status.status === 'rate_limited'
+            ? 'border-warning/50 bg-warning/10 text-warning-foreground'
             : 'border-primary/50 bg-primary/10 text-primary-foreground'
         }`}>
           <div className="flex items-center justify-between mb-2">
             <span className="font-semibold">
               {status.status === 'completed' ? '✅ Completed' :
                status.status === 'failed' ? '❌ Failed' :
+               status.status === 'rate_limited' ? '⏸️  Rate Limited' :
                '⏳ Running'}
             </span>
             {status.progress !== undefined && status.total !== undefined && (
@@ -158,6 +194,17 @@ export function RISCollectionButton() {
           )}
           {status.status === 'completed' && (
             <p className="text-xs mt-2 opacity-70">Page will refresh in 2 seconds...</p>
+          )}
+          {status.status === 'rate_limited' && status.rateLimitResetAt && (
+            <div className="mt-2 pt-2 border-t border-warning/30">
+              <p className="text-xs font-semibold">⏰ Automatic resumption at:</p>
+              <p className="text-sm font-mono mt-1">
+                {new Date(status.rateLimitResetAt).toLocaleTimeString()}
+              </p>
+              <p className="text-xs mt-1 opacity-70">
+                Collection will automatically restart at this time. You can also manually click "Start Collection" after the reset time.
+              </p>
+            </div>
           )}
         </div>
       )}

@@ -265,12 +265,25 @@ export async function POST(request: NextRequest) {
               wasIncremental: !!(cachedActivity && !forceRefresh),
             };
           } catch (error) {
-            logger.error(`Error collecting ${library.owner}/${library.name}:`, error);
+            const errorMsg = error instanceof Error ? error.message : String(error);
+            logger.error(`Error collecting ${library.owner}/${library.name}:`, errorMsg);
+
+            // Check if this is a rate limit error
+            if (errorMsg.includes('rate limit exceeded')) {
+              // Extract reset time from error message
+              const resetMatch = errorMsg.match(/Resets in (\d+) minutes/);
+              const minutesUntilReset = resetMatch ? parseInt(resetMatch[1]) : 60;
+
+              logger.error(`🚫 GitHub API rate limit exceeded! Will reset in ${minutesUntilReset} minutes`);
+
+              // Store rate limit info and stop collection
+              throw new Error(`RATE_LIMIT_EXCEEDED:${minutesUntilReset}`);
+            }
 
             // Log error to Redis for admin review
             await logCollectionError(
               `${library.owner}/${library.name}`,
-              error instanceof Error ? error.message : String(error),
+              errorMsg,
               { owner: library.owner, repo: library.name }
             );
 
@@ -279,7 +292,10 @@ export async function POST(request: NextRequest) {
         })
       );
 
-      // Process results
+      // Process results and check for rate limit errors
+      let rateLimitHit = false;
+      let rateLimitMinutes = 60;
+
       for (const result of batchResults) {
         if (result.status === 'fulfilled') {
           const { metrics, wasIncremental } = result.value;
@@ -291,8 +307,47 @@ export async function POST(request: NextRequest) {
             collected++;
           }
         } else {
+          // Check if this failure is due to rate limiting
+          const errorMsg = result.reason instanceof Error ? result.reason.message : String(result.reason);
+          if (errorMsg.startsWith('RATE_LIMIT_EXCEEDED:')) {
+            rateLimitHit = true;
+            rateLimitMinutes = parseInt(errorMsg.split(':')[1]) || 60;
+            logger.error(`🚫 Rate limit detected in batch, stopping collection`);
+            break; // Stop processing immediately
+          }
           failed++;
         }
+      }
+
+      // If rate limit hit, stop all processing
+      if (rateLimitHit) {
+        const resumeTime = new Date(Date.now() + rateLimitMinutes * 60 * 1000);
+        const resumeTimeStr = resumeTime.toLocaleTimeString();
+
+        await setCollectionStatus({
+          status: 'rate_limited',
+          message: `⏸️  GitHub API rate limit reached. Collection will automatically resume at ${resumeTimeStr} (in ${rateLimitMinutes} minutes). Collected ${collected} of ${currentTotal} libraries before limit.`,
+          progress: currentProgress,
+          total: currentTotal,
+          startedAt: new Date().toISOString(),
+          rateLimitResetAt: resumeTime.toISOString(),
+        });
+
+        cleanupHeartbeat();
+        await releaseCollectionLock();
+
+        logger.info(`⏸️  Collection paused due to rate limit. Resume at: ${resumeTimeStr}`);
+
+        return NextResponse.json({
+          success: false,
+          rateLimited: true,
+          collected,
+          skipped,
+          failed,
+          total: ecosystemLibraries.length,
+          message: `Rate limit reached after ${collected} libraries. Will reset in ${rateLimitMinutes} minutes at ${resumeTimeStr}`,
+          resumeAt: resumeTime.toISOString(),
+        });
       }
 
       // Update progress after batch
