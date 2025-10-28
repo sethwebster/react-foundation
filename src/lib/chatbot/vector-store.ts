@@ -255,10 +255,40 @@ export async function listAllIndices(redis: Redis): Promise<IndexMetadata[]> {
 }
 
 /**
+ * Check if Redis has RediSearch module loaded
+ */
+async function checkRedisSearchAvailable(redis: Redis): Promise<boolean> {
+  try {
+    // Try to list indices - if RediSearch is available, this will work
+    await redis.call('FT._LIST');
+    return true;
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+
+    // Check if it's an "unknown command" error
+    if (message.includes('unknown command') || message.includes('ERR unknown')) {
+      logger.error('Redis Stack / RediSearch module not available. Chatbot will not work.');
+      logger.error('Please ensure you are using Redis Stack, not regular Redis.');
+      logger.error('See: https://redis.io/docs/getting-started/install-stack/');
+      return false;
+    }
+
+    // Some other error - rethrow
+    throw error;
+  }
+}
+
+/**
  * Ensure current index exists, or create default one
  * Used for backward compatibility and initial setup
  */
 export async function ensureVectorIndexIfMissing(redis: Redis): Promise<void> {
+  // First check if RediSearch is available
+  const hasRediSearch = await checkRedisSearchAvailable(redis);
+  if (!hasRediSearch) {
+    throw new Error('Redis Stack / RediSearch module not available. Cannot use vector search.');
+  }
+
   const env = getEnv();
   const dimensions = getEmbeddingDimensions(env.embeddingModel);
 
