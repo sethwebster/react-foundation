@@ -26,7 +26,9 @@
     "admin:bootstrap": "node --env-file=.env scripts/bootstrap-admin.mjs",
     "admin:seed-test-users": "node --env-file=.env scripts/seed-admin-test-users.mjs",
     "admin:migrate-users": "node --env-file=.env scripts/migrate-users-to-roles-array.mjs",
-    "seed:communities": "npx tsx scripts/seed-communities.ts"
+    "seed:communities": "npx tsx scripts/seed-communities.ts",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "dependencies": {
     "@icons-pack/react-simple-icons": "^13.8.0",
@@ -50,11 +52,13 @@
     "@types/react-leaflet": "^2.8.3",
     "babel-plugin-react-compiler": "^1.0.0",
     "chart.js": "^4.5.1",
+    "framer-motion": "^12.23.24",
     "gray-matter": "^4.0.3",
     "ioredis": "^5.8.2",
     "jsdom": "^27.0.1",
     "leaflet": "^1.9.4",
     "linkedom": "^0.18.12",
+    "lucide-react": "^0.548.0",
     "next": "^16.0.0",
     "next-auth": "^4.24.11",
     "next-mdx-remote": "^5.0.0",
@@ -73,7 +77,12 @@
     "three": "^0.180.0"
   },
   "devDependencies": {
+    "@chromatic-com/storybook": "^4.1.1",
     "@eslint/eslintrc": "^3",
+    "@storybook/addon-a11y": "^10.0.0",
+    "@storybook/addon-docs": "^10.0.0",
+    "@storybook/addon-onboarding": "^10.0.0",
+    "@storybook/addon-vitest": "^10.0.0",
     "@tailwindcss/postcss": "^4",
     "@types/leaflet": "^1.9.21",
     "@types/node": "^20",
@@ -81,8 +90,15 @@
     "@types/react-dom": "^19.2.2",
     "eslint": "^9",
     "eslint-config-next": "^16.0.0",
+    "eslint-plugin-storybook": "^10.0.0",
     "sharp": "^0.34.4",
+    "storybook": "^10.0.0",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "@storybook/nextjs-vite": "^10.0.0",
+    "vitest": "^4.0.4",
+    "playwright": "^1.56.1",
+    "@vitest/browser-playwright": "^4.0.4",
+    "@vitest/coverage-v8": "^4.0.4"
   }
 }

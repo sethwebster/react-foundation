@@ -30,6 +30,7 @@ export default function ComingSoonPage() {
     setMessage,
     isSubmitting,
     submitted,
+    error,
     submitRequest,
   } = useAccessRequest();
 
@@ -175,6 +176,11 @@ export default function ComingSoonPage() {
               <div className="rounded-xl border border-primary/50 bg-slate-900/90 p-6 backdrop-blur-sm">
                 {!submitted ? (
                   <form onSubmit={handleRequestAccess} className="space-y-4">
+                    {error && (
+                      <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4">
+                        <p className="text-sm text-red-400 font-semibold">{error}</p>
+                      </div>
+                    )}
                     <div>
                       <label className="mb-2 block text-left text-sm font-semibold uppercase tracking-wider text-cyan-400">
                         GitHub Account
@@ -192,16 +198,20 @@ export default function ComingSoonPage() {
                     </div>
                     <div>
                       <label className="mb-2 block text-left text-sm font-semibold uppercase tracking-wider text-cyan-400">
-                        Why do you want access?
+                        Why do you want access? <span className="text-xs font-normal text-cyan-500/60">(minimum 10 characters)</span>
                       </label>
                       <textarea
                         required
+                        minLength={10}
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
                         rows={4}
                         className="w-full rounded-lg border border-primary/50 bg-slate-900/50 px-4 py-3 font-mono text-cyan-100 placeholder-cyan-500/30 outline-none focus:border-cyan-400 focus:ring-2 focus:ring-cyan-400/50"
                         placeholder="Tell us about your involvement in the React ecosystem..."
                       />
+                      <p className="mt-1 text-xs text-cyan-500/60">
+                        {message.trim().length}/10 characters minimum
+                      </p>
                     </div>
                     <button
                       type="submit"

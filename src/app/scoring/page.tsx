@@ -29,15 +29,9 @@ export default function ScoringPage() {
   return (
     <div className="min-h-screen bg-background pt-20">
       <div className="container mx-auto max-w-7xl px-4 py-12">
-        <div className="flex gap-8">
-          {/* Sidebar TOC - hidden on mobile */}
-          <aside className="hidden lg:block w-64 flex-shrink-0">
-            <RFDS.TableOfContents sections={sections} />
-          </aside>
-
+        <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-start">
           {/* Main content */}
-          <div className="flex-1 max-w-4xl">
-        <div className="space-y-8">
+          <div className="space-y-8 lg:max-w-4xl">
           {/* Hero */}
           <div className="text-center">
             <h1 className="text-4xl font-bold text-foreground sm:text-5xl">
@@ -53,6 +47,7 @@ export default function ScoringPage() {
 
           {/* The Big Idea */}
           <div id="big-idea">
+          <RFDS.ScrollReveal animation="fade-up">
           <Section
             title="The Big Idea 💡"
             icon="🎯"
@@ -69,10 +64,12 @@ export default function ScoringPage() {
               Instead of just counting how many nails someone hammered, we look at the <em>full picture</em> of their contribution.
             </p>
           </Section>
+          </RFDS.ScrollReveal>
           </div>
 
           {/* What We Measure */}
           <div id="what-we-measure">
+          <RFDS.ScrollReveal animation="fade-up" delay={100}>
           <Section
             title="What We Measure 📊"
             icon="🔍"
@@ -83,6 +80,7 @@ export default function ScoringPage() {
             </p>
 
             <div className="space-y-6">
+              <RFDS.ScrollReveal animation="fade-up" delay={100}>
               <ScoreComponent
                 number={1}
                 title="Ecosystem Footprint (30%)"
@@ -100,7 +98,9 @@ export default function ScoringPage() {
                   Why it matters: If lots of people rely on something, it's super important to keep it working!
                 </p>
               </ScoreComponent>
+              </RFDS.ScrollReveal>
 
+              <RFDS.ScrollReveal animation="fade-up" delay={150}>
               <ScoreComponent
                 number={2}
                 title="Contribution Quality (25%)"
@@ -118,7 +118,9 @@ export default function ScoringPage() {
                   Why it matters: Quality beats quantity! One awesome fix is better than 100 tiny, unhelpful changes.
                 </p>
               </ScoreComponent>
+              </RFDS.ScrollReveal>
 
+              <RFDS.ScrollReveal animation="fade-up" delay={200}>
               <ScoreComponent
                 number={3}
                 title="Maintainer Health (20%)"
@@ -136,7 +138,9 @@ export default function ScoringPage() {
                   Why it matters: We want libraries to last for years, not crash and burn because one person gets tired.
                 </p>
               </ScoreComponent>
+              </RFDS.ScrollReveal>
 
+              <RFDS.ScrollReveal animation="fade-up" delay={250}>
               <ScoreComponent
                 number={4}
                 title="Community Benefit (15%)"
@@ -154,7 +158,9 @@ export default function ScoringPage() {
                   Why it matters: When people help others learn, everyone in the community gets smarter!
                 </p>
               </ScoreComponent>
+              </RFDS.ScrollReveal>
 
+              <RFDS.ScrollReveal animation="fade-up" delay={300}>
               <ScoreComponent
                 number={5}
                 title="Mission Alignment (10%)"
@@ -173,12 +179,15 @@ export default function ScoringPage() {
                   Why it matters: We want to support libraries that help React's vision for the future!
                 </p>
               </ScoreComponent>
+              </RFDS.ScrollReveal>
             </div>
           </Section>
+          </RFDS.ScrollReveal>
           </div>
 
           {/* How We Calculate */}
           <div id="how-we-calculate">
+          <RFDS.ScrollReveal animation="fade-up" delay={100}>
           <Section
             title="How We Calculate the Score 🧮"
             icon="📐"
@@ -211,10 +220,12 @@ export default function ScoringPage() {
               Each library gets a score from 0% to 100%. The higher the score, the bigger the impact!
             </p>
           </Section>
+          </RFDS.ScrollReveal>
           </div>
 
           {/* How We Share Money */}
           <div id="how-we-share">
+          <RFDS.ScrollReveal animation="fade-up" delay={100}>
           <Section
             title="How We Share Funding 💰"
             icon="🤝"
@@ -246,10 +257,12 @@ export default function ScoringPage() {
               </p>
             </div>
           </Section>
+          </RFDS.ScrollReveal>
           </div>
 
           {/* Why This Is Fair */}
           <div id="why-fair">
+          <RFDS.ScrollReveal animation="fade-up" delay={100}>
           <Section
             title="Why This System Is Fair 🌟"
             icon="⚖️"
@@ -281,9 +294,11 @@ export default function ScoringPage() {
               </BenefitCard>
             </div>
           </Section>
+          </RFDS.ScrollReveal>
           </div>
 
           {/* Final Thought */}
+          <RFDS.ScrollReveal animation="fade-up" delay={100}>
           <div className="rounded-2xl border border-primary/30 bg-primary/10 p-8 text-center">
             <p className="text-lg font-medium text-foreground">
               🎯 Our goal is simple: <strong>Reward the libraries that make the biggest positive impact</strong> on the React community.
@@ -292,11 +307,13 @@ export default function ScoringPage() {
               By measuring impact fairly and sharing funding transparently, we help amazing open source projects thrive!
             </p>
           </div>
+          </RFDS.ScrollReveal>
 
           <div className="border-t border-border/20 pt-12"></div>
 
           {/* Eligibility for RIS Funding */}
           <div id="eligibility">
+          <RFDS.ScrollReveal animation="fade-up" delay={100}>
           <Section
             title="Eligibility for RIS Funding 🧭"
             icon="✅"
@@ -433,12 +450,14 @@ export default function ScoringPage() {
               </div>
             </div>
           </Section>
+          </RFDS.ScrollReveal>
           </div>
 
           <div className="border-t border-border/20 pt-12"></div>
 
           {/* Current Implementation Status */}
           <div id="implementation">
+          <RFDS.ScrollReveal animation="fade-up" delay={100}>
           <Section
             title="Current Implementation Status 🚧"
             icon="📋"
@@ -511,11 +530,13 @@ export default function ScoringPage() {
               </div>
             </div>
           </Section>
+          </RFDS.ScrollReveal>
           </div>
 
           <div className="border-t border-border/20 pt-12"></div>
 
           {/* Anti-Gaming Measures */}
+          <RFDS.ScrollReveal animation="fade-up" delay={100}>
           <Section
             title="Anti-Gaming & Fair Play 🛡️"
             icon="🔒"
@@ -590,10 +611,12 @@ export default function ScoringPage() {
               </div>
             </div>
           </Section>
+          </RFDS.ScrollReveal>
 
           <div className="border-t border-border/20 pt-12"></div>
 
           {/* GitHub App Installation Section */}
+          <RFDS.ScrollReveal animation="fade-up" delay={100}>
           <Section
             title="Want Your Library Included? 📲"
             icon="🚀"
@@ -687,10 +710,12 @@ export default function ScoringPage() {
               </div>
             </div>
           </Section>
+          </RFDS.ScrollReveal>
         </div>
 
         {/* Live Status Dashboard */}
         <div id="tracked-libraries">
+        <RFDS.ScrollReveal animation="fade-up" delay={100}>
         <div className="mt-12">
           <h2 className="mb-6 flex items-center gap-3 text-2xl font-bold text-foreground sm:text-3xl">
             <span className="text-3xl">📊</span>
@@ -701,12 +726,14 @@ export default function ScoringPage() {
           </p>
           <InstallationStatusDashboard />
         </div>
-        </div>
+        </RFDS.ScrollReveal>
         </div>
       </div>
+        {/* Sidebar TOC */}
+        <RFDS.TableOfContents sections={sections} />
+        </div>
       </div>
     </div>
-  </div>
   );
 }
 

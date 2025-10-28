@@ -88,7 +88,7 @@ export default function CommunitiesPage() {
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
             {/* Filters Sidebar */}
             <aside className="lg:col-span-1">
-              <div className="sticky top-4">
+              <div className="sticky top-24">
                 <Suspense fallback={<FiltersSkeleton />}>
                   <CommunityFilters />
                 </Suspense>
