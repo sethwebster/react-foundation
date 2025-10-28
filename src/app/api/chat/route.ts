@@ -377,20 +377,7 @@ async function handleToolCalls(
   }
 ): Promise<HandleToolCallResult> {
   const openai = getOpenAIClient();
-
-  // Check if vector index is available
-  try {
-    await ensureVectorIndexIfMissing(redisClient);
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    if (message.includes('RediSearch') || message.includes('Redis Stack')) {
-      logger.error('Redis Stack not available, vector search disabled');
-      // Continue without vector search capability
-    } else {
-      throw error;
-    }
-  }
-
+  await ensureVectorIndexIfMissing(redisClient);
   const messages: ChatCompletionMessageParam[] = [];
   const citations: RetrievalResult[] = [];
   let issue: HandleToolCallResult['issue'];
