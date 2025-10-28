@@ -30,9 +30,10 @@ save 900 1
 save 300 10
 stop-writes-on-bgsave-error yes
 
-# ---- Replication safety hints (for when replicas are attached) ----
-min-replicas-to-write 1
-min-replicas-max-lag 3
+# ---- Replication safety (disabled for standalone instance) ----
+# Only enable these if running Redis in a replicated cluster:
+# min-replicas-to-write 1
+# min-replicas-max-lag 3
 
 # ---- Memory / eviction ----
 maxmemory-policy noeviction
