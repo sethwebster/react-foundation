@@ -1,0 +1,63 @@
+# Redis Stack Server (RediSearch, RedisJSON, etc.)
+FROM redis/redis-stack-server:latest
+
+# Persisted data lives here — map this to a named volume in CapRover
+VOLUME ["/data"]
+
+# ------------------------------
+# redis.conf (durable + safe)
+# ------------------------------
+RUN set -eux; mkdir -p /etc/redis; cat > /etc/redis/redis.conf <<'EOF'
+# ---- Redis Stack Modules (CRITICAL!) ----
+loadmodule /opt/redis-stack/lib/redisearch.so
+loadmodule /opt/redis-stack/lib/redistimeseries.so
+loadmodule /opt/redis-stack/lib/rejson.so
+loadmodule /opt/redis-stack/lib/redisbloom.so
+
+# ---- Durability ----
+dir /data
+dbfilename dump.rdb
+appendfilename "appendonly.aof"
+
+appendonly yes
+appendfsync everysec              # use 'always' for max safety (slower)
+aof-use-rdb-preamble yes
+auto-aof-rewrite-percentage 100
+auto-aof-rewrite-min-size 64mb
+
+# RDB checkpoints (fast restarts / fallback)
+save 900 1
+save 300 10
+stop-writes-on-bgsave-error yes
+
+# ---- Replication safety hints (for when replicas are attached) ----
+min-replicas-to-write 1
+min-replicas-max-lag 3
+
+# ---- Memory / eviction ----
+maxmemory-policy noeviction
+
+# ---- Logging to stdout (so CapRover shows logs) ----
+logfile ""
+loglevel notice
+
+# ---- Security / misc ----
+protected-mode yes
+latency-monitor-threshold 0
+EOF
+
+# ------------------------------
+# Healthcheck
+# ------------------------------
+HEALTHCHECK --interval=30s --timeout=5s --retries=5 CMD \
+  sh -c 'if [ -n "$REDIS_PASSWORD" ]; then redis-cli -a "$REDIS_PASSWORD" ping | grep -qi PONG; else redis-cli ping | grep -qi PONG; fi' || exit 1
+
+EXPOSE 6379
+
+# Set via CapRover → Environment Variables
+ENV REDIS_PASSWORD=""
+
+# ------------------------------
+# One-line CMD (CapRover-safe)
+# ------------------------------
+CMD bash -c "echo 'Starting Redis primary (AOF+RDB, Redis Stack)'; if [ -n \"$REDIS_PASSWORD\" ]; then exec redis-server /etc/redis/redis.conf --requirepass \"$REDIS_PASSWORD\"; else exec redis-server /etc/redis/redis.conf; fi"
