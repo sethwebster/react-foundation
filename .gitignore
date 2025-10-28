@@ -49,3 +49,6 @@ next-env.d.ts
 
 # cache
 /.cache
+
+*storybook.log
+storybook-static
