@@ -1,8 +1,8 @@
 # Redis Stack Server (RediSearch, RedisJSON, etc.)
 FROM redis/redis-stack-server:latest
 
-# Persisted data lives here — map this to a named volume in CapRover
-VOLUME ["/data"]
+# Persisted data lives here — configure as Persistent Directory in CapRover
+# Do NOT use VOLUME directive - let CapRover manage the volume
 
 # ------------------------------
 # redis.conf (durable + safe)
