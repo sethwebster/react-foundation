@@ -55,6 +55,7 @@ Development guides and best practices:
 - **[Theming](./development/theming.md)** - Semantic theming system
 - **[RIS Setup](./development/ris-setup.md)** - React Impact Score data collection
 - **[Ecosystem Libraries](./development/ecosystem-libraries.md)** - Tracked React libraries
+- **[GitHub Bot Setup](./development/github-bot-setup.md)** - Bot account for reduced OAuth scopes
 
 ---
 

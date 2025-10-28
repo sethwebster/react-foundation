@@ -12,8 +12,8 @@ export const authOptions: NextAuthOptions = {
       authorization: {
         params: {
           // read:user and user:email for profile info
-          // public_repo allows creating issues/PRs in public repos on user's behalf
-          scope: "read:user user:email public_repo",
+          // Bot account handles write operations (issues/PRs)
+          scope: "read:user user:email",
         },
       },
     }),

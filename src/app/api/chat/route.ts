@@ -11,6 +11,7 @@ import { authOptions } from '@/lib/auth';
 import { getOpenAIClient, getResponseModel, getEmbeddingModel } from '@/lib/chatbot/openai';
 import { ensureVectorIndexIfMissing, searchSimilar } from '@/lib/chatbot/vector-store';
 import { ChatbotIssueError, createIssue } from '@/lib/chatbot/github';
+import { fileIssue } from '@/lib/github-bot';
 import {
   appendMessage,
   createConversation,
@@ -23,6 +24,7 @@ import { notifyHumanHandoff } from '@/lib/chatbot/handoff';
 import { ChatRequestSchema, type ChatResponse, type RetrievalResult } from '@/lib/chatbot/types';
 import { logger } from '@/lib/logger';
 import { getRedisClient } from '@/lib/redis';
+import { getChatbotEnv } from '@/lib/chatbot/env';
 
 const NAVIGATION_TARGETS: Record<string, string> = {
   home: '/',
@@ -47,10 +49,7 @@ Respond with concise, friendly language. You can and should use Markdown formatt
 DO NOT include citation markers like [source:...] in your response text - citations are shown separately below your message.
 If you cannot find an answer in the documents, clearly say you do not know and offer to escalate.
 When a user reports a potential bug, gather steps to reproduce, expected vs actual outcomes, and context before filing an issue.
-When you have gathered enough information to create a GitHub issue:
-- If the user is authenticated with GitHub (check the context), ask them: "Would you like me to create this issue under your GitHub account (@username), or should I create it as the Foundation bot?"
-- Wait for their response before calling create_github_issue
-- Set use_user_account to true if they want it under their account, false if they want the bot to do it
+When you have gathered enough information to create a GitHub issue, call create_github_issue to file it. Issues are always filed via the Foundation bot, with attribution to the user if they are authenticated.
 If you cannot self-serve, ask for the visitor's best contact information, then call submit_handoff_request to notify our team.
 When someone asks about adding a community, collect: community name, location/region, focus areas, primary links (website/join), meeting cadence, approximate size, and contact name/email before calling submit_community_listing. Confirm all details with the visitor first.
 When a visitor explicitly wants to open a page (e.g., "take me to the impact page"), call navigate_site with the closest matching target or a safe path (anything starting with "/" except /admin).
@@ -69,7 +68,6 @@ const IssueToolSchema = z.object({
   expected_result: z.string().nullable().optional(),
   actual_result: z.string().nullable().optional(),
   severity: z.enum(['low', 'medium', 'high']).optional(),
-  use_user_account: z.boolean().optional().default(false),
 });
 
 const HandoffToolSchema = z.object({
@@ -139,7 +137,7 @@ function buildTools(): ChatCompletionTool[] {
       function: {
         name: 'create_github_issue',
         description:
-          'Create a GitHub issue when a user reports a validated bug with clear reproduction steps.',
+          'Create a GitHub issue when a user reports a validated bug with clear reproduction steps. Issues are always filed via the Foundation bot, with attribution to the authenticated user if available.',
         parameters: {
           type: 'object',
           properties: {
@@ -155,10 +153,6 @@ function buildTools(): ChatCompletionTool[] {
               type: 'string',
               enum: ['low', 'medium', 'high'],
               description: 'Impact of the reported issue.',
-            },
-            use_user_account: {
-              type: 'boolean',
-              description: 'If true, create the issue under the authenticated user\'s GitHub account. If false or not specified, create it as the Foundation bot.',
             },
           },
           required: ['title', 'description', 'reproduction_steps'],
@@ -452,45 +446,36 @@ async function handleToolCalls(
 
       const body = formatIssueBody(parsed.data, metadata);
 
-      // Check if user wants to create issue under their account
-      const useUserAccount = parsed.data.use_user_account === true;
-      const hasUserToken = !!options.userGithubToken;
-
-      // If user wants to use their account but doesn't have a token, fail gracefully
-      if (useUserAccount && !hasUserToken) {
-        messages.push({
-          role: 'tool',
-          tool_call_id: toolCall.id,
-          content: JSON.stringify({
-            success: false,
-            error: 'user_not_authenticated',
-            message: 'User is not authenticated with GitHub',
-          }),
-        });
-        continue;
-      }
-
       try {
-        const result = await createIssue(
-          {
-            title: parsed.data.title,
-            body,
-            labels: ['bug', 'chatbot'],
-          },
-          useUserAccount && hasUserToken
-            ? { userToken: options.userGithubToken }
-            : undefined
-        );
+        // Always use the bot to file issues
+        const env = getChatbotEnv();
+        const result = await fileIssue({
+          owner: env.githubOwner,
+          repo: env.githubRepo,
+          title: parsed.data.title,
+          body,
+          labels: ['bug', 'from-chatbot'],
+          filedBy: options.userGithubLogin
+            ? {
+                username: options.userGithubLogin,
+                name: options.userGithubLogin,
+              }
+            : undefined,
+        });
 
-        issue = result;
+        issue = {
+          url: result.html_url,
+          number: result.number,
+        };
 
         messages.push({
           role: 'tool',
           tool_call_id: toolCall.id,
           content: JSON.stringify({
             success: true,
-            issue: result,
-            createdAs: useUserAccount && hasUserToken ? 'user' : 'bot',
+            issue,
+            createdAs: 'bot',
+            attributedTo: options.userGithubLogin || 'anonymous',
           }),
         });
       } catch (error) {
@@ -684,10 +669,10 @@ export async function POST(request: NextRequest) {
 
     // Build system prompt with user authentication context
     let systemPrompt = SYSTEM_PROMPT;
-    if (userGithubLogin && userGithubToken) {
-      systemPrompt += `\n\nCONTEXT: The user is authenticated with GitHub as @${userGithubLogin}.`;
+    if (userGithubLogin) {
+      systemPrompt += `\n\nCONTEXT: The user is authenticated with GitHub as @${userGithubLogin}. You can personalize responses and attribute GitHub issues to them.`;
     } else {
-      systemPrompt += '\n\nCONTEXT: The user is not authenticated with GitHub.';
+      systemPrompt += '\n\nCONTEXT: The user is not authenticated. GitHub issues will be filed anonymously via the Foundation bot.';
     }
 
     const openaiMessages: ChatCompletionMessageParam[] = [
