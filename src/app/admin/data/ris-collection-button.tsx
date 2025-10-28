@@ -34,8 +34,8 @@ export function RISCollectionButton() {
         if (data.status) {
           setStatus(data.status);
 
-          // Stop polling if completed, failed, or rate limited
-          if (data.status.status === 'completed' || data.status.status === 'failed' || data.status.status === 'rate_limited') {
+          // Stop polling if completed or failed
+          if (data.status.status === 'completed' || data.status.status === 'failed') {
             setIsRunning(false);
 
             // Refresh the page to show updated data
@@ -44,6 +44,12 @@ export function RISCollectionButton() {
                 window.location.reload();
               }, 2000);
             }
+          }
+
+          // For rate_limited, keep polling to check if we can auto-resume
+          if (data.status.status === 'rate_limited') {
+            setIsRunning(false); // Stop the "running" indicator
+            // Don't stop polling - we'll check for auto-resume below
           }
         }
       } catch (err) {
@@ -59,6 +65,32 @@ export function RISCollectionButton() {
 
     return () => clearInterval(interval);
   }, [isRunning]);
+
+  // Separate effect for auto-resuming after rate limit
+  useEffect(() => {
+    if (!status || status.status !== 'rate_limited' || !status.rateLimitResetAt) return;
+
+    const checkAndResume = async () => {
+      const resetTime = new Date(status.rateLimitResetAt!).getTime();
+      const now = Date.now();
+
+      // If reset time has passed, automatically restart collection
+      if (now >= resetTime) {
+        console.log('Rate limit has expired, auto-resuming collection...');
+        setStatus(null);
+        setError(null);
+        await handleStartCollection(false);
+      }
+    };
+
+    // Check every 30 seconds if we can resume
+    const interval = setInterval(checkAndResume, 30000);
+
+    // Check immediately in case reset time already passed
+    checkAndResume();
+
+    return () => clearInterval(interval);
+  }, [status]);
 
   const handleStartCollection = async (forceRefresh = false) => {
     setError(null);
@@ -165,12 +197,12 @@ export function RISCollectionButton() {
           )}
           {status.status === 'rate_limited' && status.rateLimitResetAt && (
             <div className="mt-2 pt-2 border-t border-warning/30">
-              <p className="text-xs font-semibold">⏰ Collection will automatically resume at:</p>
+              <p className="text-xs font-semibold">⏰ Automatic resumption at:</p>
               <p className="text-sm font-mono mt-1">
                 {new Date(status.rateLimitResetAt).toLocaleTimeString()}
               </p>
               <p className="text-xs mt-1 opacity-70">
-                You can try again after this time, or wait for automatic resumption.
+                Collection will automatically restart at this time. You can also manually click "Start Collection" after the reset time.
               </p>
             </div>
           )}
