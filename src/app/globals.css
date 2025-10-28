@@ -68,7 +68,6 @@ html.dark .prose li,
 
 html {
   scroll-behavior: smooth;
-  overflow-x: hidden;
   color-scheme: light dark;
 }
 
@@ -177,7 +176,6 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  overflow-x: hidden;
   transition: color 0.3s ease-in-out;
 }
 
@@ -196,25 +194,19 @@ button {
   box-sizing: border-box;
 }
 
-/* Smooth theme transitions for all elements */
-* {
-  transition: background-color 0.3s ease-in-out,
-              color 0.3s ease-in-out,
-              border-color 0.3s ease-in-out,
-              box-shadow 0.3s ease-in-out,
-              fill 0.3s ease-in-out,
-              stroke 0.3s ease-in-out;
+/* Smooth theme transitions - only for theme-related properties on specific elements */
+/* DO NOT use * selector - breaks animations and performance */
+:where(button, a, input, select, textarea, [class*="bg-"], [class*="text-"], [class*="border-"]) {
+  transition-property: background-color, color, border-color, box-shadow, fill, stroke;
+  transition-duration: 0.3s;
+  transition-timing-function: ease-in-out;
 }
 
 /* Enhanced transitions for interactive elements */
 :where(button, a, input, select, textarea) {
-  transition: background-color 0.3s ease-in-out,
-              color 0.3s ease-in-out,
-              border-color 0.3s ease-in-out,
-              box-shadow 0.3s ease-in-out,
-              transform 0.2s ease-in-out,
-              fill 0.3s ease-in-out,
-              stroke 0.3s ease-in-out;
+  transition-property: background-color, color, border-color, box-shadow, transform, fill, stroke;
+  transition-duration: 0.3s, 0.3s, 0.3s, 0.3s, 0.2s, 0.3s, 0.3s;
+  transition-timing-function: ease-in-out;
 }
 
 /* Prevent transitions on page load */

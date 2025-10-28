@@ -27,9 +27,7 @@ export default function FoundationHome() {
           <MissionStatement />
           <ThreePillars />
           <ByTheNumbers />
-          <ScrollReveal animation="fade-up" delay={100}>
-            <BecomeContributor />
-          </ScrollReveal>
+          <BecomeContributor />
           <JoinMovementCTA />
         </main>
       </div>
