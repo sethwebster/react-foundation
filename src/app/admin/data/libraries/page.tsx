@@ -152,55 +152,61 @@ async function RISDataSection() {
         </div>
       )}
 
-      {data.allocation && (
-        <div>
-          <h4 className="text-sm font-semibold text-muted-foreground mb-2">
-            Current Quarter Allocation ({data.allocation.period})
-          </h4>
+      {data.allocation && (() => {
+        // Filter to only libraries receiving funding (above eligibility threshold)
+        const eligibleLibraries = data.allocation.libraries.filter(lib => lib.allocation_usd > 0);
+        const topLibrary = eligibleLibraries[0]; // Already sorted by RIS descending
 
-          {/* Empty state warning when no libraries meet threshold */}
-          {data.allocation.libraries.length === 0 && (
-            <div className="mb-4 p-4 bg-warning/10 border border-warning/30 rounded-lg">
-              <p className="text-sm text-warning-foreground font-semibold">
-                ⚠️ No Libraries Meet Eligibility Threshold
-              </p>
-              <p className="text-sm text-muted-foreground mt-1">
-                All libraries scored below the 15% RIS threshold. Check server logs for detailed score breakdown
-                or use the diagnostic endpoint: <code className="text-xs bg-muted px-1 py-0.5 rounded">GET /api/ris/scores</code>
-              </p>
+        return (
+          <div>
+            <h4 className="text-sm font-semibold text-muted-foreground mb-2">
+              Current Quarter Allocation ({data.allocation.period})
+            </h4>
+
+            {/* Empty state warning when no libraries meet threshold */}
+            {eligibleLibraries.length === 0 && (
+              <div className="mb-4 p-4 bg-warning/10 border border-warning/30 rounded-lg">
+                <p className="text-sm text-warning-foreground font-semibold">
+                  ⚠️ No Libraries Meet Eligibility Threshold
+                </p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  All libraries scored below the 15% RIS threshold. Check server logs for detailed score breakdown
+                  or use the diagnostic endpoint: <code className="text-xs bg-muted px-1 py-0.5 rounded">GET /api/ris/scores</code>
+                </p>
+              </div>
+            )}
+
+            <div className="grid gap-4 md:grid-cols-4">
+              <InfoCard
+                label="Total Pool"
+                value={`$${(data.allocation.total_pool_usd / 1000).toFixed(0)}K`}
+                detail="Total allocation amount"
+              />
+              <InfoCard
+                label="Libraries Scored"
+                value={eligibleLibraries.length.toString()}
+                detail="Libraries receiving funding"
+              />
+              <InfoCard
+                label="Average Allocation"
+                value={eligibleLibraries.length > 0
+                  ? `$${Math.round(data.allocation.total_pool_usd / eligibleLibraries.length / 1000)}K`
+                  : 'N/A'
+                }
+                detail={eligibleLibraries.length > 0
+                  ? "Per library average"
+                  : "No libraries meet eligibility threshold"
+                }
+              />
+              <InfoCard
+                label="Top Library"
+                value={topLibrary?.libraryName || 'N/A'}
+                detail={topLibrary ? `$${Math.round(topLibrary.allocation_usd / 1000)}K` : ''}
+              />
             </div>
-          )}
-
-          <div className="grid gap-4 md:grid-cols-4">
-            <InfoCard
-              label="Total Pool"
-              value={`$${(data.allocation.total_pool_usd / 1000).toFixed(0)}K`}
-              detail="Total allocation amount"
-            />
-            <InfoCard
-              label="Libraries Scored"
-              value={data.allocation.libraries.length.toString()}
-              detail="Libraries in allocation"
-            />
-            <InfoCard
-              label="Average Allocation"
-              value={data.allocation.libraries.length > 0
-                ? `$${Math.round(data.allocation.total_pool_usd / data.allocation.libraries.length / 1000)}K`
-                : 'N/A'
-              }
-              detail={data.allocation.libraries.length > 0
-                ? "Per library average"
-                : "No libraries meet eligibility threshold"
-              }
-            />
-            <InfoCard
-              label="Top Library"
-              value={data.allocation.libraries[0]?.libraryName || 'N/A'}
-              detail={data.allocation.libraries[0] ? `$${Math.round(data.allocation.libraries[0].allocation_usd / 1000)}K` : ''}
-            />
           </div>
-        </div>
-      )}
+        );
+      })()}
     </>
   );
 }
