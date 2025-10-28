@@ -13,6 +13,7 @@ interface CollectionStatus {
   total?: number;
   startedAt?: string;
   completedAt?: string;
+  rateLimitResetAt?: string;
 }
 
 export function RISCollectionButton() {
@@ -33,8 +34,8 @@ export function RISCollectionButton() {
         if (data.status) {
           setStatus(data.status);
 
-          // Stop polling if completed or failed
-          if (data.status.status === 'completed' || data.status.status === 'failed') {
+          // Stop polling if completed, failed, or rate limited
+          if (data.status.status === 'completed' || data.status.status === 'failed' || data.status.status === 'rate_limited') {
             setIsRunning(false);
 
             // Refresh the page to show updated data
@@ -133,12 +134,15 @@ export function RISCollectionButton() {
             ? 'border-success/50 bg-success/10 text-success-foreground'
             : status.status === 'failed'
             ? 'border-destructive/50 bg-destructive/10 text-destructive-foreground'
+            : status.status === 'rate_limited'
+            ? 'border-warning/50 bg-warning/10 text-warning-foreground'
             : 'border-primary/50 bg-primary/10 text-primary-foreground'
         }`}>
           <div className="flex items-center justify-between mb-2">
             <span className="font-semibold">
               {status.status === 'completed' ? '✅ Completed' :
                status.status === 'failed' ? '❌ Failed' :
+               status.status === 'rate_limited' ? '⏸️  Rate Limited' :
                '⏳ Running'}
             </span>
             {status.progress !== undefined && status.total !== undefined && (
@@ -158,6 +162,17 @@ export function RISCollectionButton() {
           )}
           {status.status === 'completed' && (
             <p className="text-xs mt-2 opacity-70">Page will refresh in 2 seconds...</p>
+          )}
+          {status.status === 'rate_limited' && status.rateLimitResetAt && (
+            <div className="mt-2 pt-2 border-t border-warning/30">
+              <p className="text-xs font-semibold">⏰ Collection will automatically resume at:</p>
+              <p className="text-sm font-mono mt-1">
+                {new Date(status.rateLimitResetAt).toLocaleTimeString()}
+              </p>
+              <p className="text-xs mt-1 opacity-70">
+                You can try again after this time, or wait for automatic resumption.
+              </p>
+            </div>
           )}
         </div>
       )}
