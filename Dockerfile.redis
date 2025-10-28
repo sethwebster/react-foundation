@@ -7,13 +7,9 @@ FROM redis/redis-stack-server:latest
 # ------------------------------
 # redis.conf (durable + safe)
 # ------------------------------
-RUN set -eux; mkdir -p /etc/redis; cat > /etc/redis/redis.conf <<'EOF'
-# ---- Redis Stack Modules (CRITICAL!) ----
-loadmodule /opt/redis-stack/lib/redisearch.so
-loadmodule /opt/redis-stack/lib/redistimeseries.so
-loadmodule /opt/redis-stack/lib/rejson.so
-loadmodule /opt/redis-stack/lib/redisbloom.so
-
+# NOTE: Modules are loaded by entrypoint.sh via command-line args
+# We only configure persistence and security here
+RUN set -eux; mkdir -p /etc/redis; cat > /redis-stack.conf <<'EOF'
 # ---- Durability ----
 dir /data
 dbfilename dump.rdb
@@ -59,6 +55,7 @@ EXPOSE 6379
 ENV REDIS_PASSWORD=""
 
 # ------------------------------
-# One-line CMD (CapRover-safe)
+# Use Redis Stack's entrypoint (loads modules automatically)
+# Pass password via REDIS_ARGS which entrypoint appends
 # ------------------------------
-CMD bash -c "echo 'Starting Redis primary (AOF+RDB, Redis Stack)'; if [ -n \"$REDIS_PASSWORD\" ]; then exec redis-server /etc/redis/redis.conf --requirepass \"$REDIS_PASSWORD\"; else exec redis-server /etc/redis/redis.conf; fi"
+CMD bash -c "if [ -n \"$REDIS_PASSWORD\" ]; then export REDIS_ARGS=\"--requirepass $REDIS_PASSWORD\"; fi; exec /entrypoint.sh"
