@@ -18,7 +18,8 @@ export function UsersListClient({
   users: User[];
   currentUserEmail: string;
 }) {
-  const [newEmail, setNewEmail] = useState('');
+  const [newEmails, setNewEmails] = useState<string[]>([]);
+  const [emailInput, setEmailInput] = useState('');
   const [newRoles, setNewRoles] = useState<UserRole[]>([]); // Empty by default, 'user' is implicit
   const [editingUser, setEditingUser] = useState<string | null>(null);
   const [editRoles, setEditRoles] = useState<UserRole[]>([]);
@@ -30,20 +31,98 @@ export function UsersListClient({
     return roles.filter(role => role !== 'user');
   };
 
+  // Parse emails from pasted text (newline or comma separated)
+  const parseEmails = (text: string): string[] => {
+    return text
+      .split(/[\n,;]+/) // Split by newline, comma, or semicolon
+      .map(email => email.trim())
+      .filter(email => email.length > 0 && email.includes('@'));
+  };
+
+  // Handle paste event - detect multiple emails
+  const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    const pastedText = e.clipboardData.getData('text');
+    const emails = parseEmails(pastedText);
+
+    if (emails.length > 1) {
+      // Multiple emails detected - prevent default and add as chips
+      e.preventDefault();
+      setNewEmails(prev => [...new Set([...prev, ...emails])]); // Use Set to avoid duplicates
+      setEmailInput('');
+    }
+    // If single email, let default paste behavior happen
+  };
+
+  // Add current email input to chips
+  const handleAddEmail = () => {
+    if (!emailInput.trim()) return;
+
+    const emails = parseEmails(emailInput);
+    if (emails.length > 0) {
+      setNewEmails(prev => [...new Set([...prev, ...emails])]);
+      setEmailInput('');
+    }
+  };
+
+  // Handle Enter key to add email as chip
+  const handleEmailKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleAddEmail();
+    } else if (e.key === 'Backspace' && emailInput === '' && newEmails.length > 0) {
+      // Backspace on empty input removes last email chip
+      setNewEmails(prev => prev.slice(0, -1));
+    }
+  };
+
+  // Remove specific email from chips
+  const handleRemoveEmail = (emailToRemove: string) => {
+    setNewEmails(prev => prev.filter(email => email !== emailToRemove));
+  };
+
   const handleAddUser = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+
+    // Add current input if any
+    if (emailInput.trim()) {
+      handleAddEmail();
+    }
+
+    const emailsToAdd = emailInput.trim()
+      ? [...newEmails, ...parseEmails(emailInput)]
+      : newEmails;
+
+    if (emailsToAdd.length === 0) {
+      setError('Please enter at least one email address');
+      return;
+    }
 
     // Add 'user' role implicitly if no roles selected
     const rolesToAdd: UserRole[] = newRoles.length === 0 ? ['user'] : newRoles;
 
     startTransition(async () => {
       try {
-        await addUserAction(newEmail, rolesToAdd);
-        setNewEmail('');
-        setNewRoles([]);
+        // Add users one by one
+        const errors: string[] = [];
+        for (const email of emailsToAdd) {
+          try {
+            await addUserAction(email, rolesToAdd);
+          } catch (err) {
+            errors.push(`${email}: ${err instanceof Error ? err.message : 'Failed'}`);
+          }
+        }
+
+        if (errors.length > 0) {
+          setError(`Some users failed to add:\n${errors.join('\n')}`);
+        } else {
+          // Success - clear form
+          setNewEmails([]);
+          setEmailInput('');
+          setNewRoles([]);
+        }
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to add user');
+        setError(err instanceof Error ? err.message : 'Failed to add users');
       }
     });
   };
@@ -102,17 +181,58 @@ export function UsersListClient({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-semibold text-foreground mb-2">
-                Email
+                Email(s)
               </label>
-              <input
-                type="email"
-                required
-                value={newEmail}
-                onChange={(e) => setNewEmail(e.target.value)}
-                placeholder="user@example.com"
-                disabled={isPending}
-                className="w-full rounded-lg border border-border bg-input px-4 py-2 text-foreground outline-none focus:border-ring focus:ring-2 focus:ring-ring/50 disabled:opacity-50"
-              />
+              <div className="space-y-2">
+                {/* Email chips */}
+                {newEmails.length > 0 && (
+                  <div className="flex flex-wrap gap-2 p-2 rounded-lg border border-border bg-muted/30">
+                    {newEmails.map((email) => (
+                      <span
+                        key={email}
+                        className="inline-flex items-center gap-1 rounded-md bg-primary/20 px-2 py-1 text-sm text-primary-foreground"
+                      >
+                        {email}
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveEmail(email)}
+                          disabled={isPending}
+                          className="ml-1 rounded hover:bg-primary/30 disabled:opacity-50"
+                          aria-label={`Remove ${email}`}
+                        >
+                          <svg
+                            className="h-3 w-3"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M6 18L18 6M6 6l12 12"
+                            />
+                          </svg>
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                )}
+                {/* Email input */}
+                <input
+                  type="email"
+                  value={emailInput}
+                  onChange={(e) => setEmailInput(e.target.value)}
+                  onPaste={handlePaste}
+                  onKeyDown={handleEmailKeyDown}
+                  placeholder={newEmails.length > 0 ? "Add another email..." : "user@example.com or paste multiple"}
+                  disabled={isPending}
+                  className="w-full rounded-lg border border-border bg-input px-4 py-2 text-foreground outline-none focus:border-ring focus:ring-2 focus:ring-ring/50 disabled:opacity-50"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Paste multiple emails (one per line) or press Enter to add
+                </p>
+              </div>
             </div>
             <div>
               <label className="block text-sm font-semibold text-foreground mb-2">
@@ -130,7 +250,13 @@ export function UsersListClient({
             disabled={isPending}
             className="rounded-lg bg-primary px-6 py-2 font-semibold text-foreground transition hover:bg-primary/50 disabled:opacity-50"
           >
-            {isPending ? 'Adding...' : 'Add User'}
+            {isPending
+              ? 'Adding...'
+              : newEmails.length > 1
+              ? `Add ${newEmails.length} Users`
+              : newEmails.length === 1
+              ? 'Add 1 User'
+              : 'Add User(s)'}
           </button>
         </form>
       </div>
