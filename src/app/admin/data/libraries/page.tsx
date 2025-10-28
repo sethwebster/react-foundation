@@ -158,15 +158,90 @@ async function RISDataSection() {
             Current Quarter Allocation ({data.allocation.period})
           </h4>
 
-          {/* Empty state warning when no libraries meet threshold */}
-          {data.allocation.libraries.length === 0 && (
+          {/* Enhanced diagnostic when libraries are below threshold */}
+          {data.allocation.libraries.length > 0 &&
+           data.allocation.libraries.filter(lib => lib.allocation_usd > 0).length === 0 && (
             <div className="mb-4 p-4 bg-warning/10 border border-warning/30 rounded-lg">
               <p className="text-sm text-warning-foreground font-semibold">
-                ⚠️ No Libraries Meet Eligibility Threshold
+                ⚠️ No Libraries Meet Eligibility Threshold (15%)
+              </p>
+              <p className="text-sm text-muted-foreground mt-2 mb-3">
+                All {data.allocation.libraries.length} libraries scored below the 15% RIS threshold and received $0 allocation.
+              </p>
+
+              {/* Score Distribution */}
+              <div className="mt-3 p-3 bg-muted/50 rounded-lg">
+                <p className="text-xs font-semibold text-foreground mb-2">Score Distribution:</p>
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div>
+                    <span className="text-muted-foreground">Highest:</span>{' '}
+                    <span className="font-mono text-foreground">
+                      {(data.allocation.libraries[0]?.ris * 100).toFixed(2)}%
+                    </span>
+                    <span className="text-muted-foreground ml-1">
+                      ({data.allocation.libraries[0]?.libraryName})
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Lowest:</span>{' '}
+                    <span className="font-mono text-foreground">
+                      {(data.allocation.libraries[data.allocation.libraries.length - 1]?.ris * 100).toFixed(2)}%
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Average:</span>{' '}
+                    <span className="font-mono text-foreground">
+                      {(data.allocation.libraries.reduce((sum, lib) => sum + lib.ris, 0) / data.allocation.libraries.length * 100).toFixed(2)}%
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Median:</span>{' '}
+                    <span className="font-mono text-foreground">
+                      {(data.allocation.libraries[Math.floor(data.allocation.libraries.length / 2)]?.ris * 100).toFixed(2)}%
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Top 5 Scores */}
+              <div className="mt-3 p-3 bg-muted/50 rounded-lg">
+                <p className="text-xs font-semibold text-foreground mb-2">Top 5 Libraries:</p>
+                <div className="space-y-1">
+                  {data.allocation.libraries.slice(0, 5).map((lib, idx) => (
+                    <div key={lib.libraryName} className="flex justify-between text-xs">
+                      <span className="text-muted-foreground">
+                        {idx + 1}. {lib.libraryName}
+                      </span>
+                      <span className="font-mono text-foreground">
+                        {(lib.ris * 100).toFixed(2)}%
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Diagnostic Actions */}
+              <div className="mt-3 pt-3 border-t border-warning/20">
+                <p className="text-xs text-muted-foreground mb-2">
+                  <strong>Possible causes:</strong> Missing metrics, low activity data, or data collection issues.
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  <strong>Next steps:</strong> Use the diagnostic endpoint for detailed component scores:{' '}
+                  <code className="text-xs bg-muted px-1 py-0.5 rounded">GET /api/ris/scores</code>
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Original warning for truly empty allocation */}
+          {data.allocation.libraries.length === 0 && (
+            <div className="mb-4 p-4 bg-destructive/10 border border-destructive/30 rounded-lg">
+              <p className="text-sm text-destructive-foreground font-semibold">
+                ❌ No Allocation Data Available
               </p>
               <p className="text-sm text-muted-foreground mt-1">
-                All libraries scored below the 15% RIS threshold. Check server logs for detailed score breakdown
-                or use the diagnostic endpoint: <code className="text-xs bg-muted px-1 py-0.5 rounded">GET /api/ris/scores</code>
+                No libraries found in allocation. This indicates a data collection failure.
+                Try running the data collection again.
               </p>
             </div>
           )}
