@@ -246,7 +246,7 @@ export function TableOfContents({
 
       {/* Desktop sticky panel */}
       <aside
-        className={cn('hidden lg:block lg:sticky lg:top-6 lg:self-start z-20', className)}
+        className={cn('hidden lg:block lg:sticky lg:top-24 lg:self-start z-20', className)}
       >
         <div className="rounded-2xl border border-border/50 bg-card/80 backdrop-blur-xl ring-1 ring-border/10 shadow-lg">
           <button
