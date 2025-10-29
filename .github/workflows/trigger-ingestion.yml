@@ -1,0 +1,85 @@
+name: Trigger Chatbot Ingestion
+
+# Option 1: Manual trigger from GitHub Actions UI
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to ingest'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - preview
+      max_pages:
+        description: 'Maximum pages to crawl (0 = unlimited)'
+        required: false
+        default: '100'
+      use_sitemap:
+        description: 'Use sitemap.xml for discovery'
+        required: false
+        default: 'true'
+        type: boolean
+
+  # Option 2: Scheduled (daily at 2 AM UTC)
+  schedule:
+    - cron: '0 2 * * *'
+
+  # Option 3: After successful deployments (via repository_dispatch)
+  repository_dispatch:
+    types: [deployment_success]
+
+jobs:
+  trigger-ingestion:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger ingestion API
+        run: |
+          ENVIRONMENT="${{ github.event.inputs.environment || 'production' }}"
+          MAX_PAGES="${{ github.event.inputs.max_pages || '100' }}"
+          USE_SITEMAP="${{ github.event.inputs.use_sitemap || 'true' }}"
+
+          if [ "$ENVIRONMENT" = "production" ]; then
+            URL="https://react.foundation/api/admin/ingest"
+          else
+            URL="https://preview.react.foundation/api/admin/ingest"
+          fi
+
+          echo "🚀 Triggering ingestion for $ENVIRONMENT..."
+          echo "   URL: $URL"
+          echo "   Max pages: $MAX_PAGES"
+          echo "   Use sitemap: $USE_SITEMAP"
+
+          RESPONSE=$(curl -X POST "$URL" \
+            -H "Authorization: Bearer ${{ secrets.INGESTION_API_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"maxPages\": $MAX_PAGES,
+              \"useSitemap\": $USE_SITEMAP,
+              \"clearExisting\": false
+            }" \
+            -w "\n%{http_code}" \
+            -s)
+
+          HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
+          BODY=$(echo "$RESPONSE" | sed '$d')
+
+          echo "Response:"
+          echo "$BODY" | jq '.'
+
+          if [ "$HTTP_CODE" = "200" ]; then
+            echo "✅ Ingestion started successfully"
+            INGESTION_ID=$(echo "$BODY" | jq -r '.ingestionId')
+            echo "   Ingestion ID: $INGESTION_ID"
+          else
+            echo "❌ Failed with HTTP $HTTP_CODE"
+            exit 1
+          fi
+
+      - name: Wait for completion (optional)
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          echo "⏳ Waiting for ingestion to complete..."
+          echo "   Check status at: https://react.foundation/admin/data"
+          sleep 10

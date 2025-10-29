@@ -1,6 +1,10 @@
 # React Community Building Guide
 
 > **For Chatbot:** This guide helps people start and run React meetups, conferences, and community events, including how to qualify for CoIS funding.
+>
+> 📚 **Full Interactive Guide:** https://react.foundation/communities/start
+>
+> **When users ask:** "Do you have a guide for starting a community?" or "How do I start a React community?" → Direct them to the full interactive guide at `/communities/start` which includes detailed steps, checklists, timeline, resources, and real examples.
 
 ## Starting a React Meetup
 

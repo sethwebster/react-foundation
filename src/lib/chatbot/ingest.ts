@@ -5,6 +5,7 @@
 
 import type Redis from 'ioredis';
 import { SiteCrawler, type CrawlerOptions } from './crawler';
+import { SitemapCrawler, getSitemapUrl } from './sitemap-crawler';
 import { ContentExtractor, type ContentChunk } from './content-extractor';
 import { FileIngester } from './file-ingest';
 import { createEmbedding } from './openai';
@@ -42,6 +43,8 @@ export interface IngestionOptions extends CrawlerOptions {
   clearExisting?: boolean; // Deprecated - now always creates new index
   deleteOldIndex?: boolean; // Whether to delete old index after successful swap
   baseUrl: string;
+  useSitemap?: boolean; // Use sitemap.xml for page discovery (recommended)
+  minPriority?: number; // Only crawl pages above this sitemap priority (0.0-1.0)
 }
 
 export class IngestionService {
@@ -110,8 +113,13 @@ export class IngestionService {
         // Only crawl in local development
         this.addLog(`🕷️ Phase 1: Crawling site from ${options.baseUrl}...`);
 
+        // Use sitemap if available and requested
+        const useSitemap = options.useSitemap ?? true; // Default to sitemap crawling
+
         try {
-          const crawlResults = await this.crawlSite(options);
+          const crawlResults = useSitemap
+            ? await this.crawlSiteWithSitemap(options)
+            : await this.crawlSite(options);
           this.progress.crawledPages = crawlResults.length;
 
           if (crawlResults.length === 0) {
@@ -241,6 +249,53 @@ export class IngestionService {
     }
 
     return results;
+  }
+
+  private async crawlSiteWithSitemap(options: IngestionOptions) {
+    this.addLog('🗺️ Using sitemap-based crawler...');
+    const sitemapUrl = getSitemapUrl(options.baseUrl);
+    this.addLog(`ℹ️ Sitemap URL: ${sitemapUrl}`);
+
+    if (options.excludePaths && options.excludePaths.length > 0) {
+      this.addLog(`ℹ️ Excluding paths: ${options.excludePaths.join(', ')}`);
+    }
+
+    if (options.allowedPaths && options.allowedPaths.length > 0) {
+      this.addLog(`ℹ️ Allowed paths only: ${options.allowedPaths.join(', ')}`);
+    }
+
+    if (options.minPriority) {
+      this.addLog(`ℹ️ Minimum priority: ${options.minPriority}`);
+    }
+
+    const crawler = new SitemapCrawler(sitemapUrl, {
+      maxPages: options.maxPages,
+      allowedPaths: options.allowedPaths,
+      excludePaths: options.excludePaths,
+      minPriority: options.minPriority,
+      onProgress: (current: number, total: number, url: string) => {
+        this.progress.crawledPages = current;
+        this.progress.totalPages = total;
+        this.progress.currentUrl = url;
+        this.addLog(`🔍 Crawling [${current}/${total}]: ${url}`);
+      },
+      onError: (url: string, error: Error) => {
+        this.addLog(`❌ Failed to crawl ${url}: ${error.message}`, 'error');
+      },
+    });
+
+    const results = await crawler.crawl();
+
+    this.addLog(`ℹ️ Sitemap crawl completed:`);
+    this.addLog(`  - Successfully crawled: ${results.length} pages`);
+
+    // Convert SitemapCrawlResult to CrawlResult format
+    return results.map((result) => ({
+      url: result.url,
+      title: result.title,
+      html: result.html,
+      links: [], // Sitemap crawling doesn't discover links
+    }));
   }
 
   private async extractAndChunk(crawlResults: Array<{ url: string; title: string; html: string }>) {
