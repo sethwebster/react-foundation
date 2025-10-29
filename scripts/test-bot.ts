@@ -2,14 +2,10 @@
  * Test script for GitHub bot
  *
  * Usage: npx tsx scripts/test-bot.ts
+ * Note: tsx automatically loads .env files
  */
 
 import { Octokit } from '@octokit/rest';
-import * as dotenv from 'dotenv';
-import * as path from 'path';
-
-// Load .env file
-dotenv.config({ path: path.resolve(process.cwd(), '.env') });
 
 async function testBot() {
   console.log('🤖 Testing GitHub Bot Configuration...\n');

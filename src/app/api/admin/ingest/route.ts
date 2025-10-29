@@ -9,21 +9,22 @@ import { authOptions } from '@/lib/auth';
 import { UserManagementService } from '@/lib/admin/user-management-service';
 import { getRedisClient } from '@/lib/redis';
 import { IngestionService, type IngestionProgress } from '@/lib/chatbot/ingest';
+import { IngestionLockService } from '@/lib/chatbot/ingestion-lock';
 import { logger } from '@/lib/logger';
 
 export const runtime = 'nodejs'; // jsdom requires Node runtime (not Edge)
 export const dynamic = 'force-dynamic';
 export const maxDuration = 300; // 5 minutes max for ingestion
 
-// Store ingestion progress in memory
+// Store ingestion progress in memory (progress updates only)
 const ingestionProgress = new Map<string, IngestionProgress>();
-const runningIngestions = new Map<string, Promise<void>>();
 
 export async function POST(request: Request) {
   try {
     // Check for API token (for CI/CD workflows) or session auth (for admin UI)
     const authHeader = request.headers.get('Authorization');
     const apiToken = authHeader?.replace('Bearer ', '');
+    let startedBy: string = 'api-token';
 
     // API token authentication (for GitHub Actions)
     if (apiToken && process.env.INGESTION_API_TOKEN) {
@@ -43,6 +44,8 @@ export async function POST(request: Request) {
       if (!isAdmin) {
         return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
       }
+
+      startedBy = session.user.email;
     }
 
     const body = await request.json();
@@ -64,17 +67,45 @@ export async function POST(request: Request) {
     // Generate ingestion ID
     const ingestionId = `ingest-${Date.now()}`;
 
-    // Check if ingestion is already running
-    if (runningIngestions.size > 0) {
+    // Initialize Redis and lock service
+    const redis = getRedisClient();
+    const lockService = new IngestionLockService(redis);
+
+    // Clear stale locks (from crashed processes)
+    const staleCleared = await lockService.clearStale();
+    if (staleCleared) {
+      logger.warn('Cleared stale ingestion lock before starting new ingestion');
+    }
+
+    // Try to acquire lock
+    const locked = await lockService.acquire(ingestionId, startedBy);
+
+    if (!locked) {
+      const lockStatus = await lockService.getStatus();
       return NextResponse.json(
-        { error: 'An ingestion is already in progress' },
+        {
+          error: 'An ingestion is already in progress',
+          currentIngestion: lockStatus.lock,
+          ageMs: lockStatus.ageMs,
+          stale: lockStatus.stale,
+        },
         { status: 409 }
       );
     }
 
     // Start ingestion in background
-    const redis = getRedisClient();
     const service = new IngestionService(redis);
+
+    // Keepalive: Extend lock every 2 minutes to keep it fresh
+    const keepaliveInterval = setInterval(async () => {
+      const extended = await lockService.extend(ingestionId);
+      if (extended) {
+        logger.debug(`Extended lock TTL for ingestion: ${ingestionId}`);
+      } else {
+        logger.warn(`Failed to extend lock - may have been cleared: ${ingestionId}`);
+        clearInterval(keepaliveInterval);
+      }
+    }, 120000); // Every 2 minutes
 
     const ingestionPromise = service
       .ingest({
@@ -84,15 +115,21 @@ export async function POST(request: Request) {
         allowedPaths,
         excludePaths,
       })
-      .then(() => {
-        runningIngestions.delete(ingestionId);
+      .then(async () => {
+        clearInterval(keepaliveInterval);
+        await lockService.release(ingestionId);
+        logger.info(`Ingestion completed: ${ingestionId}`);
       })
-      .catch((error) => {
+      .catch(async (error) => {
         logger.error('Ingestion failed:', error);
-        runningIngestions.delete(ingestionId);
+        clearInterval(keepaliveInterval);
+        await lockService.release(ingestionId);
       });
 
-    runningIngestions.set(ingestionId, ingestionPromise);
+    // Don't await the promise - let it run in background
+    ingestionPromise.catch(() => {
+      // Error already logged above
+    });
 
     // Poll for progress updates
     const pollProgress = setInterval(() => {

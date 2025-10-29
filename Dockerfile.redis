@@ -1,61 +1,13 @@
-# Redis Stack Server (RediSearch, RedisJSON, etc.)
 FROM redis/redis-stack-server:latest
-
-# Persisted data lives here — configure as Persistent Directory in CapRover
-# Do NOT use VOLUME directive - let CapRover manage the volume
-
-# ------------------------------
-# redis.conf (durable + safe)
-# ------------------------------
-# NOTE: Modules are loaded by entrypoint.sh via command-line args
-# We only configure persistence and security here
-RUN set -eux; mkdir -p /etc/redis; cat > /redis-stack.conf <<'EOF'
-# ---- Durability ----
-dir /data
-dbfilename dump.rdb
-appendfilename "appendonly.aof"
-
-appendonly yes
-appendfsync everysec              # use 'always' for max safety (slower)
-aof-use-rdb-preamble yes
-auto-aof-rewrite-percentage 100
-auto-aof-rewrite-min-size 64mb
-
-# RDB checkpoints (fast restarts / fallback)
-save 900 1
-save 300 10
-stop-writes-on-bgsave-error yes
-
-# ---- Replication safety (disabled for standalone instance) ----
-# Only enable these if running Redis in a replicated cluster:
-# min-replicas-to-write 1
-# min-replicas-max-lag 3
-
-# ---- Memory / eviction ----
-maxmemory-policy noeviction
-
-# ---- Logging to stdout (so CapRover shows logs) ----
-logfile ""
-loglevel notice
-
-# ---- Security / misc ----
-protected-mode yes
-latency-monitor-threshold 0
-EOF
-
-# ------------------------------
-# Healthcheck
-# ------------------------------
-HEALTHCHECK --interval=30s --timeout=5s --retries=5 CMD \
-  sh -c 'if [ -n "$REDIS_PASSWORD" ]; then redis-cli -a "$REDIS_PASSWORD" ping | grep -qi PONG; else redis-cli ping | grep -qi PONG; fi' || exit 1
-
 EXPOSE 6379
+VOLUME ["/data"]
 
-# Set via CapRover → Environment Variables
-ENV REDIS_PASSWORD=""
-
-# ------------------------------
-# Use Redis Stack's entrypoint (loads modules automatically)
-# Pass password via REDIS_ARGS which entrypoint appends
-# ------------------------------
-CMD bash -c "if [ -n \"$REDIS_PASSWORD\" ]; then export REDIS_ARGS=\"--requirepass $REDIS_PASSWORD\"; fi; exec /entrypoint.sh"
+# Use shell-form so $REDIS_PASSWORD expands at runtime.
+CMD ["sh","-lc","exec redis-stack-server \
+  --requirepass \"$REDIS_PASSWORD\" \
+  --dir /data \
+  --appendonly yes \
+  --appendfsync everysec \
+  --aof-use-rdb-preamble yes \
+  --appendfilename appendonly.aof \
+  --dbfilename dump.rdb"]
