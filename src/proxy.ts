@@ -15,7 +15,7 @@ const PUBLIC_ROUTES = [
   '/auth',
   '/api/request-access',
   '/api/check-access', // Prevent infinite loop
-  '/api/webhooks', // GitHub webhooks (have their own security)
+  '/api/webhooks', // All webhooks (GitHub, Vercel Deploy, etc. - have their own auth)
   '/api/ris/process-webhooks', // RIS webhook processor (has CRON_SECRET auth)
   '/privacy',
   '/terms',

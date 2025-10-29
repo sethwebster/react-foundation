@@ -40,9 +40,27 @@ interface VercelDeploymentPayload {
 
 export async function POST(request: NextRequest) {
   try {
-    // Verify webhook signature
-    const signature = request.headers.get('x-vercel-signature');
+    const body = await request.text();
     const secret = process.env.VERCEL_DEPLOY_WEBHOOK_SECRET;
+
+    // Check for authorization header (simple token auth)
+    const authHeader = request.headers.get('authorization');
+    const providedToken = authHeader?.replace('Bearer ', '');
+
+    // Check for x-vercel-signature (HMAC auth)
+    const signature = request.headers.get('x-vercel-signature');
+
+    // Check for query parameter (URL-based auth)
+    const url = new URL(request.url);
+    const querySecret = url.searchParams.get('secret');
+
+    logger.info('Vercel webhook received:', {
+      hasAuthHeader: !!authHeader,
+      hasSignature: !!signature,
+      hasQuerySecret: !!querySecret,
+      hasSecret: !!secret,
+      bodyLength: body.length,
+    });
 
     if (!secret) {
       logger.error('VERCEL_DEPLOY_WEBHOOK_SECRET not configured');
@@ -52,25 +70,67 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!signature) {
-      logger.warn('Vercel deploy webhook called without signature');
+    // Support multiple authentication methods:
+    // 1. Bearer token in Authorization header (recommended)
+    // 2. Query parameter ?secret=xxx (Deploy Hooks style)
+    // 3. HMAC signature (Integration style)
+    let authenticated = false;
+
+    // Method 1: Bearer token
+    if (providedToken === secret) {
+      authenticated = true;
+      logger.info('Authenticated via Bearer token');
+    }
+
+    // Method 2: Query parameter
+    if (querySecret === secret) {
+      authenticated = true;
+      logger.info('Authenticated via query parameter');
+    }
+
+    // Method 3: HMAC signature (if provided)
+    if (signature && !authenticated) {
+      try {
+        const encoder = new TextEncoder();
+        const keyData = encoder.encode(secret);
+        const messageData = encoder.encode(body);
+
+        const cryptoKey = await crypto.subtle.importKey(
+          'raw',
+          keyData,
+          { name: 'HMAC', hash: 'SHA-1' },
+          false,
+          ['sign']
+        );
+
+        const signatureBuffer = await crypto.subtle.sign('HMAC', cryptoKey, messageData);
+        const expectedSignature = Array.from(new Uint8Array(signatureBuffer))
+          .map(b => b.toString(16).padStart(2, '0'))
+          .join('');
+
+        const providedSignature = signature.startsWith('sha1=')
+          ? signature.substring(5)
+          : signature;
+
+        if (providedSignature === expectedSignature) {
+          authenticated = true;
+          logger.info('Authenticated via HMAC signature');
+        }
+      } catch (error) {
+        logger.error('Error verifying HMAC signature:', error);
+      }
+    }
+
+    if (!authenticated) {
+      logger.warn('Webhook authentication failed - no valid auth method');
       return NextResponse.json(
-        { error: 'Missing signature' },
+        { error: 'Unauthorized' },
         { status: 401 }
       );
     }
 
-    // Simple signature verification (Vercel uses HMAC SHA-256)
-    // For production, implement proper HMAC verification
-    if (signature !== secret) {
-      logger.warn('Invalid Vercel deploy webhook signature');
-      return NextResponse.json(
-        { error: 'Invalid signature' },
-        { status: 401 }
-      );
-    }
-
-    const payload: VercelDeploymentPayload = await request.json();
+    // Parse body as JSON
+    const payload: VercelDeploymentPayload = JSON.parse(body);
 
     logger.info('Vercel deployment webhook received:', {
       type: payload.type,
