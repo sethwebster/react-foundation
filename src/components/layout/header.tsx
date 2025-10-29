@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { useState, useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
 import { MobileMenu } from "@/components/layout/mobile-menu";
@@ -13,8 +14,34 @@ import { ThemeToggleWrapper } from "@/components/ui/theme-toggle-wrapper";
 export function Header() {
   const pathname = usePathname();
   const { data: session } = useSession();
+  const [isAdmin, setIsAdmin] = useState(false);
   const isStorePage = pathname?.startsWith("/store");
   const isComingSoonPage = pathname === "/coming-soon";
+
+  // Check admin status when user session changes
+  useEffect(() => {
+    const checkAdminStatus = async () => {
+      if (!session?.user?.email) {
+        setIsAdmin(false);
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/admin/check');
+        if (response.ok) {
+          const data = await response.json();
+          setIsAdmin(data.isAdmin);
+        } else {
+          setIsAdmin(false);
+        }
+      } catch (error) {
+        console.error('Failed to check admin status:', error);
+        setIsAdmin(false);
+      }
+    };
+
+    checkAdminStatus();
+  }, [session?.user?.email]);
 
   return (
     <header className="fixed left-0 right-0 top-0 z-50 bg-background/95 shadow-lg shadow-black/5 backdrop-blur-xl supports-[backdrop-filter]:bg-background/80">
@@ -79,7 +106,7 @@ export function Header() {
                 <Link className="transition hover:text-foreground" href="/store">
                   Store
                 </Link>
-                {session?.user && (
+                {isAdmin && (
                   <Link
                     className="transition hover:text-foreground text-destructive font-medium"
                     href="/admin"

@@ -51,32 +51,24 @@ export async function upsertRecord(
   logger.info(`[upsertRecord] Generating ${chunks.length} embeddings for ${record.id}`);
   const embeddings = await generateEmbeddings(chunks);
 
-  // 4. Store each chunk
+  // 4. Store each chunk using new vector-store schema
+  // Schema: id, content, source, embedding (as binary buffer)
   for (let i = 0; i < chunks.length; i++) {
     const chunkKey = `${indexPrefix}${record.id}:${i}`;
+    const chunkId = `${record.id}:${i}`;
 
-    // Convert embedding to base64 for Redis storage
+    // Convert embedding to binary buffer for vector search
     const embedBuffer = embeddingToBuffer(embeddings[i]);
 
-    const chunkData: Record<string, string | number> = {
-      item_id: record.id,
-      ord: i,
-      text: chunks[i],
-      url: record.url,
-      title: record.title,
-      type: record.type,
-      updated_at: record.updatedAt,
-      tsv: chunks[i], // For BM25 full-text search
-      embed: embedBuffer.toString('base64'),
+    const chunkData: Record<string, string | Buffer> = {
+      id: chunkId,
+      content: chunks[i],
+      source: record.url,
+      embedding: embedBuffer, // Binary buffer, not base64
     };
 
-    // Add optional anchor if available
-    if (record.anchors && record.anchors[0]) {
-      chunkData.anchor = record.anchors[0].anchor;
-    }
-
     // Store chunk fields
-    pipeline.hset(chunkKey, chunkData);
+    pipeline.hset(chunkKey, chunkData as unknown as Record<string, string>);
   }
 
   await pipeline.exec();

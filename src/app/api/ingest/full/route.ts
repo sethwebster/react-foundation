@@ -10,8 +10,8 @@ import { authOptions } from '@/lib/auth';
 import { UserManagementService } from '@/lib/admin/user-management-service';
 import { getRedisClient } from '@/lib/redis';
 import { MDXLoader, CommunitiesLoader, LibrariesLoader, PagesLoader, upsertRecords, generateContentMap, storeContentMap } from '@/lib/ingest';
-import { createChunksIndex } from '@/lib/ingest/redis-index';
-import { generateIndexName, generateIndexPrefix, getCurrentIndexName, swapToNewIndex, deleteIndex } from '@/lib/chatbot/vector-store';
+import { generateIndexName, generateIndexPrefix, getCurrentIndexName, swapToNewIndex, deleteIndex, createVectorIndex } from '@/lib/chatbot/vector-store';
+import { getEmbeddingDimensions, getChatbotEnv } from '@/lib/chatbot/env';
 import { logger } from '@/lib/logger';
 
 export const runtime = 'nodejs'; // Requires Node runtime for file system access
@@ -125,7 +125,9 @@ export async function POST(request: Request) {
         await addLog(redis, ingestionId, `🆕 Creating new index: ${newIndexName}`);
 
         // 3. Create new RediSearch index
-        await createChunksIndex(redis);
+        const env = getChatbotEnv();
+        const dimensions = getEmbeddingDimensions(env.embeddingModel);
+        await createVectorIndex(redis, newIndexName, newPrefix, dimensions);
         await addLog(redis, ingestionId, `✅ New index created: ${newIndexName}`);
 
         // 4. Initialize loaders

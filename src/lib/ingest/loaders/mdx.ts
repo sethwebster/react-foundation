@@ -94,6 +94,66 @@ function generateId(filePath: string, baseDir: string): string {
 }
 
 /**
+ * Clean JSX/HTML content for better search relevance
+ * Removes JSX components and HTML tags while preserving markdown structure
+ */
+function cleanJSXContent(content: string): string {
+  let cleaned = content;
+
+  // First, preserve markdown headings by adding markers
+  // This ensures they don't get lost in the cleaning process
+  const headings: Array<{ marker: string; original: string }> = [];
+  let headingIndex = 0;
+
+  cleaned = cleaned.replace(/^(#{1,6}\s+.+)$/gm, (match) => {
+    const marker = `__HEADING_${headingIndex}__`;
+    headings.push({ marker, original: match });
+    headingIndex++;
+    return marker;
+  });
+
+  // Remove JSX component tags (e.g., <RFDS.SemanticCard variant="outlined">...</RFDS.SemanticCard>)
+  // This regex matches:
+  // - Self-closing tags: <Component />
+  // - Opening tags: <Component attr="value">
+  // - Closing tags: </Component>
+  cleaned = cleaned.replace(/<[A-Z][A-Za-z0-9.]*(?:\s+[^>]*)?\s*\/?>/g, ' ');
+  cleaned = cleaned.replace(/<\/[A-Z][A-Za-z0-9.]*>/g, ' ');
+
+  // Remove standard HTML tags (e.g., <div>, <span>, <p>)
+  cleaned = cleaned.replace(/<\/?[a-z][a-z0-9]*[^>]*>/gi, ' ');
+
+  // Remove JSX expressions {variable} but keep the content inside if it's a string
+  cleaned = cleaned.replace(/\{[^}]*\}/g, ' ');
+
+  // Remove className and other common attributes
+  cleaned = cleaned.replace(/className="[^"]*"/g, '');
+  cleaned = cleaned.replace(/\w+="[^"]*"/g, '');
+
+  // Restore markdown headings
+  headings.forEach(({ marker, original }) => {
+    cleaned = cleaned.replace(marker, '\n\n' + original + '\n');
+  });
+
+  // Preserve markdown list structure
+  cleaned = cleaned.replace(/^(\s*[-*+]\s+)/gm, '\n$1');
+
+  // Preserve numbered lists
+  cleaned = cleaned.replace(/^(\s*\d+\.\s+)/gm, '\n$1');
+
+  // Clean up multiple spaces (but preserve newlines)
+  cleaned = cleaned.replace(/ +/g, ' ');
+
+  // Clean up excessive newlines (max 2 in a row)
+  cleaned = cleaned.replace(/\n{3,}/g, '\n\n');
+
+  // Clean up spaces around punctuation
+  cleaned = cleaned.replace(/\s+([.,;!?])/g, '$1');
+
+  return cleaned.trim();
+}
+
+/**
  * Extract anchors from markdown content
  * Finds all ## headings and creates anchor links
  */
@@ -210,6 +270,9 @@ export class MDXLoader implements ContentLoader {
         // Extract anchors
         const anchors = extractAnchors(content);
 
+        // Clean JSX/HTML for better search relevance
+        const cleanedContent = cleanJSXContent(content);
+
         // Create record
         const record: RawRecord = {
           id,
@@ -221,7 +284,7 @@ export class MDXLoader implements ContentLoader {
             ...frontmatter,
             file_path: filePath,
           },
-          body: content,
+          body: cleanedContent, // Use cleaned content for better embeddings
           anchors: anchors.length > 0 ? anchors : undefined,
         };
 

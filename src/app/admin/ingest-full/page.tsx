@@ -6,6 +6,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { SearchTester } from '@/components/admin/search-tester';
 
 interface IngestionResult {
   success: boolean;
@@ -407,6 +408,11 @@ export default function IngestFullPage() {
           )}
         </div>
       )}
+
+      {/* Search Tester */}
+      <div className="mt-6">
+        <SearchTester />
+      </div>
 
       {/* Info Panel */}
       <div className="bg-muted border border-border rounded-xl p-6 mt-6">
