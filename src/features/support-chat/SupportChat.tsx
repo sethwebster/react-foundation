@@ -10,7 +10,7 @@ import {
 } from 'react';
 import ReactMarkdown, { type Components } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/cn';
 
@@ -216,7 +216,8 @@ function getRandomThinkingMessage(): string {
   return THINKING_MESSAGES[Math.floor(Math.random() * THINKING_MESSAGES.length)];
 }
 
-export function SupportChat(): JSX.Element {
+export function SupportChat(): JSX.Element | null {
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<UIMessage[]>(INITIAL_MESSAGES);
   const [input, setInput] = useState('');
@@ -225,6 +226,11 @@ export function SupportChat(): JSX.Element {
   const scrollRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const router = useRouter();
+
+  // Hide chatbot on coming soon page
+  if (pathname === '/coming-soon') {
+    return null;
+  }
 
   useEffect(() => {
     if (!isOpen) return;
