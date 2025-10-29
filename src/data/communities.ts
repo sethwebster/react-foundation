@@ -2516,6 +2516,43 @@ export const REACT_COMMUNITIES: Community[] = [
     "created_at": "2025-10-24T15:05:17.672Z",
     "updated_at": "2025-10-24T15:05:17.672Z",
     "meetup_url": "reactdenver.com"
+  },
+  {
+    "id": "react-reactors",
+    "name": "React Reactors",
+    "slug": "react-reactors",
+    "city": "New York",
+    "region": "New York",
+    "country": "United States",
+    "timezone": "America/New_York",
+    "coordinates": {
+      "lat": 40.7128,
+      "lng": -74.006
+    },
+    "organizers": [
+      {
+        "id": "seth-webster",
+        "name": "Seth Webster",
+        "role": "Lead Organizer",
+        "github_username": "sethwebster"
+      }
+    ],
+    "founded_date": "2025-10-29",
+    "event_types": [
+      "meetup"
+    ],
+    "description": "Inner workings of React",
+    "member_count": 50,
+    "typical_attendance": 25,
+    "meeting_frequency": "monthly",
+    "primary_language": "English",
+    "status": "new",
+    "invite_only": false,
+    "verified": false,
+    "verification_status": "pending",
+    "meetup_url": "https://Meetup.com/react-reactors",
+    "created_at": "2025-10-29T18:35:58.635Z",
+    "updated_at": "2025-10-29T18:35:58.635Z"
   }
 ];
 
