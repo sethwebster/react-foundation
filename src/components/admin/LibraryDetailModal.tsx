@@ -5,7 +5,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { LibraryEligibilityEditor } from './LibraryEligibilityEditor';
 
 interface Library {
@@ -42,17 +42,19 @@ export function LibraryDetailModal({ library, isOpen, onClose }: LibraryDetailMo
   const [collectionState, setCollectionState] = useState<CollectionState | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoadingState, setIsLoadingState] = useState(false);
+  const [bulkCollectionRunning, setBulkCollectionRunning] = useState(false);
 
-  // Fetch collection state when modal opens
-  useEffect(() => {
-    if (isOpen) {
-      fetchCollectionState();
-    }
-  }, [isOpen, library.owner, library.repo]);
-
-  const fetchCollectionState = async () => {
+  const fetchCollectionState = useCallback(async () => {
     setIsLoadingState(true);
     try {
+      // Check if bulk collection is running
+      const bulkStatusResponse = await fetch('/api/ris/status');
+      if (bulkStatusResponse.ok) {
+        const bulkData = await bulkStatusResponse.json();
+        setBulkCollectionRunning(bulkData.status?.status === 'running');
+      }
+
+      // Fetch library-specific collection state
       const response = await fetch(
         `/api/admin/ris/status?type=library&owner=${library.owner}&repo=${library.repo}`
       );
@@ -65,7 +67,42 @@ export function LibraryDetailModal({ library, isOpen, onClose }: LibraryDetailMo
     } finally {
       setIsLoadingState(false);
     }
-  };
+  }, [library.owner, library.repo]);
+
+  // Fetch collection state when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      fetchCollectionState();
+    }
+  }, [isOpen, fetchCollectionState]);
+
+  // Poll for collection state updates while modal is open
+  // This ensures UI updates when bulk collection completes
+  useEffect(() => {
+    if (!isOpen) return;
+
+    // Determine polling interval based on collection state
+    // If bulk collection is running or this library's collection is in progress, poll more frequently
+    const needsFrequentPolling = () => {
+      if (bulkCollectionRunning) return true; // Bulk collection active, poll frequently
+      if (!collectionState) return true; // Unknown state, check frequently
+      if (collectionState.is_complete) return false; // Complete, don't need frequent updates
+      // Check if any source is in_progress
+      const sources = ['github_basic', 'github_prs', 'github_issues', 'github_commits', 'github_releases', 'npm_metrics', 'cdn_metrics', 'ossf_metrics'];
+      return sources.some(key => {
+        const source = collectionState[key as keyof CollectionState] as { status?: string } | undefined;
+        return source?.status === 'in_progress';
+      });
+    };
+
+    const pollInterval = needsFrequentPolling() ? 2000 : 5000; // Poll every 2s if active, 5s if idle
+
+    const interval = setInterval(() => {
+      fetchCollectionState();
+    }, pollInterval);
+
+    return () => clearInterval(interval);
+  }, [isOpen, library.owner, library.repo, collectionState, bulkCollectionRunning, fetchCollectionState]);
 
   const handleKickOffCollection = async () => {
     setIsCollecting(true);
@@ -157,7 +194,14 @@ export function LibraryDetailModal({ library, isOpen, onClose }: LibraryDetailMo
           {/* Collection Controls */}
           <div className="bg-muted/50 rounded-lg p-4">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="font-semibold text-foreground">Data Collection</h3>
+              <div className="flex items-center gap-2">
+                <h3 className="font-semibold text-foreground">Data Collection</h3>
+                {bulkCollectionRunning && (
+                  <span className="text-xs px-2 py-1 rounded-full font-medium bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 animate-pulse">
+                    Bulk collection running...
+                  </span>
+                )}
+              </div>
               {collectionState && (
                 <span className={`text-xs px-2 py-1 rounded-full font-medium ${
                   collectionState.is_complete

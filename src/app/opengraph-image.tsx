@@ -1,4 +1,5 @@
 import { ImageResponse } from 'next/og';
+import { ecosystemLibraries } from '@/lib/maintainer-tiers';
 
 export const runtime = 'edge';
 export const alt = 'React Foundation - Supporting the React Ecosystem';
@@ -93,7 +94,7 @@ export default async function OGImage() {
                 backgroundColor: '#34D399',
               }}
             />
-            <span>54 Libraries Supported</span>
+            <span>{ecosystemLibraries.length} Libraries Supported</span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <div

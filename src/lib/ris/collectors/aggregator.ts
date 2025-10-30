@@ -29,6 +29,8 @@ export class MetricsAggregator {
   private npmCollector: NPMCollector;
   private cdnCollector: CDNCollector;
   private ossfCollector: OSSFCollector;
+  private onSourceStart?: (source: string) => void | ((library: string, source: string) => void);
+  private currentLibraryContext?: string; // Track which library is currently being collected
 
   constructor(options: AggregatorOptions) {
     if (options.githubCollectors) {
@@ -52,6 +54,25 @@ export class MetricsAggregator {
     this.npmCollector = new NPMCollector();
     this.cdnCollector = new CDNCollector();
     this.ossfCollector = new OSSFCollector();
+  }
+
+  /**
+   * Set callback for source-level progress tracking
+   * Callback receives (library: string, source: string) where library is "owner/repo"
+   */
+  setSourceCallback(callback: (library: string, source: string) => void): void {
+    this.onSourceStart = (source: string) => {
+      // This old format is deprecated - we need library info
+      // For now, just call with empty library - the route will handle it
+      callback('', source);
+    };
+  }
+  
+  /**
+   * Set callback with library context
+   */
+  setSourceCallbackWithLibrary(callback: (library: string, source: string) => void): void {
+    this.onSourceStart = callback as any; // Store the new format
   }
 
   /**
@@ -81,23 +102,52 @@ export class MetricsAggregator {
 
     console.log(`   Found ${installations.length} installation(s)`);
 
+    // IMPORTANT: Each installation must be on a DIFFERENT organization/account
+    // Installing on multiple repos under the same org doesn't increase rate limits
+    const installationAccounts = new Set<string>();
+    installations.forEach(inst => {
+      const account = inst.account?.login || 'unknown';
+      installationAccounts.add(account);
+      console.log(`   - Installation ${inst.id}: ${account} (${inst.target_type})`);
+    });
+
+    if (installationAccounts.size < installations.length) {
+      console.warn(`   ⚠️  WARNING: Some installations are on the same account. Rate limits are per ACCOUNT/ORG, not per repository.`);
+      console.warn(`   ⚠️  To increase rate limits, install the app on DIFFERENT organizations or user accounts.`);
+    }
+
     // Create a collector for each installation
+    // Use the appOctokit directly so tokens refresh automatically
     const collectors = await Promise.all(
       installations.map(async (installation, index) => {
+        // Get installation-specific Octokit (automatically refreshes tokens)
         const appOctokit = await app.getInstallationOctokit(installation.id);
 
-        // Convert to standard Octokit instance
+        // Use appOctokit directly - it handles token refresh automatically
+        // Convert to standard Octokit by using auth function that refreshes
         const octokit = new Octokit({
-          auth: await appOctokit.auth(),
+          auth: async () => {
+            // This will be called for each request and refreshes token if needed
+            const auth = await appOctokit.auth();
+            // Type assertion: auth() returns { token: string }
+            return (auth as { token: string }).token;
+          },
         });
 
-        console.log(`   ✓ Installation ${index + 1}: ${installation.account?.login || 'unknown'}`);
+        const accountName = installation.account?.login || 'unknown';
+        console.log(`   ✓ Collector ${index + 1}: ${accountName} (installation ${installation.id})`);
 
         return new GitHubActivityCollector({ octokit });
       })
     );
 
-    console.log(`✅ GitHub App ready with ${collectors.length} installation(s) (${collectors.length * 5000}/hour total)`);
+    const uniqueAccounts = installationAccounts.size;
+    console.log(`✅ GitHub App ready with ${collectors.length} installation(s) across ${uniqueAccounts} unique account(s)`);
+    if (uniqueAccounts > 1) {
+      console.log(`   📊 Effective rate limit: ${uniqueAccounts * 5000}/hour (${uniqueAccounts} accounts × 5,000/hour each)`);
+    } else {
+      console.log(`   📊 Effective rate limit: 5,000/hour (single account - install on different orgs/accounts to increase)`);
+    }
 
     return new MetricsAggregator({
       githubCollectors: collectors,
@@ -112,6 +162,10 @@ export class MetricsAggregator {
     const now = Date.now();
     const totalCollectors = this.githubCollectors.length;
 
+    if (totalCollectors === 0) {
+      throw new Error('No GitHub collectors available');
+    }
+
     // Try each collector starting from current index
     for (let i = 0; i < totalCollectors; i++) {
       const index = (this.currentCollectorIndex + i) % totalCollectors;
@@ -122,11 +176,12 @@ export class MetricsAggregator {
         // Clear the exhaustion flag if reset time passed
         if (resetTime && now >= resetTime) {
           this.exhaustedUntil.delete(index);
-          console.log(`✅ Token ${index + 1} rate limit reset, back in rotation`);
+          console.log(`✅ Collector ${index + 1}/${totalCollectors} rate limit reset, back in rotation`);
         }
 
         // Update index for next call
         this.currentCollectorIndex = (index + 1) % totalCollectors;
+        console.log(`🔄 Using collector ${index + 1}/${totalCollectors} (${this.exhaustedUntil.size} exhausted)`);
         return { collector: this.githubCollectors[index], index };
       }
     }
@@ -143,7 +198,7 @@ export class MetricsAggregator {
     });
 
     const waitMinutes = Math.ceil((soonestReset - now) / 60000);
-    console.warn(`⚠️  All ${totalCollectors} tokens exhausted. Soonest reset: ${waitMinutes} min`);
+    console.warn(`⚠️  All ${totalCollectors} collectors exhausted. Soonest reset: ${waitMinutes} min`);
 
     this.currentCollectorIndex = (soonestIndex + 1) % totalCollectors;
     return { collector: this.githubCollectors[soonestIndex], index: soonestIndex };
@@ -155,7 +210,8 @@ export class MetricsAggregator {
   private markCollectorExhausted(index: number, resetTimestamp: number): void {
     this.exhaustedUntil.set(index, resetTimestamp);
     const waitMinutes = Math.ceil((resetTimestamp - Date.now()) / 60000);
-    console.warn(`⚠️  Token ${index + 1}/${this.githubCollectors.length} exhausted. Resets in ${waitMinutes} min`);
+    const remaining = this.githubCollectors.length - this.exhaustedUntil.size;
+    console.warn(`⚠️  Collector ${index + 1}/${this.githubCollectors.length} exhausted. Resets in ${waitMinutes} min. ${remaining} collector(s) still available.`);
   }
 
   /**
@@ -170,6 +226,16 @@ export class MetricsAggregator {
     hasNpmPackage: boolean = true
   ): Promise<LibraryActivityData> {
     console.log(`Collecting activity for ${owner}/${repo}...`);
+
+    // Set library context for callbacks
+    const libraryKey = `${owner}/${repo}`;
+    this.currentLibraryContext = libraryKey;
+    
+    // Fire callback immediately to signal collection has started for this library
+    if (this.onSourceStart) {
+      console.log(`  → Firing start callback for ${libraryKey}`);
+      (this.onSourceStart as (library: string, source: string) => void)(libraryKey, 'events');
+    }
 
     // Determine NPM package name (null for repos without NPM packages)
     const npmPackageName = hasNpmPackage ? NPMCollector.getPackageName(owner, repo) : null;
@@ -187,6 +253,8 @@ export class MetricsAggregator {
         const collectorInfo = this.getNextGitHubCollector();
         const githubCollector = collectorInfo.collector;
         collectorIndex = collectorInfo.index;
+        
+        console.log(`  🔑 Collector ${collectorIndex + 1}/${this.githubCollectors.length} for ${owner}/${repo}`);
 
     // Decide: full collection or incremental update
     if (!cachedActivity) {
@@ -206,8 +274,27 @@ export class MetricsAggregator {
       } : {};
 
       // Collect GitHub and OSSF data (always needed)
+      // Pass source callback to GitHub collector for progress tracking
+      // Wrap callback to include library context
+      const libraryCallback = this.onSourceStart 
+        ? (source: string) => {
+            // Always pass library context if we have onSourceStart
+            if (typeof this.onSourceStart === 'function') {
+              console.log(`  → Library callback firing: ${libraryKey} - ${source}`);
+              // Call with (library, source) format - setSourceCallbackWithLibrary stores it this way
+              (this.onSourceStart as (library: string, source: string) => void)(libraryKey, source);
+            } else {
+              console.log(`  → WARNING: onSourceStart is not a function for ${libraryKey}`);
+            }
+          }
+        : undefined;
+      
+      if (!libraryCallback) {
+        console.log(`  → WARNING: No library callback set for ${libraryKey}`);
+      }
+      
       const [githubActivity, ossf, npm, cdn] = await Promise.allSettled([
-        githubCollector.fetchAllActivity(owner, repo, libraryName),
+        githubCollector.fetchAllActivity(owner, repo, libraryName, libraryCallback),
         this.ossfCollector.collectMetrics(owner, repo),
         npmPackageName ? this.npmCollector.collectMetrics(npmPackageName) : Promise.resolve({ downloads_12mo: 0, downloads_last_month: 0, package_name: '', latest_version: '', license: '', dependents_count: 0, typescript_support: false }),
         npmPackageName ? this.cdnCollector.collectMetrics(npmPackageName) : Promise.resolve({ jsdelivr_hits_12mo: 0, jsdelivr_hits_last_month: 0 }),

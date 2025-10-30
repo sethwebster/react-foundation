@@ -23,6 +23,12 @@ import {
   setCollectionStatus,
   logCollectionError,
 } from '@/lib/redis';
+import {
+  initializeCollectionState,
+  getCollectionState,
+  markSourceCompleted,
+  markSourceFailed,
+} from '@/lib/ris/collection-state';
 import type { LibraryRawMetrics } from '@/lib/ris/types';
 import { calculateMetricsFromActivity } from '@/lib/ris/activity-calculator';
 
@@ -149,6 +155,9 @@ export async function POST(request: NextRequest) {
     let collected = 0;
     let skipped = 0;
     let failed = 0;
+    
+    // Track progress with a shared counter (for parallel batch updates)
+    let progressCounter = 0;
 
     // Prioritize libraries with no data first, then process libraries with existing data
     // This ensures that new libraries get baseline collection before incremental updates run
@@ -207,6 +216,9 @@ export async function POST(request: NextRequest) {
     let currentProgress = 0;
     let currentTotal = orderedLibraries.length;
     let currentMessage = initialMessage;
+    let currentLibraryDisplay: string | undefined = undefined;
+    let currentSourceDisplay: string | undefined = undefined;
+    let currentActiveLibraries: Array<{ library: string; source?: string }> | undefined = undefined;
 
     const statusHeartbeat = setInterval(async () => {
       await setCollectionStatus({
@@ -215,6 +227,9 @@ export async function POST(request: NextRequest) {
         progress: currentProgress,
         total: currentTotal,
         startedAt: new Date().toISOString(),
+        currentLibrary: currentLibraryDisplay,
+        currentSource: currentSourceDisplay,
+        activeLibraries: currentActiveLibraries,
       });
       logger.debug('Collection status heartbeat: Status refreshed');
     }, 20000); // Every 20 seconds
@@ -233,13 +248,115 @@ export async function POST(request: NextRequest) {
 
       for (let i = 0; i < orderedLibraries.length; i += batchSize) {
         const batch = orderedLibraries.slice(i, i + batchSize);
+        currentProgress = progressCounter; // Sync before batch starts
+        
+        // Track active libraries in this batch with their current sources
+        const activeLibrariesMap = new Map<string, string | undefined>();
+        
+        // Initialize all libraries in batch as active
+        batch.forEach(library => {
+          const libraryKey = `${library.owner}/${library.name}`;
+          activeLibrariesMap.set(libraryKey, undefined); // No source yet
+        });
+        
+        // Update status immediately to show all libraries being processed
+        const activeLibraries: Array<{ library: string; source?: string }> = Array.from(activeLibrariesMap.entries()).map(([library, source]) => ({
+          library,
+          source,
+        }));
+        currentActiveLibraries = activeLibraries; // Store for heartbeat
+        
+        logger.info(`Starting batch with ${activeLibraries.length} libraries: ${activeLibraries.map(l => l.library).join(', ')}`);
+        
+        // Update status immediately with all libraries in batch (even before sources start)
+        const initialStatus = {
+          status: 'running' as const,
+          message: currentMessage,
+          progress: currentProgress,
+          total: currentTotal,
+          startedAt: new Date().toISOString(),
+          activeLibraries,
+        };
+        
+        logger.debug(`Setting initial status with ${activeLibraries.length} active libraries`);
+        await setCollectionStatus(initialStatus);
+
+        // Set up source callback BEFORE processing starts so it's ready when libraries begin collection
+        // This callback will be shared across all libraries in the batch
+        logger.info(`Setting up source callback for batch of ${batch.length} libraries`);
+        aggregator.setSourceCallbackWithLibrary((library: string, source: string) => {
+          logger.info(`Source callback received: library=${library}, source=${source}`);
+          // Map internal source names to user-friendly names
+          const sourceMap: Record<string, string> = {
+            events: 'GitHub activity',
+            basic_stats: 'basic stats',
+            prs: 'PRs',
+            issues: 'issues',
+            commits: 'commits',
+            releases: 'releases',
+            npm_metrics: 'NPM metrics',
+            cdn_metrics: 'CDN metrics',
+            ossf_metrics: 'OSSF score',
+          };
+          const displaySource = sourceMap[source] || source;
+          
+          logger.debug(`Source callback: ${library} - ${displaySource}`);
+          
+          // Update the active libraries map
+          if (library && activeLibrariesMap.has(library)) {
+            activeLibrariesMap.set(library, displaySource);
+          } else if (!library) {
+            // Fallback: update first library in batch if library not provided
+            const firstLib = `${batch[0].owner}/${batch[0].name}`;
+            logger.warn(`Source callback missing library, using first: ${firstLib}`);
+            activeLibrariesMap.set(firstLib, displaySource);
+          } else {
+            // Library provided but not in map - add it anyway
+            logger.warn(`Library ${library} not in activeLibrariesMap, adding it`);
+            activeLibrariesMap.set(library, displaySource);
+          }
+          
+          // Build active libraries array for status update
+          const updatedActiveLibraries: Array<{ library: string; source?: string }> = 
+            Array.from(activeLibrariesMap.entries()).map(([lib, src]) => ({
+              library: lib,
+              source: src,
+            }));
+          currentActiveLibraries = updatedActiveLibraries; // Update for heartbeat callbacks
+          
+          logger.debug(`Updating status with ${updatedActiveLibraries.length} active libraries`);
+          
+          // Update status with all active libraries
+          setCollectionStatus({
+            status: 'running',
+            message: currentMessage,
+            progress: currentProgress,
+            total: currentTotal,
+            startedAt: new Date().toISOString(),
+            activeLibraries: updatedActiveLibraries,
+          }).catch(err => logger.error('Failed to update collection status:', err));
+        });
 
       // Process batch in parallel
+      logger.info(`Starting parallel collection for batch: ${batch.map(l => `${l.owner}/${l.name}`).join(', ')}`);
       const batchResults = await Promise.allSettled(
-        batch.map(async (library) => {
+        batch.map(async (library, batchIndex) => {
+          const libraryIndex = i + batchIndex; // Track which library this is in the full list
+          const libraryKey = `${library.owner}/${library.name}`;
+          
           try {
+            logger.info(`[${libraryKey}] Starting collection...`);
+            
+            // Ensure collection state exists (initialize if needed)
+            let state = await getCollectionState(library.owner, library.name);
+            if (!state || forceRefresh) {
+              state = await initializeCollectionState(library.owner, library.name);
+            }
+
             // Get cached activity data (permanent storage)
             const cachedActivity = await getCachedLibraryActivity(library.owner, library.name);
+            
+            logger.info(`[${libraryKey}] Calling collectLibraryActivity...`);
 
             // Collect or update activity (skip NPM for infrastructure repos)
             const activity = await aggregator.collectLibraryActivity(
@@ -259,14 +376,126 @@ export async function POST(request: NextRequest) {
             // Cache calculated metrics (7 day TTL)
             await cacheLibraryMetrics(library.owner, library.name, metrics);
 
+            // Update collection-state: Mark all sources as completed since aggregator successfully collected them
+            // The aggregator collects all sources in one call, so if we reach here, all sources succeeded
+            const allSources: Array<'github_basic' | 'github_prs' | 'github_issues' | 'github_commits' | 'github_releases' | 'npm_metrics' | 'cdn_metrics' | 'ossf_metrics'> = [
+              'github_basic',
+              'github_prs',
+              'github_issues',
+              'github_commits',
+              'github_releases',
+              'npm_metrics',
+              'cdn_metrics',
+              'ossf_metrics',
+            ];
+
+            // CRITICAL: Always mark ALL sources as completed after successful collection
+            // The aggregator collects all sources atomically, so if we reach here, all succeeded
+            // Execute sequentially to avoid race conditions with Redis
+            for (const source of allSources) {
+              try {
+                // Calculate items collected for sources that track counts
+                const itemsCollected = source === 'github_prs' ? activity.prs.length
+                  : source === 'github_issues' ? activity.issues.length
+                  : source === 'github_commits' ? activity.commits.length
+                  : source === 'github_releases' ? activity.releases.length
+                  : undefined;
+                
+                // Always mark as completed - aggregator already succeeded for all sources
+                // (even if source was already completed, we refresh the timestamp)
+                await markSourceCompleted(library.owner, library.name, source, itemsCollected);
+              } catch (stateError) {
+                // Log but don't fail the whole collection if state update fails
+                logger.error(`Failed to mark ${source} as completed for ${library.owner}/${library.name}:`, stateError);
+              }
+            }
+            
+            // Final verification: Ensure state shows complete after all sources are marked
+            const finalState = await getCollectionState(library.owner, library.name);
+            if (!finalState) {
+              logger.error(`❌ No collection state found for ${library.owner}/${library.name} after marking sources complete`);
+            } else if (!finalState.is_complete) {
+              // This should not happen, but if it does, log warning
+              logger.warn(`⚠️ State not marked complete for ${library.owner}/${library.name} after marking all sources. Sources: ${allSources.map(s => `${s}=${finalState[s]?.status}`).join(', ')}`);
+              
+              // One more attempt: force mark all sources again
+              for (const source of allSources) {
+                try {
+                  const sourceState = finalState[source];
+                  if (sourceState?.status !== 'completed') {
+                    const itemsCollected = source === 'github_prs' ? activity.prs.length
+                      : source === 'github_issues' ? activity.issues.length
+                      : source === 'github_commits' ? activity.commits.length
+                      : source === 'github_releases' ? activity.releases.length
+                      : undefined;
+                    await markSourceCompleted(library.owner, library.name, source, itemsCollected);
+                  }
+                } catch (retryError) {
+                  logger.error(`Failed to retry mark ${source} as completed:`, retryError);
+                }
+              }
+            } else {
+              logger.debug(`✅ Collection state verified complete for ${library.owner}/${library.name}`);
+            }
+
+            // Library completed successfully - count will be done after batch
+
             return {
               library,
               metrics,
               wasIncremental: !!(cachedActivity && !forceRefresh),
             };
           } catch (error) {
-            const errorMsg = error instanceof Error ? error.message : String(error);
-            logger.error(`Error collecting ${library.owner}/${library.name}:`, errorMsg);
+            // Capture full error details for debugging
+            const errorObj = error instanceof Error ? error : new Error(String(error));
+            const errorMsg = errorObj.message || String(error);
+            const errorStack = errorObj.stack || '';
+            
+            // Log full error details
+            logger.error(`Error collecting ${library.owner}/${library.name}:`, {
+              message: errorMsg,
+              stack: errorStack,
+              name: errorObj.name,
+            });
+            
+            // If error mentions Inngest/getStepMetadata, log additional context
+            if (errorMsg.includes('getStepMetadata') || errorMsg.includes('step function')) {
+              logger.error(`Inngest-related error detected for ${library.owner}/${library.name}. This may indicate a dependency issue or async context problem.`);
+            }
+
+            // Ensure collection state exists for error tracking
+            let state = await getCollectionState(library.owner, library.name);
+            if (!state) {
+              state = await initializeCollectionState(library.owner, library.name);
+            }
+
+            // Mark all sources as failed since collection failed
+            const allSources: Array<'github_basic' | 'github_prs' | 'github_issues' | 'github_commits' | 'github_releases' | 'npm_metrics' | 'cdn_metrics' | 'ossf_metrics'> = [
+              'github_basic',
+              'github_prs',
+              'github_issues',
+              'github_commits',
+              'github_releases',
+              'npm_metrics',
+              'cdn_metrics',
+              'ossf_metrics',
+            ];
+
+            // Mark failed sources (only ones that were pending/in_progress)
+            // Execute sequentially to avoid race conditions with Redis
+            for (const source of allSources) {
+              try {
+                const currentSourceState = state[source];
+                if (currentSourceState?.status === 'pending' || currentSourceState?.status === 'in_progress') {
+                  await markSourceFailed(library.owner, library.name, source, errorMsg);
+                  // Refresh state after each update to get latest state
+                  state = await getCollectionState(library.owner, library.name) || state;
+                }
+              } catch (stateError) {
+                // Log but don't fail the whole error handling if state update fails
+                logger.error(`Failed to mark ${source} as failed for ${library.owner}/${library.name}:`, stateError);
+              }
+            }
 
             // Check if this is a rate limit error
             if (errorMsg.includes('rate limit exceeded')) {
@@ -287,6 +516,8 @@ export async function POST(request: NextRequest) {
               { owner: library.owner, repo: library.name }
             );
 
+            // Library failed - count will be done after batch
+
             throw error;
           }
         })
@@ -306,6 +537,9 @@ export async function POST(request: NextRequest) {
           } else {
             collected++;
           }
+          
+          // Increment progress counter for successful completion
+          progressCounter++;
         } else {
           // Check if this failure is due to rate limiting
           const errorMsg = result.reason instanceof Error ? result.reason.message : String(result.reason);
@@ -316,6 +550,9 @@ export async function POST(request: NextRequest) {
             break; // Stop processing immediately
           }
           failed++;
+          
+          // Increment progress counter even on failure (library was attempted)
+          progressCounter++;
         }
       }
 
@@ -350,8 +587,8 @@ export async function POST(request: NextRequest) {
         });
       }
 
-      // Update progress after batch
-      currentProgress = collected + skipped + failed;
+      // Update progress after batch completes (progressCounter tracks completed libraries)
+      currentProgress = progressCounter;
 
       if (librariesWithoutData.length === 0) {
         // Only updating existing libraries
@@ -364,13 +601,29 @@ export async function POST(request: NextRequest) {
           : `Updating existing: ${currentProgress - librariesWithoutData.length}/${librariesWithData.length} (${librariesWithoutData.length} new libraries collected)`;
       }
 
+      // Determine next library to process (for status display)
+      const nextLibraryIndex = currentProgress;
+      const nextLibrary = orderedLibraries[nextLibraryIndex];
+      currentLibraryDisplay = nextLibrary 
+        ? `${nextLibrary.owner}/${nextLibrary.name}`
+        : undefined;
+      // Clear source when batch completes (will be set again when next batch starts)
+      currentSourceDisplay = undefined;
+      currentActiveLibraries = undefined; // Clear active libraries - next batch will set new ones
+
+      // Update status immediately after batch completes
       await setCollectionStatus({
         status: 'running',
         message: currentMessage,
         progress: currentProgress,
         total: currentTotal,
         startedAt: new Date().toISOString(),
+        currentLibrary: currentLibraryDisplay,
+        currentSource: currentSourceDisplay,
+        activeLibraries: currentActiveLibraries,
       });
+      
+      logger.info(`📊 Batch progress: ${currentProgress}/${currentTotal} libraries completed`);
 
         logger.debug(`Batch complete: ${collected} full, ${skipped} incremental, ${failed} failed / ${orderedLibraries.length} total`);
       }
@@ -436,15 +689,17 @@ ${sortedScores.slice(-5).reverse().map((s, i) => `  ${i + 1}. ${s.libraryName}: 
       // Release lock
       await releaseCollectionLock();
 
-      // Set completion status
-      await setCollectionStatus({
-        status: 'completed',
-        message: `Completed: ${librariesWithoutData.length} new libraries collected, ${librariesWithData.length} existing updated (${failed} failed)`,
-        progress: allMetrics.length,
-        total: orderedLibraries.length,
-        startedAt: new Date().toISOString(),
-        completedAt: new Date().toISOString(),
-      });
+        // Set completion status (clear currentLibrary and currentSource since we're done)
+        await setCollectionStatus({
+          status: 'completed',
+          message: `Completed: ${librariesWithoutData.length} new libraries collected, ${librariesWithData.length} existing updated (${failed} failed)`,
+          progress: allMetrics.length,
+          total: orderedLibraries.length,
+          startedAt: new Date().toISOString(),
+          completedAt: new Date().toISOString(),
+          currentLibrary: undefined, // Clear current library on completion
+          currentSource: undefined, // Clear current source on completion
+        });
 
       return NextResponse.json({
         success: true,

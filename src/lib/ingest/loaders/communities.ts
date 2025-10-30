@@ -2,10 +2,13 @@
  * Communities Loader
  * Loads React community data from Redis
  * Based on AUTO_INGESTION_SETUP.md specification
+ * 
+ * Uses the new individual-key storage format for better scalability
  */
 
 import type { ContentLoader, RawRecord } from '../types';
-import { getRedisClient } from '@/lib/redis';
+import type { Community } from '@/types/community';
+import { getCommunities } from '@/lib/redis-communities';
 import { logger } from '@/lib/logger';
 
 export class CommunitiesLoader implements ContentLoader {
@@ -14,29 +17,25 @@ export class CommunitiesLoader implements ContentLoader {
   async load(): Promise<RawRecord[]> {
     logger.info(`[${this.name}] Loading communities from Redis`);
 
-    const redis = getRedisClient();
     const records: RawRecord[] = [];
 
     try {
-      // Communities are stored in a single key as JSON array
-      const COMMUNITIES_KEY = 'communities:all';
-      const data = await redis.get(COMMUNITIES_KEY);
+      // Use the new getCommunities() function which handles migration automatically
+      const communities = await getCommunities();
 
-      if (!data) {
-        logger.warn(`[${this.name}] No communities found at ${COMMUNITIES_KEY}`);
+      if (communities.length === 0) {
+        logger.warn(`[${this.name}] No communities found in Redis`);
         return records;
       }
 
-      // Parse JSON array
-      const communities = JSON.parse(data) as Array<Record<string, unknown>>;
       logger.info(`[${this.name}] Found ${communities.length} communities in Redis`);
 
       for (const community of communities) {
-        const communityName = (community.name as string) || 'unknown';
+        const communityName = community.name || 'unknown';
         try {
           // Extract slug - use slug field or generate from name
-          const slug = (community.slug as string) ||
-                       (communityName.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''));
+          const slug = community.slug ||
+                       communityName.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
 
           // Build body text from community data
           const body = this.buildCommunityBody(community);
@@ -47,14 +46,14 @@ export class CommunitiesLoader implements ContentLoader {
             type: 'community',
             title: communityName,
             url: `/communities/${slug}`,
-            updatedAt: (community.updatedAt as string) || new Date().toISOString(),
+            updatedAt: community.updated_at || new Date().toISOString(),
             tags: {
-              city: community.city as string,
-              country: community.country as string,
-              tier: community.coisTier as string,
-              status: community.status as string,
-              verified: community.verified as boolean,
-              memberCount: community.memberCount as number,
+              city: community.city,
+              country: community.country,
+              tier: community.cois_tier || '',
+              status: community.status,
+              verified: community.verified || false,
+              memberCount: community.member_count || 0,
             },
             body,
             anchors: [
@@ -82,8 +81,9 @@ export class CommunitiesLoader implements ContentLoader {
 
   /**
    * Build searchable text body from community data
+   * Uses Community type with snake_case properties
    */
-  private buildCommunityBody(community: Record<string, unknown>): string {
+  private buildCommunityBody(community: import('@/types/community').Community): string {
     const parts: string[] = [];
 
     // Name and location
@@ -96,43 +96,49 @@ export class CommunitiesLoader implements ContentLoader {
     }
 
     // Event details
-    if (community.eventFormats && Array.isArray(community.eventFormats) && community.eventFormats.length > 0) {
-      parts.push(`\n## Events\nEvent formats: ${community.eventFormats.join(', ')}`);
+    if (community.event_types && Array.isArray(community.event_types) && community.event_types.length > 0) {
+      parts.push(`\n## Events\nEvent formats: ${community.event_types.join(', ')}`);
     }
 
-    if (community.meetingFrequency) {
-      parts.push(`Meeting frequency: ${community.meetingFrequency}`);
+    if (community.meeting_frequency) {
+      parts.push(`Meeting frequency: ${community.meeting_frequency}`);
     }
 
-    if (community.typicalAttendance) {
-      parts.push(`Typical attendance: ${community.typicalAttendance} people`);
+    if (community.typical_attendance) {
+      parts.push(`Typical attendance: ${community.typical_attendance} people`);
     }
 
     // Organizers
     if (community.organizers && Array.isArray(community.organizers) && community.organizers.length > 0) {
       parts.push(`\n## Organizers`);
-      community.organizers.forEach((org: { name: string; role?: string }) => {
+      community.organizers.forEach((org) => {
         parts.push(`- ${org.name}${org.role ? ` (${org.role})` : ''}`);
       });
     }
 
     // Contact
-    if (community.website || community.socialLinks) {
+    if (community.website || community.meetup_url || community.twitter_handle) {
       parts.push(`\n## Contact`);
       if (community.website) {
         parts.push(`Website: ${community.website}`);
       }
-      if (community.socialLinks && typeof community.socialLinks === 'object') {
-        const links = community.socialLinks as Record<string, string>;
-        Object.entries(links).forEach(([platform, url]) => {
-          parts.push(`${platform}: ${url}`);
-        });
+      if (community.meetup_url) {
+        parts.push(`Meetup: ${community.meetup_url}`);
+      }
+      if (community.twitter_handle) {
+        parts.push(`Twitter: ${community.twitter_handle}`);
+      }
+      if (community.discord_url) {
+        parts.push(`Discord: ${community.discord_url}`);
+      }
+      if (community.slack_url) {
+        parts.push(`Slack: ${community.slack_url}`);
       }
     }
 
     // Tier/status
-    if (community.coisTier) {
-      parts.push(`\nCoIS Tier: ${community.coisTier}`);
+    if (community.cois_tier) {
+      parts.push(`\nCoIS Tier: ${community.cois_tier}`);
     }
 
     if (community.verified) {
