@@ -5,6 +5,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { RFDS } from '@/components/rfds';
 
 interface ActiveLibrary {
   library: string; // Owner/repo format
@@ -163,21 +164,23 @@ export function RISCollectionButton() {
   return (
     <div className="space-y-3">
       <div className="flex gap-3">
-        <button
+        <RFDS.SemanticButton
           onClick={() => handleStartCollection(false)}
           disabled={isRunning}
-          className="flex-1 rounded-lg bg-primary px-4 py-2 font-semibold text-primary-foreground transition hover:bg-primary/90 disabled:opacity-50"
+          variant="primary"
+          className="flex-1"
           title="Prioritizes new libraries first, then updates existing data"
         >
           {isRunning ? '🔄 Running...' : '▶️ Start Collection (Smart)'}
-        </button>
-        <button
+        </RFDS.SemanticButton>
+        <RFDS.SemanticButton
           onClick={() => handleStartCollection(true)}
           disabled={isRunning}
-          className="flex-1 rounded-lg bg-destructive px-4 py-2 font-semibold text-destructive-foreground transition hover:bg-destructive/90 disabled:opacity-50"
+          variant="destructive"
+          className="flex-1"
         >
           {isRunning ? '🔄 Running...' : '🔥 Force Full Refresh'}
-        </button>
+        </RFDS.SemanticButton>
       </div>
 
       {status && (
@@ -266,12 +269,14 @@ export function RISCollectionButton() {
           <div className="flex items-center justify-between">
             <span>❌ {error}</span>
             {error.includes('already in progress') && (
-              <button
+              <RFDS.SemanticButton
+                variant="ghost"
+                size="sm"
                 onClick={handleReleaseLock}
-                className="ml-2 text-xs underline hover:no-underline"
+                className="ml-2 text-xs"
               >
                 Release Lock
-              </button>
+              </RFDS.SemanticButton>
             )}
           </div>
         </div>

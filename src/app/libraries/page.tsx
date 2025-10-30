@@ -12,6 +12,7 @@ import {
   useCollectionStatus,
 } from '@/lib/ris';
 import { RISLibraryRankings } from '@/components/ris/ris-library-rankings';
+import { RFDS } from '@/components/rfds';
 import Link from 'next/link';
 
 export default function LibrariesPage() {
@@ -197,22 +198,13 @@ function StatCard({
   highlight?: boolean;
 }) {
   return (
-    <div
-      className={`rounded-xl border p-6 ${
-        highlight
-          ? 'border-primary/30 bg-primary/10'
-          : 'border-border/10 bg-background/[0.03]'
-      }`}
-    >
-      <div className="text-sm text-foreground/60">{label}</div>
-      <div
-        className={`mt-2 text-3xl font-bold ${
-          highlight ? 'text-cyan-400' : 'text-foreground'
-        }`}
-      >
-        {value}
-      </div>
-      <div className="mt-1 text-xs text-foreground/50">{subtext}</div>
-    </div>
+    <RFDS.StatCard
+      label={label}
+      value={value}
+      detail={subtext}
+      highlight={highlight}
+      color="primary"
+      variant="outlined"
+    />
   );
 }

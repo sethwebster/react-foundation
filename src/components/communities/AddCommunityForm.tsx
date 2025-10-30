@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import { RFDS } from '@/components/rfds';
 import { CountrySelect } from '@/components/ui/country-select';
 
 interface Props { fullPage?: boolean; onSuccess?: () => void; }
@@ -46,7 +47,9 @@ export function AddCommunityForm({ fullPage, onSuccess }: Props = {}) {
         <div className="text-5xl mb-4">🔐</div>
         <h2 className="text-2xl font-bold mb-3">Login Required</h2>
         <p className="text-muted-foreground mb-6">Please sign in</p>
-        <button onClick={() => router.push('/api/auth/signin')} className="bg-primary text-primary-foreground px-6 py-3 rounded-lg font-semibold">Sign In</button>
+        <RFDS.SemanticButton variant="primary" onClick={() => router.push('/api/auth/signin')}>
+          Sign In
+        </RFDS.SemanticButton>
       </div>
     );
   }
@@ -64,41 +67,41 @@ export function AddCommunityForm({ fullPage, onSuccess }: Props = {}) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div><label className="block text-sm font-medium mb-2">Community Name <span className="text-destructive">*</span></label>
-        <input required value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} placeholder="React Amsterdam" className="w-full px-4 py-2 bg-card border border-border rounded-lg focus:ring-2 focus:ring-primary" />
+        <RFDS.Input required value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} placeholder="React Amsterdam" className="w-full" />
       </div>
       <CountrySelect label="Country" required value={formData.country} onChange={(country) => setFormData({...formData, country})} placeholder="Select your country first" />
       <div><label className="block text-sm font-medium mb-2">Full Address <span className="text-destructive">*</span></label>
-        <input required value={formData.address} onChange={(e) => setFormData({...formData, address: e.target.value})} placeholder={getAddressPlaceholder()} className="w-full px-4 py-2 bg-card border border-border rounded-lg focus:ring-2 focus:ring-primary" />
+        <RFDS.Input required value={formData.address} onChange={(e) => setFormData({...formData, address: e.target.value})} placeholder={getAddressPlaceholder()} className="w-full" />
         <p className="text-xs text-muted-foreground mt-1">Include venue name, street, city - we'll use this to place your pin on the map</p>
       </div>
       <div><label className="block text-sm font-medium mb-2">City <span className="text-destructive">*</span></label>
-        <input required value={formData.city} onChange={(e) => setFormData({...formData, city: e.target.value})} placeholder={formData.country === 'United States' ? 'San Francisco' : 'Amsterdam'} className="w-full px-4 py-2 bg-card border border-border rounded-lg focus:ring-2 focus:ring-primary" />
+        <RFDS.Input required value={formData.city} onChange={(e) => setFormData({...formData, city: e.target.value})} placeholder={formData.country === 'United States' ? 'San Francisco' : 'Amsterdam'} className="w-full" />
       </div>
       <div><label className="block text-sm font-medium mb-2">Description <span className="text-destructive">*</span></label>
-        <textarea required value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} rows={4} className="w-full px-4 py-2 bg-card border border-border rounded-lg resize-none focus:ring-2 focus:ring-primary" />
+        <RFDS.Textarea required value={formData.description} onChange={(e) => setFormData({...formData, description: e.target.value})} rows={4} className="w-full" />
       </div>
       <div className="grid grid-cols-2 gap-4">
         <div><label className="block text-sm font-medium mb-2">Group URL</label>
-          <input type="url" value={formData.meetup_url} onChange={(e) => setFormData({...formData, meetup_url: e.target.value})} className="w-full px-4 py-2 bg-card border border-border rounded-lg focus:ring-2 focus:ring-primary" />
+          <RFDS.Input type="url" value={formData.meetup_url} onChange={(e) => setFormData({...formData, meetup_url: e.target.value})} className="w-full" />
         </div>
         <div><label className="block text-sm font-medium mb-2">Website</label>
-          <input type="url" value={formData.website} onChange={(e) => setFormData({...formData, website: e.target.value})} className="w-full px-4 py-2 bg-card border border-border rounded-lg focus:ring-2 focus:ring-primary" />
+          <RFDS.Input type="url" value={formData.website} onChange={(e) => setFormData({...formData, website: e.target.value})} className="w-full" />
         </div>
       </div>
       <div className="grid grid-cols-2 gap-4">
         <div><label className="block text-sm font-medium mb-2">Your Name <span className="text-destructive">*</span></label>
-          <input required value={formData.organizer_name} onChange={(e) => setFormData({...formData, organizer_name: e.target.value})} className="w-full px-4 py-2 bg-card border border-border rounded-lg focus:ring-2 focus:ring-primary" />
+          <RFDS.Input required value={formData.organizer_name} onChange={(e) => setFormData({...formData, organizer_name: e.target.value})} className="w-full" />
         </div>
         <div><label className="block text-sm font-medium mb-2">Email <span className="text-destructive">*</span></label>
-          <input required type="email" value={formData.organizer_email} onChange={(e) => setFormData({...formData, organizer_email: e.target.value})} className="w-full px-4 py-2 bg-card border border-border rounded-lg focus:ring-2 focus:ring-primary" />
+          <RFDS.Input required type="email" value={formData.organizer_email} onChange={(e) => setFormData({...formData, organizer_email: e.target.value})} className="w-full" />
         </div>
       </div>
       {result && <div className={`p-4 rounded-lg border ${result.success ? 'bg-green-500/10 border-green-500/20' : 'bg-destructive/10 border-destructive/20'}`}>
         <p className={`text-sm font-medium ${result.success ? 'text-green-600 dark:text-green-400' : 'text-destructive'}`}>{result.message}</p>
       </div>}
-      <button type="submit" disabled={submitting} className="w-full bg-primary text-primary-foreground px-6 py-3 rounded-lg font-semibold hover:bg-primary/90 disabled:opacity-50">
+      <RFDS.SemanticButton type="submit" variant="primary" disabled={submitting} className="w-full">
         {submitting ? 'Submitting...' : 'Submit Community'}
-      </button>
+      </RFDS.SemanticButton>
       <p className="text-xs text-muted-foreground text-center">Reviewed before being added</p>
     </form>
   );

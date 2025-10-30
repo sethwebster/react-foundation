@@ -5,7 +5,9 @@
 
 import { getRedisClient } from '@/lib/redis';
 import { getCommunities, migrateFromOldFormat } from '@/lib/redis-communities';
+import { RFDS } from '@/components/rfds';
 import { MigrationButton } from './migration-button';
+import { CommunitiesTable } from '@/components/admin/CommunitiesTable';
 
 export const dynamic = 'force-dynamic';
 
@@ -112,39 +114,11 @@ export default async function CommunitiesPage() {
         </div>
       </div>
       
-      {/* Communities List Preview */}
+      {/* Communities Table */}
       {data.communities && data.communities.length > 0 && (
         <div className="bg-card border border-border rounded-xl p-6">
-          <h3 className="text-lg font-bold text-foreground mb-4">Communities Preview</h3>
-          <div className="max-h-96 overflow-y-auto">
-            <div className="space-y-2">
-              {data.communities.slice(0, 20).map((community) => (
-                <div key={community.id} className="flex items-center justify-between p-2 bg-muted rounded text-sm">
-                  <div>
-                    <span className="font-medium text-foreground">{community.name}</span>
-                    <span className="text-muted-foreground ml-2">({community.country})</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className={`px-2 py-1 rounded text-xs ${
-                      community.status === 'active' 
-                        ? 'bg-success/20 text-success-foreground' 
-                        : 'bg-muted-foreground/20 text-muted-foreground'
-                    }`}>
-                      {community.status}
-                    </span>
-                    {community.member_count && (
-                      <span className="text-muted-foreground">{community.member_count} members</span>
-                    )}
-                  </div>
-                </div>
-              ))}
-              {data.communities.length > 20 && (
-                <p className="text-sm text-muted-foreground text-center pt-2">
-                  ... and {data.communities.length - 20} more communities
-                </p>
-              )}
-            </div>
-          </div>
+          <h3 className="text-lg font-bold text-foreground mb-4">All Communities ({data.communities.length})</h3>
+          <CommunitiesTable communities={data.communities} />
         </div>
       )}
 
@@ -186,10 +160,14 @@ function InfoCard({
   detail?: string;
 }) {
   return (
-    <div className="bg-muted rounded-lg p-4">
-      <div className="text-sm text-muted-foreground mb-1">{label}</div>
-      <div className="text-2xl font-bold text-primary mb-1">{value}</div>
-      {detail && <div className="text-xs text-muted-foreground">{detail}</div>}
-    </div>
+    <RFDS.StatCard
+      label={label}
+      value={value}
+      detail={detail}
+      color="primary"
+      variant="default"
+      className="bg-muted"
+    />
   );
 }
+

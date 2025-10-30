@@ -8,6 +8,7 @@ import { Suspense } from 'react';
 import { getRedisClient, getCachedQuarterlyAllocation, getLastUpdated } from '@/lib/redis';
 import { ecosystemLibraries } from '@/lib/maintainer-tiers';
 import { getBulkLibraryEligibility } from '@/lib/admin/library-eligibility-service';
+import { RFDS } from '@/components/rfds';
 import { RISCollectionButton } from '../ris-collection-button';
 import { LibraryApprovalQueue } from '@/components/admin/LibraryApprovalQueue';
 import { LibraryList, type LibraryWithEligibility } from '@/components/admin/LibraryList';
@@ -270,17 +271,14 @@ function InfoCard({
   detail?: string;
   color?: 'primary' | 'success' | 'destructive';
 }) {
-  const colorClass = {
-    primary: 'text-primary',
-    success: 'text-success-foreground',
-    destructive: 'text-destructive-foreground',
-  }[color];
-
   return (
-    <div className="bg-muted rounded-lg p-4">
-      <div className="text-sm text-muted-foreground mb-1">{label}</div>
-      <div className={`text-2xl font-bold ${colorClass} mb-1`}>{value}</div>
-      {detail && <div className="text-xs text-muted-foreground">{detail}</div>}
-    </div>
+    <RFDS.StatCard
+      label={label}
+      value={value}
+      detail={detail}
+      color={color}
+      variant="default"
+      className="bg-muted"
+    />
   );
 }

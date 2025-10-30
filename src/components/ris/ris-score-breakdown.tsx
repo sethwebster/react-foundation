@@ -10,6 +10,7 @@ import {
   getRISColorClass,
   getComponentColorClass,
 } from '@/lib/ris';
+import { StatCard } from '@/components/rfds/stat-card';
 
 interface RISScoreBreakdownProps {
   score: LibraryScore;
@@ -184,10 +185,12 @@ export function RISScoreBreakdown({
 
 function MetricCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-lg border border-border/10 bg-background/[0.02] p-3">
-      <div className="text-xs text-foreground/50">{label}</div>
-      <div className="mt-1 text-lg font-semibold text-foreground">{value}</div>
-    </div>
+    <StatCard
+      label={label}
+      value={value}
+      variant="outlined"
+      className="p-3"
+    />
   );
 }
 

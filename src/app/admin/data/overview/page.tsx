@@ -6,6 +6,7 @@
 import { getRedisClient } from '@/lib/redis';
 import { UserManagementService } from '@/lib/admin/user-management-service';
 import { AccessRequestsService } from '@/lib/admin/access-requests-service';
+import { RFDS } from '@/components/rfds';
 
 export const dynamic = 'force-dynamic';
 
@@ -315,11 +316,14 @@ function StatCard({
   icon: string;
 }) {
   return (
-    <div className="bg-card border border-border rounded-lg p-4 text-center">
-      <div className="text-2xl mb-2">{icon}</div>
-      <div className="text-2xl md:text-3xl font-bold text-primary mb-1">{value}</div>
-      <div className="text-xs md:text-sm text-muted-foreground">{label}</div>
-    </div>
+    <RFDS.StatCard
+      label={label}
+      value={value}
+      icon={icon}
+      color="primary"
+      variant="outlined"
+      className="text-center"
+    />
   );
 }
 
@@ -334,18 +338,15 @@ function InfoCard({
   detail?: string;
   color?: 'primary' | 'success' | 'destructive';
 }) {
-  const colorClass = {
-    primary: 'text-primary',
-    success: 'text-success-foreground',
-    destructive: 'text-destructive-foreground',
-  }[color];
-
   return (
-    <div className="bg-muted rounded-lg p-4">
-      <div className="text-sm text-muted-foreground mb-1">{label}</div>
-      <div className={`text-2xl font-bold ${colorClass} mb-1`}>{value}</div>
-      {detail && <div className="text-xs text-muted-foreground">{detail}</div>}
-    </div>
+    <RFDS.StatCard
+      label={label}
+      value={value}
+      detail={detail}
+      color={color}
+      variant="default"
+      className="bg-muted"
+    />
   );
 }
 

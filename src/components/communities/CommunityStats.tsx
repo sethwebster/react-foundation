@@ -6,6 +6,7 @@
 'use client';
 
 import useSWR from 'swr';
+import { RFDS } from '@/components/rfds';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -65,12 +66,12 @@ export function CommunityStats() {
 
 function StatCard({ number, label }: { number: string; label: string }) {
   return (
-    <div className="space-y-2">
-      <div className="text-4xl md:text-5xl font-bold text-primary">
-        {number}
-      </div>
-      <div className="text-sm md:text-base text-muted-foreground">{label}</div>
-    </div>
+    <RFDS.StatCard
+      label={label}
+      value={number}
+      color="primary"
+      variant="default"
+    />
   );
 }
 

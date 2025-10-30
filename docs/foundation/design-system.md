@@ -27,6 +27,16 @@ Base-level, highly reusable building blocks. No business logic, minimal composit
 - `Rating` - Star rating display
 - `Collapsible` - Expandable/collapsible content wrapper
 - `ScrollReveal` - Scroll-triggered animation wrapper
+- `Input` - Text input field with semantic theming
+- `Textarea` - Multi-line text input
+- `Select` - Dropdown select menu
+- `Label` - Form label component
+- `Checkbox` - Checkbox input
+- `Radio` - Radio button input
+- `Switch` - Toggle switch component
+- `Separator` - Visual divider/separator
+- `Dialog` - Modal dialog component
+- `Tooltip` - Tooltip component
 
 **Usage:**
 ```tsx
@@ -59,6 +69,10 @@ Composed from primitives, still reusable but more specific to domain.
 **Components:**
 - `ProductCard` - Product preview card (uses Button, Rating, Pill internally)
 - `ProductGallery` - Image carousel with lightbox
+- `Table` - Fully-featured data table with search, sorting, and custom rendering
+- `StatCard` - Unified stat/info/metric card component
+- `FormInput` - Form input with label, helper text, and error handling
+- `SearchInput` - Search input with icon
 
 **Usage:**
 ```tsx
@@ -314,6 +328,190 @@ type ScrollRevealProps = {
 
 ---
 
+#### Form Primitives
+
+##### Input
+
+Text input field with semantic theming and variants.
+
+```tsx
+<RFDS.Input 
+  type="text" 
+  placeholder="Enter text..." 
+  variant="default" 
+/>
+<RFDS.Input variant="error" />
+<RFDS.Input variant="success" />
+```
+
+**Props:**
+```typescript
+type InputProps = {
+  variant?: "default" | "error" | "success";
+  type?: string;
+  className?: string;
+  // ... standard input props
+}
+```
+
+---
+
+##### Textarea
+
+Multi-line text input with semantic theming.
+
+```tsx
+<RFDS.Textarea 
+  rows={4} 
+  placeholder="Enter description..." 
+/>
+```
+
+**Props:**
+```typescript
+type TextareaProps = {
+  rows?: number;
+  className?: string;
+  // ... standard textarea props
+}
+```
+
+---
+
+##### Select
+
+Dropdown select menu with semantic theming.
+
+```tsx
+<RFDS.Select>
+  <option value="option1">Option 1</option>
+  <option value="option2">Option 2</option>
+</RFDS.Select>
+```
+
+---
+
+##### Label
+
+Form label component with optional required indicator.
+
+```tsx
+<RFDS.Label htmlFor="input-id" required>
+  Field Label
+</RFDS.Label>
+```
+
+**Props:**
+```typescript
+type LabelProps = {
+  htmlFor?: string;
+  required?: boolean;
+  children: ReactNode;
+}
+```
+
+---
+
+##### Checkbox
+
+Checkbox input with semantic styling.
+
+```tsx
+<RFDS.Checkbox 
+  checked={isChecked} 
+  onChange={(e) => setIsChecked(e.target.checked)} 
+/>
+```
+
+---
+
+##### Radio
+
+Radio button input with semantic styling.
+
+```tsx
+<RFDS.Radio 
+  name="group" 
+  value="option1" 
+  checked={selected === "option1"} 
+/>
+```
+
+---
+
+##### Switch
+
+Toggle switch component.
+
+```tsx
+<RFDS.Switch 
+  checked={enabled} 
+  onChange={(e) => setEnabled(e.target.checked)} 
+/>
+```
+
+---
+
+##### Separator
+
+Visual divider/separator component.
+
+```tsx
+<RFDS.Separator />
+<RFDS.Separator orientation="vertical" />
+```
+
+**Props:**
+```typescript
+type SeparatorProps = {
+  orientation?: "horizontal" | "vertical";
+  className?: string;
+}
+```
+
+---
+
+##### Dialog
+
+Modal dialog component for overlays and modals.
+
+```tsx
+<RFDS.Dialog open={isOpen} onOpenChange={setIsOpen}>
+  <RFDS.Dialog.Trigger>Open Dialog</RFDS.Dialog.Trigger>
+  <RFDS.Dialog.Content>
+    <RFDS.Dialog.Header>
+      <RFDS.Dialog.Title>Dialog Title</RFDS.Dialog.Title>
+    </RFDS.Dialog.Header>
+    <RFDS.Dialog.Description>
+      Dialog description
+    </RFDS.Dialog.Description>
+  </RFDS.Dialog.Content>
+</RFDS.Dialog>
+```
+
+---
+
+##### Tooltip
+
+Tooltip component for hover information.
+
+```tsx
+<RFDS.Tooltip content="Helpful information">
+  <button>Hover me</button>
+</RFDS.Tooltip>
+```
+
+**Props:**
+```typescript
+type TooltipProps = {
+  content: ReactNode;
+  children: ReactNode;
+  side?: "top" | "right" | "bottom" | "left";
+}
+```
+
+---
+
 ### Components
 
 #### ProductCard
@@ -351,6 +549,166 @@ Image carousel/lightbox for product detail pages.
 ```typescript
 type ProductGalleryProps = {
   images: ProductImage[];
+}
+```
+
+---
+
+#### Table
+
+Fully-featured data table with search, sorting, and custom rendering.
+
+```tsx
+const columns: TableColumn<User>[] = [
+  {
+    key: 'name',
+    label: 'Name',
+    sortable: true,
+    render: (_value, user) => <div>{user.name}</div>,
+    accessor: (user) => user.name.toLowerCase(),
+  },
+  {
+    key: 'email',
+    label: 'Email',
+    sortable: true,
+    accessor: (user) => user.email,
+  },
+];
+
+<RFDS.Table
+  data={users}
+  columns={columns}
+  searchable
+  searchPlaceholder="Search users..."
+  defaultSortKey="name"
+  defaultSortDirection="asc"
+  getRowKey={(user) => user.id}
+/>
+```
+
+**Features:**
+- Generic type support for any data structure
+- Search/filter functionality
+- Column sorting (ascending/descending)
+- Computed columns (derived from data)
+- Custom cell rendering
+- Semantic theming
+
+**Props:**
+```typescript
+type TableProps<T> = {
+  data: T[];
+  columns: TableColumn<T>[];
+  searchable?: boolean;
+  searchPlaceholder?: string;
+  searchFn?: (item: T, query: string) => boolean;
+  defaultSortKey?: string;
+  defaultSortDirection?: 'asc' | 'desc' | null;
+  showEmptyState?: boolean;
+  emptyStateMessage?: string;
+  getRowKey: (item: T) => string;
+}
+
+type TableColumn<T> = {
+  key: string;
+  label: string;
+  sortable?: boolean;
+  align?: 'left' | 'center' | 'right';
+  render?: (value: unknown, item: T) => ReactNode;
+  accessor?: (item: T) => string | number;
+  computed?: (item: T) => string | number;
+}
+```
+
+---
+
+#### StatCard
+
+Unified stat/info/metric card component. Replaces duplicate StatCard, InfoCard, and MetricCard implementations.
+
+```tsx
+<RFDS.StatCard
+  label="Total Users"
+  value="1,234"
+  detail="+12% from last month"
+  icon="👥"
+  trend="up"
+  variant="outlined"
+  color="primary"
+/>
+
+<RFDS.StatCard
+  label="Revenue"
+  value="$50,000"
+  highlight
+  color="success"
+/>
+```
+
+**Props:**
+```typescript
+type StatCardProps = {
+  value: string | number;
+  label: string;
+  detail?: string;
+  icon?: string | ReactNode;
+  trend?: 'up' | 'down' | 'neutral';
+  highlight?: boolean;
+  variant?: 'default' | 'outlined' | 'elevated';
+  color?: 'primary' | 'success' | 'destructive' | 'warning';
+  className?: string;
+}
+```
+
+---
+
+#### FormInput
+
+Composition component for form inputs with label, helper text, and error handling.
+
+```tsx
+<RFDS.FormInput
+  label="Email Address"
+  type="email"
+  required
+  helperText="We'll never share your email"
+  errorText={errors.email}
+  variant={errors.email ? 'error' : 'default'}
+/>
+```
+
+**Props:**
+```typescript
+type FormInputProps = {
+  label?: string;
+  helperText?: string;
+  errorText?: string;
+  required?: boolean;
+  id?: string;
+  variant?: 'default' | 'error' | 'success';
+  // ... Input props
+}
+```
+
+---
+
+#### SearchInput
+
+Search input with built-in search icon.
+
+```tsx
+<RFDS.SearchInput
+  placeholder="Search..."
+  value={query}
+  onChange={(e) => setQuery(e.target.value)}
+/>
+```
+
+**Props:**
+```typescript
+type SearchInputProps = {
+  placeholder?: string;
+  // ... Input props
 }
 ```
 
@@ -594,19 +952,31 @@ Add to this file with usage examples and props.
 
 ## Current Components Inventory
 
-### Primitives (6)
+### Primitives (16)
 - ✅ Button / ButtonLink
 - ✅ Pill
 - ✅ Rating
 - ✅ Collapsible
 - ✅ ScrollReveal
+- ✅ Input
+- ✅ Textarea
+- ✅ Select
+- ✅ Label
+- ✅ Checkbox
+- ✅ Radio
+- ✅ Switch
+- ✅ Separator
+- ✅ Dialog
+- ✅ Tooltip
 - ⬜ Typography (planned)
-- ⬜ Input (planned)
-- ⬜ Select (planned)
 
-### Components (2)
+### Components (6)
 - ✅ ProductCard
 - ✅ ProductGallery
+- ✅ Table
+- ✅ StatCard
+- ✅ FormInput
+- ✅ SearchInput
 - ⬜ CollectionCard (planned)
 - ⬜ DropCard (planned)
 
@@ -618,16 +988,17 @@ Add to this file with usage examples and props.
 
 ## Roadmap
 
-### v1.1 (Planned)
-- [ ] Typography primitives (Heading, Text, Label)
-- [ ] Form primitives (Input, Select, Checkbox, Radio)
+### v1.1 (Completed ✅)
+- [x] Form primitives (Input, Select, Checkbox, Radio, Switch, Label, Textarea)
+- [x] Layout primitives (Separator, Dialog, Tooltip)
+- [x] Table component with search and sorting
+- [x] Composition components (StatCard, FormInput, SearchInput)
+
+### v1.2 (Planned)
+- [ ] Typography primitives (Heading, Text)
 - [ ] Card primitive (generic card component)
 - [ ] CollectionCard component
 - [ ] DropCard component
-
-### v1.2 (Planned)
-- [ ] Modal/Dialog primitive
-- [ ] Tooltip primitive
 - [ ] Dropdown menu primitive
 - [ ] Tabs component
 - [ ] Breadcrumbs component
@@ -888,4 +1259,4 @@ A: Edit the component file (e.g., `button.tsx`), add to variants object, update 
 ---
 
 *Last updated: October 2025*
-*Design System Version: 1.0.0*
+*Design System Version: 1.1.0*

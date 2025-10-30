@@ -9,6 +9,7 @@
 import { useEffect, useState } from 'react';
 import type { LibraryInstallationStatus } from '@/app/api/ris/installations/route';
 import { getEligibilityBadgeInfo, type EligibilityStatus } from '@/lib/ris/eligibility';
+import { RFDS } from '@/components/rfds';
 
 interface InstallationStatusResponse {
   success: boolean;
@@ -187,8 +188,7 @@ export function InstallationStatusDashboard() {
           </FilterButton>
         </div>
 
-        <input
-          type="text"
+        <RFDS.SearchInput
           placeholder="Search libraries..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
@@ -317,23 +317,14 @@ function StatCard({
   highlight?: boolean;
 }) {
   return (
-    <div
-      className={`rounded-xl border p-4 ${
-        highlight
-          ? 'border-primary/30 bg-primary/10'
-          : 'border-border/10 bg-background/30'
-      }`}
-    >
-      <div className="flex items-center gap-2">
-        <span className="text-2xl">{icon}</span>
-        <div>
-          <div className={`text-2xl font-bold ${highlight ? 'text-primary' : 'text-foreground'}`}>
-            {value}
-          </div>
-          <div className="text-sm text-foreground/60">{label}</div>
-        </div>
-      </div>
-    </div>
+    <RFDS.StatCard
+      label={label}
+      value={value.toString()}
+      icon={icon}
+      highlight={highlight}
+      color="primary"
+      variant="outlined"
+    />
   );
 }
 
@@ -347,16 +338,13 @@ function FilterButton({
   children: React.ReactNode;
 }) {
   return (
-    <button
+    <RFDS.SemanticButton
+      variant={active ? 'primary' : 'ghost'}
+      size="sm"
       onClick={onClick}
-      className={`rounded-lg px-4 py-2 text-sm font-medium transition-colors ${
-        active
-          ? 'bg-primary text-primary-foreground'
-          : 'bg-background/30 text-foreground/70 hover:bg-background/50'
-      }`}
     >
       {children}
-    </button>
+    </RFDS.SemanticButton>
   );
 }
 
@@ -372,7 +360,9 @@ function SortButton({
   children: React.ReactNode;
 }) {
   return (
-    <button
+    <RFDS.SemanticButton
+      variant="ghost"
+      size="sm"
       onClick={onClick}
       className="flex items-center gap-1 text-sm font-semibold text-foreground/80 hover:text-foreground"
     >
@@ -382,7 +372,7 @@ function SortButton({
           {direction === 'asc' ? '↑' : '↓'}
         </span>
       )}
-    </button>
+    </RFDS.SemanticButton>
   );
 }
 

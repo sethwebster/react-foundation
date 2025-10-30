@@ -10,6 +10,7 @@ import { signIn } from 'next-auth/react';
 import { SiGithub } from '@icons-pack/react-simple-icons';
 import { ReactLogo3D } from '@/components/ui/react-logo-3d';
 import { Starfield } from '@/components/ui/starfield';
+import { RFDS } from '@/components/rfds';
 import {
   useAccessControl,
   useComingSoonRedirect,
@@ -146,16 +147,17 @@ export default function ComingSoonPage() {
                   Sign in with GitHub to request early access
                 </p>
                 {/* GitHub Sign In */}
-                <button
+                <RFDS.Button
+                  variant="secondary"
                   onClick={() => signIn('github', { callbackUrl: '/' })}
-                  className="group relative w-full cursor-pointer overflow-hidden rounded-lg border-2 border-cyan-400 bg-slate-900/80 px-4 py-3 sm:px-8 sm:py-4 font-bold uppercase tracking-wider text-sm sm:text-base text-cyan-400 shadow-[0_0_20px_rgba(0,255,255,0.3)] transition hover:bg-primary/10 hover:shadow-[0_0_30px_rgba(0,255,255,0.5)]"
+                  className="group relative w-full overflow-hidden border-2 border-cyan-400 bg-slate-900/80 px-4 py-3 sm:px-8 sm:py-4 font-bold uppercase tracking-wider text-sm sm:text-base text-cyan-400 shadow-[0_0_20px_rgba(0,255,255,0.3)] hover:bg-primary/10 hover:shadow-[0_0_30px_rgba(0,255,255,0.5)]"
                 >
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-400/10 to-transparent opacity-0 transition group-hover:opacity-100" />
                   <div className="relative flex items-center justify-center gap-2 sm:gap-3">
                     <SiGithub className="w-5 h-5 sm:w-6 sm:h-6" />
                     <span>Sign in with GitHub</span>
                   </div>
-                </button>
+                </RFDS.Button>
               </div>
             )}
 
@@ -185,7 +187,7 @@ export default function ComingSoonPage() {
                       <label className="mb-2 block text-left text-sm font-semibold uppercase tracking-wider text-cyan-400">
                         GitHub Account
                       </label>
-                      <input
+                      <RFDS.Input
                         type="email"
                         required
                         value={userEmail}
@@ -200,7 +202,7 @@ export default function ComingSoonPage() {
                       <label className="mb-2 block text-left text-sm font-semibold uppercase tracking-wider text-cyan-400">
                         Why do you want access? <span className="text-xs font-normal text-cyan-500/60">(minimum 10 characters)</span>
                       </label>
-                      <textarea
+                      <RFDS.Textarea
                         required
                         minLength={10}
                         value={message}
@@ -213,13 +215,14 @@ export default function ComingSoonPage() {
                         {message.trim().length}/10 characters minimum
                       </p>
                     </div>
-                    <button
+                    <RFDS.SemanticButton
                       type="submit"
+                      variant="primary"
                       disabled={isSubmitting}
                       className="w-full cursor-pointer rounded-lg border-2 border-cyan-400 bg-primary/10 px-6 py-3 font-bold uppercase tracking-wider text-cyan-400 shadow-[0_0_20px_rgba(0,255,255,0.3)] transition hover:bg-primary/50/20 hover:shadow-[0_0_30px_rgba(0,255,255,0.5)] disabled:opacity-50"
                     >
                       {isSubmitting ? 'Sending...' : 'Request Access'}
-                    </button>
+                    </RFDS.SemanticButton>
                   </form>
                 ) : (
                   <div className="space-y-3 py-4">

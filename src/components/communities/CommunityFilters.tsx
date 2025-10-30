@@ -7,6 +7,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { RFDS } from '@/components/rfds';
 import { SortDropdown } from '@/components/ui/sort-dropdown';
 import type { CommunityFilters as Filters, EventType } from '@/types/community';
 
@@ -122,12 +123,14 @@ export function CommunityFilters() {
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold text-foreground">Filters</h3>
         {hasActiveFilters && (
-          <button
+          <RFDS.SemanticButton
+            variant="ghost"
+            size="sm"
             onClick={clearFilters}
-            className="text-sm text-primary hover:underline"
+            className="text-sm"
           >
             Clear all
-          </button>
+          </RFDS.SemanticButton>
         )}
       </div>
 
@@ -136,12 +139,11 @@ export function CommunityFilters() {
         <label className="block text-sm font-medium text-foreground mb-2">
           Search
         </label>
-        <input
-          type="text"
+        <RFDS.SearchInput
           placeholder="City, country, or name..."
           value={filters.search || ''}
           onChange={(e) => updateFilter('search', e.target.value, true)}
-          className="w-full px-3 py-2 bg-card border border-border rounded-lg text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+          className="w-full"
         />
       </div>
 
@@ -154,11 +156,10 @@ export function CommunityFilters() {
           {(['meetup', 'conference', 'workshop', 'hackathon', 'virtual'] as EventType[]).map(
             (type) => (
               <label key={type} className="flex items-center gap-2 cursor-pointer group">
-                <input
-                  type="checkbox"
+                <RFDS.Checkbox
                   checked={filters.event_types?.includes(type) || false}
                   onChange={() => toggleEventType(type)}
-                  className="w-4 h-4 rounded border-border text-primary focus:ring-2 focus:ring-primary"
+                  className="w-4 h-4"
                 />
                 <span className="text-sm text-foreground capitalize group-hover:text-primary transition">
                   {type}
@@ -206,7 +207,6 @@ export function CommunityFilters() {
 
         <label className="flex items-center gap-2 cursor-pointer group">
           <input
-            type="checkbox"
             checked={filters.has_upcoming_events || false}
             onChange={(e) => {
               console.log('📅 Has upcoming events toggled:', e.target.checked);
@@ -221,9 +221,9 @@ export function CommunityFilters() {
       </div> */}
 
       {/* Apply button (for mobile) */}
-      <button className="w-full lg:hidden bg-primary text-primary-foreground rounded-lg px-4 py-2 font-medium hover:bg-primary/90 transition">
+      <RFDS.SemanticButton variant="primary" className="w-full lg:hidden">
         Apply Filters
-      </button>
+      </RFDS.SemanticButton>
     </div>
   );
 }

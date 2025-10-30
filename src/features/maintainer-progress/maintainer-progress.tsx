@@ -10,6 +10,7 @@ import {
   maintainerTiers,
 } from "@/lib/maintainer-tiers";
 import { products } from "@/lib/products";
+import { RFDS } from "@/components/rfds";
 
 import { useMaintainerProgress } from "./context";
 import { UsernameInput } from "./username-input";
@@ -360,9 +361,11 @@ export function MaintainerProgress() {
 
 function StatCard({ label, value }: { label: string; value: number }) {
   return (
-    <div className="rounded-xl border border-border/10 bg-background/[0.03] p-4 text-center">
-      <p className="text-xs uppercase tracking-[0.3em] text-foreground/50">{label}</p>
-      <p className="mt-2 text-xl font-semibold text-foreground">{formatter.format(value)}</p>
-    </div>
+    <RFDS.StatCard
+      label={label}
+      value={formatter.format(value)}
+      variant="outlined"
+      className="text-center"
+    />
   );
 }
