@@ -1,4 +1,5 @@
 import { Resend } from 'resend';
+import { render } from '@react-email/render';
 import { logger } from '../logger';
 import type { ConversationState } from './store';
 
@@ -19,47 +20,6 @@ function getRecipients(): string[] {
   return raw.split(',').map((item) => item.trim()).filter(Boolean);
 }
 
-function formatHtml(payload: HandoffPayload): string {
-  const { conversation, contact, summary, details, reason, metadata } = payload;
-  const conversationList = conversation.messages
-    .map((message) => {
-      const who = message.role === 'assistant' ? 'Assistant' : message.role === 'user' ? 'Visitor' : message.role;
-      return `<li><strong>${who}:</strong> ${escapeHtml(message.content)}</li>`;
-    })
-    .join('');
-
-  const metaList = Object.entries(metadata)
-    .filter(([, value]) => value != null && value !== '')
-    .map(([key, value]) => `<li><strong>${escapeHtml(key)}:</strong> ${escapeHtml(String(value))}</li>`)
-    .join('');
-
-  return `
-    <!doctype html>
-    <html>
-      <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0b1120; color: #e2e8f0; padding: 24px;">
-        <h1 style="color: #67e8f9;">Foundation chatbot handoff</h1>
-        <p><strong>Summary:</strong> ${escapeHtml(summary)}</p>
-        ${reason ? `<p><strong>Reason:</strong> ${escapeHtml(reason)}</p>` : ''}
-        ${details ? `<p><strong>Details:</strong> ${escapeHtml(details)}</p>` : ''}
-        <p><strong>Contact info:</strong> ${escapeHtml(contact)}</p>
-        <h2 style="margin-top: 24px; color: #38bdf8;">Metadata</h2>
-        <ul>${metaList || '<li>No metadata provided.</li>'}</ul>
-        <h2 style="margin-top: 24px; color: #38bdf8;">Conversation transcript</h2>
-        <ol>${conversationList}</ol>
-      </body>
-    </html>
-  `;
-}
-
-function escapeHtml(input: string): string {
-  return input
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
-
 export async function notifyHumanHandoff(payload: HandoffPayload): Promise<void> {
   const recipients = getRecipients();
   const apiKey = process.env.RESEND_API_KEY;
@@ -75,11 +35,28 @@ export async function notifyHumanHandoff(payload: HandoffPayload): Promise<void>
   const resend = new Resend(apiKey);
   const subject = `Chatbot handoff: ${payload.summary}`;
 
+  // Render React Email template
+  const { default: ChatbotHandoff } = await import('@/emails/chatbot-handoff');
+  const html = await render(
+    ChatbotHandoff({
+      summary: payload.summary,
+      reason: payload.reason,
+      details: payload.details,
+      contact: payload.contact,
+      conversationMessages: payload.conversation.messages,
+      metadata: Object.fromEntries(
+        Object.entries(payload.metadata)
+          .filter(([, value]) => value != null && value !== '')
+          .map(([key, value]) => [key, String(value)])
+      ),
+    })
+  );
+
   await resend.emails.send({
     from: `Foundation Assistant <noreply@${domain}>`,
     to: recipients,
     subject,
-    html: formatHtml(payload),
+    html,
   });
 
   logger.info('Sent human handoff notification', {
