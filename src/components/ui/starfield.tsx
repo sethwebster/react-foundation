@@ -533,6 +533,339 @@ function ShootingStars() {
   );
 }
 
+/**
+ * Create a realistic spiral galaxy texture
+ * (Currently commented out - not in use)
+ */
+/*function createGalaxyTexture(size: number): THREE.Texture {
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext('2d')!;
+  const imageData = ctx.createImageData(size, size);
+  const data = imageData.data;
+  const centerX = size / 2;
+  const centerY = size / 2;
+  const maxRadius = size / 2;
+
+  // Create spiral galaxy pattern
+  for (let y = 0; y < size; y++) {
+    for (let x = 0; x < size; x++) {
+      const dx = x - centerX;
+      const dy = y - centerY;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      const angle = Math.atan2(dy, dx);
+      
+      const idx = (y * size + x) * 4;
+      
+      if (distance > maxRadius) {
+        data[idx] = 0;     // R
+        data[idx + 1] = 0; // G
+        data[idx + 2] = 0; // B
+        data[idx + 3] = 0; // A
+        continue;
+      }
+
+      // Central core - flattened elliptical bar, not a sphere
+      // Galaxies have a central bar/bulge that's elongated, not circular
+      const barLength = maxRadius * 0.2;
+      const barWidth = maxRadius * 0.06; // Much thinner bar
+      const barDistance = Math.sqrt((dx / barLength) ** 2 + (dy / barWidth) ** 2);
+      let intensity = 0;
+      
+      if (barDistance < 1) {
+        // Bright central bar - elongated, not spherical - blue-white core
+        intensity = 0.6 * (1 - barDistance);
+        // Gradient from center outward - blue-white, not yellow
+        const centerFalloff = Math.min(1, barDistance * 1.5);
+        data[idx] = Math.min(255, 220 * (1 - centerFalloff * 0.2));     // R - less red
+        data[idx + 1] = Math.min(255, 240 * (1 - centerFalloff * 0.2)); // G
+        data[idx + 2] = Math.min(255, 255 * (1 - centerFalloff * 0.2)); // B - more blue
+      } else {
+        // Spiral arms pattern
+        const normalizedDistance = (distance - barLength) / (maxRadius - barLength);
+        const spiralAngle = angle + Math.log(Math.max(1, distance / barLength)) * 2.5; // Logarithmic spiral
+        const spiralValue = (Math.sin(spiralAngle * 2) + 1) / 2; // 0-1 wave pattern
+        
+        // Spiral arms with falloff - make arms more visible and glowing
+        const armIntensity = spiralValue * Math.pow(1 - normalizedDistance, 1.2);
+        intensity = armIntensity * 0.8; // Increased for more glow
+        
+        // Galaxy colors: blue/cyan in arms, transitioning to white near core
+        const colorMix = Math.min(1, normalizedDistance * 2);
+        const blue = Math.min(255, 180 + intensity * 60 + (1 - colorMix) * 75); // More blue/cyan
+        const green = Math.min(255, 200 + intensity * 50 + (1 - colorMix) * 55); // Cyan tint
+        const red = Math.min(255, 220 + intensity * 30 + (1 - colorMix) * 35); // Less red, more blue-white
+        
+        data[idx] = red;
+        data[idx + 1] = green;
+        data[idx + 2] = blue;
+      }
+      
+      // Add subtle noise for realism
+      const noise = (Math.random() - 0.5) * 12;
+      data[idx] = Math.max(0, Math.min(255, data[idx] + noise));
+      data[idx + 1] = Math.max(0, Math.min(255, data[idx + 1] + noise));
+      data[idx + 2] = Math.max(0, Math.min(255, data[idx + 2] + noise));
+      data[idx + 3] = Math.min(255, intensity * 255);
+    }
+  }
+
+  ctx.putImageData(imageData, 0, 0);
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.needsUpdate = true;
+  return texture;
+}*/
+
+/**
+ * Create a realistic nebula texture with wispy cloud-like structures
+ * (Currently commented out - not in use)
+ */
+/*function createNebulaTexture(size: number, primaryColor: [number, number, number], secondaryColor: [number, number, number]): THREE.Texture {
+  const canvas = document.createElement('canvas');
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext('2d')!;
+  const imageData = ctx.createImageData(size, size);
+  const data = imageData.data;
+  const centerX = size / 2;
+  const centerY = size / 2;
+
+  // Create wispy cloud-like nebula pattern using Perlin-like noise simulation
+  for (let y = 0; y < size; y++) {
+    for (let x = 0; x < size; x++) {
+      const dx = (x - centerX) / size;
+      const dy = (y - centerY) / size;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      
+      const idx = (y * size + x) * 4;
+      
+      // Create turbulent, wispy patterns using multiple sine waves
+      const scale1 = 3;
+      const scale2 = 7;
+      const scale3 = 15;
+      
+      const noise1 = Math.sin(dx * scale1 + Math.cos(dy * scale1 * 1.3)) * 0.5 + 0.5;
+      const noise2 = Math.sin(dx * scale2 + Math.cos(dy * scale2 * 0.7)) * 0.5 + 0.5;
+      const noise3 = Math.sin(dx * scale3 + Math.cos(dy * scale3 * 1.1)) * 0.5 + 0.5;
+      
+      // Combine noise layers for cloud-like structure
+      const cloud = (noise1 * 0.5 + noise2 * 0.3 + noise3 * 0.2);
+      
+      // Radial falloff from center
+      const radialFalloff = Math.max(0, 1 - distance * 1.2);
+      const intensity = cloud * radialFalloff;
+      
+      // Blend between primary and secondary colors based on position
+      const colorMix = (Math.sin(dx * 5) + 1) / 2;
+      const r = primaryColor[0] * (1 - colorMix) + secondaryColor[0] * colorMix;
+      const g = primaryColor[1] * (1 - colorMix) + secondaryColor[1] * colorMix;
+      const b = primaryColor[2] * (1 - colorMix) + secondaryColor[2] * colorMix;
+      
+      // Add intensity variation for wispy effect and glow
+      const finalIntensity = intensity * (0.8 + 0.2 * Math.sin(dx * 8 + dy * 6));
+
+      // Increase brightness for glow effect
+      data[idx] = Math.min(255, r * finalIntensity * 1.2);
+      data[idx + 1] = Math.min(255, g * finalIntensity * 1.2);
+      data[idx + 2] = Math.min(255, b * finalIntensity * 1.2);
+      data[idx + 3] = Math.min(255, finalIntensity * 220); // Increased alpha for glow // Semi-transparent
+    }
+  }
+
+  ctx.putImageData(imageData, 0, 0);
+  const texture = new THREE.CanvasTexture(canvas);
+  texture.needsUpdate = true;
+  return texture;
+}*/
+
+/**
+ * Distant Galaxy - spiral galaxy slowly scrolling in the far background
+ * (Currently commented out - not in use)
+ */
+/*function DistantGalaxy({ position, size, speed, rotation }: {
+  position: [number, number, number];
+  size: number;
+  speed: number;
+  rotation: number;
+}) {
+  const meshRef = useRef<THREE.Mesh>(null);
+  const texture = useMemo(() => createGalaxyTexture(512), []);
+
+  useFrame((state, delta) => {
+    if (meshRef.current) {
+      // Galaxies are so distant they move with the background stars
+      // Match the slowest star speed (2 units/sec) but even slower for parallax
+      // At this distance, they should appear almost static, moving with background
+      meshRef.current.position.x -= delta * speed;
+      
+      // Wrap around when off-screen - wider range for spread out objects
+      if (meshRef.current.position.x < -500) {
+        meshRef.current.position.x = 500;
+      }
+    }
+  });
+
+  return (
+    <mesh ref={meshRef} position={position} rotation={[Math.PI / 6, 0, rotation]}>
+      <planeGeometry args={[size, size]} />
+      <meshBasicMaterial
+        map={texture}
+        transparent
+        opacity={0.6} // More visible, translucent glow
+        blending={THREE.AdditiveBlending}
+        depthWrite={false}
+      />
+    </mesh>
+  );
+}*/
+
+/**
+ * Distant Nebula - wispy gas cloud slowly scrolling in the far background
+ * (Currently commented out - not in use)
+ */
+/*function DistantNebula({ position, primaryColor, secondaryColor, size, speed }: {
+  position: [number, number, number];
+  primaryColor: [number, number, number];
+  secondaryColor: [number, number, number];
+  size: number;
+  speed: number;
+}) {
+  const meshRef = useRef<THREE.Mesh>(null);
+  const texture = useMemo(() => createNebulaTexture(512, primaryColor, secondaryColor), [primaryColor, secondaryColor]);
+
+  useFrame((state, delta) => {
+    if (meshRef.current) {
+      // Nebulae are so distant they move with the background stars
+      // Match the slowest star speed but even slower for parallax
+      // At this distance, they should appear almost static, moving with background
+      meshRef.current.position.x -= delta * speed;
+      
+      // Wrap around when off-screen - wider range for spread out objects
+      if (meshRef.current.position.x < -500) {
+        meshRef.current.position.x = 500;
+      }
+    }
+  });
+
+  return (
+    <mesh ref={meshRef} position={position} rotation={[Math.PI / 6, 0, 0]}>
+      <planeGeometry args={[size, size]} />
+      <meshBasicMaterial
+        map={texture}
+        transparent
+        opacity={0.65} // More visible, translucent glow
+        blending={THREE.AdditiveBlending}
+        depthWrite={false}
+      />
+    </mesh>
+  );
+}*/
+
+/*function DistantGalaxies() {
+  // Create realistic galaxies and nebulae - mid-ground, large, translucent, glowing
+  // Colors: blue, cyan, pink/purple - soft and ethereal
+  const celestialObjects = useMemo(() => [
+    // Large Spiral Galaxy - blue/cyan (left side, mid-ground)
+    {
+      type: 'galaxy' as const,
+      position: [-200, 80, -400] as [number, number, number], // Mid-ground, not too far
+      size: 500, // Large and prominent
+      speed: 0.3, // Slow drift
+      rotation: Math.PI / 6,
+    },
+    // Spiral Galaxy - tilted (right side, mid-ground)
+    {
+      type: 'galaxy' as const,
+      position: [250, -60, -450] as [number, number, number],
+      size: 480,
+      speed: 0.35,
+      rotation: -Math.PI / 5,
+    },
+    // Spiral Galaxy - edge-on (top center, mid-ground)
+    {
+      type: 'galaxy' as const,
+      position: [0, 140, -420] as [number, number, number],
+      size: 460,
+      speed: 0.28,
+      rotation: Math.PI / 2,
+    },
+    // Nebula - pink/purple (right center, mid-ground)
+    {
+      type: 'nebula' as const,
+      position: [180, 40, -380] as [number, number, number],
+      primaryColor: [255, 120, 200] as [number, number, number], // Pink
+      secondaryColor: [200, 150, 255] as [number, number, number], // Purple
+      size: 520,
+      speed: 0.32,
+    },
+    // Nebula - cyan/blue (left top, mid-ground)
+    {
+      type: 'nebula' as const,
+      position: [-220, 120, -430] as [number, number, number],
+      primaryColor: [100, 220, 255] as [number, number, number], // Cyan
+      secondaryColor: [150, 200, 255] as [number, number, number], // Blue
+      size: 480,
+      speed: 0.3,
+    },
+    // Nebula - blue/purple (bottom right, mid-ground)
+    {
+      type: 'nebula' as const,
+      position: [200, -100, -410] as [number, number, number],
+      primaryColor: [120, 180, 255] as [number, number, number], // Blue
+      secondaryColor: [200, 140, 255] as [number, number, number], // Purple
+      size: 440,
+      speed: 0.33,
+    },
+    // Spiral Galaxy - small tilted (bottom left, slightly further)
+    {
+      type: 'galaxy' as const,
+      position: [-180, -90, -500] as [number, number, number],
+      size: 380,
+      speed: 0.25,
+      rotation: -Math.PI / 4,
+    },
+    // Nebula - cyan/pink blend (center, mid-ground)
+    {
+      type: 'nebula' as const,
+      position: [-50, -20, -390] as [number, number, number],
+      primaryColor: [150, 230, 255] as [number, number, number], // Cyan
+      secondaryColor: [255, 180, 220] as [number, number, number], // Pink
+      size: 460,
+      speed: 0.31,
+    },
+  ], []);
+
+  return (
+    <>
+      {celestialObjects.map((obj, i) => {
+        if (obj.type === 'galaxy') {
+          return (
+            <DistantGalaxy
+              key={`galaxy-${i}`}
+              position={obj.position}
+              size={obj.size}
+              speed={obj.speed}
+              rotation={obj.rotation}
+            />
+          );
+        } else {
+          return (
+            <DistantNebula
+              key={`nebula-${i}`}
+              position={obj.position}
+              primaryColor={obj.primaryColor}
+              secondaryColor={obj.secondaryColor}
+              size={obj.size}
+              speed={obj.speed}
+            />
+          );
+        }
+      })}
+    </>
+  );
+}*/
+
 export function Starfield() {
   return (
     <div style={{ width: '100%', height: '100%' }}>
@@ -548,9 +881,9 @@ export function Starfield() {
         <ambientLight intensity={0.2} />
         <directionalLight position={[10, 10, 5]} intensity={0.5} />
 
-        <Stars />
-        <ShootingStars />
-        <Enterprise />
+                <Stars />
+                <ShootingStars />
+                <Enterprise />
 
         {/* Bloom for glowing stars */}
         <EffectComposer>
