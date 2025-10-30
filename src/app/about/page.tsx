@@ -8,6 +8,17 @@ import { BecomeContributor } from "@/components/home/become-contributor";
 import { EcosystemLibraries } from "@/components/home/ecosystem-libraries";
 import { FoundingMembers } from "@/components/home/founding-members";
 import { ExecutiveMessage } from "@/components/home/executive-message";
+import { RFDS } from "@/components/rfds";
+
+const sections = [
+  { id: 'executive-message', title: 'Executive Message', level: 1 as const },
+  { id: 'mission', title: 'Our Mission', level: 1 as const },
+  { id: 'how-it-works', title: 'How It Works', level: 1 as const },
+  { id: 'founding-members', title: 'Founding Members', level: 1 as const },
+  { id: 'supported-ecosystem', title: 'Supported Ecosystem', level: 1 as const },
+  { id: 'governance', title: 'Transparent Governance', level: 1 as const },
+  { id: 'become-contributor', title: 'Become a Contributor', level: 1 as const },
+];
 
 export const metadata: Metadata = {
   title: "About | React Foundation",
@@ -22,7 +33,8 @@ export default function AboutPage() {
       </div>
 
       <div className="mx-auto flex max-w-6xl flex-col px-6 pb-24 sm:px-8 lg:px-12">
-        <main className="flex flex-col gap-20">
+        <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-start">
+          <main className="flex flex-col gap-20">
           {/* Hero */}
           <section className="space-y-8 pt-12">
             <Pill>Our Story · Our Mission · Our Values</Pill>
@@ -39,9 +51,12 @@ export default function AboutPage() {
           </section>
 
           {/* Executive Message */}
-          <ExecutiveMessage />
+          <div id="executive-message">
+            <ExecutiveMessage />
+          </div>
 
           {/* Mission */}
+          <div id="mission">
           <ScrollReveal animation="fade-up">
             <section className="scroll-mt-32 space-y-8 rounded-3xl border border-border/10 bg-muted/60 p-12">
               <h2 className="text-3xl font-semibold text-foreground sm:text-4xl">
@@ -90,8 +105,10 @@ export default function AboutPage() {
               </div>
             </section>
           </ScrollReveal>
+          </div>
 
           {/* How It Works */}
+          <div id="how-it-works">
           <ScrollReveal animation="scale">
             <section className="scroll-mt-32 space-y-8 rounded-3xl border border-border/10 bg-muted/60 p-12">
               <h2 className="text-3xl font-semibold text-foreground sm:text-4xl">
@@ -152,19 +169,24 @@ export default function AboutPage() {
               </div>
             </section>
           </ScrollReveal>
+          </div>
 
           {/* Founding Members */}
-          <FoundingMembers />
+          <div id="founding-members">
+            <FoundingMembers />
+          </div>
 
           {/* Ecosystem Libraries */}
-          <EcosystemLibraries
-            title="Supported Ecosystem"
-          />
+          <div id="supported-ecosystem">
+            <EcosystemLibraries
+              title="Supported Ecosystem"
+            />
+          </div>
 
           {/* Governance / Communities */}
+          <div id="governance">
           <ScrollReveal animation="fade-up">
             <section
-              id="communities"
               className="scroll-mt-32 space-y-8 rounded-3xl border border-border/10 bg-muted/60 p-12"
             >
               <h2 className="text-3xl font-semibold text-foreground sm:text-4xl">
@@ -264,11 +286,14 @@ export default function AboutPage() {
               </div>
             </section>
           </ScrollReveal>
+          </div>
 
           {/* Become a Contributor */}
+          <div id="become-contributor">
           <ScrollReveal animation="scale">
             <BecomeContributor />
           </ScrollReveal>
+          </div>
 
           {/* CTA */}
           <ScrollReveal animation="fade-up">
@@ -291,6 +316,10 @@ export default function AboutPage() {
             </section>
           </ScrollReveal>
         </main>
+
+        {/* Table of Contents Sidebar */}
+        <RFDS.TableOfContents sections={sections} />
+        </div>
       </div>
 
       <Footer />

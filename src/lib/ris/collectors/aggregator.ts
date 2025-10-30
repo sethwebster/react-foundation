@@ -129,7 +129,8 @@ export class MetricsAggregator {
           auth: async () => {
             // This will be called for each request and refreshes token if needed
             const auth = await appOctokit.auth();
-            return auth.token;
+            // Type assertion: auth() returns { token: string }
+            return (auth as { token: string }).token;
           },
         });
 
