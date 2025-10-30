@@ -6,6 +6,11 @@
 
 import { useState, useEffect } from 'react';
 
+interface ActiveLibrary {
+  library: string; // Owner/repo format
+  source?: string; // Current data source being collected
+}
+
 interface CollectionStatus {
   status: string;
   message: string;
@@ -14,6 +19,9 @@ interface CollectionStatus {
   startedAt?: string;
   completedAt?: string;
   rateLimitResetAt?: string;
+  currentLibrary?: string; // Owner/repo of library currently being processed (legacy)
+  currentSource?: string; // Data source being collected (legacy)
+  activeLibraries?: ActiveLibrary[]; // Array of libraries currently being processed in parallel
 }
 
 export function RISCollectionButton() {
@@ -21,10 +29,9 @@ export function RISCollectionButton() {
   const [status, setStatus] = useState<CollectionStatus | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // Poll for status updates while collection is running
+  // Poll for status updates - always check, not just when isRunning is true
+  // This ensures we see updates even if collection was started elsewhere
   useEffect(() => {
-    if (!isRunning) return;
-
     const pollStatus = async () => {
       try {
         const response = await fetch('/api/ris/status');
@@ -32,14 +39,27 @@ export function RISCollectionButton() {
         console.log('Status poll:', data);
 
         if (data.status) {
-          setStatus(data.status);
+          const statusData = data.status;
+          setStatus(statusData);
+          
+          // Debug: Log status data
+          if (statusData.activeLibraries) {
+            console.log('Active libraries:', statusData.activeLibraries);
+          }
+          if (statusData.currentLibrary) {
+            console.log('Current library being processed:', statusData.currentLibrary);
+          }
+
+          // Update isRunning based on actual status
+          const isActuallyRunning = statusData.status === 'running';
+          setIsRunning(isActuallyRunning);
 
           // Stop polling if completed or failed
-          if (data.status.status === 'completed' || data.status.status === 'failed') {
+          if (statusData.status === 'completed' || statusData.status === 'failed') {
             setIsRunning(false);
 
             // Refresh the page to show updated data
-            if (data.status.status === 'completed') {
+            if (statusData.status === 'completed') {
               setTimeout(() => {
                 window.location.reload();
               }, 2000);
@@ -47,7 +67,7 @@ export function RISCollectionButton() {
           }
 
           // For rate_limited, keep polling to check if we can auto-resume
-          if (data.status.status === 'rate_limited') {
+          if (statusData.status === 'rate_limited') {
             setIsRunning(false); // Stop the "running" indicator
             // Don't stop polling - we'll check for auto-resume below
           }
@@ -64,7 +84,7 @@ export function RISCollectionButton() {
     pollStatus();
 
     return () => clearInterval(interval);
-  }, [isRunning]);
+  }, []); // Empty deps - poll continuously
 
   // Separate effect for auto-resuming after rate limit
   useEffect(() => {
@@ -184,6 +204,38 @@ export function RISCollectionButton() {
             )}
           </div>
           <p className="text-xs mb-2">{status.message}</p>
+          {status.status === 'running' && (
+            (status.activeLibraries && status.activeLibraries.length > 0) ? (
+              <div className="mb-2 p-2 bg-background/50 rounded border border-border/50">
+                <p className="text-xs text-muted-foreground mb-2">
+                  Processing {status.activeLibraries.length} library{status.activeLibraries.length !== 1 ? 'ies' : ''} in parallel:
+                </p>
+                <div className="space-y-1 max-h-40 overflow-y-auto">
+                  {status.activeLibraries.map((activeLib, idx) => (
+                    <p key={`${activeLib.library}-${idx}`} className="text-sm font-mono font-semibold text-foreground">
+                      {activeLib.library}
+                      {activeLib.source && (
+                        <span className="text-muted-foreground font-normal"> - {activeLib.source}</span>
+                      )}
+                      {!activeLib.source && (
+                        <span className="text-muted-foreground font-normal text-xs"> (starting...)</span>
+                      )}
+                    </p>
+                  ))}
+                </div>
+              </div>
+            ) : status.currentLibrary ? (
+              <div className="mb-2 p-2 bg-background/50 rounded border border-border/50">
+                <p className="text-xs text-muted-foreground mb-1">Currently processing:</p>
+                <p className="text-sm font-mono font-semibold text-foreground">
+                  {status.currentLibrary}
+                  {status.currentSource && (
+                    <span className="text-muted-foreground font-normal"> - {status.currentSource}</span>
+                  )}
+                </p>
+              </div>
+            ) : null
+          )}
           {status.progress !== undefined && status.total !== undefined && (
             <div className="w-full bg-muted-foreground/20 rounded-full h-2">
               <div

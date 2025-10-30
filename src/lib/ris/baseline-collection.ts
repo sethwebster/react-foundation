@@ -36,6 +36,7 @@ export interface BaselineCollectionOptions {
   githubToken?: string;
   force?: boolean; // Force re-collection even if data exists
   resume?: boolean; // Resume from existing state (default: true)
+  onSourceStart?: (source: string) => void; // Callback when starting to collect a source
 }
 
 export interface BaselineCollectionResult {
@@ -167,6 +168,11 @@ export async function collectBaselineForLibrary(
     for (const source of sourcesToCollect) {
       try {
         await markSourceInProgress(owner, repo, source as CollectionSourceKey);
+        
+        // Notify status callback if provided
+        if (options.onSourceStart) {
+          options.onSourceStart(source);
+        }
 
         switch (source) {
           case 'github_basic': {
@@ -345,6 +351,8 @@ export async function refreshLibraries(
 
 /**
  * Refresh a single library (incremental update if possible)
+ * NOTE: This function uses the aggregator for efficiency but updates collection-state
+ * for consistency with the UI and retry system.
  */
 async function refreshLibrary(
   owner: string,
@@ -355,6 +363,12 @@ async function refreshLibrary(
 ): Promise<BaselineCollectionResult> {
   try {
     logger.info(`  🔄 Refreshing ${owner}/${repo}...`);
+
+    // Ensure collection state exists (initialize if needed)
+    let state = await getCollectionState(owner, repo);
+    if (!state || options.force) {
+      state = await initializeCollectionState(owner, repo);
+    }
 
     // Use provided token or fall back to environment
     const githubToken = options.githubToken || process.env.GITHUB_TOKEN;
@@ -383,11 +397,39 @@ async function refreshLibrary(
     const metrics = calculateMetricsFromActivity(activity);
     await cacheLibraryMetrics(owner, repo, metrics);
 
+    // Update collection-state: Mark all sources as completed since aggregator successfully collected them
+    const allSources: Array<'github_basic' | 'github_prs' | 'github_issues' | 'github_commits' | 'github_releases' | 'npm_metrics' | 'cdn_metrics' | 'ossf_metrics'> = [
+      'github_basic',
+      'github_prs',
+      'github_issues',
+      'github_commits',
+      'github_releases',
+      'npm_metrics',
+      'cdn_metrics',
+      'ossf_metrics',
+    ];
+
+    // Mark sources as completed
+    for (const source of allSources) {
+      const currentSourceState = state[source];
+      if (options.force || currentSourceState?.status !== 'completed') {
+        const itemsCollected = source === 'github_prs' ? activity.prs.length
+          : source === 'github_issues' ? activity.issues.length
+          : source === 'github_commits' ? activity.commits.length
+          : source === 'github_releases' ? activity.releases.length
+          : undefined;
+        await markSourceCompleted(owner, repo, source, itemsCollected);
+      }
+    }
+
     const dataAge = cachedActivity
       ? Date.now() - new Date(cachedActivity.last_updated_at).getTime()
       : 0;
 
     logger.info(`    ✓ Refreshed ${owner}/${repo}`);
+
+    // Get final state for return
+    const finalState = await getCollectionState(owner, repo);
 
     return {
       success: true,
@@ -395,16 +437,46 @@ async function refreshLibrary(
       repo,
       dataAge,
       metricsCalculated: true,
+      collectionState: finalState || undefined,
     };
 
   } catch (error) {
     logger.error(`    ✗ Failed to refresh ${owner}/${repo}:`, error);
 
+    // Ensure collection state exists for error tracking
+    let state = await getCollectionState(owner, repo);
+    if (!state) {
+      state = await initializeCollectionState(owner, repo);
+    }
+
+    // Mark sources as failed
+    const allSources: Array<'github_basic' | 'github_prs' | 'github_issues' | 'github_commits' | 'github_releases' | 'npm_metrics' | 'cdn_metrics' | 'ossf_metrics'> = [
+      'github_basic',
+      'github_prs',
+      'github_issues',
+      'github_commits',
+      'github_releases',
+      'npm_metrics',
+      'cdn_metrics',
+      'ossf_metrics',
+    ];
+
+    const errorMsg = error instanceof Error ? error.message : String(error);
+    for (const source of allSources) {
+      const currentSourceState = state[source];
+      if (currentSourceState?.status === 'pending' || currentSourceState?.status === 'in_progress') {
+        await markSourceFailed(owner, repo, source, errorMsg);
+      }
+    }
+
+    const finalState = await getCollectionState(owner, repo);
+
     return {
       success: false,
       owner,
       repo,
-      error: error instanceof Error ? error.message : String(error),
+      error: errorMsg,
+      collectionState: finalState || undefined,
     };
   }
 }

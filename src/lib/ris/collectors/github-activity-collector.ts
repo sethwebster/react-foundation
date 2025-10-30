@@ -19,11 +19,14 @@ export interface GitHubCollectorOptions {
   token?: string;
   /** Pre-configured Octokit instance (for GitHub App auth) */
   octokit?: Octokit;
+  /** Callback when starting to fetch a source */
+  onSourceStart?: (source: string) => void;
 }
 
 export class GitHubActivityCollector {
   private restClient: Octokit;
   private rateLimitWarningShown = false;
+  private onSourceStart?: (source: string) => void;
 
   constructor(options: GitHubCollectorOptions | string) {
     // Support legacy string token or new options object
@@ -31,16 +34,19 @@ export class GitHubActivityCollector {
       this.restClient = new Octokit({
         auth: options,
       });
-    } else if (options.octokit) {
-      // Use provided Octokit instance (for GitHub App)
-      this.restClient = options.octokit;
-    } else if (options.token) {
-      // Use PAT
-      this.restClient = new Octokit({
-        auth: options.token,
-      });
     } else {
-      throw new Error('GitHub token or Octokit instance is required');
+      if (options.octokit) {
+        // Use provided Octokit instance (for GitHub App)
+        this.restClient = options.octokit;
+      } else if (options.token) {
+        // Use PAT
+        this.restClient = new Octokit({
+          auth: options.token,
+        });
+      } else {
+        throw new Error('GitHub token or Octokit instance is required');
+      }
+      this.onSourceStart = options.onSourceStart;
     }
   }
 
@@ -50,19 +56,41 @@ export class GitHubActivityCollector {
   async fetchAllActivity(
     owner: string,
     repo: string,
-    libraryName: string
+    libraryName: string,
+    onSourceStart?: (source: string) => void
   ): Promise<LibraryActivityData> {
     console.log(`  📥 Fetching ALL historical activity for ${owner}/${repo}...`);
 
     await this.checkRateLimit();
 
-    const [basicStats, prs, issues, commits, releases] = await Promise.all([
-      this.fetchBasicStats(owner, repo),
-      this.fetchAllPRs(owner, repo),
-      this.fetchAllIssues(owner, repo),
-      this.fetchAllCommits(owner, repo),
-      this.fetchAllReleases(owner, repo),
-    ]);
+    // Collect sequentially to support source-level progress tracking
+    const sourceCallback = onSourceStart || this.onSourceStart;
+    let basicStats, prs, issues, commits, releases;
+    if (sourceCallback) {
+      sourceCallback('basic_stats');
+      basicStats = await this.fetchBasicStats(owner, repo);
+      
+      sourceCallback('prs');
+      prs = await this.fetchAllPRs(owner, repo);
+      
+      sourceCallback('issues');
+      issues = await this.fetchAllIssues(owner, repo);
+      
+      sourceCallback('commits');
+      commits = await this.fetchAllCommits(owner, repo);
+      
+      sourceCallback('releases');
+      releases = await this.fetchAllReleases(owner, repo);
+    } else {
+      // If no callback, collect in parallel for speed
+      [basicStats, prs, issues, commits, releases] = await Promise.all([
+        this.fetchBasicStats(owner, repo),
+        this.fetchAllPRs(owner, repo),
+        this.fetchAllIssues(owner, repo),
+        this.fetchAllCommits(owner, repo),
+        this.fetchAllReleases(owner, repo),
+      ]);
+    }
 
     const now = new Date().toISOString();
 

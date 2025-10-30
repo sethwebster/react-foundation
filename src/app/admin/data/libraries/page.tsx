@@ -5,7 +5,7 @@
  */
 
 import { Suspense } from 'react';
-import { getRedisClient, getCachedQuarterlyAllocation, getLastUpdated, getCollectionStatus } from '@/lib/redis';
+import { getRedisClient, getCachedQuarterlyAllocation, getLastUpdated } from '@/lib/redis';
 import { ecosystemLibraries } from '@/lib/maintainer-tiers';
 import { getBulkLibraryEligibility } from '@/lib/admin/library-eligibility-service';
 import { RISCollectionButton } from '../ris-collection-button';
@@ -113,44 +113,8 @@ async function RISDataSection() {
         />
       </div>
 
-      {data.collectionStatus && (
-        <div className="mb-4 p-3 bg-muted rounded-lg">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-semibold text-foreground">Collection Status</span>
-            <span
-              className={`text-xs px-2 py-1 rounded-full font-medium ${
-                (data.collectionStatus.status as string) === 'completed'
-                  ? 'bg-success/20 text-success-foreground'
-                  : (data.collectionStatus.status as string) === 'running'
-                  ? 'bg-primary/20 text-primary-foreground'
-                  : (data.collectionStatus.status as string) === 'failed'
-                  ? 'bg-destructive/20 text-destructive-foreground'
-                  : 'bg-muted-foreground/20 text-muted-foreground'
-              }`}
-            >
-              {String(data.collectionStatus.status || 'unknown')}
-            </span>
-          </div>
-          <p className="text-sm text-muted-foreground">
-            {String(data.collectionStatus.message || 'No status message')}
-          </p>
-          {data.collectionStatus.progress !== undefined &&
-           data.collectionStatus.total !== undefined &&
-           (data.collectionStatus.total as number) > 0 && (
-            <div className="mt-2 flex items-center gap-2">
-              <div className="flex-1 bg-muted-foreground/20 rounded-full h-2">
-                <div
-                  className="bg-primary h-2 rounded-full transition-all"
-                  style={{ width: `${Math.min(100, ((data.collectionStatus.progress as number) / (data.collectionStatus.total as number)) * 100)}%` }}
-                />
-              </div>
-              <span className="text-xs text-muted-foreground">
-                {String(data.collectionStatus.progress)}/{String(data.collectionStatus.total)}
-              </span>
-            </div>
-          )}
-        </div>
-      )}
+      {/* Collection Status is now shown in RISCollectionButton component above, which polls for live updates */}
+      {/* Removed duplicate server-side status display to avoid confusion with stale data */}
 
       {data.allocation && (
         <div>
@@ -160,7 +124,7 @@ async function RISDataSection() {
 
           {/* Empty state warning when no libraries meet threshold */}
           {data.allocation.libraries.length === 0 && (
-            <div className="mb-4 p-4 bg-warning/10 border border-warning/30 rounded-lg">
+            <div className="mb-4 p-4 bg-warning/10 rounded-lg">
               <p className="text-sm text-warning-foreground font-semibold">
                 ⚠️ No Libraries Meet Eligibility Threshold
               </p>
@@ -224,10 +188,10 @@ async function getRISData() {
 
     const currentQuarter = getCurrentQuarter();
 
-    const [allocation, lastUpdated, collectionStatus] = await Promise.all([
+    const [allocation, lastUpdated] = await Promise.all([
       getCachedQuarterlyAllocation(currentQuarter).catch(() => null),
       getLastUpdated(),
-      getCollectionStatus(),
+      // Removed getCollectionStatus() - status is now fetched client-side for live updates
     ]);
 
     return {
@@ -235,7 +199,7 @@ async function getRISData() {
       risActivityKeys: risActivityKeys.length,
       allocation,
       lastUpdated,
-      collectionStatus,
+      // Removed collectionStatus - now shown in RISCollectionButton component
       keysByNamespace: {
         'ris:allocation': allKeys.filter(k => k.startsWith('ris:allocation:')).length,
       },

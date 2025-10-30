@@ -305,6 +305,11 @@ export async function isCollectionLocked(): Promise<boolean> {
 /**
  * Set collection status
  */
+export interface ActiveLibrary {
+  library: string; // Owner/repo format
+  source?: string; // Current data source being collected
+}
+
 export async function setCollectionStatus(status: {
   status: 'running' | 'completed' | 'failed' | 'rate_limited';
   message?: string;
@@ -313,6 +318,9 @@ export async function setCollectionStatus(status: {
   startedAt?: string;
   completedAt?: string;
   rateLimitResetAt?: string;
+  currentLibrary?: string; // Owner/repo of library currently being processed (legacy, for backward compat)
+  currentSource?: string; // Data source being collected (legacy, for backward compat)
+  activeLibraries?: ActiveLibrary[]; // Array of libraries currently being processed in parallel
 }): Promise<void> {
   const client = getRedisClient();
   const key = REDIS_KEYS.collectionStatus;
