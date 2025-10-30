@@ -51,6 +51,9 @@ export { SignInButton } from "@/features/auth/sign-in-button";
 // Error Components
 export { ErrorBoundary } from "@/components/error-boundary";
 
+// Table Components
+export { Table, type TableColumn, type TableProps, type SortDirection } from "./table";
+
 // Re-export for namespace
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
@@ -82,6 +85,7 @@ import { MaintainerProgress } from "@/features/maintainer-progress/maintainer-pr
 import { ImpactSection } from "@/features/impact/impact-section";
 import { SignInButton } from "@/features/auth/sign-in-button";
 import { ErrorBoundary } from "@/components/error-boundary";
+import { Table } from "./table";
 
 export const Components = {
   // Layout
@@ -129,4 +133,7 @@ export const Components = {
   
   // Error
   ErrorBoundary,
+  
+  // Table
+  Table,
 };

@@ -221,17 +221,32 @@ async function LibrariesListWithData() {
     repo: lib.name,
   }));
 
-  const eligibilityData = await getBulkLibraryEligibility(librariesData);
+  const [eligibilityData, allocation] = await Promise.all([
+    getBulkLibraryEligibility(librariesData),
+    getCachedQuarterlyAllocation(getCurrentQuarter()).catch(() => null),
+  ]);
 
-  // Merge library info with eligibility data
+  // Create a map of RIS scores from allocation
+  const risScoreMap = new Map<string, number>();
+  if (allocation) {
+    for (const lib of allocation.libraries) {
+      const key = `${lib.owner}/${lib.repo}`;
+      risScoreMap.set(key, lib.ris);
+    }
+  }
+
+  // Merge library info with eligibility data and RIS scores
   const librariesWithEligibility: LibraryWithEligibility[] = ecosystemLibraries.map((lib, index) => {
     const eligibility = eligibilityData[index];
+    const repoKey = `${lib.owner}/${lib.name}`;
+    const risScore = risScoreMap.get(repoKey);
 
     return {
       owner: lib.owner,
       repo: lib.name,
       name: lib.name,
       github: `https://github.com/${lib.owner}/${lib.name}`,
+      risScore,
       eligibility: eligibility
         ? {
             status: eligibility.eligibility.status,
