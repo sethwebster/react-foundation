@@ -150,12 +150,12 @@ export default function ComingSoonPage() {
                 <RFDS.Button
                   variant="secondary"
                   onClick={() => signIn('github', { callbackUrl: '/' })}
-                  className="group relative w-full overflow-hidden border-2 border-cyan-400 bg-slate-900/80 px-4 py-3 sm:px-8 sm:py-4 font-bold uppercase tracking-wider text-sm sm:text-base text-cyan-400 shadow-[0_0_20px_rgba(0,255,255,0.3)] hover:bg-primary/10 hover:shadow-[0_0_30px_rgba(0,255,255,0.5)]"
+                  className="group relative w-full overflow-hidden border-2 border-cyan-400 bg-slate-900/80 px-4 py-3 sm:px-8 sm:py-4 font-bold uppercase tracking-wider text-sm sm:text-base text-cyan-400 dark:text-cyan-400 text-cyan-600 shadow-[0_0_20px_rgba(0,255,255,0.3)] hover:bg-primary/10 hover:shadow-[0_0_30px_rgba(0,255,255,0.5)]"
                 >
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-400/10 to-transparent opacity-0 transition group-hover:opacity-100" />
                   <div className="relative flex items-center justify-center gap-2 sm:gap-3">
                     <SiGithub className="w-5 h-5 sm:w-6 sm:h-6" />
-                    <span>Sign in with GitHub</span>
+                    <span className="text-cyan-400 dark:text-cyan-400 text-cyan-600">Sign in with GitHub</span>
                   </div>
                 </RFDS.Button>
               </div>
