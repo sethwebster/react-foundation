@@ -35,9 +35,9 @@ const contributorData = [
   },
   {
     variant: 'donate' as const,
-    title: 'Make a Donation',
+    title: 'Support Financially',
     description:
-      'One-time or recurring donations directly fund maintainers, educational resources, and accessibility initiatives. 100% of funds go to the ecosystem.',
+      'Financial support is one way to help fund maintainers, educational resources, and accessibility initiatives. This includes store purchases, direct donations, and sponsorships.',
     icon: (
       <svg
         className="h-7 w-7"
@@ -55,7 +55,7 @@ const contributorData = [
     ),
     primaryAction: {
       href: '/store',
-      label: 'Shop to Donate →',
+      label: 'Learn More →',
     },
     secondaryAction: {
       href: '#',
@@ -139,8 +139,9 @@ export function BecomeContributor() {
           Become a Contributor
         </h2>
         <p className="mx-auto mt-4 max-w-2xl text-base text-foreground/70">
-          Join the movement to sustain and grow the React ecosystem. Whether you code,
-          donate, sponsor, or become a member, your contribution makes a real difference.
+          Join the movement to sustain and grow the React ecosystem. Contribute code,
+          organize communities, create educational content, or support financially —
+          every pathway helps build a stronger ecosystem.
         </p>
       </div>
 

@@ -9,19 +9,19 @@ export function JoinMovementCTA() {
           Join the Movement
         </h2>
         <p className="mx-auto max-w-2xl text-lg text-foreground/70">
-          Whether you&apos;re a contributor, maintainer, or React enthusiast, there are
-          many ways to support the foundation and help build a sustainable future
-          for open source.
+          Whether you contribute code, organize meetups, create educational content,
+          or support financially, there are many ways to participate in building a
+          sustainable future for the React ecosystem.
         </p>
         <div className="flex flex-wrap items-center justify-center gap-4">
-          <ButtonLink href="/store" variant="primary" size="lg">
-            Shop the Store
+          <ButtonLink href="#contribute" variant="primary" size="lg">
+            Get Involved
           </ButtonLink>
-          <ButtonLink href="/about" variant="secondary" size="lg">
-            Learn More
-          </ButtonLink>
-          <ButtonLink href="/impact" variant="ghost" size="lg">
+          <ButtonLink href="/impact" variant="secondary" size="lg">
             View Impact Reports
+          </ButtonLink>
+          <ButtonLink href="/store" variant="ghost" size="lg">
+            Shop the Store
           </ButtonLink>
         </div>
       </section>

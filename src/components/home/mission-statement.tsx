@@ -12,8 +12,9 @@ export function MissionStatement() {
         </h2>
         <p className="max-w-3xl text-lg leading-relaxed text-foreground/70">
           We exist to ensure the React ecosystem thrives for generations to come.
-          By creating sustainable funding mechanisms and transparent governance,
-          we empower maintainers to build the tools millions of developers rely on.
+          Through code contributions, community organizing, educational content creation,
+          and sustainable funding, we support maintainers, educators, and community
+          organizers who build the tools millions of developers rely on.
         </p>
       </section>
     </ScrollReveal>

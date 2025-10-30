@@ -39,7 +39,8 @@ export function ThreePillars() {
             </h3>
             <p className="text-sm leading-relaxed text-foreground/70">
               Direct financial support for the developers maintaining the libraries
-              you depend on every day. Every purchase helps sustain open source.
+              you depend on every day. Maintainers receive funding through multiple
+              channels including code contributions, sponsorships, and community support.
             </p>
             <div className="pt-4">
               <ButtonLink href="/impact" variant="ghost" size="sm">

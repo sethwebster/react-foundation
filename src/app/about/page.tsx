@@ -120,11 +120,12 @@ export default function AboutPage() {
                     <span className="text-xl font-bold text-primary-foreground">1</span>
                   </div>
                   <h3 className="text-xl font-semibold text-foreground">
-                    Shop the Store
+                    Contribute to the Ecosystem
                   </h3>
                   <p className="text-sm leading-relaxed text-foreground/70">
-                    Browse our collection of premium React-themed merchandise. Every
-                    purchase directly supports the ecosystem.
+                    Submit code, documentation, RFCs, and bug reports to React and 54+
+                    ecosystem libraries. Your contributions directly improve the tools
+                    millions of developers use every day.
                   </p>
                 </div>
 
@@ -133,24 +134,26 @@ export default function AboutPage() {
                     <span className="text-xl font-bold text-success-foreground">2</span>
                   </div>
                   <h3 className="text-xl font-semibold text-foreground">
-                    Revenue Distribution
+                    Join the Community
                   </h3>
                   <p className="text-sm leading-relaxed text-foreground/70">
-                    100% of profits are distributed to maintainers of 54+ React ecosystem
-                    libraries based on contribution metrics.
+                    Organize meetups, create educational content, teach workshops, or
+                    help other developers learn React. Community organizers and educators
+                    are essential to ecosystem growth.
                   </p>
                 </div>
 
                 <div className="space-y-4 rounded-2xl border border-border/10 bg-background/[0.03] p-8">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-warning to-warning/80">
-                    <span className="text-xl font-bold text-warning-foreground">3</span>
+                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-accent to-accent/80">
+                    <span className="text-xl font-bold text-white">3</span>
                   </div>
                   <h3 className="text-xl font-semibold text-foreground">
-                    Contributor Recognition
+                    Support Through the Store
                   </h3>
                   <p className="text-sm leading-relaxed text-foreground/70">
-                    Contributors unlock exclusive merchandise tiers (Contributor, Sustainer,
-                    Core) based on their ecosystem contributions.
+                    One way to fund the ecosystem is through our official merchandise store.
+                    100% of profits support maintainers, educators, and community organizers
+                    based on transparent impact metrics.
                   </p>
                 </div>
 
@@ -159,11 +162,12 @@ export default function AboutPage() {
                     <span className="text-xl font-bold text-primary-foreground">4</span>
                   </div>
                   <h3 className="text-xl font-semibold text-foreground">
-                    Transparent Reporting
+                    Transparent Impact
                   </h3>
                   <p className="text-sm leading-relaxed text-foreground/70">
                     Quarterly impact reports detail exactly how funds support maintainers,
-                    education, and accessibility initiatives.
+                    education, and accessibility initiatives. Full transparency in how
+                    contributions make a difference.
                   </p>
                 </div>
               </div>

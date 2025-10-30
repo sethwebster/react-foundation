@@ -12,19 +12,19 @@ export function FoundationHero() {
         </h1>
         <p className="mt-8 max-w-2xl text-lg text-foreground/70">
           The React Foundation is a community-driven initiative dedicated to sustaining
-          and advancing the React ecosystem by funding maintainers, supporting education,
-          and ensuring accessibility for all developers.
+          and advancing the React ecosystem. Join thousands of contributors who code,
+          teach, organize, and support the tools millions of developers rely on.
         </p>
       </div>
       <div className="flex flex-wrap gap-4">
-        <ButtonLink href="/store" variant="primary" size="lg">
-          Shop to Support
-        </ButtonLink>
-        <ButtonLink href="#contribute" variant="tertiary" size="lg">
-          Contribute
+        <ButtonLink href="#contribute" variant="primary" size="lg">
+          Get Involved
         </ButtonLink>
         <ButtonLink href="/about" variant="secondary" size="lg">
           Learn Our Story
+        </ButtonLink>
+        <ButtonLink href="/store" variant="tertiary" size="lg">
+          Shop to Support
         </ButtonLink>
       </div>
       <HeroBadges />
