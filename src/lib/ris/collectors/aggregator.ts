@@ -230,6 +230,12 @@ export class MetricsAggregator {
     // Set library context for callbacks
     const libraryKey = `${owner}/${repo}`;
     this.currentLibraryContext = libraryKey;
+    
+    // Fire callback immediately to signal collection has started for this library
+    if (this.onSourceStart) {
+      console.log(`  → Firing start callback for ${libraryKey}`);
+      (this.onSourceStart as (library: string, source: string) => void)(libraryKey, 'events');
+    }
 
     // Determine NPM package name (null for repos without NPM packages)
     const npmPackageName = hasNpmPackage ? NPMCollector.getPackageName(owner, repo) : null;
@@ -274,11 +280,18 @@ export class MetricsAggregator {
         ? (source: string) => {
             // Always pass library context if we have onSourceStart
             if (typeof this.onSourceStart === 'function') {
+              console.log(`  → Library callback firing: ${libraryKey} - ${source}`);
               // Call with (library, source) format - setSourceCallbackWithLibrary stores it this way
               (this.onSourceStart as (library: string, source: string) => void)(libraryKey, source);
+            } else {
+              console.log(`  → WARNING: onSourceStart is not a function for ${libraryKey}`);
             }
           }
         : undefined;
+      
+      if (!libraryCallback) {
+        console.log(`  → WARNING: No library callback set for ${libraryKey}`);
+      }
       
       const [githubActivity, ossf, npm, cdn] = await Promise.allSettled([
         githubCollector.fetchAllActivity(owner, repo, libraryName, libraryCallback),

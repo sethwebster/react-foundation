@@ -61,13 +61,19 @@ export class GitHubActivityCollector {
   ): Promise<LibraryActivityData> {
     console.log(`  📥 Fetching ALL historical activity for ${owner}/${repo}...`);
 
-    await this.checkRateLimit();
-
     // Collect sequentially to support source-level progress tracking
     const sourceCallback = onSourceStart || this.onSourceStart;
+    
+    // Fire callback immediately to signal that collection has started
+    if (sourceCallback) {
+      console.log(`  → Firing callback for ${owner}/${repo} - basic_stats`);
+      sourceCallback('basic_stats');
+    }
+
+    await this.checkRateLimit();
+
     let basicStats, prs, issues, commits, releases;
     if (sourceCallback) {
-      sourceCallback('basic_stats');
       basicStats = await this.fetchBasicStats(owner, repo);
       
       sourceCallback('prs');

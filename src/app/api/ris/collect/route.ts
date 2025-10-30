@@ -283,8 +283,9 @@ export async function POST(request: NextRequest) {
 
         // Set up source callback BEFORE processing starts so it's ready when libraries begin collection
         // This callback will be shared across all libraries in the batch
+        logger.info(`Setting up source callback for batch of ${batch.length} libraries`);
         aggregator.setSourceCallbackWithLibrary((library: string, source: string) => {
-          logger.debug(`Source callback received: library=${library}, source=${source}`);
+          logger.info(`Source callback received: library=${library}, source=${source}`);
           // Map internal source names to user-friendly names
           const sourceMap: Record<string, string> = {
             events: 'GitHub activity',
@@ -337,11 +338,15 @@ export async function POST(request: NextRequest) {
         });
 
       // Process batch in parallel
+      logger.info(`Starting parallel collection for batch: ${batch.map(l => `${l.owner}/${l.name}`).join(', ')}`);
       const batchResults = await Promise.allSettled(
         batch.map(async (library, batchIndex) => {
           const libraryIndex = i + batchIndex; // Track which library this is in the full list
+          const libraryKey = `${library.owner}/${library.name}`;
           
           try {
+            logger.info(`[${libraryKey}] Starting collection...`);
+            
             // Ensure collection state exists (initialize if needed)
             let state = await getCollectionState(library.owner, library.name);
             if (!state || forceRefresh) {
@@ -350,6 +355,8 @@ export async function POST(request: NextRequest) {
 
             // Get cached activity data (permanent storage)
             const cachedActivity = await getCachedLibraryActivity(library.owner, library.name);
+            
+            logger.info(`[${libraryKey}] Calling collectLibraryActivity...`);
 
             // Collect or update activity (skip NPM for infrastructure repos)
             const activity = await aggregator.collectLibraryActivity(
