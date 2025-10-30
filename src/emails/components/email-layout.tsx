@@ -16,6 +16,7 @@ import {
 } from '@react-email/components';
 import * as React from 'react';
 import { emailColors, emailTypography, emailSpacing, emailBorders } from '../design-tokens';
+import { getSiteUrl } from '@/lib/site-url';
 
 interface EmailLayoutProps {
   preview?: string;
@@ -24,9 +25,9 @@ interface EmailLayoutProps {
 }
 
 export function EmailLayout({ preview, title, children }: EmailLayoutProps) {
-  // Use production URL or fallback for development
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://react.foundation';
-  const logoUrl = `${baseUrl}/react-logo.png`;
+  // Use hosted image URL for production emails (more reliable than base64)
+  // Note: Gmail and most email clients still require "allow images" - this is a security feature
+  const logoUrl = `${getSiteUrl()}/react-logo.png`;
 
   return (
     <Html>
