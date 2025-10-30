@@ -6,6 +6,7 @@
 import { logger } from '@/lib/logger';
 import { getRedisClient } from '@/lib/redis';
 import { getSiteUrl } from '@/lib/site-url';
+import { render } from '@react-email/render';
 import crypto from 'crypto';
 
 export interface AccessRequest {
@@ -282,69 +283,25 @@ export class AccessRequestsService {
     const { Resend } = await import('resend');
     const resend = new Resend(resendApiKey);
 
+    // Render React Email template
+    const { default: AccessRequestNotification } = await import('@/emails/access-request-notification');
+    const html = await render(
+      AccessRequestNotification({
+        email: request.email,
+        message: request.message,
+        requestedAt: request.requestedAt,
+        requestId: request.id,
+        approveUrl,
+        denyUrl,
+        reviewUrl,
+      })
+    );
+
     const { data, error } = await resend.emails.send({
       from: fromAddress,
       to: recipients,
       subject: `🚀 Early Access Request - ${request.email}`,
-      html: `
-        <!DOCTYPE html>
-        <html>
-          <head>
-            <style>
-              body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #000; color: #fff; }
-              .container { max-width: 600px; margin: 0 auto; padding: 40px 20px; }
-              .header { border-left: 4px solid #06b6d4; padding-left: 20px; margin-bottom: 30px; }
-              .header h1 { margin: 0; font-size: 24px; background: linear-gradient(to right, #06b6d4, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-              .content { background: #111; border: 1px solid #06b6d4; border-radius: 8px; padding: 30px; }
-              .field { margin-bottom: 20px; }
-              .label { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: #06b6d4; margin-bottom: 5px; }
-              .value { font-size: 16px; color: #fff; }
-              .message-box { background: #000; border: 1px solid #374151; border-radius: 4px; padding: 15px; margin-top: 10px; }
-              .actions { margin-top: 30px; display: flex; gap: 10px; justify-content: center; }
-              .button { display: inline-block; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 14px; text-align: center; }
-              .approve { background: #10b981; color: #000; }
-              .deny { background: #ef4444; color: #fff; }
-              .review { background: #06b6d4; color: #000; }
-              .footer { margin-top: 30px; text-align: center; font-size: 12px; color: #666; }
-            </style>
-          </head>
-          <body>
-            <div class="container">
-              <div class="header">
-                <h1>Early Access Request</h1>
-              </div>
-
-              <div class="content">
-                <div class="field">
-                  <div class="label">Email</div>
-                  <div class="value">${request.email}</div>
-                </div>
-
-                <div class="field">
-                  <div class="label">Message</div>
-                  <div class="message-box">${formattedMessage}</div>
-                </div>
-
-                <div class="field">
-                  <div class="label">Requested At</div>
-                  <div class="value">${new Date(request.requestedAt).toLocaleString()}</div>
-                </div>
-              </div>
-
-              <div class="actions">
-                <a href="${approveUrl}" class="button approve">✅ Approve</a>
-                <a href="${denyUrl}" class="button deny">❌ Deny</a>
-                <a href="${reviewUrl}" class="button review">👁️ Review</a>
-              </div>
-
-              <div class="footer">
-                <p>Click a button above to take action, or visit the <a href="${baseUrl}/admin/users/requests" style="color: #06b6d4;">admin panel</a> to review.</p>
-                <p style="margin-top: 10px; font-size: 10px; color: #444;">Request ID: ${request.id}</p>
-              </div>
-            </div>
-          </body>
-        </html>
-      `,
+      html,
     });
 
     if (error) {
@@ -378,25 +335,15 @@ export class AccessRequestsService {
       logger.info(`   To: ${email}`);
       logger.info(`   Using base URL: ${baseUrl}`);
 
+      // Render React Email template
+      const { default: AccessApproved } = await import('@/emails/access-approved');
+      const html = await render(AccessApproved({ signInUrl: baseUrl }));
+
       const result = await resend.emails.send({
         from: `React Foundation <noreply@${fromDomain}>`,
         to: [email],
         subject: '✅ Access Approved - React Foundation',
-        html: `
-          <!DOCTYPE html>
-          <html>
-            <body style="font-family: system-ui; background: #000; color: #fff; padding: 40px;">
-              <div style="max-width: 500px; margin: 0 auto; text-align: center;">
-                <h1 style="color: #10b981; font-size: 32px;">🎉 Welcome!</h1>
-                <p style="font-size: 18px; color: #fff;">Your access request has been approved.</p>
-                <p style="color: #aaa; margin: 20px 0;">You can now sign in and access the React Foundation.</p>
-                ${baseUrl ? `<a href="${baseUrl}" style="display: inline-block; margin-top: 20px; padding: 14px 32px; background: #06b6d4; color: #000; text-decoration: none; border-radius: 8px; font-weight: bold;">
-                  Sign In Now
-                </a>` : '<p style="color: #666; margin-top: 20px;">Please visit the React Foundation to sign in.</p>'}
-              </div>
-            </body>
-          </html>
-        `,
+        html,
       });
 
       if (result.data) {
@@ -429,27 +376,15 @@ export class AccessRequestsService {
       logger.info(`   From: noreply@${fromDomain}`);
       logger.info(`   To: ${email}`);
 
+      // Render React Email template
+      const { default: AccessDenied } = await import('@/emails/access-denied');
+      const html = await render(AccessDenied());
+
       const result = await resend.emails.send({
         from: `React Foundation <noreply@${fromDomain}>`,
         to: [email],
         subject: 'Access Request Update - React Foundation',
-        html: `
-          <!DOCTYPE html>
-          <html>
-            <body style="font-family: system-ui; background: #000; color: #fff; padding: 40px;">
-              <div style="max-width: 500px; margin: 0 auto; text-align: center;">
-                <h1 style="color: #ef4444; font-size: 32px;">Access Request Update</h1>
-                <p style="font-size: 16px; color: #fff;">Thank you for your interest in the React Foundation.</p>
-                <p style="color: #aaa; margin: 20px 0;">
-                  After review, we're unable to grant access at this time. We appreciate your understanding.
-                </p>
-                <p style="color: #666; font-size: 14px; margin-top: 30px;">
-                  If you have questions, please reply to this email.
-                </p>
-              </div>
-            </body>
-          </html>
-        `,
+        html,
       });
 
       if (result.data) {
@@ -478,44 +413,21 @@ export class AccessRequestsService {
       }
 
       const fromDomain = process.env.RESEND_FROM_DOMAIN || 'yourdomain.com';
-      const safeMessage = (replyMessage ?? '')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/\n/g, '<br>');
-      const safeBucket = bucket?.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;') || 'General waitlist';
+
+      // Render React Email template
+      const { default: AccessBucketed } = await import('@/emails/access-bucketed');
+      const html = await render(
+        AccessBucketed({
+          message: replyMessage,
+          bucket: bucket || 'General waitlist',
+        })
+      );
 
       const result = await resend.emails.send({
         from: `React Foundation <noreply@${fromDomain}>`,
         to: [email],
         subject: 'Access Request Update - React Foundation',
-        html: `
-          <!DOCTYPE html>
-          <html>
-            <body style="font-family: system-ui; background: #000; color: #fff; padding: 40px;">
-              <div style="max-width: 500px; margin: 0 auto; text-align: left;">
-                <h1 style="color: #06b6d4; font-size: 28px; margin-bottom: 16px;">Access Request Update</h1>
-                <p style="color: #fff; font-size: 16px; line-height: 1.5;">
-                  Thank you for your request—here&apos;s the latest update.
-                </p>
-                <div style="background: #111; border: 1px solid #1f2937; border-radius: 8px; padding: 20px; margin: 24px 0;">
-                  <p style="color: #06b6d4; text-transform: uppercase; letter-spacing: 1px; font-size: 12px; margin: 0 0 8px;">
-                    Message
-                  </p>
-                  <p style="color: #e5e7eb; font-size: 16px; line-height: 1.6; white-space: pre-wrap;">
-                    ${safeMessage}
-                  </p>
-                </div>
-                <p style="color: #a855f7; font-weight: bold; font-size: 14px;">
-                  You&apos;re currently in: ${safeBucket}
-                </p>
-                <p style="color: #9ca3af; font-size: 14px; margin-top: 24px;">
-                  We&apos;ll reach out as soon as it&apos;s your turn.
-                </p>
-              </div>
-            </body>
-          </html>
-        `,
+        html,
       });
 
       if (result.data) {
