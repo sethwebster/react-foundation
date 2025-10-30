@@ -374,15 +374,14 @@ function StatBox({
   capitalize?: boolean;
 }) {
   return (
-    <div className="bg-card border border-border rounded-xl p-4 text-center">
-      <div className="text-3xl mb-2">{icon}</div>
-      <div
-        className={`text-2xl font-bold text-primary mb-1 ${capitalize ? 'capitalize' : ''}`}
-      >
-        {value}
-      </div>
-      <div className="text-xs text-muted-foreground">{label}</div>
-    </div>
+    <RFDS.StatCard
+      label={label}
+      value={value}
+      icon={icon}
+      color="primary"
+      variant="outlined"
+      className={`text-center ${capitalize ? 'capitalize' : ''}`}
+    />
   );
 }
 

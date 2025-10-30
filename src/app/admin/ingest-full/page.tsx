@@ -6,6 +6,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { RFDS } from '@/components/rfds';
 import { SearchTester } from '@/components/admin/search-tester';
 
 interface IngestionResult {
@@ -240,13 +241,14 @@ export default function IngestFullPage() {
 
       {/* Action Button */}
       {!progress && (
-        <button
+        <RFDS.SemanticButton
+          variant="primary"
           onClick={handleIngest}
           disabled={ingesting}
-          className="w-full bg-primary text-primary-foreground px-6 py-3 rounded-lg font-semibold hover:bg-primary/90 transition disabled:opacity-50"
+          className="w-full"
         >
           {ingesting ? '⏳ Running Ingestion...' : '🚀 Start Full Ingestion'}
-        </button>
+        </RFDS.SemanticButton>
       )}
 
       {/* Error Display */}
@@ -281,11 +283,11 @@ export default function IngestFullPage() {
                   📝 Live Logs ({progress.logs.length})
                 </p>
                 <label className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer">
-                  <input
+                  <RFDS.Checkbox
                     type="checkbox"
                     checked={autoScroll}
                     onChange={(e) => setAutoScroll(e.target.checked)}
-                    className="w-4 h-4 accent-primary"
+                    className="w-4 h-4"
                   />
                   Auto-scroll
                 </label>
@@ -394,17 +396,18 @@ export default function IngestFullPage() {
 
           {/* Actions */}
           {progress.status !== 'running' && (
-            <button
+            <RFDS.SemanticButton
+              variant="secondary"
               onClick={() => {
                 setProgress(null);
                 setIngestionId(null);
                 setError(null);
                 setIngesting(false);
               }}
-              className="w-full bg-secondary text-secondary-foreground px-6 py-3 rounded-lg font-semibold hover:bg-secondary/90 transition mt-4"
+              className="w-full mt-4"
             >
               Run Another Ingestion
-            </button>
+            </RFDS.SemanticButton>
           )}
         </div>
       )}

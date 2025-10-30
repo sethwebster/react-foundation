@@ -54,6 +54,11 @@ export { ErrorBoundary } from "@/components/error-boundary";
 // Table Components
 export { Table, type TableColumn, type TableProps, type SortDirection } from "./table";
 
+// Composition Components
+export { StatCard, type StatCardProps } from "./stat-card";
+export { FormInput, type FormInputProps } from "./form-input";
+export { SearchInput, type SearchInputProps } from "./search-input";
+
 // Re-export for namespace
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
@@ -86,6 +91,9 @@ import { ImpactSection } from "@/features/impact/impact-section";
 import { SignInButton } from "@/features/auth/sign-in-button";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { Table } from "./table";
+import { StatCard } from "./stat-card";
+import { FormInput } from "./form-input";
+import { SearchInput } from "./search-input";
 
 export const Components = {
   // Layout
@@ -136,4 +144,9 @@ export const Components = {
   
   // Table
   Table,
+  
+  // Compositions
+  StatCard,
+  FormInput,
+  SearchInput,
 };

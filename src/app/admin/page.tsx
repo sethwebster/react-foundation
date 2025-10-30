@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { UserManagementService } from '@/lib/admin/user-management-service';
 import { AccessRequestsService } from '@/lib/admin/access-requests-service';
 import { getRedisClient } from '@/lib/redis';
+import { RFDS } from '@/components/rfds';
 
 export const dynamic = 'force-dynamic';
 
@@ -289,19 +290,15 @@ function MetricCard({
   highlight?: boolean;
 }) {
   const content = (
-    <div
-      className={`bg-card border rounded-lg p-4 text-center transition ${
-        highlight
-          ? 'border-primary bg-primary/5'
-          : 'border-border hover:bg-muted'
-      } ${href ? 'cursor-pointer' : ''}`}
-    >
-      <div className="text-2xl mb-2">{icon}</div>
-      <div className="text-2xl md:text-3xl font-bold text-foreground mb-1">
-        {value}
-      </div>
-      <div className="text-xs md:text-sm text-muted-foreground">{label}</div>
-    </div>
+    <RFDS.StatCard
+      label={label}
+      value={value}
+      icon={icon}
+      highlight={highlight}
+      color="primary"
+      variant="outlined"
+      className={`text-center ${href ? 'cursor-pointer' : ''}`}
+    />
   );
 
   if (href) {

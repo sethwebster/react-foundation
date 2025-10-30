@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { RFDS } from '@/components/rfds';
 
 export function MigrationButton() {
   const [migrating, setMigrating] = useState(false);
@@ -32,13 +33,13 @@ export function MigrationButton() {
 
   return (
     <div className="space-y-2">
-      <button
+      <RFDS.SemanticButton
+        variant="warning"
         onClick={handleMigrate}
         disabled={migrating}
-        className="px-4 py-2 bg-warning text-warning-foreground rounded-lg hover:bg-warning/90 transition text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {migrating ? 'Migrating...' : 'Trigger Migration Now'}
-      </button>
+      </RFDS.SemanticButton>
       {result && (
         <p className={`text-sm ${result.includes('✅') ? 'text-success-foreground' : 'text-destructive'}`}>
           {result}

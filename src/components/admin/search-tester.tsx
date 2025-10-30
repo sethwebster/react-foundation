@@ -76,13 +76,12 @@ export function SearchTester() {
       {/* Search Input */}
       <div className="space-y-3 mb-6">
         <div className="flex gap-2">
-          <input
-            type="text"
+          <RFDS.SearchInput
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSearch(query)}
             placeholder="Enter search query..."
-            className="flex-1 px-4 py-2 border border-border rounded-lg bg-background text-foreground focus:ring-2 focus:ring-primary focus:outline-none"
+            className="flex-1"
           />
           <RFDS.SemanticButton
             variant="primary"
@@ -96,25 +95,25 @@ export function SearchTester() {
         {/* Sample Queries */}
         <div className="flex flex-wrap gap-2">
           {SAMPLE_QUERIES.map((sampleQuery) => (
-            <button
+            <RFDS.Pill
               key={sampleQuery}
               onClick={() => {
                 setQuery(sampleQuery);
                 handleSearch(sampleQuery);
               }}
-              className="text-xs px-3 py-1 bg-muted hover:bg-muted/80 text-muted-foreground rounded-full transition-colors"
+              className="cursor-pointer"
             >
               {sampleQuery}
-            </button>
+            </RFDS.Pill>
           ))}
         </div>
       </div>
 
       {/* Error */}
       {error && (
-        <div className="bg-destructive/10 border border-destructive/50 rounded-lg p-4 mb-4">
-          <p className="text-sm text-destructive">{error}</p>
-        </div>
+        <RFDS.SemanticAlert variant="destructive" className="mb-4">
+          {error}
+        </RFDS.SemanticAlert>
       )}
 
       {/* Results */}
@@ -130,11 +129,9 @@ export function SearchTester() {
           </div>
 
           {response.resultCount === 0 ? (
-            <div className="bg-warning/10 border border-warning/50 rounded-lg p-4">
-              <p className="text-sm text-warning-foreground">
-                No results found. The vector store may be empty or the query didn't match any content.
-              </p>
-            </div>
+            <RFDS.SemanticAlert variant="warning">
+              No results found. The vector store may be empty or the query didn't match any content.
+            </RFDS.SemanticAlert>
           ) : (
             <div className="space-y-3">
               {response.results.map((result, index) => (

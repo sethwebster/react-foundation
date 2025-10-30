@@ -25,8 +25,8 @@ import { Components } from "./components";
 import { Layouts } from "./layouts";
 
 // Import individual components for direct access
-import { Button, ButtonLink, Pill, Rating, Collapsible, ScrollReveal, SegmentedControl, ThemeSegmentedControl, AccordionContent } from "./primitives";
-import { ProductCard, ProductGallery, UserAvatar, LibraryCard, RISScoreBreakdown, RISLibraryRankings, EcosystemLibraries, ByTheNumbers, LimitedDrops, FeaturedLook, FoundationHero, MissionStatement, PastDropsCollections, ExecutiveMessage, BecomeContributor, FeaturedCollections, JoinMovementCTA, HeroBadges, ThreePillars, Hero, FoundingMembers, PastDrops, UsernameInput, MaintainerProgress, ImpactSection, SignInButton, ErrorBoundary, Table, type TableColumn, type TableProps, type SortDirection } from "./components";
+import { Button, ButtonLink, Pill, Rating, Collapsible, ScrollReveal, SegmentedControl, ThemeSegmentedControl, AccordionContent, Input, Textarea, Select, Label, Checkbox, Radio, Switch, Separator, Dialog, Tooltip } from "./primitives";
+import { ProductCard, ProductGallery, UserAvatar, LibraryCard, RISScoreBreakdown, RISLibraryRankings, EcosystemLibraries, ByTheNumbers, LimitedDrops, FeaturedLook, FoundationHero, MissionStatement, PastDropsCollections, ExecutiveMessage, BecomeContributor, FeaturedCollections, JoinMovementCTA, HeroBadges, ThreePillars, Hero, FoundingMembers, PastDrops, UsernameInput, MaintainerProgress, ImpactSection, SignInButton, ErrorBoundary, Table, StatCard, FormInput, SearchInput, type TableColumn, type TableProps, type SortDirection } from "./components";
 import { Header, Footer } from "./layouts";
 import { SemanticButton, SemanticCard, SemanticBadge, SemanticInput, SemanticAlert, SemanticAvatar, SemanticSeparator, ContributorIcon, ContributorCard } from "./semantic-components";
 import { Timeline, TimelineItem, TimelineStep, TimelineProgress } from "./timeline";
@@ -48,6 +48,18 @@ export const RFDS = {
   SegmentedControl,
   ThemeSegmentedControl,
   AccordionContent,
+  // Form Primitives
+  Input,
+  Textarea,
+  Select,
+  Label,
+  Checkbox,
+  Radio,
+  Switch,
+  // Layout Primitives
+  Separator,
+  Dialog,
+  Tooltip,
 
   // Components - Composed UI elements
   ProductCard,
@@ -105,6 +117,11 @@ export const RFDS = {
   // Table Components
   Table,
 
+  // Composition Components
+  StatCard,
+  FormInput,
+  SearchInput,
+
   // Layers - For advanced usage
   Primitives,
   Components,
@@ -122,10 +139,23 @@ export {
   ScrollReveal,
   SegmentedControl,
   ThemeSegmentedControl,
+  Input,
+  Textarea,
+  Select,
+  Label,
+  Checkbox,
+  Radio,
+  Switch,
+  Separator,
+  Dialog,
+  Tooltip,
   // Components
   ProductCard,
   ProductGallery,
   Table,
+  StatCard,
+  FormInput,
+  SearchInput,
   // Table Types
   type TableColumn,
   type TableProps,

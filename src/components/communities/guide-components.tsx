@@ -107,9 +107,9 @@ export function Checklist({ items, title }: ChecklistProps) {
       <div className="space-y-3">
         {items.map((item, i) => (
           <label key={i} className="flex items-start gap-3 cursor-pointer group">
-            <input
+            <RFDS.Checkbox
               type="checkbox"
-              className="mt-1 h-4 w-4 shrink-0 rounded border-border bg-background text-primary focus:ring-2 focus:ring-primary focus:ring-offset-2"
+              className="mt-1 h-4 w-4 shrink-0"
             />
             <span className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">
               {item}
@@ -142,12 +142,14 @@ export function StepCard({ number, title, description, children }: StepCardProps
           <h3 className="mb-2 text-xl font-semibold text-foreground">{title}</h3>
           <p className="text-muted-foreground leading-relaxed">{description}</p>
           {children && (
-            <button
+            <RFDS.SemanticButton
+              variant="ghost"
+              size="sm"
               onClick={() => setIsExpanded(!isExpanded)}
-              className="mt-3 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+              className="mt-3 text-sm"
             >
               {isExpanded ? '↑ Show less' : '↓ Learn more'}
-            </button>
+            </RFDS.SemanticButton>
           )}
         </div>
       </div>
@@ -214,32 +216,15 @@ export function StatGrid({ children }: { children: React.ReactNode }) {
 }
 
 export function StatCard({ value, label, icon, trend }: StatCardProps) {
-  const trendIcons = {
-    up: '↗',
-    down: '↘',
-    neutral: '→',
-  };
-
-  const trendColors = {
-    up: 'text-success',
-    down: 'text-destructive',
-    neutral: 'text-muted-foreground',
-  };
-
   return (
-    <RFDS.SemanticCard variant="outlined" hover className="not-prose p-6">
-      <div className="flex items-start justify-between">
-        <div>
-          <div className="text-3xl font-bold text-foreground mb-1">{value}</div>
-          <div className="text-sm text-muted-foreground">{label}</div>
-        </div>
-        {(icon || trend) && (
-          <div className="text-2xl">
-            {icon || (trend && <span className={trendColors[trend]}>{trendIcons[trend]}</span>)}
-          </div>
-        )}
-      </div>
-    </RFDS.SemanticCard>
+    <RFDS.StatCard
+      value={value}
+      label={label}
+      icon={icon}
+      trend={trend}
+      variant="outlined"
+      className="not-prose"
+    />
   );
 }
 

@@ -186,10 +186,10 @@ export function Table<T extends Record<string, any>>({
     // Apply sorting
     if (sortKey && sortDirection) {
       const column = getColumn(sortKey);
-      if (column?.sortable !== false) {
+      if (column && column.sortable !== false) {
         result = [...result].sort((a, b) => {
-          const aVal = getSortValue(a, column!);
-          const bVal = getSortValue(b, column!);
+          const aVal = getSortValue(a, column);
+          const bVal = getSortValue(b, column);
 
           if (aVal === bVal) return 0;
 
