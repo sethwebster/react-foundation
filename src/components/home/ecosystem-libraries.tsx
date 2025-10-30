@@ -15,7 +15,7 @@ interface EcosystemLibrariesProps {
 export function EcosystemLibraries({
   id = "libraries",
   title = "Supported Ecosystem",
-  description = "We track contributions across all 54 critical React ecosystem libraries:",
+  description,
   risScores,
   showRIS = false,
 }: EcosystemLibrariesProps) {
@@ -23,6 +23,11 @@ export function EcosystemLibraries({
   const risScoreMap = risScores
     ? new Map(risScores.map((score) => [score.repo, score.ris]))
     : new Map();
+  
+  // Use dynamic count from ecosystemLibraries if description not provided
+  const libraryCount = ecosystemLibraries.length;
+  const defaultDescription = `We track contributions across all ${libraryCount} critical React ecosystem libraries:`;
+  const displayDescription = description || defaultDescription;
   // Group libraries by category
   const categorizedLibraries = [
     {
@@ -82,7 +87,7 @@ export function EcosystemLibraries({
         className="scroll-mt-32 space-y-8 rounded-3xl border border-border/10 bg-muted/60 p-12"
       >
         <h2 className="text-3xl font-semibold text-foreground sm:text-4xl">{title}</h2>
-        <p className="max-w-3xl text-lg text-foreground/70">{description}</p>
+        <p className="max-w-3xl text-lg text-foreground/70">{displayDescription}</p>
 
         <div className="space-y-8 pt-6">
           {categorizedLibraries.map((cat) => {

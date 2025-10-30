@@ -159,7 +159,6 @@ export default function AboutPage() {
           {/* Ecosystem Libraries */}
           <EcosystemLibraries
             title="Supported Ecosystem"
-            description="We track contributions across all 54 critical React ecosystem libraries:"
           />
 
           {/* Governance / Communities */}

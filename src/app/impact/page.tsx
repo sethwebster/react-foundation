@@ -4,6 +4,7 @@ import { Pill } from "@/components/ui/pill";
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
 import { Footer } from "@/components/layout/footer";
 import { EcosystemLibraries } from "@/components/home/ecosystem-libraries";
+import { ecosystemLibraries } from "@/lib/maintainer-tiers";
 
 export const metadata: Metadata = {
   title: "Impact Reports | React Foundation",
@@ -113,7 +114,7 @@ export default function ImpactPage() {
           <EcosystemLibraries
             id="libraries"
             title="Supported Ecosystem"
-            description="We track contributions across all 54 critical React ecosystem libraries, ensuring fair distribution of funds based on contribution metrics."
+            description={`We track contributions across all ${ecosystemLibraries.length} critical React ecosystem libraries, ensuring fair distribution of funds based on contribution metrics.`}
           />
 
           {/* How Funds are Distributed */}
