@@ -154,7 +154,7 @@ export function UsernameInput({ githubLogin, onUsernameChange, isPending }: User
         Track your React ecosystem contributions
       </p>
       <RFDS.SemanticButton
-        variant="outline"
+        variant="secondary"
         onClick={() => setShowCustomInput(true)}
         className="w-full"
       >

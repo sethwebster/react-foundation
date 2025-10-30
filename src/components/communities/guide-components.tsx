@@ -108,7 +108,6 @@ export function Checklist({ items, title }: ChecklistProps) {
         {items.map((item, i) => (
           <label key={i} className="flex items-start gap-3 cursor-pointer group">
             <RFDS.Checkbox
-              type="checkbox"
               className="mt-1 h-4 w-4 shrink-0"
             />
             <span className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">

@@ -157,7 +157,6 @@ export function CommunityFilters() {
             (type) => (
               <label key={type} className="flex items-center gap-2 cursor-pointer group">
                 <RFDS.Checkbox
-                  type="checkbox"
                   checked={filters.event_types?.includes(type) || false}
                   onChange={() => toggleEventType(type)}
                   className="w-4 h-4"
@@ -208,7 +207,6 @@ export function CommunityFilters() {
 
         <label className="flex items-center gap-2 cursor-pointer group">
           <input
-            type="checkbox"
             checked={filters.has_upcoming_events || false}
             onChange={(e) => {
               console.log('📅 Has upcoming events toggled:', e.target.checked);

@@ -158,11 +158,11 @@ export function UsersTable({ users, currentUserEmail, onUpdate }: UsersTableProp
         return (
           <div className="flex flex-wrap gap-1">
             {visibleRoles.map(role => {
-              const roleColors: Record<string, 'default' | 'success' | 'warning' | 'destructive'> = {
-                admin: 'destructive',
-                community_manager: 'primary',
-                library_manager: 'success',
-              };
+                const roleColors: Record<string, 'default' | 'success' | 'warning' | 'destructive'> = {
+                  admin: 'destructive',
+                  community_manager: 'warning',
+                  library_manager: 'success',
+                };
               return (
                 <RFDS.SemanticBadge
                   key={role}

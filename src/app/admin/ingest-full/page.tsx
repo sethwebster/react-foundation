@@ -284,7 +284,6 @@ export default function IngestFullPage() {
                 </p>
                 <label className="flex items-center gap-2 text-xs text-muted-foreground cursor-pointer">
                   <RFDS.Checkbox
-                    type="checkbox"
                     checked={autoScroll}
                     onChange={(e) => setAutoScroll(e.target.checked)}
                     className="w-4 h-4"

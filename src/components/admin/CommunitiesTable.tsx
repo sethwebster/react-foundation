@@ -39,6 +39,7 @@ export function CommunitiesTable({ communities }: CommunitiesTableProps) {
       render: (_value: unknown, community: Community) => {
         const statusConfig = {
           active: { variant: 'success' as const, label: 'Active' },
+          paused: { variant: 'warning' as const, label: 'Paused' },
           inactive: { variant: 'outline' as const, label: 'Inactive' },
           new: { variant: 'default' as const, label: 'New' },
         };

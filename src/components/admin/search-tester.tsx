@@ -95,16 +95,17 @@ export function SearchTester() {
         {/* Sample Queries */}
         <div className="flex flex-wrap gap-2">
           {SAMPLE_QUERIES.map((sampleQuery) => (
-            <RFDS.Pill
+            <button
               key={sampleQuery}
+              type="button"
               onClick={() => {
                 setQuery(sampleQuery);
                 handleSearch(sampleQuery);
               }}
               className="cursor-pointer"
             >
-              {sampleQuery}
-            </RFDS.Pill>
+              <RFDS.Pill>{sampleQuery}</RFDS.Pill>
+            </button>
           ))}
         </div>
       </div>
