@@ -5,11 +5,31 @@
 
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef, useState, type RefObject } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { RFDS } from '@/components/rfds';
 import { SortDropdown } from '@/components/ui/sort-dropdown';
-import type { CommunityFilters as Filters, EventType } from '@/types/community';
+import type { CommunityFilters as Filters, CommunityStatusFilter, EventType } from '@/types/community';
+
+const STATUS_OPTIONS: Array<{ value: CommunityStatusFilter; label: string }> = [
+  { value: 'all', label: 'All' },
+  { value: 'new', label: 'New' },
+  { value: 'active', label: 'Active' },
+  { value: 'paused', label: 'Paused' },
+  { value: 'inactive', label: 'Inactive' },
+];
+
+function useClearDebounceOnUnmount(timer: RefObject<ReturnType<typeof setTimeout> | null>) {
+  useEffect(() => {
+    function clearDebounce() {
+      if (timer.current) {
+        clearTimeout(timer.current);
+      }
+    }
+
+    return clearDebounce;
+  }, [timer]);
+}
 
 export function CommunityFilters() {
   const router = useRouter();
@@ -23,7 +43,7 @@ export function CommunityFilters() {
     return {
       search: params.get('search') || undefined,
       country: params.get('country') || undefined,
-      status: statusParam ? (statusParam as Filters['status']) : 'active', // Default to active if no param
+      status: statusParam ? (statusParam as Filters['status']) : 'all',
       cois_tier: params.get('tier') as Filters['cois_tier'] || undefined,
       verified_only: params.get('verified') === 'true',
       has_upcoming_events: params.get('upcoming') === 'true',
@@ -50,14 +70,7 @@ export function CommunityFilters() {
     }
   };
 
-  // Cleanup timer on unmount
-  useEffect(() => {
-    return () => {
-      if (debounceTimer.current) {
-        clearTimeout(debounceTimer.current);
-      }
-    };
-  }, []);
+  useClearDebounceOnUnmount(debounceTimer);
 
   const applyFilters = (newFilters: Filters) => {
     const params = new URLSearchParams();
@@ -65,14 +78,9 @@ export function CommunityFilters() {
     if (newFilters.search) params.set('search', newFilters.search);
     if (newFilters.country) params.set('country', newFilters.country);
 
-    // Always add status to URL to be explicit
     const statusValue = newFilters.status as string;
-    if (statusValue === 'all') {
-      params.set('status', 'all');
-    } else if (statusValue) {
+    if (statusValue && statusValue !== 'all') {
       params.set('status', statusValue);
-    } else {
-      params.set('status', 'active'); // Explicit default
     }
 
     if (newFilters.cois_tier) params.set('tier', newFilters.cois_tier);
@@ -100,7 +108,7 @@ export function CommunityFilters() {
 
   const clearFilters = () => {
     const defaultFilters: Filters = {
-      status: 'active' as any, // Reset to default
+      status: 'all',
       event_types: [],
       verified_only: false,
       has_upcoming_events: false,
@@ -115,7 +123,7 @@ export function CommunityFilters() {
     (filters.event_types && filters.event_types.length > 0) ||
     filters.cois_tier ||
     filters.has_upcoming_events ||
-    (filters.status && filters.status !== 'active'); // active is default
+    (filters.status && filters.status !== 'all');
 
   return (
     <div className="space-y-6">
@@ -132,6 +140,32 @@ export function CommunityFilters() {
             Clear all
           </RFDS.SemanticButton>
         )}
+      </div>
+
+      {/* Status shortcuts */}
+      <div>
+        <label className="block text-sm font-medium text-foreground mb-3">
+          Status
+        </label>
+        <div className="flex flex-wrap gap-2">
+          {STATUS_OPTIONS.map((option) => {
+            const selected = (filters.status || 'all') === option.value;
+
+            return (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() => updateFilter('status', option.value)}
+                className={selected
+                  ? 'rounded-full bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground transition'
+                  : 'rounded-full border border-border bg-card px-3 py-1.5 text-sm font-medium text-muted-foreground transition hover:border-primary hover:text-primary'
+                }
+              >
+                {option.label}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* Search */}
@@ -168,22 +202,6 @@ export function CommunityFilters() {
             )
           )}
         </div>
-      </div>
-
-      {/* Status */}
-      <div>
-        <SortDropdown
-          label="Community Status"
-          options={[
-            { value: 'active', label: '✓ Active Only' },
-            { value: 'all', label: '📋 All Statuses' },
-            { value: 'new', label: '✨ New' },
-            { value: 'paused', label: '⏸️ Paused' },
-            { value: 'inactive', label: '💤 Inactive' },
-          ]}
-          value={filters.status || 'active'}
-          onChange={(value) => updateFilter('status', value as Filters['status'])}
-        />
       </div>
 
       {/* CoIS Tier */}

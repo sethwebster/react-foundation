@@ -87,11 +87,13 @@ export type CommunityStatus =
   | 'inactive' // No events in 6+ months
   | 'new'; // Less than 3 events
 
+export type CommunityStatusFilter = CommunityStatus | 'all';
+
 export interface CommunityFilters {
   search?: string;
   country?: string;
   event_types?: EventType[];
-  status?: CommunityStatus;
+  status?: CommunityStatusFilter;
   verified_only?: boolean;
   cois_tier?: Community['cois_tier'];
   has_upcoming_events?: boolean;

@@ -4,7 +4,8 @@
  */
 
 import { notFound } from 'next/navigation';
-import { getCommunityBySlug } from '@/data/communities';
+import Link from 'next/link';
+import { getCommunityBySlug } from '@/lib/redis-communities';
 import { RFDS } from '@/components/rfds';
 import type { Metadata } from 'next';
 
@@ -16,7 +17,7 @@ export async function generateMetadata({
   params,
 }: CommunityPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const community = getCommunityBySlug(slug);
+  const community = await getCommunityBySlug(slug);
 
   if (!community) {
     return {
@@ -32,7 +33,7 @@ export async function generateMetadata({
 
 export default async function CommunityPage({ params }: CommunityPageProps) {
   const { slug } = await params;
-  const community = getCommunityBySlug(slug);
+  const community = await getCommunityBySlug(slug);
 
   if (!community) {
     notFound();
@@ -48,12 +49,12 @@ export default async function CommunityPage({ params }: CommunityPageProps) {
           <div className="max-w-4xl mx-auto">
             {/* Breadcrumb */}
             <nav className="mb-6">
-              <a
+              <Link
                 href="/communities"
                 className="text-sm text-muted-foreground hover:text-primary transition"
               >
                 ← Back to all communities
-              </a>
+              </Link>
             </nav>
 
             {/* Header */}
@@ -349,12 +350,12 @@ export default async function CommunityPage({ params }: CommunityPageProps) {
                 <p className="text-sm text-muted-foreground mb-4">
                   Start your own React community and earn CoIS rewards
                 </p>
-                <a
+                <Link
                   href="/communities/start"
                   className="block bg-primary text-primary-foreground px-4 py-2 rounded-lg font-medium hover:bg-primary/90 transition"
                 >
                   Learn More
-                </a>
+                </Link>
               </div>
             </aside>
           </div>

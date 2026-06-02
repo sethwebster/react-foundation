@@ -6,6 +6,7 @@
 import { NextResponse } from 'next/server';
 import { getCommunities } from '@/lib/redis-communities';
 import { autoSeedCommunities } from '@/lib/auto-seed';
+import type { EventType } from '@/types/community';
 
 export async function GET(request: Request) {
   try {
@@ -55,15 +56,9 @@ export async function GET(request: Request) {
       );
     }
 
-    // Apply status filter
-    // 'all' = show all, 'active' (or no param) = show active only, others = specific status
-    if (status === 'all') {
-      // Show all, no filter
-    } else if (status) {
+    // Apply status filter. No status or 'all' shows every published community.
+    if (status && status !== 'all') {
       communities = communities.filter((c) => c.status === status);
-    } else {
-      // Default: show active only
-      communities = communities.filter((c) => c.status === 'active');
     }
 
     // Apply tier filter
@@ -72,12 +67,12 @@ export async function GET(request: Request) {
     }
 
     // Apply event type filter (multiple types possible)
-    const types = searchParams.get('types');
+    const types = searchParams.get('types') ?? eventType;
     if (types) {
       const typeList = types.split(',').filter(Boolean);
       if (typeList.length > 0) {
         communities = communities.filter((c) =>
-          typeList.some(type => c.event_types.includes(type as any))
+          typeList.some(type => c.event_types.includes(type as EventType))
         );
       }
     }

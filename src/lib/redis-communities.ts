@@ -359,6 +359,14 @@ export async function getCommunityById(id: string): Promise<Community | null> {
 }
 
 /**
+ * Get a single community by slug from Redis-backed community data
+ */
+export async function getCommunityBySlug(slug: string): Promise<Community | null> {
+  const communities = await getCommunities();
+  return communities.find((community) => community.slug === slug) ?? null;
+}
+
+/**
  * Get communities with pagination
  * More efficient than loading all communities
  */

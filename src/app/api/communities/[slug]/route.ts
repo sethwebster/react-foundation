@@ -4,7 +4,7 @@
  */
 
 import { NextResponse } from 'next/server';
-import { getCommunityBySlug } from '@/data/communities';
+import { getCommunityBySlug } from '@/lib/redis-communities';
 
 export async function GET(
   request: Request,
@@ -12,7 +12,7 @@ export async function GET(
 ) {
   try {
     const { slug } = await params;
-    const community = getCommunityBySlug(slug);
+    const community = await getCommunityBySlug(slug);
 
     if (!community) {
       return NextResponse.json(
