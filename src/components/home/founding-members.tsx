@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { ButtonLink } from "@/components/ui/button";
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
 
 type ImageMember = {
@@ -139,16 +140,25 @@ export function FoundingMembers() {
           </div>
         </div>
 
-        <div className="border-t border-border/10 pt-8 text-center">
-          <p className="text-sm text-foreground/60">
-            Interested in becoming a sponsor member?{" "}
-            <a
-              href="mailto:partnerships@react.foundation"
-              className="font-medium text-cyan-400 transition hover:text-cyan-300"
+        <div className="border-t border-border/10 pt-8">
+          <div className="mx-auto flex max-w-3xl flex-col items-center justify-between gap-5 rounded-2xl border border-border/10 bg-card/70 p-6 text-center shadow-sm sm:flex-row sm:text-left">
+            <div className="space-y-2">
+              <h3 className="text-xl font-semibold text-foreground">
+                Sponsor React&apos;s future
+              </h3>
+              <p className="text-sm text-foreground/70">
+                Help fund React maintainers, education, and ecosystem support.
+              </p>
+            </div>
+            <ButtonLink
+              href="/become-a-sponsor"
+              variant="primary"
+              size="lg"
+              className="w-full sm:w-auto"
             >
-              Contact us
-            </a>
-          </p>
+              Become a sponsor
+            </ButtonLink>
+          </div>
         </div>
       </section>
     </ScrollReveal>
