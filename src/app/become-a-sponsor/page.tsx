@@ -8,7 +8,7 @@ import { Footer } from "@/components/layout/footer";
 const ENROLLMENT_URL =
   "https://enrollment.lfx.linuxfoundation.org/?project=react-foundation";
 
-const sponsorReasons = [
+const memberReasons = [
   {
     title: "Sustain core infrastructure",
     description:
@@ -43,12 +43,12 @@ const investmentAreas = [
 ];
 
 export const metadata: Metadata = {
-  title: "Become a Sponsor | React Foundation",
+  title: "Become a Member | React Foundation",
   description:
-    "Sponsor the React Foundation and help sustain the ecosystem, maintainers, and community programs that support React's future.",
+    "Become a React Foundation member and help sustain the ecosystem, maintainers, and community programs that support React's future.",
 };
 
-export default function BecomeSponsorPage() {
+export default function BecomeMemberPage() {
   return (
     <div className="min-h-screen bg-background pt-24 text-muted-foreground">
       <div className="absolute inset-x-0 top-[-6rem] -z-10 flex justify-center overflow-hidden blur-3xl">
@@ -66,16 +66,16 @@ export default function BecomeSponsorPage() {
                 <p className="max-w-2xl text-lg leading-8 text-foreground/70">
                   React is more than a library. It is an ecosystem of maintainers,
                   educators, tools, frameworks, and community spaces that help teams
-                  build for the web and beyond. Sponsor members help keep that
+                  build for the web and beyond. Members help keep that
                   ecosystem healthy, independent, and durable.
                 </p>
               </div>
               <div className="flex flex-col gap-4 sm:flex-row">
                 <ButtonLink href={ENROLLMENT_URL} size="lg">
-                  Join as a sponsor member
+                  Join as a member
                 </ButtonLink>
                 <ButtonLink href="#membership" variant="secondary" size="lg">
-                  See what sponsorship supports
+                  See what membership supports
                 </ButtonLink>
               </div>
             </div>
@@ -90,7 +90,7 @@ export default function BecomeSponsorPage() {
               <p className="mt-4 text-sm leading-6 text-muted-foreground">
                 Enrollment is handled through the Linux Foundation. The form opens
                 with React Foundation selected so your organization can begin the
-                sponsor membership process directly.
+                membership process directly.
               </p>
               <ButtonLink href={ENROLLMENT_URL} className="mt-6 w-full" size="lg">
                 Open enrollment form
@@ -102,7 +102,7 @@ export default function BecomeSponsorPage() {
             <section id="membership" className="space-y-8 scroll-mt-32">
               <div className="max-w-3xl space-y-4">
                 <h2 className="text-3xl font-semibold text-foreground sm:text-4xl">
-                  Sponsor members fund the shared work behind React.
+                  Members fund the shared work behind React.
                 </h2>
                 <p className="text-base leading-7 text-foreground/70">
                   Your support helps the foundation invest where individual projects
@@ -111,7 +111,7 @@ export default function BecomeSponsorPage() {
               </div>
 
               <div className="grid gap-6 md:grid-cols-3">
-                {sponsorReasons.map((reason) => (
+                {memberReasons.map((reason) => (
                   <article
                     key={reason.title}
                     className="rounded-3xl border border-border bg-card p-6 shadow-lg shadow-primary/5"
@@ -136,7 +136,7 @@ export default function BecomeSponsorPage() {
                   Built for organizations that depend on React.
                 </h2>
                 <p className="text-base leading-7 text-foreground/70">
-                  Sponsorship is for companies, platforms, agencies, and teams who
+                  Membership is for companies, platforms, agencies, and teams who
                   want React to remain a strong open ecosystem with clear stewardship
                   and practical support for the people doing the work.
                 </p>
@@ -162,7 +162,7 @@ export default function BecomeSponsorPage() {
                   Practical support for a broad ecosystem.
                 </h2>
                 <p className="text-base leading-7 text-foreground/70">
-                  React Foundation sponsorship helps create capacity for work that
+                  React Foundation membership helps create capacity for work that
                   benefits the whole ecosystem, not just one product roadmap or one
                   organization&apos;s priorities.
                 </p>
@@ -183,7 +183,7 @@ export default function BecomeSponsorPage() {
 
           <ScrollReveal animation="fade-up">
             <section className="rounded-3xl border border-border bg-gradient-to-br from-primary/15 via-success/10 to-warning/15 p-8 text-center sm:p-12">
-              <Pill className="mx-auto">Start Sponsorship</Pill>
+              <Pill className="mx-auto">Start Membership</Pill>
               <h2 className="mx-auto mt-6 max-w-3xl text-3xl font-semibold text-foreground sm:text-4xl">
                 Join the organizations helping React stay healthy for everyone.
               </h2>
