@@ -5,6 +5,7 @@
 
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import { getCommunityHostLabel } from '@/lib/community-host';
 import { getCommunityBySlug } from '@/lib/redis-communities';
 import { RFDS } from '@/components/rfds';
 import type { Metadata } from 'next';
@@ -120,7 +121,7 @@ export default async function CommunityPage({ params }: CommunityPageProps) {
                   rel="noopener noreferrer"
                   className="inline-block bg-primary text-primary-foreground px-6 py-3 rounded-lg font-semibold hover:bg-primary/90 transition"
                 >
-                  Join on Meetup.com →
+                  Join on {getCommunityHostLabel(community.meetup_url)} →
                 </a>
               )}
               {community.website && (

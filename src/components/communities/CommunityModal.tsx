@@ -7,6 +7,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { getCommunityHostLabel } from '@/lib/community-host';
 import type { Community } from '@/types/community';
 
 interface CommunityModalProps {
@@ -188,7 +189,7 @@ export function CommunityModal({ community }: CommunityModalProps) {
                 <svg className="w-4 h-4" viewBox="0 0 512 512" fill="currentColor">
                   <path d="M99 414.3c1.1 5.7-2.3 11.1-8 12.3-5.4 1.1-10.9-2.3-12-8-1.1-5.4 2.3-11 7.7-12 5.4-1.2 11.1 2.3 12.3 7.7zm143.1 71.4c-6.3 4.6-8 13.4-3.7 20 4.6 6.6 13.4 8.3 20 3.7 6.3-4.6 8-13.4 3.4-20-4.2-6.5-13.1-8.2-19.7-3.7zm-86-462.3c6.3-1.4 10.3-7.7 8.9-14-1.1-6.6-7.4-10.6-13.7-9.1-6.3 1.4-10.3 7.7-9.1 14 1.4 6.6 7.6 10.6 13.9 9.1zM34.4 226.3c-10-6.9-23.7-4.3-30.6 6-6.9 10-4.3 24 5.7 30.9 10 7.1 23.7 4.6 30.6-5.7 6.9-10.4 4.3-24.1-5.7-31.2z"/>
                 </svg>
-                Join on Meetup
+                Join on {getCommunityHostLabel(community.meetup_url)}
               </a>
             )}
             {community.website && (

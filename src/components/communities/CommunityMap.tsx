@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
+import { getCommunityHostLabel } from '@/lib/community-host';
 import type { Community } from '@/types/community';
 import type * as Leaflet from 'leaflet';
 import useSWR from 'swr';
@@ -376,7 +377,7 @@ export function CommunityMap() {
                           backgroundColor: '#ED1C40',
                           color: '#ffffff'
                         }}
-                        title="Join on Meetup.com"
+                        title={`Join on ${getCommunityHostLabel(community.meetup_url)}`}
                       >
                         <svg className="w-4 h-4" viewBox="0 0 512 512" fill="currentColor">
                           <path d="M99 414.3c1.1 5.7-2.3 11.1-8 12.3-5.4 1.1-10.9-2.3-12-8-1.1-5.4 2.3-11 7.7-12 5.4-1.2 11.1 2.3 12.3 7.7z"/>
