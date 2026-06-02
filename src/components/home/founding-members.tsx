@@ -144,7 +144,7 @@ export function FoundingMembers() {
           <div className="mx-auto flex max-w-3xl flex-col items-center justify-between gap-5 rounded-2xl border border-border/10 bg-card/70 p-6 text-center shadow-sm sm:flex-row sm:text-left">
             <div className="space-y-2">
               <h3 className="text-xl font-semibold text-foreground">
-                Sponsor React&apos;s future
+                Become a member
               </h3>
               <p className="text-sm text-foreground/70">
                 Help fund React maintainers, education, and ecosystem support.
@@ -156,7 +156,7 @@ export function FoundingMembers() {
               size="lg"
               className="w-full sm:w-auto"
             >
-              Become a sponsor
+              Become a member
             </ButtonLink>
           </div>
         </div>
