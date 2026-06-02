@@ -151,7 +151,7 @@ export function FoundingMembers() {
               </p>
             </div>
             <ButtonLink
-              href="/become-a-sponsor"
+              href="/become-a-member"
               variant="primary"
               size="lg"
               className="w-full sm:w-auto"
