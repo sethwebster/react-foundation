@@ -12,6 +12,7 @@ import {
 import { RFDS } from "@/components/rfds";
 
 import { useMaintainerProgress } from "./context";
+import { TrackedLibraryBadge } from "./tracked-library-badge";
 import { UsernameInput } from "./username-input";
 
 const formatter = new Intl.NumberFormat("en-US");
@@ -193,7 +194,7 @@ export function MaintainerProgress() {
                   reach <span className="text-foreground">{nextTier.label}</span>.
                 </p>
               ) : (
-                <p className="mt-2 text-xs text-emerald-300">
+                <p className="mt-2 text-xs text-emerald-700 dark:text-emerald-300">
                   You’ve unlocked every tier of the Core Maintainer Essentials collection.
                 </p>
               )}
@@ -275,28 +276,13 @@ export function MaintainerProgress() {
                             <span className="ml-1.5 text-foreground/30">({repos.length})</span>
                           </p>
                           <div className="flex flex-wrap gap-1.5">
-                            {repos.map((repo) => {
-                              const contributionCount = repoContributionCounts.get(repo.toLowerCase());
-                              const hasContributions = contributionCount && contributionCount > 0;
-
-                              return (
-                                <span
-                                  key={repo}
-                                  className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium transition-all ${
-                                    hasContributions
-                                      ? "bg-success/15 text-emerald-200 shadow-sm shadow-emerald-500/10"
-                                      : "bg-background/[0.04] text-foreground/50 hover:bg-background/[0.06]"
-                                  }`}
-                                >
-                                  {repo}
-                                  {hasContributions && (
-                                    <span className="inline-flex h-5 min-w-[20px] items-center justify-center rounded-md bg-success/25 px-1.5 text-[11px] font-semibold tabular-nums text-emerald-100">
-                                      {contributionCount}
-                                    </span>
-                                  )}
-                                </span>
-                              );
-                            })}
+                            {repos.map((repo) => (
+                              <TrackedLibraryBadge
+                                key={repo}
+                                repo={repo}
+                                contributionCount={repoContributionCounts.get(repo.toLowerCase())}
+                              />
+                            ))}
                           </div>
                         </div>
                       ))}
