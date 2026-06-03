@@ -18,4 +18,19 @@ describe('REACT_COMMUNITIES', () => {
       })
     );
   });
+
+  it('includes the approved React Prague community entry', () => {
+    expect(REACT_COMMUNITIES).toContainEqual(
+      expect.objectContaining({
+        id: "community-c6a17e06-3b4e-413c-896e-08abe8ddeec6",
+        name: "React Prague",
+        slug: "react-prague",
+        city: "Prague",
+        country: "Czech Republic",
+        timezone: "Europe/Prague",
+        verified: true,
+        verification_status: 'verified',
+      })
+    );
+  });
 });

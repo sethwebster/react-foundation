@@ -1,7 +1,7 @@
 /**
  * React Communities - Single Source of Truth
- * 66 communities with corrected meetup URLs
- * Last updated: 2025-10-24T20:22:31.823Z
+ * 67 communities with corrected meetup URLs
+ * Last updated: 2026-06-02T00:00:00.000Z
  */
 
 import type { Community } from '@/types/community';
@@ -2551,6 +2551,41 @@ export const REACT_COMMUNITIES: Community[] = [
     "verification_status": "verified",
     "created_at": "2026-05-15T20:22:40.000Z",
     "updated_at": "2026-05-15T20:22:40.000Z"
+  },
+  {
+    "id": "community-c6a17e06-3b4e-413c-896e-08abe8ddeec6",
+    "name": "React Prague",
+    "slug": "react-prague",
+    "city": "Prague",
+    "country": "Czech Republic",
+    "timezone": "Europe/Prague",
+    "organizers": [
+      {
+        "id": "org-8226d894-a8c8-4a47-b494-305867b8d751",
+        "name": "Petr Chalupa",
+        "role": "Lead Organizer"
+      }
+    ],
+    "founded_date": "2024-11-27",
+    "event_types": [
+      "meetup"
+    ],
+    "website": "https://reactprague.com",
+    "meetup_url": "https://guild.host/react-prague",
+    "description": "React Prague is the React and React Native community for Prague and the wider Czech scene, meeting twice a year since 2024.",
+    "member_count": 329,
+    "typical_attendance": 60,
+    "meeting_frequency": "irregular",
+    "primary_language": "English",
+    "status": "new",
+    "invite_only": false,
+    "verified": true,
+    "verification_status": "verified",
+    "cois_tier": "none",
+    "approved_by": "sethwebster@gmail.com",
+    "approved_at": "2026-06-02T15:17:47.006Z",
+    "created_at": "2026-06-02T15:17:47.006Z",
+    "updated_at": "2026-06-02T15:17:47.006Z"
   }
 ];
 
