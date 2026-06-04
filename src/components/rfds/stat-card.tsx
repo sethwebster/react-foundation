@@ -25,6 +25,8 @@ export interface StatCardProps {
   variant?: 'default' | 'outlined' | 'elevated';
   /** Color scheme */
   color?: 'primary' | 'success' | 'destructive' | 'warning';
+  /** Size of the card elements */
+  size?: 'default' | 'compact';
   /** Custom className */
   className?: string;
 }
@@ -38,6 +40,7 @@ export function StatCard({
   highlight = false,
   variant = 'outlined',
   color = 'primary',
+  size = 'default',
   className,
 }: StatCardProps) {
   const trendIcons = {
@@ -66,6 +69,11 @@ export function StatCard({
     warning: highlight ? 'text-warning-foreground' : 'text-foreground',
   };
 
+  const valueFontSize = {
+    default: 'text-2xl md:text-3xl',
+    compact: 'text-2xl'
+  }
+
   return (
     <SemanticCard
       variant={variant}
@@ -84,7 +92,8 @@ export function StatCard({
             </div>
           )}
           <div className={cn(
-            'text-2xl md:text-3xl font-bold mb-1',
+            'font-bold mb-1',
+            valueFontSize[size],
             valueColorClasses[color]
           )}>
             {value}

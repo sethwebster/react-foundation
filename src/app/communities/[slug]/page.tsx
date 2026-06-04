@@ -385,6 +385,7 @@ function StatBox({
       color="primary"
       variant="outlined"
       className={`text-center ${capitalize ? 'capitalize' : ''}`}
+      size="compact"
     />
   );
 }
