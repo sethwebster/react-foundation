@@ -2559,6 +2559,10 @@ export const REACT_COMMUNITIES: Community[] = [
     "city": "Prague",
     "country": "Czech Republic",
     "timezone": "Europe/Prague",
+    "coordinates": {
+      "lat": 50.0755,
+      "lng": 14.4378
+    },
     "organizers": [
       {
         "id": "org-8226d894-a8c8-4a47-b494-305867b8d751",

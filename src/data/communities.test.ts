@@ -28,6 +28,10 @@ describe('REACT_COMMUNITIES', () => {
         city: "Prague",
         country: "Czech Republic",
         timezone: "Europe/Prague",
+        coordinates: {
+          lat: 50.0755,
+          lng: 14.4378
+        },
         verified: true,
         verification_status: 'verified',
       })
