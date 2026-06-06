@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
+@custom-variant dark (&:where(.dark, .dark *));
 
 /* Community Guide Prose Styling - Must come after @plugin to override */
 /* Using multiple selectors for maximum specificity */
