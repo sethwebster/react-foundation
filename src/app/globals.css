@@ -429,3 +429,35 @@ a.inline-flex {
 .animate-page-appear {
   animation: page-appear 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
+
+/* ===== Panels homepage (additive only below this line) ===== */
+
+/* Geist Mono for the metric values; Tailwind's font-mono is intentionally not remapped. */
+.font-mono-panels {
+	font-family: var(--font-geist-mono), ui-monospace, "SF Mono", Menlo, monospace;
+}
+
+/*
+ * Unlayered on purpose: the sitewide :where(a, button, ...) transition rules above
+ * are unlayered and therefore beat Tailwind's layered duration utilities, so the
+ * panels' 0.15s motion has to be unlayered too. `translate` is listed alongside
+ * `transform` because Tailwind v4 translate utilities use the translate property.
+ */
+.panels-anim {
+	transition-property: background-color, color, border-color;
+	transition-duration: 0.15s;
+	transition-timing-function: ease;
+}
+
+.panels-anim-arrow {
+	transition-property: transform, translate;
+	transition-duration: 0.15s;
+	transition-timing-function: ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.panels-anim,
+	.panels-anim-arrow {
+		transition: none;
+	}
+}
