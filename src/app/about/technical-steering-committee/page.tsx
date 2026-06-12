@@ -160,9 +160,9 @@ const workingGroups = [
 export default function TechnicalSteeringCommitteePage() {
   return (
     <div className="flex min-h-screen flex-col gap-2.5 bg-[#EBECF0] px-4 pb-4 pt-24 sm:px-6 sm:pb-6 md:gap-4 dark:bg-[#16181D]">
-      <Panel tone="cyan" labelledBy="tsc-hero-title" className="flex min-h-[56vh] flex-col">
+      <Panel tone="cyan" labelledBy="tsc-hero-title">
         <OrbitMarks className="left-[68%] top-1/2 h-[680px] w-[680px] -translate-x-1/2 -translate-y-1/2" />
-        <div className="relative z-[1] mt-auto pt-16 md:pt-[88px]">
+        <div className="relative z-[1]">
           <h1
             id="tsc-hero-title"
             className="max-w-[16ch] text-[clamp(36px,4vw,56px)] font-semibold leading-[1.05] tracking-[-0.02em] text-[#16181D]"

@@ -72,9 +72,9 @@ const DISTRIBUTION_STEPS = [
 export default function ImpactPage() {
   return (
     <div className="flex min-h-screen flex-col gap-2.5 bg-[#EBECF0] px-4 pb-4 pt-24 sm:px-6 sm:pb-6 md:gap-4 dark:bg-[#16181D]">
-      <Panel tone="cyan" labelledBy="impact-hero-title" className="flex min-h-[44vh] flex-col">
+      <Panel tone="cyan" labelledBy="impact-hero-title">
         <OrbitMarks className="left-[72%] top-1/2 h-[560px] w-[560px] -translate-x-1/2 -translate-y-1/2" />
-        <div className="relative z-[1] mt-auto pt-12 md:pt-16">
+        <div className="relative z-[1]">
           <h1
             id="impact-hero-title"
             className="max-w-[16ch] text-[clamp(36px,4vw,56px)] font-semibold leading-[1.05] tracking-[-0.02em] text-[#16181D]"

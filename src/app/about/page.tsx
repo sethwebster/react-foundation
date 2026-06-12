@@ -104,9 +104,9 @@ export default function AboutPage() {
     <div className="flex min-h-screen flex-col gap-2.5 bg-[#EBECF0] px-4 pb-4 pt-24 sm:px-6 sm:pb-6 md:gap-4 dark:bg-[#16181D]">
       <div className="mx-auto w-full max-w-[1200px] lg:grid lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-start lg:gap-4">
         <main className="flex min-w-0 flex-col gap-2.5 md:gap-4">
-          <Panel tone="cyan" labelledBy="about-hero-title" className="flex min-h-[44vh] flex-col">
+          <Panel tone="cyan" labelledBy="about-hero-title">
             <OrbitMarks className="left-[72%] top-1/2 h-[560px] w-[560px] -translate-x-1/2 -translate-y-1/2" />
-            <div className="relative z-[1] mt-auto pt-12 md:pt-16">
+            <div className="relative z-[1]">
               <h1
                 id="about-hero-title"
                 className="max-w-[16ch] text-[clamp(36px,4vw,56px)] font-semibold leading-[1.05] tracking-[-0.02em] text-[#16181D]"
