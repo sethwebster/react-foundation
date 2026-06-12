@@ -102,13 +102,7 @@ owner/repo:
       <PanelEyebrow id="ecosystem-libraries-title">{title}</PanelEyebrow>
       <PanelSub>{displayDescription}</PanelSub>
 
-      {/*
-        LibraryCard is shared (read-only here) and styles itself with semantic theme
-        tokens. Panels keep constant colors in both themes, so the wrapper pins the
-        tokens it consumes to light-theme values: cards stay legible on paper when
-        the site theme is dark.
-      */}
-      <div className="mt-8 space-y-10 [--background:0_0%_100%] [--border:222_47%_11%] [--foreground:222_47%_11%]">
+      <div className="mt-8 space-y-10">
         {categorizedLibraries.map((cat) => {
           const libs = ecosystemLibraries.filter((l) => l.category === cat.category);
           if (libs.length === 0) return null;
