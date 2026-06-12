@@ -75,10 +75,9 @@ export default function ImpactPage() {
       <Panel tone="cyan" labelledBy="impact-hero-title" className="flex min-h-[44vh] flex-col">
         <OrbitMarks className="left-[72%] top-1/2 h-[560px] w-[560px] -translate-x-1/2 -translate-y-1/2" />
         <div className="relative z-[1] mt-auto pt-12 md:pt-16">
-          <PanelEyebrow as="p">100% transparent · Quarterly reports · Real impact</PanelEyebrow>
           <h1
             id="impact-hero-title"
-            className="mt-4 max-w-[16ch] text-[clamp(36px,4vw,56px)] font-semibold leading-[1.05] tracking-[-0.02em] text-[#16181D]"
+            className="max-w-[16ch] text-[clamp(36px,4vw,56px)] font-semibold leading-[1.05] tracking-[-0.02em] text-[#16181D]"
           >
             Our Impact
           </h1>

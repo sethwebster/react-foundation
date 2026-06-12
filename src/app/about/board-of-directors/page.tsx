@@ -110,10 +110,9 @@ export default function BoardOfDirectorsPage() {
       <Panel tone="cyan" labelledBy="board-hero-title" className="flex min-h-[56vh] flex-col">
         <OrbitMarks className="left-[68%] top-1/2 h-[680px] w-[680px] -translate-x-1/2 -translate-y-1/2" />
         <div className="relative z-[1] mt-auto pt-16 md:pt-[88px]">
-          <PanelEyebrow as="p">Governance · Leadership · Transparency</PanelEyebrow>
           <h1
             id="board-hero-title"
-            className="mt-4 max-w-[16ch] text-[clamp(36px,4vw,56px)] font-semibold leading-[1.05] tracking-[-0.02em] text-[#16181D]"
+            className="max-w-[16ch] text-[clamp(36px,4vw,56px)] font-semibold leading-[1.05] tracking-[-0.02em] text-[#16181D]"
           >
             Board of Directors
           </h1>

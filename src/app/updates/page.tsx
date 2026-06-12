@@ -23,10 +23,9 @@ export default function UpdatesPage() {
 	return (
 		<main className="contents">
 			<Panel tone="paper" labelledBy="updates-title">
-				<PanelEyebrow as="p">Updates</PanelEyebrow>
 				<h1
 					id="updates-title"
-					className="mt-4 max-w-[16ch] text-[clamp(36px,4vw,56px)] font-semibold leading-[1.05] tracking-[-0.02em] text-[#16181D]"
+					className="max-w-[16ch] text-[clamp(36px,4vw,56px)] font-semibold leading-[1.05] tracking-[-0.02em] text-[#16181D]"
 				>
 					Updates
 				</h1>

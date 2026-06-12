@@ -116,10 +116,9 @@ export default async function AuthorPage({ params }: AuthorPageProps) {
 							</div>
 						)}
 						<div className="min-w-0">
-							<PanelEyebrow as="p">Author</PanelEyebrow>
 							<h1
 								id="author-title"
-								className="mt-4 max-w-[16ch] text-[clamp(36px,4vw,56px)] font-semibold leading-[1.05] tracking-[-0.02em] text-[#16181D]"
+								className="max-w-[16ch] text-[clamp(36px,4vw,56px)] font-semibold leading-[1.05] tracking-[-0.02em] text-[#16181D]"
 							>
 								{author.name}
 							</h1>

@@ -60,10 +60,9 @@ export default function AuthorsPage() {
 		<div className="flex min-h-screen flex-col gap-2.5 bg-[#EBECF0] px-4 pb-4 pt-24 sm:px-6 sm:pb-6 md:gap-4 dark:bg-[#16181D]">
 			<main className="contents">
 				<Panel tone="paper" labelledBy="authors-title">
-					<PanelEyebrow as="p">Authors</PanelEyebrow>
 					<h1
 						id="authors-title"
-						className="mt-4 max-w-[16ch] text-[clamp(36px,4vw,56px)] font-semibold leading-[1.05] tracking-[-0.02em] text-[#16181D]"
+						className="max-w-[16ch] text-[clamp(36px,4vw,56px)] font-semibold leading-[1.05] tracking-[-0.02em] text-[#16181D]"
 					>
 						Authors
 					</h1>
