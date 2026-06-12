@@ -18,8 +18,23 @@ export function Header() {
   const [isAdmin, setIsAdmin] = useState(false);
   const isStorePage = pathname?.startsWith("/store");
   const isComingSoonPage = pathname === "/coming-soon";
-  // The redesigned homepage renders the header as a floating panel; other routes keep the classic bar.
-  const isHome = pathname === "/";
+  // Redesigned foundation routes render the header as a floating panel; store,
+  // admin, profile, and coming-soon keep the classic bar until their own pass.
+  const PANELS_ROUTE_PREFIXES = [
+    "/about",
+    "/impact",
+    "/libraries",
+    "/updates",
+    "/authors",
+    "/communities",
+    "/become-a-member",
+    "/privacy",
+    "/terms",
+    "/auth",
+  ];
+  const isPanelsRoute =
+    pathname === "/" ||
+    PANELS_ROUTE_PREFIXES.some((prefix) => pathname?.startsWith(prefix));
 
   // Check admin status when user session changes
   useEffect(() => {
@@ -49,20 +64,20 @@ export function Header() {
   return (
     <header
       className={
-        isHome
+        isPanelsRoute
           ? "fixed left-0 right-0 top-0 z-50 px-4 pt-3 sm:px-6"
           : "fixed left-0 right-0 top-0 z-50 bg-background/95 shadow-lg shadow-black/5 backdrop-blur-xl supports-[backdrop-filter]:bg-background/80"
       }
     >
       <div
         className={
-          isHome
+          isPanelsRoute
             ? "mx-auto flex w-full max-w-[1200px] items-center justify-between rounded-2xl border border-[#EBECF0] bg-[#F6F7F9] px-5 py-3 dark:border-[#343A46] dark:bg-[#23272F]"
             : "mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4 sm:px-8 lg:px-12"
         }
       >
         {/* Logo */}
-        {isHome ? (
+        {isPanelsRoute ? (
           <Link href="/" className="flex items-center gap-2.5">
             <div className="relative h-7 w-7">
               <Image
@@ -180,7 +195,7 @@ export function Header() {
               href="/profile"
               className="transition hover:border-primary/50 hover:shadow-lg hover:shadow-primary/20"
             />
-          ) : isHome ? (
+          ) : isPanelsRoute ? (
             // Ink button per the panels language; `!` outranks the unlayered `a.inline-flex { color: currentColor }` rule.
             <Link
               href="/api/auth/signin"

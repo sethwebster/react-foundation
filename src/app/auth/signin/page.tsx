@@ -81,7 +81,7 @@ export default function SignInPage() {
 								<path d="M23.955 13.587l-1.342-4.135-2.664-8.189a.455.455 0 0 0-.867 0L16.418 9.45H7.582L4.919 1.263C4.783.84 4.185.84 4.05 1.263L1.386 9.452.044 13.587a.924.924 0 0 0 .331 1.03L12 23.054l11.625-8.436a.92.92 0 0 0 .33-1.031" />
 							</svg>
 							Continue with GitLab
-							<span className="absolute right-3 top-3 rounded-full bg-[rgba(22,24,29,0.08)] px-2 py-1 text-xs font-semibold text-[#16181D]">
+							<span className="ml-2 whitespace-nowrap rounded-full bg-[rgba(22,24,29,0.08)] px-2 py-0.5 text-[11px] font-semibold text-[#16181D]">
 								Coming Soon
 							</span>
 						</button>
