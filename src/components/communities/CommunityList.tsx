@@ -6,9 +6,10 @@
 'use client';
 
 import useSWR from 'swr';
+import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import type { ReactNode } from 'react';
-import { Row, RowArrow, RowList, RowRight } from '@/components/panels/panel';
+import { RowArrow, RowList } from '@/components/panels/panel';
 import type { Community } from '@/types/community';
 
 // Fetcher for SWR
@@ -172,10 +173,19 @@ export function CommunityList() {
   );
 }
 
+/*
+ * Not the shared Row: the row hosts secondary external links, and anchors
+ * cannot nest inside the Row anchor, so the hover surface is a div and the
+ * detail link wraps only the title block and the trailing arrow.
+ */
 function CommunityRow({ community }: { community: Community }) {
+  const detailHref = `/communities/${community.slug}`;
   return (
-    <Row href={`/communities/${community.slug}`} bare className="py-5">
-      <div className="min-w-0">
+    <div className="group panels-anim -mx-4 grid grid-cols-[minmax(0,1fr)] items-center gap-x-5 gap-y-2 px-4 py-5 text-[#16181D] hover:bg-[var(--panel-hover)] md:grid-cols-[minmax(0,1fr)_auto]">
+      <Link
+        href={detailHref}
+        className="min-w-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-[#16181D]"
+      >
         <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1.5">
           <h3 className="text-[17px] font-semibold">{community.name}</h3>
           <MonoChip>{getVerificationLabel(community)}</MonoChip>
@@ -194,14 +204,39 @@ function CommunityRow({ community }: { community: Community }) {
           {community.city}
           {community.region && `, ${community.region}`}, {community.country}
         </p>
-      </div>
-      <RowRight bare>
-        <span className="font-mono-panels text-[13px] font-medium">
-          {community.member_count.toLocaleString()} members
-        </span>
-        <RowArrow />
-      </RowRight>
-    </Row>
+      </Link>
+      <span className="flex items-center gap-4 md:justify-self-end">
+        {community.meetup_url && (
+          <a
+            href={community.meetup_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[13px] font-semibold text-[#087EA4]"
+          >
+            Meetup ↗
+          </a>
+        )}
+        {community.website && (
+          <a
+            href={community.website}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[13px] font-semibold text-[#087EA4]"
+          >
+            Website ↗
+          </a>
+        )}
+        <Link
+          href={detailHref}
+          className="inline-flex items-center gap-2.5 whitespace-nowrap text-[15px] font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-[#16181D]"
+        >
+          <span className="font-mono-panels text-[13px] font-medium">
+            {community.member_count.toLocaleString()} members
+          </span>
+          <RowArrow />
+        </Link>
+      </span>
+    </div>
   );
 }
 
