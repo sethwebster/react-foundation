@@ -1,37 +1,30 @@
 import type { Metadata } from "next";
-import { Footer } from "@/components/layout/footer";
-import { FoundationHero } from "@/components/home/foundation-hero";
-import { MissionStatement } from "@/components/home/mission-statement";
-import { ThreePillars } from "@/components/home/three-pillars";
-import { BecomeContributor } from "@/components/home/become-contributor";
-import { JoinMovementCTA } from "@/components/home/join-movement-cta";
-import { FoundingMembers } from "@/components/home/founding-members";
+
+import { PanelContribute } from "@/components/home/panels/panel-contribute";
+import { PanelHero } from "@/components/home/panels/panel-hero";
+import { PanelJoin } from "@/components/home/panels/panel-join";
+import { PanelMembers } from "@/components/home/panels/panel-members";
+import { PanelMetrics } from "@/components/home/panels/panel-metrics";
+import { PanelMission } from "@/components/home/panels/panel-mission";
+import { PanelPillars } from "@/components/home/panels/panel-pillars";
+import { PanelsFooter } from "@/components/home/panels/panels-footer";
 
 export const metadata: Metadata = {
-  title: "React Foundation",
-  description: "Supporting the React ecosystem through community funding and governance.",
+	title: "React Foundation",
+	description: "Supporting the React ecosystem through community funding and governance.",
 };
 
 export default function FoundationHome() {
-  return (
-    <div className="bg-background pt-24 text-muted-foreground">
-      {/* Background gradient */}
-      <div className="absolute inset-x-0 top-[-6rem] -z-10 flex justify-center overflow-hidden blur-3xl">
-        <div className="h-[24rem] w-full max-w-[60rem] bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 opacity-30" />
-      </div>
-
-      <div className="animate-page-appear mx-auto flex max-w-6xl flex-col px-6 pb-24 sm:px-8 lg:px-12">
-        <main className="flex flex-col gap-20">
-          <FoundationHero />
-          <MissionStatement />
-          <ThreePillars />
-          <BecomeContributor />
-          <FoundingMembers />
-          <JoinMovementCTA />
-        </main>
-      </div>
-
-      <Footer />
-    </div>
-  );
+	return (
+		<div className="flex min-h-screen flex-col gap-2.5 bg-[#EBECF0] px-4 pb-4 pt-24 sm:px-6 sm:pb-6 md:gap-4 dark:bg-[#16181D]">
+			<PanelHero />
+			<PanelMetrics />
+			<PanelMission />
+			<PanelPillars />
+			<PanelContribute />
+			<PanelMembers />
+			<PanelJoin />
+			<PanelsFooter />
+		</div>
+	);
 }
