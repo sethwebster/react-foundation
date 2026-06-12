@@ -1,182 +1,180 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
 import Image from "next/image";
-import Link from "next/link";
-import { Pill } from "@/components/ui/pill";
-import { Footer } from "@/components/layout/footer";
-import { getAuthorBySlug, getAllAuthors } from "@/lib/authors";
+import { notFound } from "next/navigation";
+
+import { Panel, PanelEyebrow, PanelPlainLink, Row, RowArrow, RowList, RowRight } from "@/components/panels/panel";
+import { PanelsFooter } from "@/components/panels/panels-footer";
+import { getAllAuthors, getAuthorBySlug, type Author } from "@/lib/authors";
 import { getAllUpdates } from "@/lib/updates";
 
 type AuthorPageProps = {
-  params: Promise<{
-    slug: string;
-  }>;
+	params: Promise<{
+		slug: string;
+	}>;
 };
 
 export async function generateStaticParams() {
-  const authors = getAllAuthors();
-  return authors.map((author) => ({
-    slug: author.slug,
-  }));
+	const authors = getAllAuthors();
+
+	return authors.map((author) => ({
+		slug: author.slug,
+	}));
 }
 
 export async function generateMetadata({
-  params,
+	params,
 }: AuthorPageProps): Promise<Metadata> {
-  const { slug } = await params;
-  const author = getAuthorBySlug(slug);
+	const { slug } = await params;
+	const author = getAuthorBySlug(slug);
 
-  if (!author) {
-    return {
-      title: "Author not found",
-    };
-  }
+	if (!author) {
+		return {
+			title: "Author not found",
+		};
+	}
 
-  return {
-    title: author.name,
-    description: `${author.title} - ${author.bio}`,
-  };
+	return {
+		title: author.name,
+		description: `${author.title} - ${author.bio}`,
+	};
+}
+
+const SOCIAL_LINKS: Array<{
+	key: "github" | "twitter" | "linkedin" | "website";
+	label: string;
+}> = [
+	{ key: "github", label: "GitHub" },
+	{ key: "twitter", label: "Twitter" },
+	{ key: "linkedin", label: "LinkedIn" },
+	{ key: "website", label: "Website" },
+];
+
+function formatDate(date: string) {
+	return new Date(date).toLocaleDateString("en-US", {
+		year: "numeric",
+		month: "long",
+		day: "numeric",
+	});
+}
+
+function AuthorSocialLinks({ author }: { author: Author }) {
+	const hasSocialLinks = SOCIAL_LINKS.some((link) => author[link.key]);
+
+	if (!hasSocialLinks) {
+		return null;
+	}
+
+	return (
+		<div className="flex flex-wrap items-center justify-start gap-2 pt-2">
+			{SOCIAL_LINKS.map((link) => {
+				const href = author[link.key];
+
+				if (!href) {
+					return null;
+				}
+
+				return (
+					<a
+						key={link.key}
+						href={href}
+						target="_blank"
+						rel="noopener noreferrer"
+						className="panels-anim rounded-full border border-[#16181D] px-4 py-2 text-sm font-medium text-[#16181D] hover:bg-[rgba(22,24,29,0.08)]"
+					>
+						{link.label} →
+					</a>
+				);
+			})}
+		</div>
+	);
 }
 
 export default async function AuthorPage({ params }: AuthorPageProps) {
-  const { slug } = await params;
-  const author = getAuthorBySlug(slug);
+	const { slug } = await params;
+	const author = getAuthorBySlug(slug);
 
-  if (!author) {
-    notFound();
-  }
+	if (!author) {
+		notFound();
+	}
 
-  // Get updates by this author
-  const authorUpdates = getAllUpdates().filter(
-    (update) => update.metadata.author === slug
-  );
+	const authorUpdates = getAllUpdates().filter((update) => update.metadata.author === slug);
 
-  return (
-    <div className="min-h-screen bg-background pt-24 text-muted-foreground">
-      <div className="absolute inset-x-0 top-[-6rem] -z-10 flex justify-center blur-3xl">
-        <div className="h-[24rem] w-[60rem] bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 opacity-30" />
-      </div>
+	return (
+		<div className="flex min-h-screen flex-col gap-2.5 bg-[#EBECF0] px-4 pb-4 pt-24 sm:px-6 sm:pb-6 md:gap-4 dark:bg-[#16181D]">
+			<main className="contents">
+				<Panel tone="paper" labelledBy="author-title">
+					<div className="flex flex-col items-start gap-8 md:flex-row md:items-center">
+						{author.avatar && (
+							<div className="relative h-28 w-28 shrink-0 overflow-hidden rounded-full border border-[#16181D]/20 md:h-32 md:w-32">
+								<Image
+									src={author.avatar}
+									alt={author.name}
+									width={128}
+									height={128}
+									className="object-cover"
+								/>
+							</div>
+						)}
+						<div className="min-w-0">
+							<PanelEyebrow as="p">Author</PanelEyebrow>
+							<h1
+								id="author-title"
+								className="mt-4 max-w-[16ch] text-[clamp(36px,4vw,56px)] font-semibold leading-[1.05] tracking-[-0.02em] text-[#16181D]"
+							>
+								{author.name}
+							</h1>
+							<p className="mt-3 text-lg text-[#5E687E]">{author.title}</p>
+							<p className="mt-5 max-w-[42rem] text-base leading-[1.6] text-[#5E687E]">
+								{author.bio}
+							</p>
+							<div className="mt-6">
+								<AuthorSocialLinks author={author} />
+							</div>
+						</div>
+					</div>
+				</Panel>
 
-      <div className="mx-auto flex max-w-4xl flex-col px-6 pb-24 sm:px-8 lg:px-12">
-        <main className="flex flex-col gap-12 pt-12">
-          {/* Author Profile */}
-          <section className="space-y-8 rounded-3xl border border-border/10 bg-muted/60 p-12">
-            <div className="flex flex-col items-center gap-6 text-center">
-              {author.avatar && (
-                <div className="relative h-32 w-32 overflow-hidden rounded-full border-4 border-border/20 shadow-2xl">
-                  <Image
-                    src={author.avatar}
-                    alt={author.name}
-                    width={128}
-                    height={128}
-                    className="object-cover"
-                  />
-                </div>
-              )}
-              <div>
-                <h1 className="text-3xl font-bold text-foreground sm:text-4xl">
-                  {author.name}
-                </h1>
-                <p className="mt-2 text-lg text-foreground/70">{author.title}</p>
-              </div>
-              <p className="max-w-2xl text-base leading-relaxed text-foreground/80">
-                {author.bio}
-              </p>
+				{authorUpdates.length > 0 && (
+					<Panel tone="paper" labelledBy="author-updates-title">
+						<PanelEyebrow id="author-updates-title">Updates by {author.name}</PanelEyebrow>
+						<RowList className="mt-4">
+							{authorUpdates.map((update) => (
+								<Row
+									key={update.slug}
+									href={`/updates/${update.slug}`}
+									className="grid-cols-1! py-6 md:grid-cols-[9rem_minmax(0,1fr)_auto]!"
+								>
+									<time
+										dateTime={update.metadata.date}
+										className="font-mono-panels text-[13px] font-medium text-[#5E687E]"
+									>
+										{formatDate(update.metadata.date)}
+									</time>
+									<div className="min-w-0">
+										<h2 className="text-[19px] font-semibold leading-tight text-[#16181D]">
+											{update.metadata.title}
+										</h2>
+										<p className="mt-2 max-w-[42rem] text-sm leading-[1.55] text-[#5E687E]">
+											{update.metadata.description}
+										</p>
+									</div>
+									<RowRight className="col-start-1! justify-self-start! text-[#087EA4] md:col-auto! md:justify-self-end!">
+										Read update <RowArrow />
+									</RowRight>
+								</Row>
+							))}
+						</RowList>
+					</Panel>
+				)}
 
-              {/* Social Links */}
-              <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
-                {author.github && (
-                  <a
-                    href={author.github}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="rounded-full border border-border/20 bg-background/5 px-4 py-2 text-sm text-foreground/80 transition hover:border-cyan-400/50 hover:bg-background/10 hover:text-cyan-300"
-                  >
-                    GitHub →
-                  </a>
-                )}
-                {author.twitter && (
-                  <a
-                    href={author.twitter}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="rounded-full border border-border/20 bg-background/5 px-4 py-2 text-sm text-foreground/80 transition hover:border-cyan-400/50 hover:bg-background/10 hover:text-cyan-300"
-                  >
-                    Twitter →
-                  </a>
-                )}
-                {author.linkedin && (
-                  <a
-                    href={author.linkedin}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="rounded-full border border-border/20 bg-background/5 px-4 py-2 text-sm text-foreground/80 transition hover:border-cyan-400/50 hover:bg-background/10 hover:text-cyan-300"
-                  >
-                    LinkedIn →
-                  </a>
-                )}
-                {author.website && (
-                  <a
-                    href={author.website}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="rounded-full border border-border/20 bg-background/5 px-4 py-2 text-sm text-foreground/80 transition hover:border-cyan-400/50 hover:bg-background/10 hover:text-cyan-300"
-                  >
-                    Website →
-                  </a>
-                )}
-              </div>
-            </div>
-          </section>
-
-          {/* Author's Updates */}
-          {authorUpdates.length > 0 && (
-            <section className="space-y-6">
-              <h2 className="text-2xl font-semibold text-foreground">
-                Updates by {author.name}
-              </h2>
-              <div className="space-y-4">
-                {authorUpdates.map((update) => (
-                  <Link
-                    key={update.slug}
-                    href={`/updates/${update.slug}`}
-                    className="block rounded-2xl border border-border/10 bg-muted/60 p-6 transition hover:border-border/20 hover:bg-muted/80"
-                  >
-                    <time
-                      dateTime={update.metadata.date}
-                      className="text-xs text-foreground/50"
-                    >
-                      {new Date(update.metadata.date).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      })}
-                    </time>
-                    <h3 className="mt-2 text-lg font-semibold text-foreground">
-                      {update.metadata.title}
-                    </h3>
-                    <p className="mt-2 text-sm text-foreground/70">
-                      {update.metadata.description}
-                    </p>
-                  </Link>
-                ))}
-              </div>
-            </section>
-          )}
-
-          {/* Back Link */}
-          <div className="border-t border-border/10 pt-8">
-            <Link
-              href="/authors"
-              className="text-sm text-cyan-400 transition hover:text-cyan-300"
-            >
-              ← All authors
-            </Link>
-          </div>
-        </main>
-      </div>
-
-      <Footer />
-    </div>
-  );
+				<Panel tone="paper" compact labelledBy="author-nav-title">
+					<h2 id="author-nav-title" className="sr-only">
+						Author navigation
+					</h2>
+					<PanelPlainLink href="/authors">All authors</PanelPlainLink>
+				</Panel>
+			</main>
+			<PanelsFooter />
+		</div>
+	);
 }

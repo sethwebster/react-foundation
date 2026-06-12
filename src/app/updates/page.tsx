@@ -1,69 +1,75 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { Pill } from "@/components/ui/pill";
-import { ScrollReveal } from "@/components/ui/scroll-reveal";
-import { getAllUpdates } from "@/lib/updates";
+
+import { Panel, PanelEyebrow, PanelSub, Row, RowArrow, RowList, RowRight } from "@/components/panels/panel";
 import { getAuthorBySlug } from "@/lib/authors";
+import { getAllUpdates } from "@/lib/updates";
 
 export const metadata: Metadata = {
-  title: "Updates",
-  description: "Latest news and announcements from the React Foundation.",
+	title: "Updates",
+	description: "Latest news and announcements from the React Foundation.",
 };
 
+function formatDate(date: string) {
+	return new Date(date).toLocaleDateString("en-US", {
+		year: "numeric",
+		month: "long",
+		day: "numeric",
+	});
+}
+
 export default function UpdatesPage() {
-  const updates = getAllUpdates();
-  return (
-    <main className="flex flex-col gap-20">
-      {/* Hero */}
-      <section className="space-y-8 pt-12">
-        <Pill>Latest News · Announcements · Community Updates</Pill>
-        <div>
-          <h1 className="text-5xl font-semibold leading-tight text-foreground sm:text-6xl">
-            Updates
-          </h1>
-          <p className="mt-8 max-w-2xl text-lg text-foreground/70">
-            Stay informed about the latest news, announcements, and initiatives from
-            the React Foundation.
-          </p>
-        </div>
-      </section>
+	const updates = getAllUpdates();
 
-      {/* Updates List */}
-      <ScrollReveal animation="fade-up">
-        <section className="space-y-8">
-          {updates.map((update, idx) => {
-            const author = getAuthorBySlug(update.metadata.author);
+	return (
+		<main className="contents">
+			<Panel tone="paper" labelledBy="updates-title">
+				<PanelEyebrow as="p">Updates</PanelEyebrow>
+				<h1
+					id="updates-title"
+					className="mt-4 max-w-[16ch] text-[clamp(36px,4vw,56px)] font-semibold leading-[1.05] tracking-[-0.02em] text-[#16181D]"
+				>
+					Updates
+				</h1>
+				<PanelSub>
+					Stay informed about the latest news, announcements, and initiatives from the
+					React Foundation.
+				</PanelSub>
+			</Panel>
 
-            return (
-              <ScrollReveal key={update.slug} animation="fade-up" delay={idx * 100}>
-                <Link
-                  href={`/updates/${update.slug}`}
-                  className="block rounded-3xl border border-border/10 bg-muted/60 p-8 transition hover:border-border/20 hover:bg-muted/80"
-                >
-                  <div className="flex items-center gap-4 text-xs text-foreground/50">
-                    <time dateTime={update.metadata.date}>
-                      {new Date(update.metadata.date).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                      })}
-                    </time>
-                    <span>·</span>
-                    <span>{author?.name || update.metadata.author}</span>
-                  </div>
-                  <h2 className="mt-4 text-2xl font-semibold text-foreground sm:text-3xl">
-                    {update.metadata.title}
-                  </h2>
-                  <p className="mt-4 text-base text-foreground/70">{update.metadata.description}</p>
-                  <div className="mt-6 text-sm text-cyan-400 transition hover:text-cyan-300">
-                    Read more →
-                  </div>
-                </Link>
-              </ScrollReveal>
-            );
-          })}
-        </section>
-      </ScrollReveal>
-    </main>
-  );
+			<Panel tone="paper" labelledBy="updates-list-title">
+				<PanelEyebrow id="updates-list-title">Latest posts</PanelEyebrow>
+				<RowList className="mt-4">
+					{updates.map((update) => {
+						const author = getAuthorBySlug(update.metadata.author);
+
+						return (
+							<Row
+								key={update.slug}
+								href={`/updates/${update.slug}`}
+								className="grid-cols-1! py-6 md:grid-cols-[9rem_minmax(0,1fr)_auto]!"
+							>
+								<time
+									dateTime={update.metadata.date}
+									className="font-mono-panels text-[13px] font-medium text-[#5E687E]"
+								>
+									{formatDate(update.metadata.date)}
+								</time>
+								<div className="min-w-0">
+									<h2 className="text-[19px] font-semibold leading-tight text-[#16181D]">
+										{update.metadata.title}
+									</h2>
+									<p className="mt-2 max-w-[42rem] text-sm leading-[1.55] text-[#5E687E]">
+										{update.metadata.description}
+									</p>
+								</div>
+								<RowRight className="col-start-1! justify-self-start! text-[#087EA4] md:col-auto! md:justify-self-end!">
+									{author?.name || update.metadata.author} <RowArrow />
+								</RowRight>
+							</Row>
+						);
+					})}
+				</RowList>
+			</Panel>
+		</main>
+	);
 }
