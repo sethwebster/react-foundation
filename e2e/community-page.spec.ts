@@ -9,9 +9,13 @@ test.describe('Community page', () => {
   });
 
   test('renders community stats with compact variant size', async ({ page }) => {
-    const statBox = page.getByText(community.meeting_frequency, { exact: true });
+    const statBox = page
+      .getByRole('region', { name: 'By the numbers' })
+      .getByText(community.meeting_frequency, { exact: true });
 
     await expect(statBox).toBeVisible();
-    await expect(statBox).toHaveClass('font-bold mb-1 text-2xl text-foreground');
+    await expect(statBox).toHaveClass(
+      'font-mono-panels justify-self-end text-[15px] font-medium capitalize'
+    );
   });
 });
