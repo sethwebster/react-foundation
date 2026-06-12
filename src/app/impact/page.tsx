@@ -1,9 +1,16 @@
 import type { Metadata } from "next";
-import { ButtonLink } from "@/components/ui/button";
-import { Pill } from "@/components/ui/pill";
-import { ScrollReveal } from "@/components/ui/scroll-reveal";
-import { Footer } from "@/components/layout/footer";
+import { BarChart3, BookOpen, CircleDollarSign, Globe, MessageSquare, Users } from "lucide-react";
+
 import { EcosystemLibraries } from "@/components/home/ecosystem-libraries";
+import {
+  OrbitMarks,
+  Panel,
+  PanelActions,
+  PanelButton,
+  PanelEyebrow,
+  PanelSub,
+} from "@/components/panels/panel";
+import { PanelsFooter } from "@/components/panels/panels-footer";
 import { ecosystemLibraries } from "@/lib/maintainer-tiers";
 
 export const metadata: Metadata = {
@@ -11,186 +18,151 @@ export const metadata: Metadata = {
   description: "See how React Foundation funding supports the ecosystem with transparent quarterly reports.",
 };
 
+const REPORT_CONTENTS = [
+  {
+    icon: CircleDollarSign,
+    title: "Revenue Details",
+    description: "Total revenue generated from all sources",
+  },
+  {
+    icon: Users,
+    title: "Maintainer Funding",
+    description: "Breakdown of funding by library and maintainer",
+  },
+  {
+    icon: BookOpen,
+    title: "Education Initiatives",
+    description: "Tutorials, docs, and learning resources supported",
+  },
+  {
+    icon: Globe,
+    title: "Accessibility",
+    description: "Global accessibility improvements funded",
+  },
+  {
+    icon: BarChart3,
+    title: "Impact Metrics",
+    description: "Downloads, usage, and ecosystem growth data",
+  },
+  {
+    icon: MessageSquare,
+    title: "Community Feedback",
+    description: "Testimonials from maintainers and contributors",
+  },
+];
+
+const DISTRIBUTION_STEPS = [
+  {
+    title: "Contribution Tracking",
+    description:
+      "We track pull requests, issues, and commits across all 54 supported libraries using GitHub's GraphQL API.",
+  },
+  {
+    title: "Score Calculation",
+    description:
+      "Contributions are weighted (PRs × 8 + Issues × 3 + Commits × 1) to calculate fair distribution ratios.",
+  },
+  {
+    title: "Fund Distribution",
+    description:
+      "100% of profits are distributed quarterly based on contribution scores and library impact metrics.",
+  },
+];
+
 export default function ImpactPage() {
   return (
-    <div className="min-h-screen bg-background pt-24 text-muted-foreground">
-      <div className="absolute inset-x-0 top-[-6rem] -z-10 flex justify-center blur-3xl">
-        <div className="h-[24rem] w-[60rem] bg-gradient-to-r from-emerald-400 via-cyan-500 to-blue-600 opacity-30" />
-      </div>
+    <div className="flex min-h-screen flex-col gap-2.5 bg-[#EBECF0] px-4 pb-4 pt-24 sm:px-6 sm:pb-6 md:gap-4 dark:bg-[#16181D]">
+      <Panel tone="cyan" labelledBy="impact-hero-title" className="flex min-h-[44vh] flex-col">
+        <OrbitMarks className="left-[72%] top-1/2 h-[560px] w-[560px] -translate-x-1/2 -translate-y-1/2" />
+        <div className="relative z-[1] mt-auto pt-12 md:pt-16">
+          <PanelEyebrow as="p">100% transparent · Quarterly reports · Real impact</PanelEyebrow>
+          <h1
+            id="impact-hero-title"
+            className="mt-4 max-w-[16ch] text-[clamp(36px,4vw,56px)] font-semibold leading-[1.05] tracking-[-0.02em] text-[#16181D]"
+          >
+            Our Impact
+          </h1>
+          <p className="mt-4 max-w-[40rem] text-[17px] leading-[1.55] text-[rgba(22,24,29,0.7)]">
+            Full transparency on how your support funds the React ecosystem. Every
+            contribution is tracked and reported publicly.
+          </p>
+        </div>
+      </Panel>
 
-      <div className="mx-auto flex max-w-6xl flex-col px-6 pb-24 sm:px-8 lg:px-12">
-        <main className="flex flex-col gap-20">
-          {/* Hero */}
-          <section className="space-y-8 pt-12">
-            <Pill>100% Transparent · Quarterly Reports · Real Impact</Pill>
-            <div>
-              <h1 className="text-5xl font-semibold leading-tight text-foreground sm:text-6xl">
-                Our Impact
-              </h1>
-              <p className="mt-8 max-w-2xl text-lg text-foreground/70">
-                Full transparency on how your support funds the React ecosystem. Every
-                contribution is tracked and reported publicly.
-              </p>
-            </div>
-          </section>
-
-          {/* Coming Soon */}
-          <ScrollReveal animation="fade-up">
-            <section className="scroll-mt-32 space-y-8 rounded-3xl border border-border/10 bg-gradient-to-br from-emerald-500/10 via-cyan-500/10 to-blue-500/10 p-12">
-              <div className="text-center">
-                <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-400 to-cyan-500">
-                  <svg
-                    className="h-10 w-10 text-foreground"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                    />
-                  </svg>
-                </div>
-                <h2 className="text-3xl font-semibold text-foreground sm:text-4xl">
-                  First Report Coming Soon
-                </h2>
-                <p className="mx-auto mt-4 max-w-2xl text-base text-foreground/70">
-                  Our inaugural quarterly impact report will be published once the store
-                  launches. Each report will provide complete transparency into fund
-                  distribution.
+      <Panel tone="paper" labelledBy="impact-coming-soon-title">
+        <PanelEyebrow id="impact-coming-soon-title">First report coming soon</PanelEyebrow>
+        <PanelSub>
+          Our inaugural quarterly impact report will be published once the store
+          launches. Each report will provide complete transparency into fund
+          distribution.
+        </PanelSub>
+        <div className="mt-4 divide-y divide-[color:var(--panel-rule)]">
+          {REPORT_CONTENTS.map((item) => (
+            <div
+              key={item.title}
+              className="grid grid-cols-[24px_minmax(0,1fr)] items-start gap-x-5 py-5"
+            >
+              <item.icon size={24} strokeWidth={1.5} aria-hidden="true" className="mt-0.5 text-[#16181D]" />
+              <div className="min-w-0">
+                <h3 className="text-[17px] font-semibold text-[#16181D]">{item.title}</h3>
+                <p className="mt-1 max-w-[42rem] text-sm leading-[1.55] text-[#5E687E]">
+                  {item.description}
                 </p>
               </div>
+            </div>
+          ))}
+        </div>
+      </Panel>
 
-              <div className="grid gap-4 pt-8 sm:grid-cols-2 lg:grid-cols-3">
-                <div className="space-y-2 rounded-2xl border border-border/10 bg-background/[0.03] p-6 text-center">
-                  <div className="text-2xl">💰</div>
-                  <h3 className="font-semibold text-foreground">Revenue Details</h3>
-                  <p className="text-sm text-foreground/60">
-                    Total revenue generated from all sources
-                  </p>
-                </div>
-                <div className="space-y-2 rounded-2xl border border-border/10 bg-background/[0.03] p-6 text-center">
-                  <div className="text-2xl">👥</div>
-                  <h3 className="font-semibold text-foreground">Maintainer Funding</h3>
-                  <p className="text-sm text-foreground/60">
-                    Breakdown of funding by library and maintainer
-                  </p>
-                </div>
-                <div className="space-y-2 rounded-2xl border border-border/10 bg-background/[0.03] p-6 text-center">
-                  <div className="text-2xl">📚</div>
-                  <h3 className="font-semibold text-foreground">Education Initiatives</h3>
-                  <p className="text-sm text-foreground/60">
-                    Tutorials, docs, and learning resources supported
-                  </p>
-                </div>
-                <div className="space-y-2 rounded-2xl border border-border/10 bg-background/[0.03] p-6 text-center">
-                  <div className="text-2xl">🌍</div>
-                  <h3 className="font-semibold text-foreground">Accessibility</h3>
-                  <p className="text-sm text-foreground/60">
-                    Global accessibility improvements funded
-                  </p>
-                </div>
-                <div className="space-y-2 rounded-2xl border border-border/10 bg-background/[0.03] p-6 text-center">
-                  <div className="text-2xl">📊</div>
-                  <h3 className="font-semibold text-foreground">Impact Metrics</h3>
-                  <p className="text-sm text-foreground/60">
-                    Downloads, usage, and ecosystem growth data
-                  </p>
-                </div>
-                <div className="space-y-2 rounded-2xl border border-border/10 bg-background/[0.03] p-6 text-center">
-                  <div className="text-2xl">💬</div>
-                  <h3 className="font-semibold text-foreground">Community Feedback</h3>
-                  <p className="text-sm text-foreground/60">
-                    Testimonials from maintainers and contributors
-                  </p>
-                </div>
+      <EcosystemLibraries
+        id="libraries"
+        title="Supported ecosystem"
+        description={`We track contributions across all ${ecosystemLibraries.length} critical React ecosystem libraries, ensuring fair distribution of funds based on contribution metrics.`}
+      />
+
+      <Panel tone="paper" labelledBy="impact-funds-title">
+        <PanelEyebrow id="impact-funds-title">How funds are distributed</PanelEyebrow>
+        <PanelSub>
+          We use a transparent, metrics-based approach to ensure fair distribution of
+          funds to maintainers across the React ecosystem.
+        </PanelSub>
+        <div className="mt-4 divide-y divide-[color:var(--panel-rule)]">
+          {DISTRIBUTION_STEPS.map((step, index) => (
+            <div
+              key={step.title}
+              className="grid grid-cols-[24px_minmax(0,1fr)] items-start gap-x-5 py-6"
+            >
+              <span className="font-mono-panels mt-1 text-[15px] font-medium text-[#16181D]">
+                {index + 1}
+              </span>
+              <div className="min-w-0">
+                <h3 className="text-[17px] font-semibold text-[#16181D]">{step.title}</h3>
+                <p className="mt-1 max-w-[42rem] text-sm leading-[1.55] text-[#5E687E]">
+                  {step.description}
+                </p>
               </div>
-            </section>
-          </ScrollReveal>
+            </div>
+          ))}
+        </div>
+      </Panel>
 
-          {/* Ecosystem Libraries */}
-          <EcosystemLibraries
-            id="libraries"
-            title="Supported Ecosystem"
-            description={`We track contributions across all ${ecosystemLibraries.length} critical React ecosystem libraries, ensuring fair distribution of funds based on contribution metrics.`}
-          />
+      <Panel tone="paper" labelledBy="impact-cta-title">
+        <PanelEyebrow id="impact-cta-title">Support the ecosystem</PanelEyebrow>
+        <p className="mt-4 max-w-[40rem] text-[26px] font-semibold leading-[1.35] tracking-[-0.01em] text-[#16181D] md:text-[28px]">
+          Every purchase directly supports React ecosystem maintainers. Shop the store
+          to make an impact today.
+        </p>
+        <PanelActions>
+          <PanelButton href="/store" variant="ink">
+            Shop the Store
+          </PanelButton>
+          <PanelButton href="/about" variant="outline">
+            Learn More
+          </PanelButton>
+        </PanelActions>
+      </Panel>
 
-          {/* How Funds are Distributed */}
-          <ScrollReveal animation="fade-up">
-            <section className="scroll-mt-32 space-y-8 rounded-3xl border border-border/10 bg-muted/60 p-12">
-              <h2 className="text-3xl font-semibold text-foreground sm:text-4xl">
-                How Funds are Distributed
-              </h2>
-              <p className="max-w-3xl text-lg text-foreground/70">
-                We use a transparent, metrics-based approach to ensure fair distribution
-                of funds to maintainers across the React ecosystem.
-              </p>
-
-              <div className="grid gap-6 pt-6 lg:grid-cols-3">
-                <div className="space-y-4">
-                  <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-400 to-cyan-500">
-                    <span className="text-2xl font-bold text-foreground">1</span>
-                  </div>
-                  <h3 className="text-xl font-semibold text-foreground">
-                    Contribution Tracking
-                  </h3>
-                  <p className="text-sm leading-relaxed text-foreground/70">
-                    We track pull requests, issues, and commits across all 54 supported
-                    libraries using GitHub&apos;s GraphQL API.
-                  </p>
-                </div>
-
-                <div className="space-y-4">
-                  <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-sky-400 to-indigo-500">
-                    <span className="text-2xl font-bold text-foreground">2</span>
-                  </div>
-                  <h3 className="text-xl font-semibold text-foreground">Score Calculation</h3>
-                  <p className="text-sm leading-relaxed text-foreground/70">
-                    Contributions are weighted (PRs × 8 + Issues × 3 + Commits × 1) to
-                    calculate fair distribution ratios.
-                  </p>
-                </div>
-
-                <div className="space-y-4">
-                  <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-yellow-300 to-orange-500">
-                    <span className="text-2xl font-bold text-foreground">3</span>
-                  </div>
-                  <h3 className="text-xl font-semibold text-foreground">Fund Distribution</h3>
-                  <p className="text-sm leading-relaxed text-foreground/70">
-                    100% of profits are distributed quarterly based on contribution scores
-                    and library impact metrics.
-                  </p>
-                </div>
-              </div>
-            </section>
-          </ScrollReveal>
-
-          {/* CTA */}
-          <ScrollReveal animation="scale">
-            <section className="scroll-mt-32 space-y-8 rounded-3xl border border-border/10 bg-gradient-to-br from-cyan-500/10 via-yellow-400/10 to-orange-500/10 p-12 text-center">
-              <h2 className="text-3xl font-semibold text-foreground sm:text-4xl">
-                Support the Ecosystem
-              </h2>
-              <p className="mx-auto max-w-2xl text-lg text-foreground/70">
-                Every purchase directly supports React ecosystem maintainers. Shop the
-                store to make an impact today.
-              </p>
-              <div className="flex flex-wrap items-center justify-center gap-4">
-                <ButtonLink href="/store" variant="primary" size="lg">
-                  Shop the Store
-                </ButtonLink>
-                <ButtonLink href="/about" variant="secondary" size="lg">
-                  Learn More
-                </ButtonLink>
-              </div>
-            </section>
-          </ScrollReveal>
-        </main>
-      </div>
-
-      <Footer />
+      <PanelsFooter />
     </div>
   );
 }

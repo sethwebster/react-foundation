@@ -1,8 +1,9 @@
 'use client';
 
 import React from "react";
-import { RFDS } from "@/components/rfds";
 import Link from "next/link";
+
+import { Panel, PanelEyebrow, PanelSub } from "@/components/panels/panel";
 
 type Action = { href: string; label: string; external?: boolean };
 
@@ -131,6 +132,9 @@ const contributorData: {
   },
 ];
 
+const ACTION_LINK_CLASS =
+  "panels-anim text-[15px] font-semibold hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-[#16181D]";
+
 export function BecomeContributor() {
   const handleContactClick = () => {
     const parts = ['hello', 'react', 'foundation'];
@@ -138,34 +142,31 @@ export function BecomeContributor() {
   };
 
   return (
-    <section
-      id="contribute"
-      className="relative isolate scroll-mt-32 rounded-3xl border border-border/10 p-12"
-    >
-      <div className="absolute inset-0 -z-10 overflow-hidden rounded-3xl bg-gradient-vibrant" />
-      <div className="text-center">
-        <h2 className="text-3xl font-semibold text-foreground sm:text-4xl">
-          Become a Contributor
-        </h2>
-        <p className="mx-auto mt-4 max-w-2xl text-base text-foreground/70">
-          Join the movement to sustain and grow the React ecosystem. Contribute code,
-          organize communities, create educational content, or support financially —
-          every pathway helps build a stronger ecosystem.
-        </p>
-      </div>
+    <Panel tone="paper" id="contribute" labelledBy="become-contributor-title">
+      <PanelEyebrow id="become-contributor-title">Become a contributor</PanelEyebrow>
+      <PanelSub>
+        Contribute code, organize communities, create educational content, or support
+        financially. Every pathway helps sustain and grow the React ecosystem.
+      </PanelSub>
 
-      <div className="mt-12 grid gap-6 lg:grid-cols-2">
+      <div className="mt-4 divide-y divide-[color:var(--panel-rule)]">
         {contributorData.map((item) => (
-          <RFDS.ContributorCard
+          <div
             key={item.variant}
-            icon={<RFDS.ContributorIcon variant={item.variant}>{item.icon}</RFDS.ContributorIcon>}
-            title={item.title}
-            description={item.description}
-            actions={
-              <>
+            className="grid grid-cols-[24px_minmax(0,1fr)] items-start gap-x-5 py-6"
+          >
+            <span className="mt-0.5 text-[#16181D] [&_svg]:h-6 [&_svg]:w-6" aria-hidden="true">
+              {item.icon}
+            </span>
+            <div className="min-w-0">
+              <h3 className="text-[17px] font-semibold text-[#16181D]">{item.title}</h3>
+              <p className="mt-1 max-w-[42rem] text-sm leading-[1.55] text-[#5E687E]">
+                {item.description}
+              </p>
+              <div className="mt-3 flex flex-wrap items-center gap-x-6 gap-y-2">
                 <Link
                   href={item.primaryAction.href}
-                  className="inline-flex items-center justify-center gap-2 rounded-md border border-border bg-secondary px-3 py-2 text-sm font-medium text-secondary-foreground transition-colors hover:bg-secondary/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                  className={`${ACTION_LINK_CLASS} text-[#087EA4]!`}
                   {...(item.primaryAction.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
                 >
                   {item.primaryAction.label}
@@ -173,29 +174,29 @@ export function BecomeContributor() {
                 {item.secondaryAction && (
                   <Link
                     href={item.secondaryAction.href}
-                    className="inline-flex items-center justify-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                    className={`${ACTION_LINK_CLASS} text-[#16181D]!`}
                     {...(item.secondaryAction.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
                   >
                     {item.secondaryAction.label}
                   </Link>
                 )}
-              </>
-            }
-          />
+              </div>
+            </div>
+          </div>
         ))}
       </div>
 
-      <div className="mt-8 border-t border-border/10 pt-8 text-center">
-        <p className="text-sm text-foreground/60">
+      <div className="mt-2 border-t border-[color:var(--panel-rule)] pt-6">
+        <p className="text-sm text-[#5E687E]">
           Questions about contributing?{" "}
           <button
             onClick={handleContactClick}
-            className="font-medium text-primary transition-colors hover:text-primary/80 hover:underline"
+            className="panels-anim font-semibold text-[#087EA4] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-[#16181D]"
           >
             Get in touch
           </button>
         </p>
       </div>
-    </section>
+    </Panel>
   );
 }

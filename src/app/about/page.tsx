@@ -1,13 +1,23 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { ButtonLink } from "@/components/ui/button";
-import { Pill } from "@/components/ui/pill";
-import { ScrollReveal } from "@/components/ui/scroll-reveal";
-import { Footer } from "@/components/layout/footer";
+import { Code, Landmark } from "lucide-react";
+
 import { BecomeContributor } from "@/components/home/become-contributor";
 import { EcosystemLibraries } from "@/components/home/ecosystem-libraries";
-import { FoundingMembers } from "@/components/home/founding-members";
 import { ExecutiveMessage } from "@/components/home/executive-message";
+import { FoundingMembers } from "@/components/home/founding-members";
+import {
+  OrbitMarks,
+  Panel,
+  PanelActions,
+  PanelButton,
+  PanelEyebrow,
+  PanelSub,
+  Row,
+  RowArrow,
+  RowList,
+  RowRight,
+} from "@/components/panels/panel";
+import { PanelsFooter } from "@/components/panels/panels-footer";
 import { RFDS } from "@/components/rfds";
 
 const sections = [
@@ -25,309 +35,207 @@ export const metadata: Metadata = {
   description: "Learn about the React Foundation's mission, governance, and how we support the ecosystem.",
 };
 
+const MISSION_POINTS = [
+  {
+    title: "Sustainable Funding",
+    description: "Creating reliable revenue streams that support open source maintainers",
+  },
+  {
+    title: "Full Transparency",
+    description: "Quarterly reports showing exactly how funds are distributed",
+  },
+  {
+    title: "Community First",
+    description: "Decisions driven by community needs and maintainer feedback",
+  },
+];
+
+const HOW_IT_WORKS_STEPS = [
+  {
+    title: "Contribute to the Ecosystem",
+    description:
+      "Submit code, documentation, RFCs, and bug reports to React and 54+ ecosystem libraries. Your contributions directly improve the tools millions of developers use every day.",
+  },
+  {
+    title: "Join the Community",
+    description:
+      "Organize meetups, create educational content, teach workshops, or help other developers learn React. Community organizers and educators are essential to ecosystem growth.",
+  },
+  {
+    title: "Support Through the Store",
+    description:
+      "One way to fund the ecosystem is through our official merchandise store. 100% of profits support maintainers, educators, and community organizers based on transparent impact metrics.",
+  },
+  {
+    title: "Transparent Impact",
+    description:
+      "Quarterly impact reports detail exactly how funds support maintainers, education, and accessibility initiatives. Full transparency in how contributions make a difference.",
+  },
+];
+
+const GOVERNANCE_BODIES = [
+  {
+    icon: Landmark,
+    href: "/about/board-of-directors",
+    title: "Board of Directors",
+    subtitle: "Strategic Leadership · Financial Oversight · Governance",
+    description:
+      "Our Board provides strategic guidance, ensures financial oversight, and maintains the foundation's commitment to transparency and community-first values.",
+  },
+  {
+    icon: Code,
+    href: "/about/technical-steering-committee",
+    title: "Technical Steering Committee",
+    subtitle: "Technical Excellence · Innovation · Open Standards",
+    description:
+      "The TSC drives technical excellence across the React ecosystem, establishing standards, best practices, and supporting innovation in libraries and tools.",
+  },
+];
+
+const GOVERNANCE_PRINCIPLES = [
+  { title: "Open Financials", description: "Every dollar tracked and reported publicly" },
+  { title: "Community Input", description: "Major decisions informed by maintainer feedback" },
+  { title: "Quarterly Reports", description: "Detailed impact metrics published every quarter" },
+  { title: "Open Source Values", description: "Built on the same principles as the ecosystem we support" },
+];
+
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-background pt-24 text-muted-foreground">
-      <div className="absolute inset-x-0 top-[-6rem] -z-10 flex justify-center blur-3xl">
-        <div className="h-[24rem] w-[60rem] bg-gradient-to-r from-success/50 via-primary/60 to-primary/70 opacity-30" />
-      </div>
-
-      <div className="mx-auto flex max-w-6xl flex-col px-6 pb-24 sm:px-8 lg:px-12">
-        <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-start">
-          <main className="flex flex-col gap-20">
-          {/* Hero */}
-          <section className="space-y-8 pt-12">
-            <Pill>Our Story · Our Mission · Our Values</Pill>
-            <div>
-              <h1 className="text-5xl font-semibold leading-tight text-foreground sm:text-6xl">
+    <div className="flex min-h-screen flex-col gap-2.5 bg-[#EBECF0] px-4 pb-4 pt-24 sm:px-6 sm:pb-6 md:gap-4 dark:bg-[#16181D]">
+      <div className="mx-auto w-full max-w-[1200px] lg:grid lg:grid-cols-[minmax(0,1fr)_20rem] lg:items-start lg:gap-4">
+        <main className="flex min-w-0 flex-col gap-2.5 md:gap-4">
+          <Panel tone="cyan" labelledBy="about-hero-title" className="flex min-h-[44vh] flex-col">
+            <OrbitMarks className="left-[72%] top-1/2 h-[560px] w-[560px] -translate-x-1/2 -translate-y-1/2" />
+            <div className="relative z-[1] mt-auto pt-12 md:pt-16">
+              <PanelEyebrow as="p">Our story · Our mission · Our values</PanelEyebrow>
+              <h1
+                id="about-hero-title"
+                className="mt-4 max-w-[16ch] text-[clamp(36px,4vw,56px)] font-semibold leading-[1.05] tracking-[-0.02em] text-[#16181D]"
+              >
                 About React Foundation
               </h1>
-              <p className="mt-8 max-w-2xl text-lg text-foreground/70">
+              <p className="mt-4 max-w-[40rem] text-[17px] leading-[1.55] text-[rgba(22,24,29,0.7)]">
                 We&apos;re building a sustainable future for the React ecosystem through
-                community funding, transparent governance, and unwavering support for
-                the maintainers who make it all possible.
+                community funding, transparent governance, and support for the
+                maintainers who make it all possible.
               </p>
             </div>
-          </section>
+          </Panel>
 
-          {/* Executive Message */}
-          <div id="executive-message">
+          <div id="executive-message" className="scroll-mt-24">
             <ExecutiveMessage />
           </div>
 
-          {/* Mission */}
-          <div id="mission">
-          <ScrollReveal animation="fade-up">
-            <section className="scroll-mt-32 space-y-8 rounded-3xl border border-border/10 bg-muted/60 p-12">
-              <h2 className="text-3xl font-semibold text-foreground sm:text-4xl">
-                Our Mission
-              </h2>
-              <p className="max-w-3xl text-lg leading-relaxed text-foreground/70">
-                The React Foundation exists to ensure the React ecosystem thrives for
-                generations to come. We provide direct financial support to maintainers,
-                fund educational initiatives, and ensure accessibility for developers
-                worldwide.
-              </p>
-              <div className="space-y-4 pt-4">
-                <div className="flex gap-4">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-success/10">
-                    <div className="h-2 w-2 rounded-full bg-success/50" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-foreground">Sustainable Funding</h3>
-                    <p className="mt-1 text-sm text-foreground/60">
-                      Creating reliable revenue streams that support open source maintainers
+          <Panel tone="paper" id="mission" labelledBy="mission-title">
+            <PanelEyebrow id="mission-title">Our mission</PanelEyebrow>
+            <p className="mt-4 max-w-[56rem] text-[clamp(24px,2.6vw,34px)] font-medium leading-[1.35] tracking-[-0.01em] text-[#16181D]">
+              The React Foundation exists to ensure the React ecosystem{" "}
+              <span className="text-[#087EA4]">thrives for generations to come</span>. We
+              provide direct financial support to maintainers, fund educational
+              initiatives, and ensure accessibility for developers worldwide.
+            </p>
+            <RowList className="mt-10 max-w-[44rem]">
+              {MISSION_POINTS.map((point) => (
+                <div key={point.title} className="py-4 first:pt-0 last:pb-0">
+                  <h3 className="text-[17px] font-semibold text-[#16181D]">{point.title}</h3>
+                  <p className="mt-1 text-sm leading-[1.55] text-[#5E687E]">{point.description}</p>
+                </div>
+              ))}
+            </RowList>
+          </Panel>
+
+          <Panel tone="paper" id="how-it-works" labelledBy="how-it-works-title">
+            <PanelEyebrow id="how-it-works-title">How it works</PanelEyebrow>
+            <div className="mt-4 divide-y divide-[color:var(--panel-rule)]">
+              {HOW_IT_WORKS_STEPS.map((step, index) => (
+                <div
+                  key={step.title}
+                  className="grid grid-cols-[24px_minmax(0,1fr)] items-start gap-x-5 py-6"
+                >
+                  <span className="font-mono-panels mt-1 text-[15px] font-medium text-[#16181D]">
+                    {index + 1}
+                  </span>
+                  <div className="min-w-0">
+                    <h3 className="text-[17px] font-semibold text-[#16181D]">{step.title}</h3>
+                    <p className="mt-1 max-w-[42rem] text-sm leading-[1.55] text-[#5E687E]">
+                      {step.description}
                     </p>
                   </div>
                 </div>
-                <div className="flex gap-4">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10">
-                    <div className="h-2 w-2 rounded-full bg-primary/50" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-foreground">Full Transparency</h3>
-                    <p className="mt-1 text-sm text-foreground/60">
-                      Quarterly reports showing exactly how funds are distributed
-                    </p>
-                  </div>
-                </div>
-                <div className="flex gap-4">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent/10">
-                    <div className="h-2 w-2 rounded-full bg-accent/50" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-foreground">Community First</h3>
-                    <p className="mt-1 text-sm text-foreground/60">
-                      Decisions driven by community needs and maintainer feedback
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </section>
-          </ScrollReveal>
-          </div>
+              ))}
+            </div>
+          </Panel>
 
-          {/* How It Works */}
-          <div id="how-it-works">
-          <ScrollReveal animation="scale">
-            <section className="scroll-mt-32 space-y-8 rounded-3xl border border-border/10 bg-muted/60 p-12">
-              <h2 className="text-3xl font-semibold text-foreground sm:text-4xl">
-                How It Works
-              </h2>
-              <div className="grid gap-6 lg:grid-cols-2">
-                <div className="space-y-4 rounded-2xl border border-border/10 bg-background/[0.03] p-8">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-primary/80">
-                    <span className="text-xl font-bold text-primary-foreground">1</span>
-                  </div>
-                  <h3 className="text-xl font-semibold text-foreground">
-                    Contribute to the Ecosystem
-                  </h3>
-                  <p className="text-sm leading-relaxed text-foreground/70">
-                    Submit code, documentation, RFCs, and bug reports to React and 54+
-                    ecosystem libraries. Your contributions directly improve the tools
-                    millions of developers use every day.
-                  </p>
-                </div>
-
-                <div className="space-y-4 rounded-2xl border border-border/10 bg-background/[0.03] p-8">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-success to-primary">
-                    <span className="text-xl font-bold text-success-foreground">2</span>
-                  </div>
-                  <h3 className="text-xl font-semibold text-foreground">
-                    Join the Community
-                  </h3>
-                  <p className="text-sm leading-relaxed text-foreground/70">
-                    Organize meetups, create educational content, teach workshops, or
-                    help other developers learn React. Community organizers and educators
-                    are essential to ecosystem growth.
-                  </p>
-                </div>
-
-                <div className="space-y-4 rounded-2xl border border-border/10 bg-background/[0.03] p-8">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-accent to-accent/80">
-                    <span className="text-xl font-bold text-white">3</span>
-                  </div>
-                  <h3 className="text-xl font-semibold text-foreground">
-                    Support Through the Store
-                  </h3>
-                  <p className="text-sm leading-relaxed text-foreground/70">
-                    One way to fund the ecosystem is through our official merchandise store.
-                    100% of profits support maintainers, educators, and community organizers
-                    based on transparent impact metrics.
-                  </p>
-                </div>
-
-                <div className="space-y-4 rounded-2xl border border-border/10 bg-background/[0.03] p-8">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary/80 to-accent">
-                    <span className="text-xl font-bold text-primary-foreground">4</span>
-                  </div>
-                  <h3 className="text-xl font-semibold text-foreground">
-                    Transparent Impact
-                  </h3>
-                  <p className="text-sm leading-relaxed text-foreground/70">
-                    Quarterly impact reports detail exactly how funds support maintainers,
-                    education, and accessibility initiatives. Full transparency in how
-                    contributions make a difference.
-                  </p>
-                </div>
-              </div>
-            </section>
-          </ScrollReveal>
-          </div>
-
-          {/* Founding Members */}
-          <div id="founding-members">
+          <div id="founding-members" className="scroll-mt-24">
             <FoundingMembers />
           </div>
 
-          {/* Ecosystem Libraries */}
-          <div id="supported-ecosystem">
-            <EcosystemLibraries
-              title="Supported Ecosystem"
-              showMissingLibraryIssue
-            />
+          <div id="supported-ecosystem" className="scroll-mt-24">
+            <EcosystemLibraries title="Supported ecosystem" showMissingLibraryIssue />
           </div>
 
-          {/* Governance / Communities */}
-          <div id="governance">
-          <ScrollReveal animation="fade-up">
-            <section
-              className="scroll-mt-32 space-y-8 rounded-3xl border border-border/10 bg-muted/60 p-12"
-            >
-              <h2 className="text-3xl font-semibold text-foreground sm:text-4xl">
-                Transparent Governance
-              </h2>
-              <p className="max-w-3xl text-lg leading-relaxed text-foreground/70">
-                The React Foundation operates with complete transparency. All funding
-                decisions, impact reports, and financial details are published quarterly
-                for community review and feedback.
-              </p>
-
-              {/* Governance Bodies */}
-              <div className="grid gap-6 pt-6 lg:grid-cols-2">
-                <Link
-                  href="/about/board-of-directors"
-                  className="group block space-y-4 rounded-2xl border border-border/10 bg-card text-card-foreground p-8 transition-all hover:border-primary/20 hover:bg-gradient-to-br hover:from-primary/5 hover:to-accent/5 hover:shadow-lg"
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-primary/80 shadow-lg">
-                      <svg className="h-7 w-7 text-primary-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                      </svg>
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-xl font-semibold text-foreground transition-colors group-hover:text-primary">
-                        Board of Directors
-                      </h3>
-                      <p className="mt-1 text-sm text-muted-foreground">
-                        Strategic Leadership · Financial Oversight · Governance
-                      </p>
-                    </div>
-                    <svg className="h-5 w-5 shrink-0 text-muted-foreground transition-all group-hover:translate-x-1 group-hover:text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
+          <Panel tone="paper" id="governance" labelledBy="governance-title">
+            <PanelEyebrow id="governance-title">Transparent governance</PanelEyebrow>
+            <PanelSub>
+              The React Foundation operates with complete transparency. All funding
+              decisions, impact reports, and financial details are published quarterly
+              for community review and feedback.
+            </PanelSub>
+            <RowList className="mt-4">
+              {GOVERNANCE_BODIES.map((body) => (
+                <Row key={body.href} href={body.href} className="py-6">
+                  <body.icon size={24} strokeWidth={1.5} aria-hidden="true" />
+                  <div className="min-w-0">
+                    <h3 className="text-[17px] font-semibold">{body.title}</h3>
+                    <p className="mt-0.5 text-[13px] text-[#5E687E]">{body.subtitle}</p>
+                    <p className="mt-2 max-w-[42rem] text-sm leading-[1.55] text-[#5E687E]">
+                      {body.description}
+                    </p>
                   </div>
-                  <p className="text-sm leading-relaxed text-foreground/70">
-                    Our Board provides strategic guidance, ensures financial oversight, and
-                    maintains the foundation&apos;s commitment to transparency and community-first values.
-                  </p>
-                </Link>
-
-                <Link
-                  href="/about/technical-steering-committee"
-                  className="group block space-y-4 rounded-2xl border border-border/10 bg-card text-card-foreground p-8 transition-all hover:border-success/20 hover:bg-gradient-to-br hover:from-success/5 hover:to-primary/5 hover:shadow-lg"
+                  <RowRight>
+                    <RowArrow />
+                  </RowRight>
+                </Row>
+              ))}
+            </RowList>
+            <div className="mt-8 grid gap-3 sm:grid-cols-2">
+              {GOVERNANCE_PRINCIPLES.map((principle) => (
+                <div
+                  key={principle.title}
+                  className="rounded-2xl border border-[#EBECF0] bg-white p-6"
                 >
-                  <div className="flex items-center gap-4">
-                    <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-success to-primary shadow-lg">
-                      <svg className="h-7 w-7 text-success-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-                      </svg>
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-xl font-semibold text-foreground transition-colors group-hover:text-success">
-                        Technical Steering Committee
-                      </h3>
-                      <p className="mt-1 text-sm text-muted-foreground">
-                        Technical Excellence · Innovation · Open Standards
-                      </p>
-                    </div>
-                    <svg className="h-5 w-5 shrink-0 text-muted-foreground transition-all group-hover:translate-x-1 group-hover:text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                  </div>
-                  <p className="text-sm leading-relaxed text-foreground/70">
-                    The TSC drives technical excellence across the React ecosystem, establishing
-                    standards, best practices, and supporting innovation in libraries and tools.
-                  </p>
-                </Link>
-              </div>
+                  <h3 className="text-[17px] font-semibold text-[#16181D]">{principle.title}</h3>
+                  <p className="mt-1 text-sm text-[#5E687E]">{principle.description}</p>
+                </div>
+              ))}
+            </div>
+          </Panel>
 
-              {/* Governance Principles */}
-              <div className="grid gap-6 pt-6 sm:grid-cols-2">
-                <div className="space-y-3 rounded-2xl border border-border/10 bg-background/[0.03] p-6">
-                  <h3 className="font-semibold text-foreground">Open Financials</h3>
-                  <p className="text-sm text-foreground/70">
-                    Every dollar tracked and reported publicly
-                  </p>
-                </div>
-                <div className="space-y-3 rounded-2xl border border-border/10 bg-background/[0.03] p-6">
-                  <h3 className="font-semibold text-foreground">Community Input</h3>
-                  <p className="text-sm text-foreground/70">
-                    Major decisions informed by maintainer feedback
-                  </p>
-                </div>
-                <div className="space-y-3 rounded-2xl border border-border/10 bg-background/[0.03] p-6">
-                  <h3 className="font-semibold text-foreground">Quarterly Reports</h3>
-                  <p className="text-sm text-foreground/70">
-                    Detailed impact metrics published every quarter
-                  </p>
-                </div>
-                <div className="space-y-3 rounded-2xl border border-border/10 bg-background/[0.03] p-6">
-                  <h3 className="font-semibold text-foreground">Open Source Values</h3>
-                  <p className="text-sm text-foreground/70">
-                    Built on the same principles as the ecosystem we support
-                  </p>
-                </div>
-              </div>
-            </section>
-          </ScrollReveal>
-          </div>
-
-          {/* Become a Contributor */}
-          <div id="become-contributor">
-          <ScrollReveal animation="scale">
+          <div id="become-contributor" className="scroll-mt-24">
             <BecomeContributor />
-          </ScrollReveal>
           </div>
 
-          {/* CTA */}
-          <ScrollReveal animation="fade-up">
-            <section className="scroll-mt-32 space-y-8 rounded-3xl border border-border/10 bg-gradient-to-br from-primary/10 via-warning/10 to-warning/5 p-12 text-center">
-              <h2 className="text-3xl font-semibold text-foreground sm:text-4xl">
-                Ready to Make an Impact?
-              </h2>
-              <p className="mx-auto max-w-2xl text-lg text-foreground/70">
-                Start supporting the React ecosystem today. Every contribution helps build
-                a sustainable future for open source.
-              </p>
-              <div className="flex flex-wrap items-center justify-center gap-4">
-                <ButtonLink href="/store" variant="primary" size="lg">
-                  Shop the Store
-                </ButtonLink>
-                <ButtonLink href="/impact" variant="secondary" size="lg">
-                  View Our Impact
-                </ButtonLink>
-              </div>
-            </section>
-          </ScrollReveal>
+          <Panel tone="paper" labelledBy="about-cta-title">
+            <PanelEyebrow id="about-cta-title">Ready to make an impact?</PanelEyebrow>
+            <p className="mt-4 max-w-[40rem] text-[26px] font-semibold leading-[1.35] tracking-[-0.01em] text-[#16181D] md:text-[28px]">
+              Start supporting the React ecosystem today. Every contribution helps build
+              a sustainable future for open source.
+            </p>
+            <PanelActions>
+              <PanelButton href="/store" variant="ink">
+                Shop the Store
+              </PanelButton>
+              <PanelButton href="/impact" variant="outline">
+                View Our Impact
+              </PanelButton>
+            </PanelActions>
+          </Panel>
         </main>
 
-        {/* Table of Contents Sidebar */}
         <RFDS.TableOfContents sections={sections} />
-        </div>
       </div>
 
-      <Footer />
+      <PanelsFooter />
     </div>
   );
 }

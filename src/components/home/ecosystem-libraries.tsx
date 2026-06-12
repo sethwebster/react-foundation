@@ -1,5 +1,4 @@
-import { ButtonLink } from "@/components/ui/button";
-import { ScrollReveal } from "@/components/ui/scroll-reveal";
+import { Panel, PanelEyebrow, PanelSub } from "@/components/panels/panel";
 import { ecosystemLibraries } from "@/lib/maintainer-tiers";
 import { LibraryCard } from "@/components/ui/library-card";
 import { libraryDisplayNames } from "@/lib/library-icons";
@@ -16,7 +15,7 @@ interface EcosystemLibrariesProps {
 
 export function EcosystemLibraries({
   id = "libraries",
-  title = "Supported Ecosystem",
+  title = "Supported ecosystem",
   description,
   risScores,
   showRIS = false,
@@ -26,7 +25,7 @@ export function EcosystemLibraries({
   const risScoreMap = risScores
     ? new Map(risScores.map((score) => [score.repo, score.ris]))
     : new Map();
-  
+
   // Use dynamic count from ecosystemLibraries if description not provided
   const libraryCount = ecosystemLibraries.length;
   const defaultDescription = `We track contributions across all ${libraryCount} critical React ecosystem libraries:`;
@@ -99,60 +98,64 @@ owner/repo:
   ];
 
   return (
-    <ScrollReveal animation="scale">
-      <section
-        id={id}
-        className="scroll-mt-32 space-y-8 rounded-3xl border border-border/10 bg-muted/60 p-12"
-      >
-        <h2 className="text-3xl font-semibold text-foreground sm:text-4xl">{title}</h2>
-        <p className="max-w-3xl text-lg text-foreground/70">{displayDescription}</p>
+    <Panel tone="paper" id={id} labelledBy="ecosystem-libraries-title">
+      <PanelEyebrow id="ecosystem-libraries-title">{title}</PanelEyebrow>
+      <PanelSub>{displayDescription}</PanelSub>
 
-        <div className="space-y-8 pt-6">
-          {categorizedLibraries.map((cat) => {
-            const libs = ecosystemLibraries.filter((l) => l.category === cat.category);
-            if (libs.length === 0) return null;
+      {/*
+        LibraryCard is shared (read-only here) and styles itself with semantic theme
+        tokens. Panels keep constant colors in both themes, so the wrapper pins the
+        tokens it consumes to light-theme values: cards stay legible on paper when
+        the site theme is dark.
+      */}
+      <div className="mt-8 space-y-10 [--background:0_0%_100%] [--border:222_47%_11%] [--foreground:222_47%_11%]">
+        {categorizedLibraries.map((cat) => {
+          const libs = ecosystemLibraries.filter((l) => l.category === cat.category);
+          if (libs.length === 0) return null;
 
-            return (
-              <div key={cat.category}>
-                <h3 className="mb-4 text-sm font-semibold uppercase tracking-[0.2em] text-foreground/60">
-                  {cat.name} · {libs.length} {libs.length === 1 ? "library" : "libraries"}
-                </h3>
-                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                  {libs.map((lib, idx) => (
-                    <LibraryCard
-                      key={lib.name}
-                      owner={lib.owner}
-                      name={lib.name}
-                      displayName={libraryDisplayNames[lib.name] || lib.name}
-                      delay={idx * 0.05}
-                      risScore={risScoreMap.get(lib.name)}
-                      showRIS={showRIS}
-                    />
-                  ))}
-                </div>
+          return (
+            <div key={cat.category}>
+              <h3 className="mb-3 text-[13px] font-medium tracking-[0.01em] text-[#5E687E]">
+                {cat.name} · {libs.length} {libs.length === 1 ? "library" : "libraries"}
+              </h3>
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                {libs.map((lib, idx) => (
+                  <LibraryCard
+                    key={lib.name}
+                    owner={lib.owner}
+                    name={lib.name}
+                    displayName={libraryDisplayNames[lib.name] || lib.name}
+                    delay={idx * 0.05}
+                    risScore={risScoreMap.get(lib.name)}
+                    showRIS={showRIS}
+                  />
+                ))}
               </div>
-            );
-          })}
-        </div>
+            </div>
+          );
+        })}
+      </div>
 
-        <div className="pt-6 text-center">
-          <p className="text-sm text-foreground/60">
-            Total: {ecosystemLibraries.length} libraries tracked · All contributions
-            verified via GitHub
+      <p className="mt-8 text-[13px] text-[#5E687E]">
+        Total: {ecosystemLibraries.length} libraries tracked · All contributions
+        verified via GitHub
+      </p>
+
+      {showMissingLibraryIssue ? (
+        <div className="mt-6 flex flex-col flex-wrap items-start justify-between gap-6 rounded-2xl border border-[#EBECF0] bg-white px-7 py-6 md:flex-row md:items-center">
+          <p className="text-[17px] font-semibold text-[#16181D]">
+            Don&apos;t see a library?
           </p>
+          <a
+            href={issueUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="panels-anim inline-flex items-center justify-center rounded-xl border border-[#16181D] bg-transparent px-6 py-3.5 text-[15px] font-semibold leading-[1.2] text-[#16181D] hover:bg-[rgba(22,24,29,0.08)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-[#16181D]"
+          >
+            Add a missing library
+          </a>
         </div>
-
-        {showMissingLibraryIssue ? (
-          <div className="space-y-3 rounded-2xl border border-border/10 bg-background/50 p-6">
-            <p className="text-sm text-foreground/80">
-              Don&apos;t see a library?
-            </p>
-            <ButtonLink href={issueUrl} variant="secondary" size="md" target="_blank" rel="noopener noreferrer">
-              Add a missing library
-            </ButtonLink>
-          </div>
-        ) : null}
-      </section>
-    </ScrollReveal>
+      ) : null}
+    </Panel>
   );
 }
