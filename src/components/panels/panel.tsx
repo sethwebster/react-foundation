@@ -99,7 +99,7 @@ export function PanelButton({
 		<Link
 			href={href}
 			className={cn(
-				"panels-anim inline-flex items-center justify-center rounded-xl border px-6 py-3.5 text-[15px] font-semibold leading-[1.2]",
+				"panels-anim panels-press inline-flex items-center justify-center rounded-xl border px-6 py-3.5 text-[15px] font-semibold leading-[1.2]",
 				FOCUS_RING,
 				variant === "ink"
 					? // The `!` is load-bearing: globals.css has unlayered `a.inline-flex { color: currentColor }`

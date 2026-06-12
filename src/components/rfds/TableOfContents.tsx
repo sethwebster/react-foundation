@@ -14,7 +14,7 @@
 'use client';
 
 import React, { useEffect, useMemo, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, MotionConfig } from 'framer-motion';
 import { ListTree, ChevronRight, Search, PanelRightOpen, PanelRightClose, ArrowUp } from 'lucide-react';
 
 export interface TOCSection {
@@ -169,7 +169,7 @@ function TOCInner({
                   <span className="absolute left-1.5 top-2.5 inline-flex h-2.5 w-2.5 items-center justify-center">
                     <span
                       className={cn(
-                        'h-1.5 w-1.5 rounded-full transition-all',
+                        'h-1.5 w-1.5 rounded-full transition-colors',
                         isActive
                           ? panels
                             ? 'bg-[#087EA4] dark:bg-[#58C4DC]'
@@ -237,7 +237,8 @@ export function TableOfContents({
   };
 
   return (
-    <>
+    // Collapses every internal spring/fade to instant when the user prefers reduced motion.
+    <MotionConfig reducedMotion="user">
       {/* Floating mobile dock */}
       <div className="fixed bottom-4 right-4 z-40 lg:hidden">
         <button
@@ -316,7 +317,7 @@ export function TableOfContents({
             onClick={() => setOpen((v) => !v)}
             aria-label={open ? 'Collapse' : 'Expand'}
             className={cn(
-              'absolute right-3 top-3 rounded-full p-2 transition',
+              'absolute right-1.5 top-1.5 rounded-full p-3 transition',
               panels ? 'hover:bg-[#EBECF0] dark:hover:bg-[#343A46]' : 'hover:bg-muted'
             )}
           >
@@ -355,7 +356,7 @@ export function TableOfContents({
 
       {/* Back to top button */}
       <BackToTop panels={panels} />
-    </>
+    </MotionConfig>
   );
 }
 

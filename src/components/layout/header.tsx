@@ -124,29 +124,29 @@ export function Header() {
             {isStorePage ? (
               // Store navigation
               <>
-                <Link className="transition hover:text-foreground" href="/store#featured">
+                <Link className="py-2 transition hover:text-foreground" href="/store#featured">
                   Collections
                 </Link>
-                <Link className="transition hover:text-foreground" href="/store#drops">
+                <Link className="py-2 transition hover:text-foreground" href="/store#drops">
                   Limited Drops
                 </Link>
-                <Link className="transition hover:text-foreground" href="/impact">
+                <Link className="py-2 transition hover:text-foreground" href="/impact">
                   Impact
                 </Link>
               </>
             ) : (
               // Foundation navigation
               <>
-                <Link className="transition hover:text-foreground" href="/about">
+                <Link className="py-2 transition hover:text-foreground" href="/about">
                   About
                 </Link>
-                <Link className="transition hover:text-foreground" href="/updates">
+                <Link className="py-2 transition hover:text-foreground" href="/updates">
                   Updates
                 </Link>
-                <Link className="transition hover:text-foreground" href="/impact">
+                <Link className="py-2 transition hover:text-foreground" href="/impact">
                   Impact
                 </Link>
-                <Link className="transition hover:text-foreground" href="/communities">
+                <Link className="py-2 transition hover:text-foreground" href="/communities">
                   Communities
                 </Link>
                 {isAdmin && (
@@ -199,7 +199,7 @@ export function Header() {
             // Ink button per the panels language; `!` outranks the unlayered `a.inline-flex { color: currentColor }` rule.
             <Link
               href="/api/auth/signin"
-              className="inline-flex items-center rounded-xl bg-[#16181D] px-4 py-2 text-sm font-semibold text-[#F6F7F9]! transition hover:bg-[#07090D] dark:bg-[#F6F7F9] dark:text-[#16181D]! dark:hover:bg-white"
+              className="panels-press inline-flex items-center rounded-xl bg-[#16181D] px-4 py-2.5 text-sm font-semibold text-[#F6F7F9]! transition hover:bg-[#07090D] dark:bg-[#F6F7F9] dark:text-[#16181D]! dark:hover:bg-white"
             >
               Sign in
             </Link>

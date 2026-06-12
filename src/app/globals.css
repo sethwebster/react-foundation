@@ -457,7 +457,43 @@ a.inline-flex {
 
 @media (prefers-reduced-motion: reduce) {
 	.panels-anim,
-	.panels-anim-arrow {
+	.panels-anim-arrow,
+	.panels-press {
 		transition: none;
 	}
+	.panels-press:active {
+		scale: 1;
+	}
+}
+
+/* Headings avoid one-word last lines; body text avoids orphans. */
+h1,
+h2,
+h3 {
+	text-wrap: balance;
+}
+
+p {
+	text-wrap: pretty;
+}
+
+/* Stable digit widths for dynamic numbers that are not already monospace. */
+.panels-nums {
+	font-variant-numeric: tabular-nums;
+}
+
+/*
+ * Tactile press for buttons (0.96 per the interaction conventions; anything
+ * smaller reads as exaggerated). Unlayered for the same cascade reason as
+ * .panels-anim, and scoped to scale so it stays interruptible and composable
+ * with the color transitions.
+ */
+.panels-press {
+	transition-property: scale;
+	transition-duration: 0.1s;
+	transition-timing-function: ease;
+}
+
+.panels-press:active {
+	scale: 0.96;
 }

@@ -136,7 +136,7 @@ export default function LibrariesPage() {
                       and OSSF Scorecard for {allocation.libraries.length} React ecosystem libraries.
                     </p>
                     {lastUpdated && (
-                      <p className="text-xs text-[#5E687E]">
+                      <p className="panels-nums text-xs text-[#5E687E]">
                         Last updated: {new Date(lastUpdated).toLocaleString()}
                       </p>
                     )}
@@ -159,7 +159,7 @@ export default function LibrariesPage() {
             <PanelEyebrow id="library-rankings-title">Library rankings</PanelEyebrow>
             <PanelSub>Scores and allocation estimates for the current RIS period.</PanelSub>
           </div>
-          <div className="font-mono-panels text-sm text-[#5E687E]">
+          <div className="font-mono-panels panels-nums text-sm text-[#5E687E]">
             {totalLibraries} libraries · Total pool: ${allocation.total_pool_usd.toLocaleString()}
           </div>
         </div>

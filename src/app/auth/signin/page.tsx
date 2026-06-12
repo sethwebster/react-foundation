@@ -46,7 +46,7 @@ export default function SignInPage() {
 							type="button"
 							onClick={() => signIn("github", { callbackUrl })}
 							className={cn(
-								"panels-anim flex w-full items-center justify-center gap-4 rounded-xl border px-6 py-3.5 text-[15px] font-semibold leading-[1.2]",
+								"panels-anim panels-press flex w-full items-center justify-center gap-4 rounded-xl border px-6 py-3.5 text-[15px] font-semibold leading-[1.2]",
 								FOCUS_RING,
 								"border-[#16181D] bg-[#16181D] text-[#F6F7F9]! hover:border-[#07090D] hover:bg-[#07090D]",
 							)}
