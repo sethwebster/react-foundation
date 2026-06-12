@@ -143,15 +143,12 @@ function TOCInner({
 
       {/* List */}
       <nav className="relative">
-        <div
-          className={cn(
-            'pointer-events-none absolute left-3 top-0 h-full w-px',
-            panels
-              ? 'bg-[#EBECF0] dark:bg-[#404756]'
-              : 'bg-gradient-to-b from-transparent via-border to-transparent'
-          )}
-          aria-hidden="true"
-        />
+        {!panels && (
+          <div
+            className="pointer-events-none absolute left-3 top-0 h-full w-px bg-gradient-to-b from-transparent via-border to-transparent"
+            aria-hidden="true"
+          />
+        )}
 
         <ul className="max-h-[60vh] space-y-1 overflow-y-auto pr-2">
           {headings.map((h) => {
@@ -162,27 +159,33 @@ function TOCInner({
                   onClick={() => onItemClick(h.id)}
                   className={cn(
                     'group relative w-full text-left',
-                    h.level === 1 ? 'pl-6' : h.level === 2 ? 'pl-10' : 'pl-14'
+                    panels
+                      ? h.level === 1
+                        ? 'pl-0'
+                        : h.level === 2
+                          ? 'pl-4'
+                          : 'pl-8'
+                      : h.level === 1
+                        ? 'pl-6'
+                        : h.level === 2
+                          ? 'pl-10'
+                          : 'pl-14'
                   )}
                   aria-current={isActive ? 'location' : undefined}
                 >
-                  <span className="absolute left-1.5 top-2.5 inline-flex h-2.5 w-2.5 items-center justify-center">
-                    <span
-                      className={cn(
-                        'h-1.5 w-1.5 rounded-full transition-colors',
-                        isActive
-                          ? panels
-                            ? 'bg-[#087EA4] dark:bg-[#58C4DC]'
-                            : 'bg-primary'
-                          : panels
-                            ? 'bg-[#BCC1CD] dark:bg-[#5E687E]'
-                            : 'bg-muted-foreground/40'
+                  {!panels && (
+                    <span className="absolute left-1.5 top-2.5 inline-flex h-2.5 w-2.5 items-center justify-center">
+                      <span
+                        className={cn(
+                          'h-1.5 w-1.5 rounded-full transition-colors',
+                          isActive ? 'bg-primary' : 'bg-muted-foreground/40'
+                        )}
+                      />
+                      {isActive && (
+                        <span className="absolute inset-0 -m-1 rounded-full bg-primary/30 blur-[6px]" />
                       )}
-                    />
-                    {isActive && !panels && (
-                      <span className="absolute inset-0 -m-1 rounded-full bg-primary/30 blur-[6px]" />
-                    )}
-                  </span>
+                    </span>
+                  )}
 
                   <span
                     className={cn(
