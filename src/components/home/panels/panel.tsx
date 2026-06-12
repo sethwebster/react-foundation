@@ -140,7 +140,9 @@ export function Row({
 	children: ReactNode;
 }) {
 	const rowClassName = cn(
-		"group panels-anim grid items-center gap-x-5 text-[#16181D] hover:bg-[var(--panel-hover)]",
+		// Inset content from the row edges, with a matching negative margin so
+		// resting text keeps the panel's alignment and only the hover surface grows.
+		"group panels-anim -mx-3 grid items-center gap-x-5 rounded-lg px-3 text-[#16181D] hover:bg-[var(--panel-hover)]",
 		FOCUS_RING,
 		bare
 			? "grid-cols-[minmax(0,1fr)_auto]"
