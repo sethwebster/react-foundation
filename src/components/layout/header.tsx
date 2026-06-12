@@ -18,6 +18,8 @@ export function Header() {
   const [isAdmin, setIsAdmin] = useState(false);
   const isStorePage = pathname?.startsWith("/store");
   const isComingSoonPage = pathname === "/coming-soon";
+  // The redesigned homepage renders the header as a floating panel; other routes keep the classic bar.
+  const isHome = pathname === "/";
 
   // Check admin status when user session changes
   useEffect(() => {
@@ -45,33 +47,61 @@ export function Header() {
   }, [session?.user?.email]);
 
   return (
-    <header className="fixed left-0 right-0 top-0 z-50 bg-background/95 shadow-lg shadow-black/5 backdrop-blur-xl supports-[backdrop-filter]:bg-background/80">
-      <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4 sm:px-8 lg:px-12">
+    <header
+      className={
+        isHome
+          ? "fixed left-0 right-0 top-0 z-50 px-4 pt-3 sm:px-6"
+          : "fixed left-0 right-0 top-0 z-50 bg-background/95 shadow-lg shadow-black/5 backdrop-blur-xl supports-[backdrop-filter]:bg-background/80"
+      }
+    >
+      <div
+        className={
+          isHome
+            ? "mx-auto flex w-full max-w-[1200px] items-center justify-between rounded-2xl border border-[#EBECF0] bg-[#F6F7F9] px-5 py-3 dark:border-[#343A46] dark:bg-[#23272F]"
+            : "mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4 sm:px-8 lg:px-12"
+        }
+      >
         {/* Logo */}
-        <div className="flex items-center gap-3">
-          <div className="relative h-10 w-10 overflow-hidden">
-            <Link href="/">
+        {isHome ? (
+          <Link href="/" className="flex items-center gap-2.5">
+            <div className="relative h-7 w-7">
               <Image
                 src="/react-logo.svg"
                 alt="React Foundation logo"
                 fill
-                sizes="40px"
-                className="object-contain p-1.5"
+                sizes="28px"
+                className="object-contain"
                 priority
               />
-            </Link>
+            </div>
+            <p className="text-[15px] font-semibold text-foreground">React Foundation</p>
+          </Link>
+        ) : (
+          <div className="flex items-center gap-3">
+            <div className="relative h-10 w-10 overflow-hidden">
+              <Link href="/">
+                <Image
+                  src="/react-logo.svg"
+                  alt="React Foundation logo"
+                  fill
+                  sizes="40px"
+                  className="object-contain p-1.5"
+                  priority
+                />
+              </Link>
+            </div>
+            <div>
+              <Link href="/">
+                <p className="text-sm uppercase tracking-[0.25em] text-muted-foreground">
+                  React Foundation
+                </p>
+                <p className="text-base font-medium text-foreground">
+                  {isStorePage ? "Official Store" : "Supporting the Ecosystem"}
+                </p>
+              </Link>
+            </div>
           </div>
-          <div>
-            <Link href="/">
-              <p className="text-sm uppercase tracking-[0.25em] text-muted-foreground">
-                React Foundation
-              </p>
-              <p className="text-base font-medium text-foreground">
-                {isStorePage ? "Official Store" : "Supporting the Ecosystem"}
-              </p>
-            </Link>
-          </div>
-        </div>
+        )}
 
         {/* Desktop Navigation (hidden on mobile) */}
         <div className={`hidden items-center gap-4 text-sm text-muted-foreground md:flex transition ${isComingSoonPage ? 'blur-sm pointer-events-none' : ''}`}>
@@ -150,6 +180,14 @@ export function Header() {
               href="/profile"
               className="transition hover:border-primary/50 hover:shadow-lg hover:shadow-primary/20"
             />
+          ) : isHome ? (
+            // Ink button per the panels language; `!` outranks the unlayered `a.inline-flex { color: currentColor }` rule.
+            <Link
+              href="/api/auth/signin"
+              className="inline-flex items-center rounded-xl bg-[#16181D] px-4 py-2 text-sm font-semibold text-[#F6F7F9]! transition hover:bg-[#07090D] dark:bg-[#F6F7F9] dark:text-[#16181D]! dark:hover:bg-white"
+            >
+              Sign in
+            </Link>
           ) : (
             <RFDS.ButtonLink href="/api/auth/signin" size="sm">
               Sign in
