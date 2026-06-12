@@ -320,7 +320,9 @@ export function TableOfContents({
             onClick={() => setOpen((v) => !v)}
             aria-label={open ? 'Collapse' : 'Expand'}
             className={cn(
-              'absolute right-1.5 top-1.5 rounded-full p-3 transition',
+              // The pseudo-element extends the hit area to 44px while the visible
+              // circle stays compact and aligned with the header row.
+              'absolute right-3 top-3 rounded-full p-2 transition after:absolute after:-inset-1.5 after:content-[""]',
               panels ? 'hover:bg-[#EBECF0] dark:hover:bg-[#343A46]' : 'hover:bg-muted'
             )}
           >
