@@ -72,7 +72,7 @@ export function Header() {
       <div
         className={
           isPanelsRoute
-            ? "mx-auto flex w-full max-w-[1200px] items-center justify-between rounded-2xl border border-[#EBECF0] bg-[#F6F7F9] px-5 py-3 dark:border-[#343A46] dark:bg-[#23272F]"
+            ? "mx-auto flex w-full max-w-[1200px] items-center justify-between rounded-2xl border border-[#EBECF0]/80 bg-[#F6F7F9]/90 px-5 py-3 supports-[backdrop-filter]:bg-[#F6F7F9]/75 supports-[backdrop-filter]:backdrop-blur-md supports-[backdrop-filter]:backdrop-saturate-150 dark:border-[#343A46]/80 dark:bg-[#23272F]/90 dark:supports-[backdrop-filter]:bg-[#23272F]/75"
             : "mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4 sm:px-8 lg:px-12"
         }
       >
