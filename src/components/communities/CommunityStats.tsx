@@ -6,7 +6,9 @@
 'use client';
 
 import useSWR from 'swr';
-import { RFDS } from '@/components/rfds';
+import { Activity, Globe, MapPin, Users } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
+import { RowList } from '@/components/panels/panel';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
@@ -15,11 +17,11 @@ export function CommunityStats() {
 
   if (isLoading || !data) {
     return (
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center max-w-5xl mx-auto">
+      <div className="mt-3 divide-y divide-[#EBECF0]">
         {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="space-y-2">
-            <div className="h-12 bg-muted animate-pulse rounded" />
-            <div className="h-4 bg-muted animate-pulse rounded w-24 mx-auto" />
+          <div key={i} className="flex items-center justify-between py-[18px]">
+            <div className="h-5 w-44 max-w-[50%] animate-pulse rounded bg-[#EBECF0]" />
+            <div className="h-5 w-16 animate-pulse rounded bg-[#EBECF0]" />
           </div>
         ))}
       </div>
@@ -28,9 +30,9 @@ export function CommunityStats() {
 
   if (error || !data.success) {
     return (
-      <div className="text-center text-destructive">
+      <p className="mt-3 text-[15px] font-medium text-[#C76A15]">
         Failed to load stats
-      </div>
+      </p>
     );
   }
 
@@ -41,37 +43,40 @@ export function CommunityStats() {
   const showActiveStat = activePercentage >= 0.75;
 
   return (
-    <div className={`grid grid-cols-2 md:grid-cols-${showActiveStat ? '4' : '3'} gap-8 text-center max-w-5xl mx-auto`}>
-      <StatCard
+    <RowList className="mt-3">
+      <StatRow
+        icon={MapPin}
         number={stats.total_communities.toString()}
         label="Communities"
       />
-      <StatCard
+      <StatRow
+        icon={Globe}
         number={stats.countries.toString()}
         label="Countries"
       />
-      <StatCard
+      <StatRow
+        icon={Users}
         number={formatNumber(stats.total_members)}
         label="Total Members"
       />
       {showActiveStat && (
-        <StatCard
+        <StatRow
+          icon={Activity}
           number={stats.active_communities.toString()}
           label="Active"
         />
       )}
-    </div>
+    </RowList>
   );
 }
 
-function StatCard({ number, label }: { number: string; label: string }) {
+function StatRow({ icon: Icon, number, label }: { icon: LucideIcon; number: string; label: string }) {
   return (
-    <RFDS.StatCard
-      label={label}
-      value={number}
-      color="primary"
-      variant="default"
-    />
+    <div className="grid grid-cols-[24px_minmax(0,1fr)_auto] items-center gap-x-5 py-[18px] text-[#16181D]">
+      <Icon size={24} strokeWidth={1.5} aria-hidden="true" />
+      <span className="text-[17px] font-medium">{label}</span>
+      <span className="font-mono-panels justify-self-end text-[15px] font-medium">{number}</span>
+    </div>
   );
 }
 

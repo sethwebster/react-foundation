@@ -9,11 +9,11 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { SortDropdown } from '@/components/ui/sort-dropdown';
 
 const SORT_OPTIONS = [
-  { value: 'members', label: '👥 Most Members' },
-  { value: 'activity', label: '🔥 Most Active' },
-  { value: 'cois', label: '🏆 Highest CoIS' },
-  { value: 'name', label: '🔤 Name (A-Z)' },
-  { value: 'recent', label: '📅 Recently Active' },
+  { value: 'members', label: 'Most Members' },
+  { value: 'activity', label: 'Most Active' },
+  { value: 'cois', label: 'Highest CoIS' },
+  { value: 'name', label: 'Name (A-Z)' },
+  { value: 'recent', label: 'Recently Active' },
 ];
 
 export function CommunitySortDropdown() {

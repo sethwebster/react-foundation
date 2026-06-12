@@ -7,7 +7,7 @@
 
 import { useEffect, useRef, useState, type RefObject } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { RFDS } from '@/components/rfds';
+import { Search } from 'lucide-react';
 import { SortDropdown } from '@/components/ui/sort-dropdown';
 import type { CommunityFilters as Filters, CommunityStatusFilter, EventType } from '@/types/community';
 
@@ -18,6 +18,9 @@ const STATUS_OPTIONS: Array<{ value: CommunityStatusFilter; label: string }> = [
   { value: 'paused', label: 'Paused' },
   { value: 'inactive', label: 'Inactive' },
 ];
+
+const FOCUS_RING =
+  'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-solid focus-visible:outline-[#16181D]';
 
 function useClearDebounceOnUnmount(timer: RefObject<ReturnType<typeof setTimeout> | null>) {
   useEffect(() => {
@@ -126,27 +129,24 @@ export function CommunityFilters() {
     (filters.status && filters.status !== 'all');
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
+    <div className="space-y-6 rounded-2xl border border-[#EBECF0] bg-white p-6">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-foreground">Filters</h3>
+        <h3 className="text-[17px] font-semibold text-[#16181D]">Filters</h3>
         {hasActiveFilters && (
-          <RFDS.SemanticButton
-            variant="ghost"
-            size="sm"
+          <button
+            type="button"
             onClick={clearFilters}
-            className="text-sm"
+            className={`panels-anim text-[13px] font-semibold text-[#087EA4] hover:text-[#16181D] ${FOCUS_RING}`}
           >
             Clear all
-          </RFDS.SemanticButton>
+          </button>
         )}
       </div>
 
-      {/* Status shortcuts */}
       <div>
-        <label className="block text-sm font-medium text-foreground mb-3">
+        <span className="mb-3 block text-sm font-medium text-[#16181D]">
           Status
-        </label>
+        </span>
         <div className="flex flex-wrap gap-2">
           {STATUS_OPTIONS.map((option) => {
             const selected = (filters.status || 'all') === option.value;
@@ -157,8 +157,8 @@ export function CommunityFilters() {
                 type="button"
                 onClick={() => updateFilter('status', option.value)}
                 className={selected
-                  ? 'rounded-full bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground transition'
-                  : 'rounded-full border border-border bg-card px-3 py-1.5 text-sm font-medium text-muted-foreground transition hover:border-primary hover:text-primary'
+                  ? `panels-anim rounded-full border border-[#16181D] bg-[#16181D] px-3 py-1.5 text-[13px] font-medium text-[#F6F7F9]! ${FOCUS_RING}`
+                  : `panels-anim rounded-full border border-[rgba(22,24,29,0.2)] px-3 py-1.5 text-[13px] font-medium text-[#5E687E] hover:bg-[rgba(22,24,29,0.08)] hover:text-[#16181D] ${FOCUS_RING}`
                 }
               >
                 {option.label}
@@ -168,34 +168,43 @@ export function CommunityFilters() {
         </div>
       </div>
 
-      {/* Search */}
       <div>
-        <label className="block text-sm font-medium text-foreground mb-2">
+        <label htmlFor="community-search" className="mb-2 block text-sm font-medium text-[#16181D]">
           Search
         </label>
-        <RFDS.SearchInput
-          placeholder="City, country, or name..."
-          value={filters.search || ''}
-          onChange={(e) => updateFilter('search', e.target.value, true)}
-          className="w-full"
-        />
+        <div className="relative w-full">
+          <Search
+            size={16}
+            strokeWidth={1.5}
+            aria-hidden="true"
+            className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[#5E687E]"
+          />
+          <input
+            id="community-search"
+            type="search"
+            placeholder="City, country, or name..."
+            value={filters.search || ''}
+            onChange={(e) => updateFilter('search', e.target.value, true)}
+            className={`panels-anim w-full rounded-xl border border-[rgba(22,24,29,0.2)] bg-white py-2.5 pl-9 pr-3 text-sm text-[#16181D] placeholder:text-[#99A1B3] ${FOCUS_RING}`}
+          />
+        </div>
       </div>
 
-      {/* Event Types */}
       <div>
-        <label className="block text-sm font-medium text-foreground mb-3">
+        <span className="mb-3 block text-sm font-medium text-[#16181D]">
           Event Types
-        </label>
+        </span>
         <div className="space-y-2">
           {(['meetup', 'conference', 'workshop', 'hackathon', 'virtual'] as EventType[]).map(
             (type) => (
-              <label key={type} className="flex items-center gap-2 cursor-pointer group">
-                <RFDS.Checkbox
+              <label key={type} className="group flex cursor-pointer items-center gap-2">
+                <input
+                  type="checkbox"
                   checked={filters.event_types?.includes(type) || false}
                   onChange={() => toggleEventType(type)}
-                  className="w-4 h-4"
+                  className={`h-4 w-4 accent-[#087EA4] ${FOCUS_RING}`}
                 />
-                <span className="text-sm text-foreground capitalize group-hover:text-primary transition">
+                <span className="panels-anim text-sm capitalize text-[#16181D] group-hover:text-[#087EA4]">
                   {type}
                 </span>
               </label>
@@ -204,44 +213,30 @@ export function CommunityFilters() {
         </div>
       </div>
 
-      {/* CoIS Tier */}
       <div>
+        <span className="mb-2 block text-sm font-medium text-[#16181D]">
+          CoIS Tier
+        </span>
         <SortDropdown
-          label="CoIS Tier"
           options={[
-            { value: '', label: '🎯 All Tiers' },
-            { value: 'platinum', label: '💎 Platinum' },
-            { value: 'gold', label: '🏆 Gold' },
-            { value: 'silver', label: '🥈 Silver' },
-            { value: 'bronze', label: '🥉 Bronze' },
+            { value: '', label: 'All Tiers' },
+            { value: 'platinum', label: 'Platinum' },
+            { value: 'gold', label: 'Gold' },
+            { value: 'silver', label: 'Silver' },
+            { value: 'bronze', label: 'Bronze' },
           ]}
           value={filters.cois_tier || ''}
           onChange={(value) => updateFilter('cois_tier', value as Filters['cois_tier'])}
         />
       </div>
 
-      {/* Toggles */}
-      {/* <div className="space-y-3 pt-2 border-t border-border">
-
-        <label className="flex items-center gap-2 cursor-pointer group">
-          <input
-            checked={filters.has_upcoming_events || false}
-            onChange={(e) => {
-              console.log('📅 Has upcoming events toggled:', e.target.checked);
-              updateFilter('has_upcoming_events', e.target.checked);
-            }}
-            className="w-4 h-4 rounded border-border text-primary focus:ring-2 focus:ring-primary"
-          />
-          <span className="text-sm text-foreground group-hover:text-primary transition">
-            Recent activity (last 6 months)
-          </span>
-        </label>
-      </div> */}
-
       {/* Apply button (for mobile) */}
-      <RFDS.SemanticButton variant="primary" className="w-full lg:hidden">
+      <button
+        type="button"
+        className={`panels-anim w-full rounded-xl border border-[#16181D] bg-[#16181D] px-6 py-3.5 text-[15px] font-semibold leading-[1.2] text-[#F6F7F9]! hover:border-[#07090D] hover:bg-[#07090D] lg:hidden ${FOCUS_RING}`}
+      >
         Apply Filters
-      </RFDS.SemanticButton>
+      </button>
     </div>
   );
 }

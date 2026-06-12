@@ -233,13 +233,12 @@ export function CommunityMap() {
 
   if (!isClient || isLoading || !L) {
     return (
-      <div className="w-full h-[600px] bg-gradient-to-br from-blue-100 to-green-100 dark:from-blue-900/20 dark:to-green-900/20 animate-pulse flex items-center justify-center rounded-lg border border-border">
+      <div className="flex h-[600px] w-full animate-pulse items-center justify-center rounded-2xl border border-[#EBECF0] bg-[#EBECF0]">
         <div className="text-center">
-          <div className="text-6xl mb-4">🗺️</div>
-          <p className="text-lg font-medium text-foreground">
+          <p className="text-[15px] font-medium text-[#16181D]">
             {isLoading ? 'Loading communities...' : !L ? 'Loading map library...' : 'Loading map...'}
           </p>
-          <p className="text-sm text-muted-foreground mt-2">
+          <p className="mt-2 text-sm text-[#5E687E]">
             {isLoading ? `Fetching ${communities.length} communities` : 'Initializing Leaflet'}
           </p>
         </div>
@@ -254,15 +253,10 @@ export function CommunityMap() {
   console.log('🗺️ CommunityMap: Rendering map, isClient:', isClient);
 
   return (
-    <div className="relative w-full h-[600px] rounded-lg overflow-hidden border-2 border-primary/20 bg-blue-50 dark:bg-blue-950/20">
-      {/* Debug indicator */}
-      {/* <div className="absolute top-2 left-2 z-[999] bg-green-500 text-white px-3 py-1 rounded text-xs font-bold">
-        MAP CONTAINER VISIBLE
-      </div> */}
-
+    <div className="relative h-[600px] w-full overflow-hidden rounded-2xl border border-[#EBECF0] bg-[#EBECF0]">
       {/* Map Legend */}
-      <div className="absolute top-4 right-4 z-10 bg-card/95 backdrop-blur-sm border border-border rounded-lg px-4 py-3 shadow-lg space-y-2">
-        <p className="text-xs font-semibold text-foreground mb-2">CoIS Tier</p>
+      <div className="absolute right-4 top-4 z-10 space-y-2 rounded-xl border border-[#EBECF0] bg-white px-4 py-3">
+        <p className="mb-2 text-xs font-semibold text-[#16181D]">CoIS Tier</p>
         <TierLegend tier="platinum" />
         <TierLegend tier="gold" />
         <TierLegend tier="silver" />
@@ -299,57 +293,53 @@ export function CommunityMap() {
               title={`${community.name} - ${community.cois_tier || community.status}`}
             >
               <Popup className="custom-popup" minWidth={320} maxWidth={400} closeButton={false}>
-                <div className="p-4" style={{ color: 'hsl(var(--card-foreground))' }}>
-                  {/* Header with tier badge */}
+                <div className="p-4 text-[#16181D]">
                   <div className="mb-3">
                     {community.cois_tier && (
-                      <div className="flex justify-end mb-2">
-                        <span
-                          className={`px-2.5 py-1 rounded-full text-xs font-medium text-white whitespace-nowrap ${getTierBadgeColor(
-                            community.cois_tier
-                          )}`}
-                        >
-                          {getTierIcon(community.cois_tier)} {community.cois_tier}
+                      <div className="mb-2 flex justify-end">
+                        <span className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border border-[rgba(22,24,29,0.2)] px-2.5 py-1 text-xs font-medium capitalize text-[#16181D]">
+                          <span
+                            aria-hidden="true"
+                            className="h-2 w-2 rounded-full"
+                            style={{ backgroundColor: getTierColorHex(community.cois_tier) }}
+                          />
+                          {community.cois_tier}
                         </span>
                       </div>
                     )}
-                    <h3 className="font-bold text-lg mb-2" style={{ color: 'hsl(var(--card-foreground))' }}>
+                    <h3 className="mb-2 text-lg font-semibold text-[#16181D]">
                       {community.name}
                     </h3>
-                    <p className="text-sm" style={{ color: 'hsl(var(--muted-foreground))' }}>
+                    <p className="text-sm text-[#5E687E]">
                       {community.city}
                       {community.region && `, ${community.region}`}, {community.country}
                     </p>
                   </div>
 
-                  <p className="text-sm mb-4 leading-relaxed" style={{ color: 'hsl(var(--card-foreground))' }}>
+                  <p className="mb-4 text-sm leading-relaxed text-[#5E687E]">
                     {community.description}
                   </p>
 
-                  <div className="grid grid-cols-2 gap-3 text-sm mb-4 bg-muted/30 p-3 rounded">
+                  <div className="mb-4 grid grid-cols-2 gap-3 rounded-xl border border-[#EBECF0] bg-[#F6F7F9] p-3 text-sm">
                     <div>
-                      <div style={{ color: 'hsl(var(--muted-foreground))' }} className="text-xs mb-1">Members</div>
-                      <div className="font-semibold" style={{ color: 'hsl(var(--card-foreground))' }}>
+                      <div className="mb-1 text-xs text-[#5E687E]">Members</div>
+                      <div className="font-mono-panels font-medium text-[#16181D]">
                         {community.member_count.toLocaleString()}
                       </div>
                     </div>
                     <div>
-                      <div style={{ color: 'hsl(var(--muted-foreground))' }} className="text-xs mb-1">Frequency</div>
-                      <div className="font-semibold capitalize" style={{ color: 'hsl(var(--card-foreground))' }}>
+                      <div className="mb-1 text-xs text-[#5E687E]">Frequency</div>
+                      <div className="font-semibold capitalize text-[#16181D]">
                         {community.meeting_frequency}
                       </div>
                     </div>
                   </div>
 
-                  <div className="flex flex-wrap gap-2 mb-4">
+                  <div className="mb-4 flex flex-wrap gap-2">
                     {community.event_types.map((type) => (
                       <span
                         key={type}
-                        className="px-2.5 py-1 rounded-full text-xs capitalize font-medium"
-                        style={{
-                          backgroundColor: 'hsl(var(--primary) / 0.15)',
-                          color: 'hsl(var(--primary))'
-                        }}
+                        className="rounded-full border border-[rgba(22,24,29,0.2)] px-2.5 py-1 text-xs font-medium capitalize text-[#5E687E]"
                       >
                         {type}
                       </span>
@@ -359,11 +349,7 @@ export function CommunityMap() {
                   <div className="flex gap-2">
                     <Link
                       href={`/communities/${community.slug}`}
-                      className="flex-1 text-center rounded-lg px-4 py-2.5 text-sm font-semibold transition hover:opacity-90 cursor-pointer"
-                      style={{
-                        backgroundColor: 'hsl(var(--primary))',
-                        color: 'hsl(var(--primary-foreground))'
-                      }}
+                      className="panels-anim flex-1 cursor-pointer rounded-xl border border-[#16181D] bg-[#16181D] px-4 py-2.5 text-center text-sm font-semibold text-[#F6F7F9]! hover:border-[#07090D] hover:bg-[#07090D]"
                     >
                       View Details
                     </Link>
@@ -372,11 +358,7 @@ export function CommunityMap() {
                         href={community.meetup_url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex-shrink-0 rounded-lg px-3 py-2.5 text-sm font-semibold transition hover:opacity-90"
-                        style={{
-                          backgroundColor: '#ED1C40',
-                          color: '#ffffff'
-                        }}
+                        className="panels-anim flex-shrink-0 rounded-xl bg-[#ED1C40] px-3 py-2.5 text-sm font-semibold text-white! hover:bg-[#C8173A]"
                         title={`Join on ${getCommunityHostLabel(community.meetup_url)}`}
                       >
                         <svg className="w-4 h-4" viewBox="0 0 512 512" fill="currentColor">
@@ -415,21 +397,6 @@ function getTierColorHex(tier?: string, status?: string): string {
   }
 }
 
-function getTierBadgeColor(tier: string): string {
-  switch (tier) {
-    case 'platinum':
-      return 'bg-gradient-to-r from-cyan-400 to-blue-400';
-    case 'gold':
-      return 'bg-gradient-to-r from-yellow-400 to-orange-400';
-    case 'silver':
-      return 'bg-gradient-to-r from-gray-300 to-gray-400';
-    case 'bronze':
-      return 'bg-gradient-to-r from-orange-300 to-orange-400';
-    default:
-      return 'bg-primary';
-  }
-}
-
 function getTierIcon(tier: string, status?: string): string {
   // Different icons for inactive/paused
   if (status === 'inactive') return '⏸';
@@ -457,7 +424,7 @@ function TierLegend({ tier }: { tier: string }) {
         className="w-3 h-3 rounded-full"
         style={{ backgroundColor: getTierColorHex(tier) }}
       />
-      <span className="text-xs text-foreground capitalize">{tier}</span>
+      <span className="text-xs capitalize text-[#5E687E]">{tier}</span>
     </div>
   );
 }
