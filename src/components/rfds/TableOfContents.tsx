@@ -339,20 +339,23 @@ export function TableOfContents({
             {open && (
               <motion.div
                 key="toc"
-                initial={{ opacity: 0, y: -4 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -4 }}
-                className="p-4"
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.2, ease: 'easeInOut' }}
+                className="overflow-hidden"
               >
-                <TOCInner
-                  title={title}
-                  headings={filtered}
-                  activeId={activeId}
-                  setQuery={setQuery}
-                  query={query}
-                  panels={panels}
-                  onItemClick={handleClick}
-                />
+                <div className="p-4">
+                  <TOCInner
+                    title={title}
+                    headings={filtered}
+                    activeId={activeId}
+                    setQuery={setQuery}
+                    query={query}
+                    panels={panels}
+                    onItemClick={handleClick}
+                  />
+                </div>
               </motion.div>
             )}
           </AnimatePresence>
