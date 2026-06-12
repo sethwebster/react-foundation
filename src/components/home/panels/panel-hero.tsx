@@ -12,9 +12,9 @@ export function PanelHero() {
 					Building the future of React, together.
 				</h1>
 				<p className="mt-4 max-w-[36rem] text-[17px] leading-[1.55] text-[rgba(22,24,29,0.7)]">
-					The React Foundation is a community-driven initiative dedicated to sustaining
-					and advancing the React ecosystem. Join thousands of contributors who code,
-					teach, organize, and support the tools millions of developers rely on.
+					The React Foundation funds the work that keeps React healthy: maintenance,
+					documentation, teaching, and the communities around it. Thousands of
+					contributors already pitch in. Join them.
 				</p>
 				<PanelActions>
 					<PanelButton href="#contribute" variant="ink">

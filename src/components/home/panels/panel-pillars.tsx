@@ -8,21 +8,21 @@ const PILLARS: ContentRow[] = [
 		icon: HandHeart,
 		title: "Fund Maintainers",
 		description:
-			"Direct financial support for the developers maintaining the libraries you depend on every day. Maintainers receive funding through multiple channels including code contributions, sponsorships, and community support.",
+			"Direct financial support for the developers who maintain the libraries you depend on every day.",
 		cta: { label: "See Impact", href: "/impact" },
 	},
 	{
 		icon: BookOpen,
 		title: "Education & Resources",
 		description:
-			"Supporting tutorials, documentation, workshops, and learning materials that help developers master React and its ecosystem.",
+			"Tutorials, documentation, workshops, and learning materials that help developers master React.",
 		cta: { label: "Learn More", href: "/impact" },
 	},
 	{
 		icon: Globe,
 		title: "Global Accessibility",
 		description:
-			"Ensuring React remains accessible and inclusive for developers worldwide, regardless of location, background, or resources.",
+			"React stays free and learnable for developers everywhere, regardless of location, background, or resources.",
 		cta: { label: "Our Commitment", href: "/impact" },
 	},
 ];
@@ -30,8 +30,8 @@ const PILLARS: ContentRow[] = [
 export function PanelPillars() {
 	return (
 		<Panel tone="cyan" id="pillars" labelledBy="pillars-title">
-			<PanelEyebrow id="pillars-title">Three Pillars of Impact</PanelEyebrow>
-			<PanelSub>Every contribution supports our three core initiatives</PanelSub>
+			<PanelEyebrow id="pillars-title">What we fund</PanelEyebrow>
+			<PanelSub>Every contribution lands in one of three programs.</PanelSub>
 			<RowList className="mt-6">
 				{PILLARS.map((pillar) => (
 					<Row key={pillar.title} href={pillar.cta.href} className="py-[26px]">

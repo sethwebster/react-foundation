@@ -8,28 +8,28 @@ const CONTRIBUTE_PATHWAYS: ContentRow[] = [
 		icon: Code,
 		title: "Contribute to Repos",
 		description:
-			"Submit code, RFCs, proposals, documentation, or bug reports to React and 54+ ecosystem libraries. Your contributions directly improve the tools millions of developers use.",
+			"Submit code, RFCs, documentation, or bug reports to React and 54+ ecosystem libraries.",
 		cta: { label: "Browse React Repos", href: "https://github.com/facebook/react" },
 	},
 	{
 		icon: CircleDollarSign,
 		title: "Support Financially",
 		description:
-			"Financial support is one way to help fund maintainers, educational resources, and accessibility initiatives. This includes store purchases, direct donations, and sponsorships.",
+			"Store purchases, donations, and sponsorships all go toward maintainers, education, and accessibility work.",
 		cta: { label: "Learn More", href: "/store" },
 	},
 	{
 		icon: Heart,
 		title: "Sponsor a Library",
 		description:
-			"Directly sponsor your favorite React ecosystem library. Choose from 54 libraries including Redux, TanStack Query, React Router, and more.",
+			"Put money behind a specific library. Choose from 54, including Redux, TanStack Query, and React Router.",
 		cta: { label: "Browse Libraries", href: "/impact#libraries" },
 	},
 	{
 		icon: UserPlus,
 		title: "Become a Member",
 		description:
-			"Join the React Foundation as an official member. Get voting rights on funding decisions, exclusive updates, and recognition in our community.",
+			"Members get a vote on funding decisions, updates before anyone else, and recognition in the community.",
 		cta: {
 			label: "Apply Now",
 			href: "https://enrollment.lfx.linuxfoundation.org/?project=react-foundation",
@@ -41,11 +41,10 @@ const CONTRIBUTE_PATHWAYS: ContentRow[] = [
 export function PanelContribute() {
 	return (
 		<Panel tone="paper" id="contribute" labelledBy="contribute-title">
-			<PanelEyebrow id="contribute-title">Become a Contributor</PanelEyebrow>
+			<PanelEyebrow id="contribute-title">Become a contributor</PanelEyebrow>
 			<PanelSub>
-				Join the movement to sustain and grow the React ecosystem. Contribute code,
-				organize communities, create educational content, or support financially —
-				every pathway helps build a stronger ecosystem.
+				Write code, give money, sponsor a library you depend on, or join as a member.
+				Every path funds the same work.
 			</PanelSub>
 			<RowList className="mt-4">
 				{CONTRIBUTE_PATHWAYS.map((pathway) => (
