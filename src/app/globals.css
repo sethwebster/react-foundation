@@ -466,6 +466,14 @@ a.inline-flex {
 	}
 }
 
+/*
+ * Reserve the scrollbar gutter on every page so the fixed header and centered
+ * content keep identical width and position whether or not the page scrolls.
+ */
+html {
+	scrollbar-gutter: stable;
+}
+
 /* Headings avoid one-word last lines; body text avoids orphans. */
 h1,
 h2,
