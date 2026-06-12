@@ -1,5 +1,5 @@
-import { Panel, PanelButton, PanelEyebrow, PanelSub, Row, RowArrow, RowList, RowRight } from "./panel";
-import type { MemberName } from "./types";
+import { Panel, PanelButton, PanelEyebrow, PanelSub, Row, RowArrow, RowList, RowRight } from "@/components/panels/panel";
+import type { MemberName } from "@/components/panels/types";
 
 const MEMBER_COLUMNS: MemberName[][] = [
 	["Meta", "Amazon", "Microsoft", "Huawei"],

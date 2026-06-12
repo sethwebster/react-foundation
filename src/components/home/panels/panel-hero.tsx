@@ -1,4 +1,4 @@
-import { OrbitMarks, Panel, PanelActions, PanelButton, PanelPlainLink } from "./panel";
+import { OrbitMarks, Panel, PanelActions, PanelButton, PanelPlainLink } from "@/components/panels/panel";
 
 export function PanelHero() {
 	return (

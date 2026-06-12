@@ -1,4 +1,4 @@
-import { Panel, PanelEyebrow } from "./panel";
+import { Panel, PanelEyebrow } from "@/components/panels/panel";
 
 export function PanelMission() {
 	return (

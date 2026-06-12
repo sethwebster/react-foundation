@@ -7,7 +7,7 @@ import { PanelMembers } from "@/components/home/panels/panel-members";
 import { PanelMetrics } from "@/components/home/panels/panel-metrics";
 import { PanelMission } from "@/components/home/panels/panel-mission";
 import { PanelPillars } from "@/components/home/panels/panel-pillars";
-import { PanelsFooter } from "@/components/home/panels/panels-footer";
+import { PanelsFooter } from "@/components/panels/panels-footer";
 
 export const metadata: Metadata = {
 	title: "React Foundation",

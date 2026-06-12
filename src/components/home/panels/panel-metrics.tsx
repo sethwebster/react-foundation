@@ -1,7 +1,7 @@
 import { Globe, Layers, ShieldCheck, Users } from "lucide-react";
 
-import { Panel, PanelEyebrow, Row, RowArrow, RowList, RowRight } from "./panel";
-import type { MetricRow } from "./types";
+import { Panel, PanelEyebrow, Row, RowArrow, RowList, RowRight } from "@/components/panels/panel";
+import type { MetricRow } from "@/components/panels/types";
 
 const METRICS: MetricRow[] = [
 	{ icon: Layers, label: "Ecosystem libraries", value: "54+", href: "/libraries" },

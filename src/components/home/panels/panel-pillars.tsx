@@ -1,7 +1,7 @@
 import { BookOpen, Globe, HandHeart } from "lucide-react";
 
-import { Panel, PanelEyebrow, PanelSub, Row, RowArrow, RowList, RowRight } from "./panel";
-import type { ContentRow } from "./types";
+import { Panel, PanelEyebrow, PanelSub, Row, RowArrow, RowList, RowRight } from "@/components/panels/panel";
+import type { ContentRow } from "@/components/panels/types";
 
 const PILLARS: ContentRow[] = [
 	{
