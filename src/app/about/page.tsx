@@ -232,7 +232,7 @@ export default function AboutPage() {
           </Panel>
         </main>
 
-        <RFDS.TableOfContents sections={sections} />
+        <RFDS.TableOfContents sections={sections} variant="panels" />
       </div>
 
       <PanelsFooter />
