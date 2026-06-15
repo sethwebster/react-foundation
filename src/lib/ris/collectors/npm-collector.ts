@@ -213,6 +213,7 @@ export class NPMCollector {
       'final-form/react-final-form': 'react-final-form',
       'testing-library/react-testing-library': '@testing-library/react',
       'testing-library/react-hooks-testing-library': '@testing-library/react-hooks',
+      'callstack/react-native-testing-library': '@testing-library/react-native',
       'vitest-dev/vitest': 'vitest',
       'microsoft/playwright': '@playwright/test',
       'radix-ui/primitives': '@radix-ui/react-primitive',

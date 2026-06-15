@@ -106,6 +106,7 @@ export const libraryIcons: Record<string, IconComponent | null> = {
   vitest: SiVitest,
   playwright: null, // No Simple Icon available
   "react-hooks-testing-library": null,
+  "react-native-testing-library": null,
 
   // UI/Component Libraries
   primitives: SiRadixui, // Radix UI Primitives
@@ -183,6 +184,7 @@ export const libraryDisplayNames: Record<string, string> = {
   vitest: "Vitest",
   playwright: "Playwright",
   "react-hooks-testing-library": "React Hooks Testing Library",
+  "react-native-testing-library": "React Native Testing Library",
   primitives: "Radix UI",
   headlessui: "Headless UI",
   "react-spectrum": "React Spectrum",
