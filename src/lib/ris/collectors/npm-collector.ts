@@ -187,6 +187,7 @@ export class NPMCollector {
       'pmndrs/jotai': 'jotai',
       'pmndrs/valtio': 'valtio',
       'pmndrs/react-spring': '@react-spring/web',
+      'pmndrs/react-three-fiber': '@react-three/fiber',
       'statelyai/xstate': 'xstate',
       'TanStack/query': '@tanstack/react-query',
       'TanStack/router': '@tanstack/react-router',
