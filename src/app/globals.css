@@ -163,15 +163,7 @@ html {
 
 body {
   min-height: 100vh;
-  background:
-    linear-gradient(
-      135deg,
-      hsl(var(--background)) 0%,
-      hsl(var(--primary) / 0.03) 50%,
-      hsl(var(--background)) 100%
-    );
-  background-size: 200% 200%;
-  animation: subtleGradientShift 20s ease-in-out infinite;
+  background: hsl(var(--background));
   color: hsl(var(--foreground));
   font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
@@ -184,20 +176,15 @@ button {
   cursor: pointer;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  body {
-    animation: none;
-    background: hsl(var(--background));
-  }
-}
 
 *, *::before, *::after {
   box-sizing: border-box;
 }
 
-/* Smooth theme transitions - only for theme-related properties on specific elements */
-/* DO NOT use * selector - breaks animations and performance */
-:where(button, a, input, select, textarea, [class*="bg-"], [class*="text-"], [class*="border-"]) {
+/* Smooth theme transitions - only for interactive elements */
+/* Avoid attribute wildcard selectors like [class*="bg-"] — they match hundreds of elements
+   and cause expensive style recalculations on every interaction */
+:where(button, a, input, select, textarea) {
   transition-property: background-color, color, border-color, box-shadow, fill, stroke;
   transition-duration: 0.3s;
   transition-timing-function: ease-in-out;

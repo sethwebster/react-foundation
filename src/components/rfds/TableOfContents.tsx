@@ -53,12 +53,11 @@ function useScrollSpy(ids: string[], rootMargin = '-40% 0px -55% 0px') {
         if (visible.length > 0) {
           setActiveId(visible[0].target.id);
         } else {
-          // Fallback: choose the one nearest to top
+          // Fallback: use boundingClientRect cached by the observer — avoids forced synchronous layout
           const above = entries
-            .map((e) => e.target)
-            .filter((el) => el.getBoundingClientRect().top <= 100)
-            .sort((a, b) => b.getBoundingClientRect().top - a.getBoundingClientRect().top);
-          if (above[0]) setActiveId(above[0].id);
+            .filter((e) => e.boundingClientRect.top <= 100)
+            .sort((a, b) => b.boundingClientRect.top - a.boundingClientRect.top);
+          if (above[0]) setActiveId(above[0].target.id);
         }
       },
       { rootMargin, threshold: [0, 0.25, 0.5, 0.75, 1] }
