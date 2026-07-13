@@ -60,14 +60,14 @@ export default function UpdatesPage() {
           No updates published yet. Check back soon.
         </p>
       ) : (
-        <section className="mt-12 space-y-6">
+        <section className="mt-12 space-y-5">
           {updates.map((update) => {
             const author = getAuthorBySlug(update.metadata.author);
             return (
               <Link
                 key={update.slug}
                 href={`/updates/${update.slug}`}
-                className="block rounded-3xl border border-border/60 bg-card p-8 transition-colors hover:border-border"
+                className="group block rounded-[2.5rem] border border-border/60 bg-card p-8 transition-colors hover:border-border sm:p-10"
               >
                 <time
                   dateTime={update.metadata.date}
@@ -77,22 +77,23 @@ export default function UpdatesPage() {
                     year: "numeric",
                     month: "long",
                     day: "numeric",
+                    timeZone: "UTC",
                   })}
                 </time>
-                <h2 className="mt-3 text-xl font-semibold text-foreground sm:text-2xl">
+                <h2 className="mt-4 text-2xl font-semibold tracking-tight text-foreground transition-colors group-hover:text-primary">
                   {update.metadata.title}
                 </h2>
-                <p className="mt-3 text-base leading-relaxed text-muted-foreground">
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                   {update.metadata.description}
                 </p>
-                <div className="mt-6 flex items-center gap-3">
+                <div className="mt-6 flex items-center gap-2.5">
                   {author?.avatar ? (
-                    <div className="relative h-8 w-8 shrink-0 overflow-hidden rounded-full border border-border">
+                    <div className="relative h-6 w-6 shrink-0 overflow-hidden rounded-full border border-border">
                       <Image
                         src={author.avatar}
                         alt={author.name}
                         fill
-                        sizes="32px"
+                        sizes="24px"
                         className="object-cover"
                       />
                     </div>
@@ -104,18 +105,16 @@ export default function UpdatesPage() {
               </Link>
             );
           })}
+
+          {/* Archive */}
+          <Link
+            href="/authors"
+            className="block rounded-[2.5rem] p-8 text-sm font-medium text-primary transition-colors hover:text-primary/80 sm:px-10"
+          >
+            View Archive →
+          </Link>
         </section>
       )}
-
-      {/* Archive */}
-      <div className="mt-10">
-        <Link
-          href="/authors"
-          className="text-sm font-medium text-primary transition-colors hover:text-primary/80"
-        >
-          View Archive →
-        </Link>
-      </div>
     </main>
   );
 }
