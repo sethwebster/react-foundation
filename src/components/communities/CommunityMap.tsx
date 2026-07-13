@@ -197,27 +197,18 @@ export function CommunityMap() {
     if (typeof window === 'undefined') return undefined;
 
     const color = getTierColorHex(tier, status);
-    const icon = getTierIcon(tier || 'none', status);
+    const dimmed = status === 'inactive' || status === 'paused';
 
-    // Create a custom SVG icon with tier color
+    // Clean teardrop pin with a white ring and solid tier-colored core.
     const svgIcon = `
-      <svg width="32" height="44" viewBox="0 0 32 44" xmlns="http://www.w3.org/2000/svg">
-        <!-- Drop shadow -->
-        <ellipse cx="16" cy="42" rx="8" ry="2" fill="rgba(0,0,0,0.2)"/>
-
-        <!-- Pin shape -->
-        <path d="M16 0C9.373 0 4 5.373 4 12c0 8 12 28 12 28s12-20 12-28c0-6.627-5.373-12-12-12z"
+      <svg width="30" height="40" viewBox="0 0 30 40" xmlns="http://www.w3.org/2000/svg" style="opacity:${dimmed ? 0.65 : 1}">
+        <ellipse cx="15" cy="38" rx="6" ry="1.8" fill="rgba(0,0,0,0.18)"/>
+        <path d="M15 1C8.096 1 2.5 6.596 2.5 13.5c0 8.5 12.5 24 12.5 24s12.5-15.5 12.5-24C27.5 6.596 21.904 1 15 1z"
               fill="${color}"
               stroke="#ffffff"
               stroke-width="2.5"
-              stroke-linecap="round"
               stroke-linejoin="round"/>
-
-        <!-- Inner circle -->
-        <circle cx="16" cy="12" r="7" fill="#ffffff" opacity="0.95"/>
-
-        <!-- Tier emoji -->
-        <text x="16" y="16" text-anchor="middle" font-size="10" fill="${color}">${icon}</text>
+        <circle cx="15" cy="13.5" r="4.5" fill="#ffffff"/>
       </svg>
     `;
 
@@ -225,22 +216,21 @@ export function CommunityMap() {
     return {
       html: svgIcon,
       className: 'custom-marker-icon',
-      iconSize: [32, 44] as [number, number],
-      iconAnchor: [16, 44] as [number, number],
-      popupAnchor: [0, -44] as [number, number],
+      iconSize: [30, 40] as [number, number],
+      iconAnchor: [15, 40] as [number, number],
+      popupAnchor: [0, -40] as [number, number],
     };
   };
 
   if (!isClient || isLoading || !L) {
     return (
-      <div className="w-full h-[600px] bg-gradient-to-br from-blue-100 to-green-100 dark:from-blue-900/20 dark:to-green-900/20 animate-pulse flex items-center justify-center rounded-lg border border-border">
+      <div className="flex h-[420px] w-full animate-pulse items-center justify-center bg-muted sm:h-[600px]">
         <div className="text-center">
-          <div className="text-6xl mb-4">🗺️</div>
-          <p className="text-lg font-medium text-foreground">
-            {isLoading ? 'Loading communities...' : !L ? 'Loading map library...' : 'Loading map...'}
+          <p className="text-sm font-medium text-foreground">
+            {isLoading ? 'Loading communities…' : !L ? 'Loading map library…' : 'Loading map…'}
           </p>
-          <p className="text-sm text-muted-foreground mt-2">
-            {isLoading ? `Fetching ${communities.length} communities` : 'Initializing Leaflet'}
+          <p className="mt-1 text-sm text-muted-foreground">
+            {isLoading ? `Fetching ${communities.length} communities` : 'Initializing map'}
           </p>
         </div>
       </div>
@@ -251,18 +241,11 @@ export function CommunityMap() {
     console.error('❌ Error loading communities:', error);
   }
 
-  console.log('🗺️ CommunityMap: Rendering map, isClient:', isClient);
-
   return (
-    <div className="relative w-full h-[600px] rounded-lg overflow-hidden border-2 border-primary/20 bg-blue-50 dark:bg-blue-950/20">
-      {/* Debug indicator */}
-      {/* <div className="absolute top-2 left-2 z-[999] bg-green-500 text-white px-3 py-1 rounded text-xs font-bold">
-        MAP CONTAINER VISIBLE
-      </div> */}
-
+    <div className="relative h-[420px] w-full overflow-hidden bg-muted sm:h-[600px]">
       {/* Map Legend */}
-      <div className="absolute top-4 right-4 z-10 bg-card/95 backdrop-blur-sm border border-border rounded-lg px-4 py-3 shadow-lg space-y-2">
-        <p className="text-xs font-semibold text-foreground mb-2">CoIS Tier</p>
+      <div className="absolute right-4 top-4 z-10 space-y-2 rounded-xl border border-border bg-card/95 px-4 py-3 shadow-lg backdrop-blur-sm">
+        <p className="mb-2 text-xs font-semibold text-foreground">CoIS Tier</p>
         <TierLegend tier="platinum" />
         <TierLegend tier="gold" />
         <TierLegend tier="silver" />
@@ -274,8 +257,8 @@ export function CommunityMap() {
         center={[20, 0]}
         zoom={2}
         scrollWheelZoom={true}
-        className="w-full h-full z-0"
-        style={{ height: '600px', width: '100%', zIndex: 0 }}
+        className="z-0 h-full w-full"
+        style={{ height: '100%', width: '100%', zIndex: 0 }}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -403,15 +386,15 @@ function getTierColorHex(tier?: string, status?: string): string {
 
   switch (tier) {
     case 'platinum':
-      return '#22d3ee'; // cyan-400
+      return '#0ea5e9'; // brand sky (primary)
     case 'gold':
-      return '#facc15'; // yellow-400
+      return '#f59e0b'; // amber-500
     case 'silver':
-      return '#9ca3af'; // gray-400
+      return '#94a3b8'; // slate-400
     case 'bronze':
-      return '#fb923c'; // orange-400
+      return '#b45309'; // amber-800 (bronze)
     default:
-      return '#3b82f6'; // blue-500 for active without tier
+      return '#64748b'; // slate-500 for active without tier
   }
 }
 

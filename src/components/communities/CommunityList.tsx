@@ -7,10 +7,30 @@
 
 import useSWR from 'swr';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useSearchParams } from 'next/navigation';
 import { getCommunityHostLabel } from '@/lib/community-host';
+import { ReactAtom } from '@/components/ui/react-atom';
 import { VerificationBadge } from './VerificationBadge';
 import type { Community } from '@/types/community';
+
+// Decorative cover gradients used when a community has no cover_image yet.
+// Keyed deterministically off the slug so each community keeps a stable look.
+const COVER_GRADIENTS = [
+  'from-primary to-primary/40',
+  'from-success to-success/40',
+  'from-warning to-warning/40',
+  'from-destructive to-destructive/40',
+  'from-primary/70 via-accent to-success/50',
+];
+
+function coverGradient(slug: string): string {
+  let hash = 0;
+  for (let i = 0; i < slug.length; i += 1) {
+    hash = (hash + slug.charCodeAt(i)) % COVER_GRADIENTS.length;
+  }
+  return COVER_GRADIENTS[hash];
+}
 
 // Fetcher for SWR
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
@@ -180,14 +200,32 @@ function CommunityCard({ community }: { community: Community }) {
     .toUpperCase();
 
   return (
-    <div className="flex flex-col gap-5 rounded-2xl border border-border/60 bg-card p-6 transition-colors hover:border-border sm:flex-row">
-      {/* Logo */}
-      <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl border border-border/60 bg-muted text-lg font-semibold text-muted-foreground">
-        {initials}
+    <div className="group flex flex-col overflow-hidden rounded-3xl border border-border/60 bg-card transition-colors hover:border-border sm:flex-row">
+      {/* Cover */}
+      <div className="relative h-44 w-full shrink-0 overflow-hidden bg-muted sm:h-auto sm:w-56 sm:self-stretch">
+        {community.cover_image ? (
+          <Image
+            src={community.cover_image}
+            alt={`${community.name} cover`}
+            fill
+            unoptimized
+            sizes="(min-width: 640px) 224px, 100vw"
+            className="object-cover"
+          />
+        ) : (
+          <div
+            className={`absolute inset-0 flex items-center justify-center bg-gradient-to-br ${coverGradient(community.slug)}`}
+          >
+            <ReactAtom className="h-12 w-12 text-white/30" strokeWidth={0.8} />
+            <span className="absolute left-4 top-4 text-lg font-semibold text-white/90">
+              {initials}
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Content */}
-      <div className="min-w-0 flex-1">
+      <div className="min-w-0 flex-1 p-6 sm:p-7">
         <div className="flex flex-wrap items-center gap-2">
           <h3 className="text-lg font-semibold text-foreground">{community.name}</h3>
           <VerificationBadge

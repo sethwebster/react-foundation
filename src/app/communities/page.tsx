@@ -18,14 +18,6 @@ export const metadata = {
     'Discover React meetups, conferences, and communities near you. Connect with React developers worldwide.',
 };
 
-// CoIS tiers as categorical brand indicators (mapped to semantic tokens).
-const TIERS: { label: string; dot: string }[] = [
-  { label: 'Platinum', dot: 'bg-primary' },
-  { label: 'Gold', dot: 'bg-warning' },
-  { label: 'Silver', dot: 'bg-muted-foreground' },
-  { label: 'Bronze', dot: 'bg-destructive' },
-];
-
 export default function CommunitiesPage() {
   return (
     <div className="relative min-h-screen bg-background pt-24">
@@ -56,22 +48,6 @@ export default function CommunitiesPage() {
             <Suspense fallback={<MapSkeleton />}>
               <CommunityMap />
             </Suspense>
-
-            {/* Tier legend */}
-            <div className="absolute right-4 top-4 z-[1000] rounded-xl border border-border/60 bg-background/90 p-3 backdrop-blur">
-              <p className="mb-2 text-xs font-semibold text-foreground">CoIS Tier</p>
-              <ul className="space-y-1.5">
-                {TIERS.map((tier) => (
-                  <li
-                    key={tier.label}
-                    className="flex items-center gap-2 text-xs text-muted-foreground"
-                  >
-                    <span className={`h-2 w-2 rounded-full ${tier.dot}`} />
-                    {tier.label}
-                  </li>
-                ))}
-              </ul>
-            </div>
           </div>
         </section>
 
@@ -123,7 +99,7 @@ function StatsSkeleton() {
 
 function MapSkeleton() {
   return (
-    <div className="flex h-[520px] items-center justify-center bg-muted">
+    <div className="flex h-[420px] items-center justify-center bg-muted sm:h-[600px]">
       <p className="text-sm text-muted-foreground">Loading map…</p>
     </div>
   );

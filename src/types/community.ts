@@ -28,6 +28,7 @@ export interface Community {
   linkedin_url?: string;
 
   // Details
+  cover_image?: string; // Optional cover/banner image URL for list + detail cards
   description: string;
   member_count: number;
   typical_attendance: number;
