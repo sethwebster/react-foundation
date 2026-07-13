@@ -45,9 +45,25 @@ Figma screenshots; styling aligns with the attached Expo design system.
 - [ ] Optional: full migration of global tokens to the Radix scale from the Expo spec
       (kept blast radius small by reusing existing neutral tokens + component styling).
 
-## Next steps (other pages from the screenshots, same neutral direction)
+## Completed — About / News / Communities (neutral redesign)
 
-- [ ] About (`/about`) — hero, Executive Director message, Our Mission cards, How it works,
-      Become a Contributor, "Ready to Make an Impact?" CTA.
-- [ ] Communities (`/communities`) — "Find Your React Community" hero + stats + map + list.
-- [ ] News/Updates (`/updates`) — "Latest news" + Follow/Subscribe + article cards.
+- [x] About (`/about`) — single-column neutral layout: hero, Executive Director message
+      (restyled `executive-message.tsx`), Our Mission (3 cards), How it works (4 numbered
+      steps), Governance (Board/TSC — kept so those sub-pages keep a nav entry), Become a
+      Contributor, "Ready to Make an Impact?" CTA. Dropped the ToC sidebar, the vibrant
+      gradient, and the standalone Ecosystem/Founding-members sections (represented elsewhere).
+- [x] News/Updates (`/updates`) — "Latest news" + Follow/Subscribe pills, neutral article
+      cards (date, title, description, author avatar), View Archive. Neutralized the shared
+      `updates/layout.tsx` gradient (also affects article detail pages).
+- [x] Communities (`/communities`) — neutral hero, inline stats, map in a rounded card with a
+      CoIS tier legend, "All communities" + "Start a community", horizontal filter bar
+      (Search/Status/Event type/Tier), restyled community cards. Preserved all SWR/URL-filter
+      logic; removed a stray `console.log`. Note: event-type filter is now single-select
+      (matches the mock's single dropdown) rather than the previous multi-select.
+
+## Notes / follow-ups for these pages
+
+- News mock showed 3 articles; the repo's `content/updates` currently has fewer — the card
+  layout is what changed, content is unchanged.
+- Community cards use an initials placeholder (no logo field on the `Community` type).
+- Map tiles + live community/stats data need network + Redis; verified layout with sample data.

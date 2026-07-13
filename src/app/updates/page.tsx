@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Pill } from "@/components/ui/pill";
-import { ScrollReveal } from "@/components/ui/scroll-reveal";
+import Image from "next/image";
 import { getAllUpdates } from "@/lib/updates";
 import { getAuthorBySlug } from "@/lib/authors";
 
@@ -12,58 +11,111 @@ export const metadata: Metadata = {
 
 export default function UpdatesPage() {
   const updates = getAllUpdates();
+
   return (
-    <main className="flex flex-col gap-20">
-      {/* Hero */}
-      <section className="space-y-8 pt-12">
-        <Pill>Latest News · Announcements · Community Updates</Pill>
-        <div>
-          <h1 className="text-5xl font-semibold leading-tight text-foreground sm:text-6xl">
-            Updates
-          </h1>
-          <p className="mt-8 max-w-2xl text-lg text-foreground/70">
-            Stay informed about the latest news, announcements, and initiatives from
-            the React Foundation.
-          </p>
+    <main className="pt-10 sm:pt-14">
+      {/* Header */}
+      <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+        <h1 className="text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
+          Latest news
+        </h1>
+        <div className="flex items-center gap-3">
+          <a
+            href="https://x.com/reactjs"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 rounded-full bg-muted px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted/70"
+          >
+            <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+            </svg>
+            Follow
+          </a>
+          <a
+            href="mailto:hello@react.foundation?subject=Subscribe%20to%20React%20Foundation%20updates"
+            className="inline-flex items-center gap-2 rounded-full bg-muted px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted/70"
+          >
+            <svg
+              className="h-4 w-4"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={1.75}
+              aria-hidden="true"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+              />
+            </svg>
+            Subscribe
+          </a>
         </div>
-      </section>
+      </div>
 
-      {/* Updates List */}
-      <ScrollReveal animation="fade-up">
-        <section className="space-y-8">
-          {updates.map((update, idx) => {
+      {/* News list */}
+      {updates.length === 0 ? (
+        <p className="mt-12 text-sm text-muted-foreground">
+          No updates published yet. Check back soon.
+        </p>
+      ) : (
+        <section className="mt-12 space-y-6">
+          {updates.map((update) => {
             const author = getAuthorBySlug(update.metadata.author);
-
             return (
-              <ScrollReveal key={update.slug} animation="fade-up" delay={idx * 100}>
-                <Link
-                  href={`/updates/${update.slug}`}
-                  className="block rounded-3xl border border-border/10 bg-muted/60 p-8 transition hover:border-border/20 hover:bg-muted/80"
+              <Link
+                key={update.slug}
+                href={`/updates/${update.slug}`}
+                className="block rounded-3xl border border-border/60 bg-card p-8 transition-colors hover:border-border"
+              >
+                <time
+                  dateTime={update.metadata.date}
+                  className="text-sm text-muted-foreground"
                 >
-                  <div className="flex items-center gap-4 text-xs text-foreground/50">
-                    <time dateTime={update.metadata.date}>
-                      {new Date(update.metadata.date).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                      })}
-                    </time>
-                    <span>·</span>
-                    <span>{author?.name || update.metadata.author}</span>
-                  </div>
-                  <h2 className="mt-4 text-2xl font-semibold text-foreground sm:text-3xl">
-                    {update.metadata.title}
-                  </h2>
-                  <p className="mt-4 text-base text-foreground/70">{update.metadata.description}</p>
-                  <div className="mt-6 text-sm text-cyan-400 transition hover:text-cyan-300">
-                    Read more →
-                  </div>
-                </Link>
-              </ScrollReveal>
+                  {new Date(update.metadata.date).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })}
+                </time>
+                <h2 className="mt-3 text-xl font-semibold text-foreground sm:text-2xl">
+                  {update.metadata.title}
+                </h2>
+                <p className="mt-3 text-base leading-relaxed text-muted-foreground">
+                  {update.metadata.description}
+                </p>
+                <div className="mt-6 flex items-center gap-3">
+                  {author?.avatar ? (
+                    <div className="relative h-8 w-8 shrink-0 overflow-hidden rounded-full border border-border">
+                      <Image
+                        src={author.avatar}
+                        alt={author.name}
+                        fill
+                        sizes="32px"
+                        className="object-cover"
+                      />
+                    </div>
+                  ) : null}
+                  <span className="text-sm font-medium text-foreground">
+                    {author?.name || update.metadata.author}
+                  </span>
+                </div>
+              </Link>
             );
           })}
         </section>
-      </ScrollReveal>
+      )}
+
+      {/* Archive */}
+      <div className="mt-10">
+        <Link
+          href="/authors"
+          className="text-sm font-medium text-primary transition-colors hover:text-primary/80"
+        >
+          View Archive →
+        </Link>
+      </div>
     </main>
   );
 }

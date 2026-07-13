@@ -6,10 +6,8 @@ export default function UpdatesLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen bg-background pt-24 text-muted-foreground">
-      <div className="absolute inset-x-0 top-[-6rem] -z-10 flex justify-center blur-3xl">
-        <div className="h-[24rem] w-[60rem] bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 opacity-30" />
-      </div>
+    <div className="relative min-h-screen bg-background pt-24">
+      <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[360px] bg-gradient-to-b from-muted/70 to-background" />
 
       <div className="mx-auto flex max-w-4xl flex-col px-6 pb-24 sm:px-8 lg:px-12">
         {children}
