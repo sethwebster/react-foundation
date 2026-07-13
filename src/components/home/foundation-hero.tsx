@@ -5,7 +5,7 @@ export function FoundationHero() {
   return (
     <section className="flex flex-col items-center pt-10 text-center sm:pt-16">
       <ReactAtom
-        className="mb-8 h-14 w-14 text-muted-foreground/40"
+        className="mb-6 h-20 w-20 text-foreground/20"
         strokeWidth={0.9}
       />
       <h1 className="max-w-3xl text-4xl font-semibold tracking-tight text-foreground sm:text-5xl lg:text-6xl">

@@ -79,43 +79,41 @@ export function BecomeContributor() {
   return (
     <section id="contribute" className="scroll-mt-32">
       <div className="text-center">
-        <h2 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+        <h2 className="text-3xl font-semibold tracking-tight text-foreground">
           Become a Contributor
         </h2>
-        <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground">
-          Contribute code, organize communities, create educational content, or
-          support financially — every pathway helps build a stronger ecosystem.
-        </p>
       </div>
 
-      <div className="mt-12 grid gap-6 sm:grid-cols-2">
+      <div className="mt-10 grid gap-5 sm:grid-cols-2">
         {CONTRIBUTORS.map((item) => (
           <div
             key={item.title}
-            className={`flex flex-col rounded-3xl p-8 ${
+            className={`flex flex-col justify-between gap-14 rounded-[2.5rem] p-10 ${
               item.highlighted
                 ? "bg-primary text-primary-foreground"
-                : "border border-border/60 bg-muted/50"
+                : "bg-muted/60"
             }`}
           >
-            <span className={item.iconAccent}>{item.icon}</span>
-            <h3
-              className={`mt-5 text-lg font-semibold ${
-                item.highlighted ? "text-primary-foreground" : "text-foreground"
-              }`}
-            >
-              {item.title}
-            </h3>
-            <p
-              className={`mt-3 flex-1 text-sm leading-relaxed ${
-                item.highlighted ? "text-primary-foreground/80" : "text-muted-foreground"
-              }`}
-            >
-              {item.description}
-            </p>
+            <div>
+              <span className={item.iconAccent}>{item.icon}</span>
+              <h3
+                className={`mt-4 text-base font-semibold tracking-tight ${
+                  item.highlighted ? "text-primary-foreground" : "text-foreground"
+                }`}
+              >
+                {item.title}
+              </h3>
+              <p
+                className={`mt-2 text-sm leading-relaxed ${
+                  item.highlighted ? "text-primary-foreground/80" : "text-muted-foreground"
+                }`}
+              >
+                {item.description}
+              </p>
+            </div>
             <Link
               href={item.action.href}
-              className={`mt-6 text-sm font-medium transition-colors ${
+              className={`text-sm font-medium transition-colors ${
                 item.highlighted
                   ? "text-primary-foreground hover:text-primary-foreground/80"
                   : "text-primary hover:text-primary/80"
