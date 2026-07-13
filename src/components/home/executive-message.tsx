@@ -2,12 +2,12 @@ import Image from "next/image";
 
 export function ExecutiveMessage() {
   return (
-    <section className="scroll-mt-32 rounded-[2rem] border border-border/60 bg-card p-8 sm:p-12">
-      <p className="text-sm font-semibold text-primary">
+    <section className="scroll-mt-32 rounded-[2.5rem] border border-border/60 bg-card p-8 shadow-[0_24px_44px_-12px_rgba(0,0,0,0.08)] sm:p-12 lg:px-20 lg:py-16">
+      <p className="text-base font-semibold text-primary">
         A Message from Our Executive Director
       </p>
 
-      <div className="mt-8 max-w-2xl space-y-5 text-base leading-relaxed text-muted-foreground">
+      <div className="mt-10 space-y-5 text-lg leading-relaxed text-foreground/80">
         <p>
           You know, every so often, something comes along in software that
           changes not just how we build — but why we build.
@@ -85,7 +85,7 @@ export function ExecutiveMessage() {
         </p>
       </div>
 
-      <div className="mt-10 flex max-w-2xl items-center gap-4 border-t border-border/60 pt-8">
+      <div className="mt-10 flex items-center gap-3">
         <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-full border border-border">
           <Image
             src="/seth-webster-headshot.jpeg"

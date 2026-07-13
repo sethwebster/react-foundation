@@ -97,21 +97,21 @@ export default function AboutPage() {
           {/* Mission */}
           <section className="scroll-mt-32">
             <div className="text-center">
-              <h2 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+              <h2 className="text-3xl font-semibold tracking-tight text-foreground">
                 Our Mission
               </h2>
-              <p className="mx-auto mt-4 max-w-2xl text-base leading-relaxed text-muted-foreground">
+              <p className="mx-auto mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground sm:text-xl">
                 The React Foundation exists to ensure the React ecosystem thrives
                 for generations to come. We provide direct financial support to
                 maintainers, fund educational initiatives, and ensure
                 accessibility for developers worldwide.
               </p>
             </div>
-            <div className="mt-12 grid gap-6 sm:grid-cols-3">
+            <div className="mt-14 grid gap-4 sm:grid-cols-3">
               {MISSION.map((item) => (
                 <div
                   key={item.title}
-                  className="rounded-3xl border border-border/60 bg-card p-6"
+                  className="flex flex-col gap-6 rounded-3xl border border-border/60 bg-card p-6 sm:min-h-[200px] sm:justify-between sm:gap-0"
                 >
                   <svg
                     className={`h-6 w-6 ${item.accent}`}
@@ -123,12 +123,14 @@ export default function AboutPage() {
                   >
                     <path strokeLinecap="round" strokeLinejoin="round" d={item.icon} />
                   </svg>
-                  <h3 className="mt-5 text-base font-semibold text-foreground">
-                    {item.title}
-                  </h3>
-                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                    {item.description}
-                  </p>
+                  <div>
+                    <h3 className="text-base font-semibold text-foreground">
+                      {item.title}
+                    </h3>
+                    <p className="mt-2 text-base leading-relaxed text-muted-foreground">
+                      {item.description}
+                    </p>
+                  </div>
                 </div>
               ))}
             </div>
@@ -136,20 +138,26 @@ export default function AboutPage() {
 
           {/* How it works */}
           <section className="scroll-mt-32">
-            <h2 className="text-center text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
+            <h2 className="text-center text-3xl font-semibold tracking-tight text-foreground">
               How it works
             </h2>
-            <ol className="mt-12 divide-y divide-border/60">
+            <ol className="mt-14 sm:pr-16">
               {STEPS.map((step, i) => (
-                <li key={step.title} className="flex gap-6 py-6 first:pt-0">
-                  <span className="pt-0.5 font-mono text-sm text-muted-foreground">
-                    {i + 1}
-                  </span>
-                  <div>
-                    <h3 className="text-lg font-semibold text-foreground">
+                <li key={step.title} className="flex gap-5 sm:gap-6">
+                  {/* Marker + connector */}
+                  <div className="flex flex-col items-center self-stretch">
+                    <span className="flex size-11 shrink-0 items-center justify-center rounded-full border border-border bg-card text-base font-semibold text-muted-foreground">
+                      {i + 1}
+                    </span>
+                    {i < STEPS.length - 1 && (
+                      <span aria-hidden className="w-px flex-1 bg-border" />
+                    )}
+                  </div>
+                  <div className="pb-10 pt-1.5">
+                    <h3 className="text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
                       {step.title}
                     </h3>
-                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                    <p className="mt-2 text-base leading-relaxed text-muted-foreground">
                       {step.description}
                     </p>
                   </div>
@@ -176,7 +184,7 @@ export default function AboutPage() {
                   href={body.href}
                   className="group rounded-3xl border border-border/60 bg-card p-8 transition-colors hover:border-primary/40"
                 >
-                  <p className="font-mono text-xs uppercase tracking-[0.15em] text-muted-foreground">
+                  <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
                     {body.eyebrow}
                   </p>
                   <h3 className="mt-3 text-lg font-semibold text-foreground">
