@@ -1,16 +1,30 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 
 import { Button } from "@/components/ui/button";
-import { RFDS } from "@/components/rfds";
+import { ReactAtom } from "@/components/ui/react-atom";
 import { MobileMenu } from "@/components/layout/mobile-menu";
 import { UserAvatar } from "@/components/ui/user-avatar";
 import { ThemeToggleWrapper } from "@/components/ui/theme-toggle-wrapper";
+
+type NavLink = { href: string; label: string };
+
+const FOUNDATION_LINKS: NavLink[] = [
+  { href: "/updates", label: "News" },
+  { href: "/about", label: "About" },
+  { href: "/impact", label: "Impact" },
+  { href: "/communities", label: "Communities" },
+];
+
+const STORE_LINKS: NavLink[] = [
+  { href: "/store#featured", label: "Collections" },
+  { href: "/store#drops", label: "Limited Drops" },
+  { href: "/impact", label: "Impact" },
+];
 
 export function Header() {
   const pathname = usePathname();
@@ -28,7 +42,7 @@ export function Header() {
       }
 
       try {
-        const response = await fetch('/api/admin/check');
+        const response = await fetch("/api/admin/check");
         if (response.ok) {
           const data = await response.json();
           setIsAdmin(data.isAdmin);
@@ -36,7 +50,7 @@ export function Header() {
           setIsAdmin(false);
         }
       } catch (error) {
-        console.error('Failed to check admin status:', error);
+        console.error("Failed to check admin status:", error);
         setIsAdmin(false);
       }
     };
@@ -44,76 +58,53 @@ export function Header() {
     checkAdminStatus();
   }, [session?.user?.email]);
 
-  return (
-    <header className="fixed left-0 right-0 top-0 z-50 bg-background/95 shadow-lg shadow-black/5 backdrop-blur-xl supports-[backdrop-filter]:bg-background/80">
-      <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4 sm:px-8 lg:px-12">
-        {/* Logo */}
-        <div className="flex items-center gap-3">
-          <div className="relative h-10 w-10 overflow-hidden">
-            <Link href="/">
-              <Image
-                src="/react-logo.svg"
-                alt="React Foundation logo"
-                fill
-                sizes="40px"
-                className="object-contain p-1.5"
-                priority
-              />
-            </Link>
-          </div>
-          <div>
-            <Link href="/">
-              <p className="text-sm uppercase tracking-[0.25em] text-muted-foreground">
-                React Foundation
-              </p>
-              <p className="text-base font-medium text-foreground">
-                {isStorePage ? "Official Store" : "Supporting the Ecosystem"}
-              </p>
-            </Link>
-          </div>
-        </div>
+  const links = isStorePage ? STORE_LINKS : FOUNDATION_LINKS;
 
-        {/* Desktop Navigation (hidden on mobile) */}
-        <div className={`hidden items-center gap-4 text-sm text-muted-foreground md:flex transition ${isComingSoonPage ? 'blur-sm pointer-events-none' : ''}`}>
-          <nav className="flex items-center gap-6">
-            {isStorePage ? (
-              // Store navigation
-              <>
-                <Link className="transition hover:text-foreground" href="/store#featured">
-                  Collections
-                </Link>
-                <Link className="transition hover:text-foreground" href="/store#drops">
-                  Limited Drops
-                </Link>
-                <Link className="transition hover:text-foreground" href="/impact">
-                  Impact
-                </Link>
-              </>
-            ) : (
-              // Foundation navigation
-              <>
-                <Link className="transition hover:text-foreground" href="/about">
-                  About
-                </Link>
-                <Link className="transition hover:text-foreground" href="/updates">
-                  Updates
-                </Link>
-                <Link className="transition hover:text-foreground" href="/impact">
-                  Impact
-                </Link>
-                <Link className="transition hover:text-foreground" href="/communities">
-                  Communities
-                </Link>
-                {isAdmin && (
-                  <Link
-                    className="transition hover:text-foreground text-destructive font-medium"
-                    href="/admin"
-                    title="Admin Panel"
-                  >
-                    ⚙️
-                  </Link>
-                )}
-              </>
+  const isActive = (href: string) => {
+    const base = href.split("#")[0];
+    if (!base || base === "/") return false;
+    return pathname === base || pathname?.startsWith(`${base}/`);
+  };
+
+  return (
+    <header className="fixed left-0 right-0 top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur-xl supports-[backdrop-filter]:bg-background/70">
+      <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4 sm:px-8 lg:px-12">
+        {/* Brand */}
+        <Link href="/" className="flex items-center gap-2.5">
+          <ReactAtom className="h-6 w-6 text-foreground" strokeWidth={1.1} />
+          <span className="text-base font-semibold tracking-tight text-foreground">
+            {isStorePage ? "The React Foundation Store" : "The React Foundation"}
+          </span>
+        </Link>
+
+        {/* Desktop Navigation */}
+        <div
+          className={`hidden items-center gap-8 md:flex ${
+            isComingSoonPage ? "pointer-events-none blur-sm" : ""
+          }`}
+        >
+          <nav className="flex items-center gap-8 text-sm">
+            {links.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className={`transition-colors hover:text-foreground ${
+                  isActive(link.href)
+                    ? "font-medium text-foreground"
+                    : "text-muted-foreground"
+                }`}
+              >
+                {link.label}
+              </Link>
+            ))}
+            {isAdmin && (
+              <Link
+                className="font-medium text-destructive transition-colors hover:text-destructive/80"
+                href="/admin"
+                title="Admin Panel"
+              >
+                Admin
+              </Link>
             )}
           </nav>
 
@@ -139,26 +130,30 @@ export function Header() {
             </Button>
           )}
 
-          {/* Theme Toggle */}
-          <ThemeToggleWrapper />
+          <div className="flex items-center gap-3">
+            <ThemeToggleWrapper />
 
-          {/* Profile Icon or Sign In */}
-          {session?.user ? (
-            <UserAvatar
-              user={session.user}
-              size={40}
-              href="/profile"
-              className="transition hover:border-primary/50 hover:shadow-lg hover:shadow-primary/20"
-            />
-          ) : (
-            <RFDS.ButtonLink href="/api/auth/signin" size="sm">
-              Sign in
-            </RFDS.ButtonLink>
-          )}
+            {session?.user ? (
+              <UserAvatar
+                user={session.user}
+                size={36}
+                href="/profile"
+                className="transition hover:border-primary/50"
+              />
+            ) : (
+              <Link
+                href="/api/auth/signin"
+                className="rounded-full border border-border bg-background px-4 py-1.5 text-sm font-medium text-foreground transition-colors hover:bg-muted focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+              >
+                Sign in
+              </Link>
+            )}
+          </div>
         </div>
 
-        {/* Mobile Menu (shows on mobile only) */}
+        {/* Mobile controls */}
         <div className="flex items-center gap-2 md:hidden">
+          <ThemeToggleWrapper />
           {isStorePage && (
             <Button variant="glass" size="sm" className="relative px-3" type="button">
               <svg

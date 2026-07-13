@@ -1,22 +1,23 @@
-import { ScrollReveal } from "@/components/ui/scroll-reveal";
+import { ButtonLink } from "@/components/ui/button";
 
 export function MissionStatement() {
   return (
-    <ScrollReveal animation="fade-up">
-      <section
-        id="mission"
-        className="scroll-mt-32 space-y-6 rounded-3xl border border-border/10 bg-muted/60 p-12"
-      >
-        <h2 className="text-3xl font-semibold text-foreground sm:text-4xl">
-          Our Mission
-        </h2>
-        <p className="max-w-3xl text-lg leading-relaxed text-foreground/70">
-          We exist to ensure the React ecosystem thrives for generations to come.
-          Through code contributions, community organizing, educational content creation,
-          and sustainable funding, we support maintainers, educators, and community
-          organizers who build the tools millions of developers rely on.
-        </p>
-      </section>
-    </ScrollReveal>
+    <section id="mission" className="scroll-mt-32">
+      <p className="font-mono text-xs uppercase tracking-[0.18em] text-primary">
+        Our Mission
+      </p>
+      <p className="mt-6 max-w-3xl text-2xl font-medium leading-snug tracking-tight text-foreground sm:text-3xl">
+        We exist to ensure the React ecosystem thrives for generations to come.
+        Through code contributions, community organizing, educational content
+        creation, and sustainable funding, we support maintainers, educators,
+        and community organizers who build the tools millions of developers rely
+        on.
+      </p>
+      <div className="mt-8">
+        <ButtonLink href="/about" variant="tertiary" size="md">
+          Learn more →
+        </ButtonLink>
+      </div>
+    </section>
   );
 }

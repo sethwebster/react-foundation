@@ -1,33 +1,27 @@
 import { ButtonLink } from "@/components/ui/button";
-import { Pill } from "@/components/ui/pill";
-import { HeroBadges } from "@/components/home/hero-badges";
+import { ReactAtom } from "@/components/ui/react-atom";
 
 export function FoundationHero() {
   return (
-    <section className="space-y-8 pt-12">
-      <Pill>Community-Driven · Transparent · Impactful</Pill>
-      <div>
-        <h1 className="text-5xl font-semibold leading-tight text-foreground sm:text-6xl lg:text-7xl">
-          Building the future of React, together.
-        </h1>
-        <p className="mt-8 max-w-2xl text-lg text-foreground/70">
-          The React Foundation is a community-driven initiative dedicated to sustaining
-          and advancing the React ecosystem. Join thousands of contributors who code,
-          teach, organize, and support the tools millions of developers rely on.
-        </p>
-      </div>
-      <div className="flex flex-wrap gap-4">
+    <section className="flex flex-col items-center pt-10 text-center sm:pt-16">
+      <ReactAtom
+        className="mb-8 h-14 w-14 text-muted-foreground/40"
+        strokeWidth={0.9}
+      />
+      <h1 className="max-w-3xl text-4xl font-semibold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
+        Building the future of React, together.
+      </h1>
+      <p className="mt-6 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
+        The React Foundation is a community-driven initiative dedicated to
+        sustaining and advancing the React ecosystem. Join thousands of
+        contributors who code, teach, organize, and support the tools millions
+        of developers rely on.
+      </p>
+      <div className="mt-9">
         <ButtonLink href="#contribute" variant="primary" size="lg">
-          Get Involved
-        </ButtonLink>
-        <ButtonLink href="/about" variant="secondary" size="lg">
-          Learn Our Story
-        </ButtonLink>
-        <ButtonLink href="/store" variant="tertiary" size="lg">
-          Shop to Support
+          Get involved
         </ButtonLink>
       </div>
-      <HeroBadges />
     </section>
   );
 }

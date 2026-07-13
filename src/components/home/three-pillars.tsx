@@ -1,115 +1,137 @@
-import { ButtonLink } from "@/components/ui/button";
-import { ScrollReveal } from "@/components/ui/scroll-reveal";
+import type { ReactNode } from "react";
+
+// Scattered "contributor" avatars for the Funding card. Filled dots use semantic
+// accent tints; the rest are empty seats — swap for real avatars when available.
+const FILLED = new Set([1, 4, 7, 10, 14, 17, 21, 24, 28, 31, 34]);
+const TINTS = [
+  "from-primary to-primary/60",
+  "from-success to-success/70",
+  "from-warning to-warning/70",
+];
+
+function AvatarGrid() {
+  return (
+    <div className="grid grid-cols-8 gap-2.5 sm:grid-cols-12">
+      {Array.from({ length: 36 }).map((_, i) =>
+        FILLED.has(i) ? (
+          <div
+            key={i}
+            className={`aspect-square rounded-full bg-gradient-to-br ${TINTS[i % TINTS.length]}`}
+          />
+        ) : (
+          <div
+            key={i}
+            className="aspect-square rounded-full border border-border/60 bg-muted"
+          />
+        ),
+      )}
+    </div>
+  );
+}
+
+function EducationMedia() {
+  return (
+    <div className="relative flex h-44 items-center justify-center overflow-hidden rounded-2xl border border-border/60 bg-gradient-to-br from-muted to-accent">
+      <svg
+        className="h-12 w-12 text-muted-foreground/50"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={1.5}
+        aria-hidden="true"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M12 14l9-5-9-5-9 5 9 5z M12 14l6.16-3.42A12 12 0 0112 21a12 12 0 01-6.16-10.42L12 14z"
+        />
+      </svg>
+    </div>
+  );
+}
+
+function AccessibilityMedia() {
+  return (
+    <div className="relative flex h-44 items-center justify-center overflow-hidden rounded-2xl border border-border/60 bg-gradient-to-br from-muted to-accent">
+      <svg
+        className="h-14 w-14 text-muted-foreground/50"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={1.5}
+        aria-hidden="true"
+      >
+        <circle cx="12" cy="4" r="1.6" fill="currentColor" stroke="none" />
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M4 8h16M12 8v5m0 0l-3.5 6M12 13l3.5 6"
+        />
+      </svg>
+    </div>
+  );
+}
+
+function PillarCard({
+  label,
+  accentClass,
+  description,
+  media,
+}: {
+  label: string;
+  accentClass: string;
+  description: string;
+  media: ReactNode;
+}) {
+  return (
+    <div className="flex flex-col gap-6 rounded-3xl border border-border/60 bg-card p-8">
+      <div className="space-y-4">
+        <p className={`font-mono text-xs uppercase tracking-[0.18em] ${accentClass}`}>
+          {label}
+        </p>
+        <p className="text-sm leading-relaxed text-muted-foreground">
+          {description}
+        </p>
+      </div>
+      {media}
+    </div>
+  );
+}
 
 export function ThreePillars() {
   return (
-    <ScrollReveal animation="scale">
-      <section
-        id="pillars"
-        className="scroll-mt-32 space-y-12 rounded-3xl border border-border/10 bg-muted/60 p-12"
-      >
-        <div className="text-center">
-          <h2 className="text-3xl font-semibold text-foreground sm:text-4xl">
-            Three Pillars of Impact
-          </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-base text-foreground/60">
-            Every contribution supports our three core initiatives
-          </p>
+    <section id="pillars" className="scroll-mt-32 space-y-6">
+      {/* Funding — full width */}
+      <div className="rounded-3xl border border-border/60 bg-card p-8 sm:p-10">
+        <p className="font-mono text-xs uppercase tracking-[0.18em] text-success">
+          Funding
+        </p>
+        <p className="mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground">
+          Direct financial support for the developers maintaining the libraries
+          you depend on every day. Maintainers receive funding through multiple
+          channels including code contributions, sponsorships, and community
+          support.
+        </p>
+        <div className="mt-8">
+          <AvatarGrid />
         </div>
+      </div>
 
-        <div className="grid gap-8 lg:grid-cols-3">
-          <div className="space-y-4 rounded-2xl border border-border/10 bg-background/[0.03] p-8">
-            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-emerald-400 to-cyan-500">
-              <svg
-                className="h-8 w-8 text-foreground"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-            </div>
-            <h3 className="text-xl font-semibold text-foreground">
-              Fund Maintainers
-            </h3>
-            <p className="text-sm leading-relaxed text-foreground/70">
-              Direct financial support for the developers maintaining the libraries
-              you depend on every day. Maintainers receive funding through multiple
-              channels including code contributions, sponsorships, and community support.
-            </p>
-            <div className="pt-4">
-              <ButtonLink href="/impact" variant="ghost" size="sm">
-                See Impact →
-              </ButtonLink>
-            </div>
-          </div>
-
-          <div className="space-y-4 rounded-2xl border border-border/10 bg-background/[0.03] p-8">
-            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-400 to-indigo-500">
-              <svg
-                className="h-8 w-8 text-foreground"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
-                />
-              </svg>
-            </div>
-            <h3 className="text-xl font-semibold text-foreground">
-              Education & Resources
-            </h3>
-            <p className="text-sm leading-relaxed text-foreground/70">
-              Supporting tutorials, documentation, workshops, and learning materials
-              that help developers master React and its ecosystem.
-            </p>
-            <div className="pt-4">
-              <ButtonLink href="/impact" variant="ghost" size="sm">
-                Learn More →
-              </ButtonLink>
-            </div>
-          </div>
-
-          <div className="space-y-4 rounded-2xl border border-border/10 bg-background/[0.03] p-8">
-            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-yellow-300 to-orange-500">
-              <svg
-                className="h-8 w-8 text-foreground"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-            </div>
-            <h3 className="text-xl font-semibold text-foreground">
-              Global Accessibility
-            </h3>
-            <p className="text-sm leading-relaxed text-foreground/70">
-              Ensuring React remains accessible and inclusive for developers worldwide,
-              regardless of location, background, or resources.
-            </p>
-            <div className="pt-4">
-              <ButtonLink href="/impact" variant="ghost" size="sm">
-                Our Commitment →
-              </ButtonLink>
-            </div>
-          </div>
-        </div>
-      </section>
-    </ScrollReveal>
+      {/* Education + Accessibility */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        <PillarCard
+          label="Education"
+          accentClass="text-warning"
+          description="Supporting tutorials, documentation, workshops, and learning materials that help developers master React and its ecosystem."
+          media={<EducationMedia />}
+        />
+        <PillarCard
+          label="Accessibility"
+          accentClass="text-primary"
+          description="Ensuring React remains accessible and inclusive for developers worldwide, regardless of location, background, or resources."
+          media={<AccessibilityMedia />}
+        />
+      </div>
+    </section>
   );
 }

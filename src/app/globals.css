@@ -93,6 +93,7 @@ html {
   --destructive-foreground: 0 0% 100%;
   --success: 142 71% 45%;           /* #10b981 emerald-500 */
   --success-foreground: 0 0% 100%;
+  --warning: 32 94% 44%;            /* #d97706 amber-600 - readable accent on light */
   --border: 214 32% 91%;            /* #e2e8f0 slate-200 */
   --input: 214 32% 91%;             /* #e2e8f0 */
   --ring: 199 89% 48%;              /* #0ea5e9 */
@@ -124,6 +125,7 @@ html {
   --destructive-foreground: 0 0% 100%;
   --success: 142 71% 45%;           /* #10b981 emerald-500 */
   --success-foreground: 0 0% 100%;
+  --warning: 36 96% 55%;            /* brighter amber for dark surfaces */
   --border: 215 25% 27%;            /* #334155 slate-700 - subtle border */
   --input: 215 25% 27%;
   --ring: 199 89% 48%;
@@ -156,6 +158,7 @@ html {
   --color-destructive-foreground: hsl(var(--destructive-foreground));
   --color-success: hsl(var(--success));
   --color-success-foreground: hsl(var(--success-foreground));
+  --color-warning: hsl(var(--warning));
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
