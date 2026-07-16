@@ -49,7 +49,8 @@ export function ExecutiveMessage() {
 
           <p>
             We&apos;re doing that by working hand-in-hand with incredible partners —
-            Meta, Microsoft, Amazon, Vercel, Expo, Callstack, Software Mansion, and many
+            Meta, Microsoft, Amazon, Vercel, Expo, Callstack, Software Mansion, Huawei, and
+            many
             more — but more importantly, by working with you, the global community of
             developers who make React what it is.
           </p>
