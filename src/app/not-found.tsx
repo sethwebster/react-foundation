@@ -1,66 +1,30 @@
-import { RFDS } from "@/components/rfds";
-import { ReactLogo3D } from "@/components/ui/react-logo-3d";
-import { Starfield } from "@/components/ui/starfield";
+import {
+  PageIntro,
+  PublicPageShell,
+  Section,
+} from "@/components/public-site/layout";
+import { ButtonLink } from "@/components/ui/button";
 
 export default function NotFound() {
   return (
-    <main className="relative h-screen overflow-hidden">
-      <BackgroundGlow />
-
-      {/* Three.js Starfield */}
-      <div className="pointer-events-none absolute inset-0 z-0">
-        <Starfield />
-      </div>
-
-      {/* Full screen 3D React Logo */}
-      <div className="fixed inset-0 z-0">
-        <ReactLogo3D />
-      </div>
-
-      {/* Typography and Navigation - Overlay on top, positioned below header */}
-      <div className="fixed z-10 flex items-center justify-center px-6 text-center" style={{ bottom: '6rem', left: '0', right: '0' }}>
-        <div className="max-w-2xl space-y-8">
-          {/* Main message */}
-          <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl">
-            This page drifted off the{" "}
-            <span className="bg-gradient-to-r from-cyan-400 via-yellow-300 to-orange-400 bg-clip-text text-transparent">
-              React Fiber
-            </span>
-          </h1>
-
-          {/* Navigation buttons */}
-          <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
-            <RFDS.ButtonLink
-              href="/"
-              variant="primary"
-              size="lg"
-              className="min-w-[200px]"
-            >
-              Return to Earth
-            </RFDS.ButtonLink>
-            <RFDS.ButtonLink
-              href="/store/collections"
-              variant="glass"
-              size="lg"
-              className="min-w-[200px] !text-white"
-            >
-              Explore Collections
-            </RFDS.ButtonLink>
-          </div>
-        </div>
-      </div>
-    </main>
+    <PublicPageShell>
+      <main>
+        <Section className="py-20 sm:py-28">
+          <PageIntro
+            eyebrow="404"
+            title="Page not found"
+            description="The address may be incorrect, or the page may have moved."
+            actions={
+              <>
+                <ButtonLink href="/">Go home</ButtonLink>
+                <ButtonLink href="/updates" variant="secondary">
+                  Read updates
+                </ButtonLink>
+              </>
+            }
+          />
+        </Section>
+      </main>
+    </PublicPageShell>
   );
 }
-
-function BackgroundGlow() {
-  return (
-    <div aria-hidden className="pointer-events-none fixed inset-0 z-0 bg-slate-950">
-      {/* Warm gradient overlays */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(239,68,68,0.08),_transparent_55%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_35%,_rgba(251,146,60,0.15),_transparent_50%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_85%_20%,_rgba(236,72,153,0.12),_transparent_45%)]" />
-    </div>
-  );
-}
-

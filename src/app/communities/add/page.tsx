@@ -1,44 +1,43 @@
-/**
- * Add Community Page (Full Page Version)
- * Accessed directly via /communities/add
- */
+import type { Metadata } from "next";
+import Link from "next/link";
 
-import { AddCommunityForm } from '@/components/communities/AddCommunityForm';
+import { AddCommunityForm } from "@/components/communities/AddCommunityForm";
+import {
+  PageIntro,
+  PublicPageShell,
+  Section,
+  Surface,
+} from "@/components/public-site/layout";
 
-export const metadata = {
-  title: 'Add Your Community | React Foundation',
-  description: 'Submit your React community to be added to our global map.',
+export const metadata: Metadata = {
+  title: "Add Your Community",
+  description: "Submit a React community for the public directory.",
 };
 
 export default function AddCommunityPage() {
   return (
-    <div className="min-h-screen bg-background pt-20 pb-12">
-      <div className="container mx-auto px-4 md:px-6 max-w-3xl">
-        {/* Breadcrumb */}
-        <nav className="mb-6">
-          <a
+    <PublicPageShell>
+      <main>
+        <Section className="pt-12 sm:pt-16" measure="standard">
+          <Link
             href="/communities"
-            className="text-sm text-muted-foreground hover:text-primary transition"
+            className="text-sm text-muted-foreground transition hover:text-foreground"
           >
-            ← Back to communities
-          </a>
-        </nav>
-
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-3">
-            Add Your Community
-          </h1>
-          <p className="text-lg text-muted-foreground">
-            Help grow the global React community map by adding your local meetup, conference, or study group.
-          </p>
-        </div>
-
-        {/* Form */}
-        <div className="bg-card border border-border rounded-xl p-6 md:p-8">
-          <AddCommunityForm fullPage />
-        </div>
-      </div>
-    </div>
+            <span aria-hidden>←</span> Back to communities
+          </Link>
+        </Section>
+        <Section className="pt-10" measure="standard">
+          <PageIntro
+            align="left"
+            eyebrow="Community directory"
+            title="Add your community"
+            description="Submit a meetup, conference, or study group for review before it appears in the public directory."
+          />
+          <Surface className="mt-10 p-6 sm:p-8">
+            <AddCommunityForm fullPage />
+          </Surface>
+        </Section>
+      </main>
+    </PublicPageShell>
   );
 }

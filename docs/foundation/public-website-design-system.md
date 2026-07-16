@@ -185,3 +185,45 @@ No new button, navigation, form, modal, animation, or card primitive is needed.
 - Do not lazy-load the Home hero’s visible images.
 - Give all media explicit dimensions or aspect ratios to avoid layout shift.
 - Preserve keyboard order and accessible labels while changing visual layout.
+
+## Implementation notes
+
+These notes record the decisions made while extending the five reference frames
+across public routes that do not have dedicated Figma artboards.
+
+### Public content boundary
+
+- Do not use fictional people, placeholder biographies, sample allocations, or
+  projected impact totals to fill an unfinished program.
+- Describe a program's current status, remit, and publication criteria until
+  authoritative data is available.
+- Keep internal configuration instructions, API routes, credentials, and data
+  collection operations out of public pages.
+- Store previews must say when checkout is unavailable. Do not show a cart,
+  waitlist, rating, stock promise, or impact claim that is not backed by a live
+  service.
+- Draft updates remain excluded from the public index and direct public routes.
+
+### Extending the visual language
+
+- Routes without a dedicated frame should reuse the same editorial sequence:
+  `PageIntro`, one status or summary `Surface`, then a divided list or simple
+  two-column section.
+- Empty and error states use the shared page shell and direct language. They do
+  not use 3D logos, starfields, confetti, cosmic metaphors, or full-screen
+  gradient effects.
+- Product photography may fall back to a shipped local placeholder. Broken
+  image states and repeated missing thumbnails are never acceptable previews.
+- Maps may use their own internal stacking context, but the fixed header stays
+  above map controls and markers. Navigation drawers and route modals stay
+  above the header.
+
+### Accessibility decisions
+
+- Header controls use a minimum 44px target on mobile.
+- Authentication actions are consistently named “Sign in” and link to the
+  public sign-in route.
+- Button-link foreground colors come from the paired semantic token. Global
+  anchor rules must not override `text-primary-foreground`.
+- Manual line breaks in headings must preserve a spaced accessible name.
+- Public routes must not create horizontal overflow at a 320px viewport.

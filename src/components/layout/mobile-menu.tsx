@@ -49,8 +49,8 @@ export function MobileMenu({ session }: MobileMenuProps) {
 
   const navigationLinks = isStorePage
     ? [
-        { href: "/store#featured", label: "Collections" },
-        { href: "/store#drops", label: "Limited Drops" },
+        { href: "/store/collections", label: "Collections" },
+        { href: "/about", label: "About" },
         { href: "/impact", label: "Impact" },
       ]
     : [

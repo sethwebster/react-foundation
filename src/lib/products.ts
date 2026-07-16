@@ -21,8 +21,23 @@ const CENTER_FALLBACK: ProductImage["centerOffset"] = {
   y: "50%",
 };
 
+const PRODUCT_PLACEHOLDERS: Record<string, string> = {
+  "fiber-shell": "/placeholders/drop-fiber.png",
+  "arguing-online-mug": "/placeholders/drop-tumbler.png",
+  "archive-tee-01": "/placeholders/drop-tee-01.png",
+  "archive-tee-02": "/placeholders/drop-tee-02.png",
+  "archive-tee-03": "/placeholders/drop-tee-03.png",
+  "archive-tee-04": "/placeholders/drop-tee-04.png",
+  "maintainer-hoodie-2024": "/placeholders/drop-hoodie.png",
+  "foundation-espresso-tumbler": "/placeholders/drop-tumbler.png",
+};
+
 export const products: Product[] = productData.products.map((product) => {
-  const images: ProductImage[] = product.images.map((image) => ({
+  const placeholder = PRODUCT_PLACEHOLDERS[product.slug];
+  const sourceImages = placeholder
+    ? [{ ...product.images[0], src: placeholder }]
+    : product.images;
+  const images: ProductImage[] = sourceImages.map((image) => ({
     ...image,
     centerOffset: image.centerOffset ?? CENTER_FALLBACK,
   }));

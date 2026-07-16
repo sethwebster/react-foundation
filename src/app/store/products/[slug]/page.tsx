@@ -1,244 +1,119 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import { ButtonLink } from "@/components/ui/button";
-import { ProductCard } from "@/components/ui/product-card";
-import { ProductGallery } from "@/components/ui/product-gallery";
-import { Rating } from "@/components/ui/rating";
 import {
-  getProductBySlug,
-  getRelatedProducts,
-  getInventorySummary,
-} from "@/lib/products-shopify";
+  PublicPageShell,
+  Section,
+  Surface,
+} from "@/components/public-site/layout";
+import { ProductGallery } from "@/components/ui/product-gallery";
+import { getInventorySummary, getProductBySlug } from "@/lib/products-shopify";
 
 type ProductPageProps = {
-  params: Promise<{
-    slug: string;
-  }>;
+  params: Promise<{ slug: string }>;
 };
-
-// Note: generateStaticParams removed - products are fetched dynamically from Shopify
-// For static generation at build time, you'd need to fetch all products from Shopify
 
 export async function generateMetadata({
   params,
 }: ProductPageProps): Promise<Metadata> {
-  const { slug } = await params;
-  const product = await getProductBySlug(slug);
-
-  if (!product) {
-    return {
-      title: "Store - Product not found",
-      description: "We couldn't find that React Foundation product.",
-    };
-  }
-
-  return {
-    title: `Store - ${product.name}`,
-    description: product.description,
-    openGraph: {
-      title: product.name,
-      description: product.description,
-      images: product.images.slice(0, 4).map((image) => ({
-        url: image.src,
-        alt: image.alt,
-      })),
-    },
-    twitter: {
-      title: product.name,
-      description: product.description,
-      images: product.images.slice(0, 1).map((image) => image.src),
-    },
-  };
+  const product = await getProductBySlug((await params).slug);
+  return product
+    ? { title: product.name, description: product.description }
+    : { title: "Product not found" };
 }
 
 export default async function ProductPage({ params }: ProductPageProps) {
-  const { slug } = await params;
-  const product = await getProductBySlug(slug);
+  const product = await getProductBySlug((await params).slug);
+  if (!product) notFound();
 
-  if (!product) {
-    notFound();
-  }
-
-  const inventorySummary = getInventorySummary(product);
-  const relatedProducts = await getRelatedProducts(product.slug);
+  const inventory = getInventorySummary(product);
 
   return (
-    <div className="relative min-h-screen bg-background pt-24 text-muted-foreground">
-      <div
-        className={`pointer-events-none absolute inset-0 blur-3xl`}
-        aria-hidden
-      >
-        <div
-          className={`absolute inset-0 bg-gradient-to-br ${product.accent} opacity-25`}
-        />
-      </div>
-      <div className="relative mx-auto max-w-6xl px-6 pb-24 sm:px-8 lg:px-12">
-        <nav className="flex items-center justify-between text-sm text-foreground/60">
-          <ButtonLink
-            href="/store#drops"
-            variant="secondary"
-            size="xs"
-            className="px-3"
+    <PublicPageShell>
+      <main>
+        <Section className="pt-12 sm:pt-16" measure="standard">
+          <Link
+            href="/store/collections"
+            className="text-sm text-muted-foreground transition hover:text-foreground"
           >
-            <span aria-hidden>←</span> Back to store
-          </ButtonLink>
-          <span className="uppercase tracking-[0.3em] text-foreground/40">
-            {product.releaseWindow}
-          </span>
-        </nav>
+            <span aria-hidden>←</span> Store collections
+          </Link>
+        </Section>
 
-        <div className="mt-12 grid gap-12 lg:grid-cols-[minmax(0,1fr)_360px]">
-          <div className="space-y-10">
-            <div className="rounded-3xl border border-border/10 bg-muted/70 p-4 sm:p-8">
-              <ProductGallery
-                images={product.images}
-                className="mx-auto max-w-[520px]"
-              />
-              <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
-                <div>
-                  <div className="space-y-1">
-                    <p className="text-[11px] uppercase tracking-[0.35em] text-foreground/70">
-                      {inventorySummary.availabilityLabel}
-                    </p>
-                    <p className="text-xs text-foreground/60">{inventorySummary.inventoryLabel}</p>
-                  </div>
-                  <h1 className="mt-2 text-4xl font-semibold text-foreground sm:text-5xl">
-                    {product.name}
-                  </h1>
-                  <p className="mt-3 text-base text-foreground/70">
-                    {product.tagline}
-                  </p>
-                  <Rating
-                    value={product.rating}
-                    count={product.ratingCount}
-                    size="md"
-                    className="mt-4"
-                  />
+        <Section className="pt-10" measure="standard">
+          <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_22rem]">
+            <Surface className="p-4 sm:p-7">
+              <ProductGallery images={product.images} />
+            </Surface>
+
+            <div>
+              <p className="text-sm font-semibold text-primary">Store preview</p>
+              <h1 className="mt-4 text-title font-semibold leading-tight text-foreground">
+                {product.name}
+              </h1>
+              <p className="mt-3 text-base text-muted-foreground">
+                {product.tagline}
+              </p>
+              <p className="mt-6 text-sm leading-6 text-muted-foreground">
+                {product.description}
+              </p>
+
+              <dl className="mt-8 divide-y divide-border border-y border-border">
+                <div className="flex justify-between gap-4 py-4 text-sm">
+                  <dt className="text-muted-foreground">Preview price</dt>
+                  <dd className="font-semibold text-foreground">{product.price}</dd>
                 </div>
-                <div className="rounded-full border border-border/15 bg-background/10 px-4 py-2 text-sm font-semibold text-foreground/80">
-                  {product.price}
+                <div className="flex justify-between gap-4 py-4 text-sm">
+                  <dt className="text-muted-foreground">Availability</dt>
+                  <dd className="text-right text-foreground">
+                    {inventory.availabilityLabel}
+                  </dd>
                 </div>
-              </div>
+              </dl>
+
+              <Surface className="mt-8 p-5 shadow-none">
+                <h2 className="text-base font-semibold text-foreground">
+                  Checkout is not currently available
+                </h2>
+                <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                  Product details may change before the store opens. No order or
+                  waitlist registration is created from this preview.
+                </p>
+              </Surface>
             </div>
+          </div>
+        </Section>
 
-            <section className="space-y-6 rounded-3xl border border-border/10 bg-muted/60 p-8">
-              <h2 className="text-xl font-semibold text-foreground">
-                Built for the React community
-              </h2>
-              <p className="text-sm text-foreground/70">{product.description}</p>
-              <div className="grid gap-4 sm:grid-cols-2">
+        <Section className="py-16" measure="standard">
+          <div className="grid gap-10 md:grid-cols-2">
+            <div>
+              <h2 className="text-xl font-semibold text-foreground">Features</h2>
+              <ul className="mt-5 divide-y divide-border border-y border-border">
                 {product.features.map((feature) => (
+                  <li key={feature} className="py-4 text-sm text-muted-foreground">
+                    {feature}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h2 className="text-xl font-semibold text-foreground">Details</h2>
+              <dl className="mt-5 divide-y divide-border border-y border-border">
+                {product.specs.map((spec) => (
                   <div
-                    key={feature}
-                    className="rounded-2xl border border-border/10 bg-background/[0.04] p-4"
+                    key={spec.label}
+                    className="grid grid-cols-[8rem_minmax(0,1fr)] gap-4 py-4 text-sm"
                   >
-                    <p className="text-sm text-foreground/80">{feature}</p>
+                    <dt className="text-muted-foreground">{spec.label}</dt>
+                    <dd className="text-foreground">{spec.value}</dd>
                   </div>
                 ))}
-              </div>
-            </section>
-
-            <section className="grid gap-6 rounded-3xl border border-border/10 bg-muted/60 p-8 sm:grid-cols-[minmax(0,1fr)_260px]">
-              <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-foreground">
-                  Why it matters
-                </h3>
-                <ul className="space-y-3 text-sm text-foreground/70">
-                  {product.highlights.map((highlight) => (
-                    <li
-                      key={highlight}
-                      className="flex gap-3 rounded-xl border border-border/10 bg-background/[0.03] p-4"
-                    >
-                      <span className="mt-1 h-1.5 w-1.5 rounded-full bg-success/50" />
-                      <span>{highlight}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <aside className="rounded-2xl border border-border/10 bg-background/[0.04] p-6 text-sm text-foreground/70">
-                <p className="font-semibold text-foreground/80">
-                  Impact guarantee
-                </p>
-                <p className="mt-3">
-                  The React Foundation publishes quarterly reports detailing how
-                  merch revenue supports maintainers, education, and accessibility
-                  initiatives. Every purchase is fully transparent.
-                </p>
-              </aside>
-            </section>
+              </dl>
+            </div>
           </div>
-
-          <aside className="space-y-8 rounded-3xl border border-border/10 bg-muted/70 p-8">
-            <div>
-              <p className="text-xs uppercase tracking-[0.3em] text-foreground/50">
-                Drop support tier
-              </p>
-              <p className="mt-4 text-sm text-foreground/70">
-                Secure your piece and we will notify you as soon as the checkout
-                experience is live.
-              </p>
-            </div>
-            <div className="space-y-3 text-sm text-foreground/70">
-              {product.specs.map((spec) => (
-                <div
-                  key={spec.label}
-                  className="rounded-2xl border border-border/10 bg-background/[0.04] p-4"
-                >
-                  <p className="text-xs uppercase tracking-[0.25em] text-foreground/40">
-                    {spec.label}
-                  </p>
-                  <p className="mt-2 text-sm text-foreground/80">{spec.value}</p>
-                </div>
-              ))}
-            </div>
-            <ButtonLink
-              href="/#drops"
-              className="w-full"
-            >
-              Join the waitlist
-            </ButtonLink>
-            <div className="rounded-2xl border border-border/10 bg-background/[0.03] p-4 text-xs text-foreground/50">
-              <p>
-                Need sizing help? Email{" "}
-                <a
-                  href="mailto:shop@react.foundation"
-                  className="text-indigo-200 hover:text-foreground"
-                >
-                  shop@react.foundation
-                </a>{" "}
-                for a tailored fit recommendation.
-              </p>
-            </div>
-          </aside>
-        </div>
-
-        {relatedProducts.length > 0 ? (
-          <section className="mt-16 space-y-6">
-            <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-semibold text-foreground">
-                More limited drops
-              </h2>
-              <ButtonLink
-                href="/store#drops"
-                variant="ghost"
-                size="sm"
-              >
-                View all drops →
-              </ButtonLink>
-            </div>
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {relatedProducts.map((related) => (
-                <ProductCard
-                  key={related.slug}
-                  product={related}
-                  href={`/store/products/${related.slug}`}
-                />
-              ))}
-            </div>
-          </section>
-        ) : null}
-      </div>
-    </div>
+        </Section>
+      </main>
+    </PublicPageShell>
   );
 }

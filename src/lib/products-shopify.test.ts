@@ -23,6 +23,9 @@ describe('public product reads without Shopify', () => {
     await expect(getProductBySlug('fiber-shell')).resolves.toMatchObject({
       slug: 'fiber-shell',
       collections: ['current-drop'],
+      primaryImage: {
+        src: '/placeholders/drop-fiber.png',
+      },
     });
   });
 

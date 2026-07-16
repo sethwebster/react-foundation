@@ -1,44 +1,52 @@
 import type { Metadata } from "next";
+
+import {
+  PageIntro,
+  PublicPageShell,
+  Section,
+  Surface,
+} from "@/components/public-site/layout";
 import { ButtonLink } from "@/components/ui/button";
-import { Footer } from "@/components/layout/footer";
 
 export const metadata: Metadata = {
-  title: "Store | Coming Soon",
-  description: "Our store is currently coming soon.",
+  title: "Store Preview",
+  description: "Status of the React Foundation store.",
 };
 
 export default function StorePage() {
   return (
-    <div className="min-h-screen bg-background pt-24 text-muted-foreground">
-      <div className="absolute inset-x-0 top-[-6rem] -z-10 flex justify-center blur-3xl">
-        <div className="h-[24rem] w-[60rem] bg-gradient-to-r from-cyan-500 via-yellow-300 to-orange-500 opacity-30" />
-      </div>
+    <PublicPageShell>
+      <main>
+        <Section className="pt-16 sm:pt-24">
+          <PageIntro
+            eyebrow="Store"
+            title="The foundation store is not open yet"
+            description="Checkout is not currently available. Product and collection routes remain visible as a preview while the commerce experience is prepared."
+            actions={
+              <>
+                <ButtonLink href="/store/collections" variant="secondary">
+                  Preview collections
+                </ButtonLink>
+                <ButtonLink href="/" variant="tertiary">
+                  Back to home
+                </ButtonLink>
+              </>
+            }
+          />
+        </Section>
 
-      <div className="mx-auto flex min-h-[60vh] max-w-3xl flex-col items-center justify-center px-6 py-24 text-center sm:px-8">
-        <div className="space-y-8">
-          <p className="text-sm font-semibold uppercase tracking-[0.25em] text-primary">
-            Store
-          </p>
-          <h1 className="text-4xl font-semibold text-foreground sm:text-5xl">
-            Coming Soon
-          </h1>
-          <p className="mx-auto max-w-xl text-lg text-foreground/75">
-            We&apos;re preparing a new store experience.
-            Until then, this page is a placeholder while we finalize product drops,
-            collections, and impact-based perks.
-          </p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <ButtonLink href="/" variant="secondary" size="lg">
-              Back to Home
-            </ButtonLink>
-            <ButtonLink href="/about" variant="tertiary" size="lg">
-              Learn About the Foundation
-            </ButtonLink>
-          </div>
-        </div>
-      </div>
-
-      <Footer />
-    </div>
+        <Section className="pt-12" measure="standard">
+          <Surface className="p-7 text-center sm:p-10">
+            <h2 className="text-xl font-semibold text-foreground">
+              No orders or waitlist registrations are being accepted
+            </h2>
+            <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">
+              Availability, pricing, fulfillment, and any relationship between store
+              revenue and foundation programs will be published before checkout opens.
+            </p>
+          </Surface>
+        </Section>
+      </main>
+    </PublicPageShell>
   );
 }

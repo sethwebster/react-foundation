@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 
-import { Button, ButtonLink } from "@/components/ui/button";
+import { ButtonLink } from "@/components/ui/button";
 import { MobileMenu } from "@/components/layout/mobile-menu";
 import { UserAvatar } from "@/components/ui/user-avatar";
 import { ThemeToggleWrapper } from "@/components/ui/theme-toggle-wrapper";
@@ -73,11 +73,11 @@ export function Header() {
             {isStorePage ? (
               // Store navigation
               <>
-                <Link className="transition hover:text-foreground" href="/store#featured">
+                <Link className="transition hover:text-foreground" href="/store/collections">
                   Collections
                 </Link>
-                <Link className="transition hover:text-foreground" href="/store#drops">
-                  Limited Drops
+                <Link className="transition hover:text-foreground" href="/about">
+                  About
                 </Link>
                 <Link className="transition hover:text-foreground" href="/impact">
                   Impact
@@ -111,28 +111,6 @@ export function Header() {
             )}
           </nav>
 
-          {/* Cart (store pages only) */}
-          {isStorePage && (
-            <Button variant="glass" size="sm" className="relative px-3" type="button">
-              <svg
-                className="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
-                />
-              </svg>
-              <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
-                0
-              </span>
-            </Button>
-          )}
-
           {/* Theme Toggle */}
           <ThemeToggleWrapper />
 
@@ -158,26 +136,6 @@ export function Header() {
 
         {/* Mobile Menu (shows on mobile only) */}
         <div className="flex items-center gap-1 md:hidden">
-          {isStorePage && (
-            <Button variant="glass" size="sm" className="relative px-3" type="button">
-              <svg
-                className="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
-                />
-              </svg>
-              <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
-                0
-              </span>
-            </Button>
-          )}
           <ThemeToggleWrapper />
           {!session?.user ? (
             <ButtonLink

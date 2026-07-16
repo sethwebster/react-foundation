@@ -1,16 +1,15 @@
-/**
- * Global Error Page
- * Inspired by 404 page with 3D React logo
- */
+"use client";
 
-'use client';
+import { useEffect } from "react";
 
-import { useEffect } from 'react';
-import Link from 'next/link';
-import { ReactLogo3D } from '@/components/ui/react-logo-3d';
-import { Starfield } from '@/components/ui/starfield';
+import {
+  PageIntro,
+  PublicPageShell,
+  Section,
+} from "@/components/public-site/layout";
+import { Button, ButtonLink } from "@/components/ui/button";
 
-export default function Error({
+export default function ErrorPage({
   error,
   reset,
 }: {
@@ -18,78 +17,41 @@ export default function Error({
   reset: () => void;
 }) {
   useEffect(() => {
-    console.error('Global error:', error);
+    console.error("Global error:", error);
   }, [error]);
 
   return (
-    <main className="relative h-screen overflow-hidden">
-      <BackgroundGlow />
-
-      {/* Three.js Starfield */}
-      <div className="pointer-events-none absolute inset-0 z-0">
-        <Starfield />
-      </div>
-
-      {/* Full screen 3D React Logo */}
-      <div className="fixed inset-0 z-0">
-        <ReactLogo3D />
-      </div>
-
-      {/* Error Message - Overlay */}
-      <div className="fixed z-10 flex items-center justify-center px-6 text-center" style={{ bottom: '6rem', left: '0', right: '0' }}>
-        <div className="max-w-2xl space-y-8">
-          {/* Error message */}
-          <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl">
-            Something tangled the{' '}
-            <span className="bg-gradient-to-r from-red-400 via-orange-400 to-pink-400 bg-clip-text text-transparent">
-              React Fiber
-            </span>
-          </h1>
-
-          <p className="text-lg text-gray-300">
-            Don&apos;t worry, it happens to the best of us. Let&apos;s get you back on track.
-          </p>
-
-          {process.env.NODE_ENV === 'development' && (
-            <details className="rounded-lg border border-destructive/30 bg-destructive/10 p-4 text-left">
-              <summary className="cursor-pointer font-mono text-sm text-red-300">
-                Error Details (Dev Only)
+    <PublicPageShell>
+      <main>
+        <Section className="py-20 sm:py-28">
+          <PageIntro
+            eyebrow="Something went wrong"
+            title="We could not load this page"
+            description="Try the request again. If the problem continues, return to the foundation home page."
+            actions={
+              <>
+                <Button type="button" onClick={reset}>
+                  Try again
+                </Button>
+                <ButtonLink href="/" variant="secondary">
+                  Go home
+                </ButtonLink>
+              </>
+            }
+          />
+          {process.env.NODE_ENV === "development" ? (
+            <details className="mx-auto mt-10 max-w-2xl rounded-card border border-border bg-muted p-5 text-sm">
+              <summary className="cursor-pointer font-semibold text-foreground">
+                Development error details
               </summary>
-              <pre className="mt-2 overflow-auto text-xs text-red-200">
+              <pre className="mt-4 overflow-auto whitespace-pre-wrap text-xs text-muted-foreground">
                 {error.message}
-                {error.digest && `\nDigest: ${error.digest}`}
+                {error.digest ? `\nDigest: ${error.digest}` : ""}
               </pre>
             </details>
-          )}
-
-          {/* Action buttons */}
-          <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
-            <button
-              onClick={reset}
-              className="min-w-[200px] rounded-lg bg-gradient-to-r from-cyan-500 to-blue-500 px-8 py-4 font-bold text-white shadow-lg transition hover:from-cyan-400 hover:to-blue-400"
-            >
-              Try Again
-            </button>
-            <Link
-              href="/"
-              className="min-w-[200px] rounded-lg border-2 border-white/20 bg-white/5 px-8 py-4 font-bold text-white backdrop-blur-sm transition hover:bg-white/10"
-            >
-              Return Home
-            </Link>
-          </div>
-        </div>
-      </div>
-    </main>
-  );
-}
-
-function BackgroundGlow() {
-  return (
-    <div aria-hidden className="pointer-events-none fixed inset-0 z-0 bg-slate-950">
-      {/* Subtle background gradients */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(239,68,68,0.08),_transparent_55%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_35%,_rgba(251,146,60,0.15),_transparent_50%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_85%_20%,_rgba(236,72,153,0.12),_transparent_45%)]" />
-    </div>
+          ) : null}
+        </Section>
+      </main>
+    </PublicPageShell>
   );
 }
