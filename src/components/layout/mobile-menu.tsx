@@ -54,8 +54,8 @@ export function MobileMenu({ session }: MobileMenuProps) {
         { href: "/impact", label: "Impact" },
       ]
     : [
+        { href: "/updates", label: "News" },
         { href: "/about", label: "About" },
-        { href: "/updates", label: "Updates" },
         { href: "/impact", label: "Impact" },
         { href: "/communities", label: "Communities" },
       ];
@@ -65,7 +65,7 @@ export function MobileMenu({ session }: MobileMenuProps) {
       {/* Menu Button */}
       <button
         onClick={toggleMenu}
-        className="flex h-10 w-10 items-center justify-center rounded-full transition hover:bg-muted"
+        className="flex h-9 w-9 items-center justify-center rounded-full bg-muted text-foreground transition hover:bg-secondary"
         aria-label={isOpen ? "Close menu" : "Open menu"}
         aria-expanded={isOpen}
       >
@@ -88,7 +88,7 @@ export function MobileMenu({ session }: MobileMenuProps) {
         ) : (
           // Hamburger icon
           <svg
-            className="h-6 w-6 text-foreground"
+            className="h-[1.125rem] w-[1.125rem] text-foreground"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -97,7 +97,7 @@ export function MobileMenu({ session }: MobileMenuProps) {
               strokeLinecap="round"
               strokeLinejoin="round"
               strokeWidth={2}
-              d={isOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"}
+              d={isOpen ? "M6 18L18 6M6 6l12 12" : "M5 7h14M5 12h14M5 17h14"}
             />
           </svg>
         )}
@@ -106,7 +106,7 @@ export function MobileMenu({ session }: MobileMenuProps) {
       {/* Overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-40 bg-background/50 backdrop-blur-sm"
+          className="fixed inset-0 z-40 bg-foreground/15 backdrop-blur-sm"
           onClick={closeMenu}
         />
       )}
@@ -114,26 +114,26 @@ export function MobileMenu({ session }: MobileMenuProps) {
       {/* Menu Panel - Only render on mobile, slide from right */}
       {isOpen && (
         <div
-          className="fixed right-0 top-0 z-50 min-h-screen w-80 max-w-[90vw] animate-in slide-in-from-right border-l border-border bg-background shadow-2xl md:hidden"
+          className="fixed right-0 top-0 z-50 min-h-screen w-80 max-w-[90vw] animate-in slide-in-from-right border-l border-border bg-background shadow-soft md:hidden"
         >
         <div className="flex flex-col bg-background">
           {/* Header */}
           <div className="flex items-center justify-between border-b border-border p-6 bg-background">
             <div className="flex items-center gap-3">
-              <div className="relative h-8 w-8 overflow-hidden rounded-full bg-muted ring-1 ring-border">
+              <div className="relative h-7 w-7 overflow-hidden">
                 <Image
                   src="/react-logo.svg"
                   alt="React Foundation"
                   fill
-                  className="object-contain p-1"
+                  className="object-contain brightness-0 dark:invert"
                 />
               </div>
-              <span className="text-sm font-semibold text-foreground">Menu</span>
+              <span className="text-sm font-semibold text-foreground">The React Foundation</span>
             </div>
             <button
               onClick={closeMenu}
               className="flex h-10 w-10 items-center justify-center rounded-full transition hover:bg-muted"
-              aria-label="Close menu"
+              aria-label="Close navigation"
             >
               <svg
                 className="h-6 w-6 text-muted-foreground"

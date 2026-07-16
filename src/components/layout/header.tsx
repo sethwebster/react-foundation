@@ -6,8 +6,7 @@ import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 
-import { Button } from "@/components/ui/button";
-import { RFDS } from "@/components/rfds";
+import { Button, ButtonLink } from "@/components/ui/button";
 import { MobileMenu } from "@/components/layout/mobile-menu";
 import { UserAvatar } from "@/components/ui/user-avatar";
 import { ThemeToggleWrapper } from "@/components/ui/theme-toggle-wrapper";
@@ -45,37 +44,32 @@ export function Header() {
   }, [session?.user?.email]);
 
   return (
-    <header className="fixed left-0 right-0 top-0 z-50 bg-background/95 shadow-lg shadow-black/5 backdrop-blur-xl supports-[backdrop-filter]:bg-background/80">
-      <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4 sm:px-8 lg:px-12">
+    <header className="fixed inset-x-0 top-0 z-50 h-[var(--foundation-header-height)] border-b border-border/70 bg-background/92 backdrop-blur-xl supports-[backdrop-filter]:bg-background/82">
+      <div
+        className={`mx-auto flex h-full w-full items-center justify-between px-5 sm:px-6 ${
+          isStorePage ? "max-w-6xl" : "max-w-[48rem]"
+        }`}
+      >
         {/* Logo */}
-        <div className="flex items-center gap-3">
-          <div className="relative h-10 w-10 overflow-hidden">
-            <Link href="/">
+        <Link href="/" className="flex min-h-11 items-center gap-2.5">
+          <span className="relative h-6 w-6 shrink-0">
               <Image
                 src="/react-logo.svg"
                 alt="React Foundation logo"
                 fill
-                sizes="40px"
-                className="object-contain p-1.5"
+                sizes="24px"
+                className="object-contain brightness-0 dark:invert"
                 priority
               />
-            </Link>
-          </div>
-          <div>
-            <Link href="/">
-              <p className="text-sm uppercase tracking-[0.25em] text-muted-foreground">
-                React Foundation
-              </p>
-              <p className="text-base font-medium text-foreground">
-                {isStorePage ? "Official Store" : "Supporting the Ecosystem"}
-              </p>
-            </Link>
-          </div>
-        </div>
+          </span>
+          <span className="whitespace-nowrap text-[0.8125rem] font-semibold tracking-[-0.01em] text-foreground sm:text-sm">
+            {isStorePage ? "React Foundation Store" : "The React Foundation"}
+          </span>
+        </Link>
 
         {/* Desktop Navigation (hidden on mobile) */}
-        <div className={`hidden items-center gap-4 text-sm text-muted-foreground md:flex transition ${isComingSoonPage ? 'blur-sm pointer-events-none' : ''}`}>
-          <nav className="flex items-center gap-6">
+        <div className={`hidden items-center gap-2.5 text-[0.8125rem] text-muted-foreground md:flex transition ${isComingSoonPage ? 'blur-sm pointer-events-none' : ''}`}>
+          <nav className="flex items-center gap-5">
             {isStorePage ? (
               // Store navigation
               <>
@@ -92,11 +86,11 @@ export function Header() {
             ) : (
               // Foundation navigation
               <>
+                <Link className="transition hover:text-foreground" href="/updates">
+                  News
+                </Link>
                 <Link className="transition hover:text-foreground" href="/about">
                   About
-                </Link>
-                <Link className="transition hover:text-foreground" href="/updates">
-                  Updates
                 </Link>
                 <Link className="transition hover:text-foreground" href="/impact">
                   Impact
@@ -146,19 +140,24 @@ export function Header() {
           {session?.user ? (
             <UserAvatar
               user={session.user}
-              size={40}
+              size={34}
               href="/profile"
-              className="transition hover:border-primary/50 hover:shadow-lg hover:shadow-primary/20"
+              className="transition hover:border-primary/50"
             />
           ) : (
-            <RFDS.ButtonLink href="/api/auth/signin" size="sm">
-              Sign in
-            </RFDS.ButtonLink>
+            <ButtonLink
+              href="/api/auth/signin"
+              variant="tertiary"
+              size="xs"
+              className="min-h-8 border px-3.5 font-medium"
+            >
+              Signin
+            </ButtonLink>
           )}
         </div>
 
         {/* Mobile Menu (shows on mobile only) */}
-        <div className="flex items-center gap-2 md:hidden">
+        <div className="flex items-center gap-1 md:hidden">
           {isStorePage && (
             <Button variant="glass" size="sm" className="relative px-3" type="button">
               <svg
@@ -179,6 +178,17 @@ export function Header() {
               </span>
             </Button>
           )}
+          <ThemeToggleWrapper />
+          {!session?.user ? (
+            <ButtonLink
+              href="/api/auth/signin"
+              variant="tertiary"
+              size="xs"
+              className="min-h-8 border px-3 font-medium"
+            >
+              Signin
+            </ButtonLink>
+          ) : null}
           <MobileMenu session={session} />
         </div>
       </div>

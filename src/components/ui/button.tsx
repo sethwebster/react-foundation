@@ -11,26 +11,26 @@ type ButtonVariant = "primary" | "secondary" | "tertiary" | "glass" | "ghost" | 
 type ButtonSize = "xs" | "sm" | "md" | "lg";
 
 const baseClasses =
-  "inline-flex items-center justify-center gap-2 rounded-full font-semibold transition cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-60 [-webkit-font-smoothing:antialiased] [-moz-osx-font-smoothing:grayscale]";
+  "inline-flex min-h-11 items-center justify-center gap-2 rounded-full font-semibold transition cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-60 [-webkit-font-smoothing:antialiased] [-moz-osx-font-smoothing:grayscale]";
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary:
-    "bg-primary text-primary-foreground !text-white shadow-lg shadow-primary/20 hover:bg-primary/90 hover:shadow-xl hover:shadow-primary/30",
+    "bg-primary text-primary-foreground hover:bg-primary/88",
   secondary:
-    "border-2 border-primary/50 bg-primary/10 text-foreground hover:border-primary hover:bg-primary/20 hover:shadow-lg hover:shadow-primary/20",
+    "bg-secondary text-secondary-foreground hover:bg-secondary/75",
   tertiary:
-    "border-2 border-border bg-card text-foreground shadow-md hover:border-primary/50 hover:bg-muted hover:shadow-lg",
+    "border border-border bg-background text-foreground hover:border-border-strong hover:bg-muted",
   glass:
-    "border border-border/15 bg-background/10 text-foreground shadow-lg shadow-primary/10 backdrop-blur hover:border-border/25 hover:bg-background/15",
+    "border border-border/80 bg-background/75 text-foreground backdrop-blur hover:bg-muted",
   ghost: "text-muted-foreground hover:text-foreground",
   link: "text-primary underline-offset-4 hover:text-primary/80 hover:underline",
 };
 
 const sizeClasses: Record<ButtonSize, string> = {
-  xs: "px-3 py-1 text-xs",
+  xs: "min-h-8 px-3 py-1 text-xs",
   sm: "px-4 py-2 text-sm",
-  md: "px-6 py-3 text-sm",
-  lg: "px-8 py-4 text-base",
+  md: "px-5 py-2.5 text-sm",
+  lg: "px-6 py-3 text-base",
 };
 
 export function buttonVariants({

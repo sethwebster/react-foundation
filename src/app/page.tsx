@@ -1,11 +1,15 @@
 import type { Metadata } from "next";
-import { Footer } from "@/components/layout/footer";
-import { FoundationHero } from "@/components/home/foundation-hero";
-import { MissionStatement } from "@/components/home/mission-statement";
-import { ThreePillars } from "@/components/home/three-pillars";
-import { BecomeContributor } from "@/components/home/become-contributor";
-import { JoinMovementCTA } from "@/components/home/join-movement-cta";
+import Image from "next/image";
+
+import { ButtonLink } from "@/components/ui/button";
 import { FoundingMembers } from "@/components/home/founding-members";
+import { MemberPhotoRail } from "@/components/home/member-photo-rail";
+import {
+  HomeCommunityCTA,
+  HomeMission,
+  HomePillars,
+} from "@/components/home/home-sections";
+import { PublicPageShell, Section } from "@/components/public-site/layout";
 
 export const metadata: Metadata = {
   title: "React Foundation",
@@ -14,24 +18,46 @@ export const metadata: Metadata = {
 
 export default function FoundationHome() {
   return (
-    <div className="bg-background pt-24 text-muted-foreground">
-      {/* Background gradient */}
-      <div className="absolute inset-x-0 top-[-6rem] -z-10 flex justify-center overflow-hidden blur-3xl">
-        <div className="h-[24rem] w-full max-w-[60rem] bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 opacity-30" />
-      </div>
+    <PublicPageShell className="overflow-x-clip">
+      <main>
+        <Section className="pt-10 text-center sm:pt-20">
+          <div className="animate-page-appear">
+            <Image
+              src="/react-logo.svg"
+              alt=""
+              aria-hidden
+              width={76}
+              height={68}
+              priority
+              className="mx-auto h-auto w-[3.75rem] grayscale opacity-[0.18] dark:invert sm:w-[4.75rem]"
+            />
+            <h1 className="mx-auto mt-7 max-w-[36rem] text-[clamp(2.05rem,5vw,2.75rem)] font-semibold leading-[1.04] text-foreground">
+              Building the future of React, together.
+            </h1>
+            <p className="mx-auto mt-6 max-w-[32rem] text-[0.9375rem] leading-6 text-muted-foreground">
+              The React Foundation is a community-driven initiative dedicated to
+              sustaining and advancing the React ecosystem. Join thousands of
+              contributors who code, teach, organize, and support the tools millions of
+              developers rely on.
+            </p>
+            <div className="mt-8">
+              <ButtonLink href="/become-a-member" size="md">
+                Get involved
+              </ButtonLink>
+            </div>
+          </div>
+        </Section>
 
-      <div className="animate-page-appear mx-auto flex max-w-6xl flex-col px-6 pb-24 sm:px-8 lg:px-12">
-        <main className="flex flex-col gap-20">
-          <FoundationHero />
-          <MissionStatement />
-          <ThreePillars />
-          <BecomeContributor />
+        <MemberPhotoRail />
+
+        <Section className="pb-8 sm:pb-24" measure="standard">
           <FoundingMembers />
-          <JoinMovementCTA />
-        </main>
-      </div>
+        </Section>
 
-      <Footer />
-    </div>
+        <HomeMission />
+        <HomePillars />
+        <HomeCommunityCTA />
+      </main>
+    </PublicPageShell>
   );
 }

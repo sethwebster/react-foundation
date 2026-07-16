@@ -1,2 +1,50 @@
 /* Import Leaflet CSS */
 @import 'leaflet/dist/leaflet.css';
+
+.community-map .leaflet-container {
+  background: hsl(var(--map-water));
+  font-family: var(--font-geist-sans), sans-serif;
+}
+
+.community-map .leaflet-tile-pane {
+  filter: sepia(0.55) saturate(1.1) hue-rotate(145deg) brightness(0.98);
+}
+
+.community-map .leaflet-control-zoom {
+  border: 1px solid hsl(var(--border)) !important;
+  border-radius: 0.75rem !important;
+  box-shadow: var(--foundation-shadow-card) !important;
+  overflow: hidden;
+}
+
+.community-map .leaflet-control-zoom a {
+  border: 0 !important;
+  background: hsl(var(--background) / 0.94) !important;
+  color: hsl(var(--foreground)) !important;
+}
+
+.community-map .leaflet-control-attribution {
+  background: hsl(var(--background) / 0.78) !important;
+  color: hsl(var(--muted-foreground)) !important;
+  font-size: 8px;
+}
+
+.foundation-map-marker {
+  background: transparent !important;
+  border: 0 !important;
+}
+
+.foundation-map-marker span {
+  display: block;
+  width: 10px;
+  height: 10px;
+  margin: 2px;
+  border: 2px solid white;
+  border-radius: 999px;
+  box-shadow: 0 2px 7px rgb(35 39 47 / 0.3);
+  transition: transform 160ms ease;
+}
+
+.foundation-map-marker:hover span {
+  transform: scale(1.35);
+}

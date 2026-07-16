@@ -1,179 +1,108 @@
-/**
- * Community Finder Page
- * Find React meetups, conferences, and communities worldwide
- */
+import type { Metadata } from "next";
+import { Suspense } from "react";
 
-import { Suspense } from 'react';
-import { CommunityMap } from '@/components/communities/CommunityMap';
-import { CommunityFilters } from '@/components/communities/CommunityFilters';
-import { CommunityList } from '@/components/communities/CommunityList';
-import { CommunityStats } from '@/components/communities/CommunityStats';
-import { CommunitySortDropdown } from '@/components/communities/CommunitySortDropdown';
-import { AddCommunityCTA } from '@/components/communities/AddCommunityCTA';
-import './leaflet.css';
+import { AddCommunityCTA } from "@/components/communities/AddCommunityCTA";
+import { CommunityFilters } from "@/components/communities/CommunityFilters";
+import { CommunityList } from "@/components/communities/CommunityList";
+import { CommunityMap } from "@/components/communities/CommunityMap";
+import { CommunitySortDropdown } from "@/components/communities/CommunitySortDropdown";
+import { CommunityStats } from "@/components/communities/CommunityStats";
+import {
+  PageIntro,
+  PublicPageShell,
+  Section,
+} from "@/components/public-site/layout";
+import { REACT_COMMUNITIES } from "@/data/communities";
+import "./leaflet.css";
 
-export const metadata = {
-  title: 'Find a React Community | React Foundation',
-  description: 'Discover React meetups, conferences, and communities near you. Connect with React developers worldwide.',
+export const metadata: Metadata = {
+  title: "React Communities",
+  description:
+    "Discover React meetups, conferences, and communities around the world.",
+};
+
+const communityStats = {
+  communities: REACT_COMMUNITIES.length,
+  countries: new Set(REACT_COMMUNITIES.map((community) => community.country)).size,
+  members: REACT_COMMUNITIES.reduce(
+    (sum, community) => sum + community.member_count,
+    0,
+  ),
 };
 
 export default function CommunitiesPage() {
   return (
-    <div className="min-h-screen bg-background pt-16">
-      {/* Hero Section */}
-      <section className="bg-gradient-to-b from-primary/10 via-primary/5 to-background py-20 border-b border-border">
-        <div className="container mx-auto px-6">
-          <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-5xl md:text-6xl font-bold text-foreground mb-6">
-              Find Your React Community
-            </h1>
-            <p className="text-xl text-muted-foreground mb-10 leading-relaxed">
-              Connect with React developers through meetups, conferences, and
-              study groups around the world.
-            </p>
+    <PublicPageShell>
+      <main>
+        <Section className="pt-16 sm:pt-24">
+          <PageIntro
+            title={
+              <>
+                Find Your React
+                <br />
+                Community
+              </>
+            }
+            description="Connect with React developers through meetups, conferences, and study groups around the world."
+            descriptionClassName="!mt-4 max-w-[27rem] text-[0.9375rem] leading-6"
+          />
+        </Section>
 
-            <div className="flex flex-wrap gap-4 justify-center">
-              <a
-                href="#communities"
-                className="inline-block bg-primary text-primary-foreground px-8 py-4 rounded-lg font-semibold hover:bg-primary/90 transition text-lg"
-              >
-                🗺️ Explore Communities
-              </a>
-              <a
-                href="/communities/start"
-                className="inline-block bg-secondary text-secondary-foreground px-8 py-4 rounded-lg font-semibold hover:bg-secondary/90 transition text-lg"
-              >
-                🚀 Start a Community
-              </a>
+        <Section className="pt-4 sm:pt-6">
+          <CommunityStats {...communityStats} />
+        </Section>
+
+        <Section className="pt-4 sm:pt-6">
+          <div className="overflow-hidden rounded-panel border border-border bg-map-water/35 shadow-card">
+            <CommunityMap communities={REACT_COMMUNITIES} />
+          </div>
+          <div className="mt-5">
+            <AddCommunityCTA />
+          </div>
+        </Section>
+
+        <Section
+          id="communities"
+          className="scroll-mt-24 border-t border-border pt-20 sm:pt-24"
+          measure="standard"
+        >
+          <div className="mb-10 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="text-sm font-semibold text-primary">Community directory</p>
+              <h2 className="mt-3 text-3xl font-semibold text-foreground">
+                Find a community
+              </h2>
+            </div>
+            <CommunitySortDropdown />
+          </div>
+
+          <div className="grid gap-10 lg:grid-cols-[14rem_minmax(0,1fr)]">
+            <aside>
+              <Suspense fallback={<FiltersSkeleton />}>
+                <CommunityFilters />
+              </Suspense>
+            </aside>
+            <div>
+              <Suspense fallback={<ListSkeleton />}>
+                <CommunityList communities={REACT_COMMUNITIES} />
+              </Suspense>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* Stats Bar - Dynamic from Redis */}
-      <section className="bg-card border-b border-border py-12">
-        <div className="container mx-auto px-6">
-          <Suspense fallback={<StatsSkeleton />}>
-            <CommunityStats />
-          </Suspense>
-        </div>
-      </section>
-
-      {/* Map Section */}
-      <section id="map" className="bg-muted/30 border-b border-border py-12">
-        <div className="container mx-auto px-6">
-          <div className="mb-8 text-center">
-            <h2 className="text-3xl font-bold text-foreground mb-3">
-              Communities Worldwide
-            </h2>
-            <p className="text-muted-foreground">
-              Click any marker to learn more about a community
-            </p>
-          </div>
-
-          <div className="bg-card rounded-xl border border-border overflow-hidden shadow-lg">
-            <Suspense fallback={<MapSkeleton />}>
-              <CommunityMap />
-            </Suspense>
-          </div>
-
-          {/* Add Community CTA */}
-          <AddCommunityCTA />
-        </div>
-      </section>
-
-      {/* Main Content: Filters + List */}
-      <section id="communities" className="py-12">
-        <div className="container mx-auto px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-            {/* Filters Sidebar */}
-            <aside className="lg:col-span-1">
-              <div className="sticky top-24">
-                <Suspense fallback={<FiltersSkeleton />}>
-                  <CommunityFilters />
-                </Suspense>
-              </div>
-            </aside>
-
-            {/* Community List */}
-            <main className="lg:col-span-3">
-              <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-                  All Communities
-                </h2>
-                <CommunitySortDropdown />
-              </div>
-
-              <Suspense fallback={<ListSkeleton />}>
-                <CommunityList />
-              </Suspense>
-            </main>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="bg-gradient-to-b from-primary/5 to-primary/10 border-t border-border py-20">
-        <div className="container mx-auto px-6 text-center">
-          <h2 className="text-4xl font-bold text-foreground mb-4">
-            Don't See a Community Near You?
-          </h2>
-          <p className="text-lg text-muted-foreground mb-10 max-w-2xl mx-auto">
-            Starting a React community is easier than you think. We provide
-            resources, templates, and support to help you succeed.
-          </p>
-          <a
-            href="/communities/start"
-            className="inline-block bg-primary text-primary-foreground px-8 py-4 rounded-lg font-semibold hover:bg-primary/90 transition text-lg"
-          >
-            Start Your Own Community
-          </a>
-        </div>
-      </section>
-    </div>
-  );
-}
-
-function StatsSkeleton() {
-  return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center max-w-5xl mx-auto">
-      {[1, 2, 3, 4].map((i) => (
-        <div key={i} className="space-y-2">
-          <div className="h-12 bg-muted animate-pulse rounded" />
-          <div className="h-4 bg-muted animate-pulse rounded w-24 mx-auto" />
-        </div>
-      ))}
-    </div>
+        </Section>
+      </main>
+    </PublicPageShell>
   );
 }
 
 function FiltersSkeleton() {
-  return (
-    <div className="space-y-6">
-      <div className="h-10 bg-muted animate-pulse rounded" />
-      <div className="h-32 bg-muted animate-pulse rounded" />
-      <div className="h-32 bg-muted animate-pulse rounded" />
-      <div className="h-32 bg-muted animate-pulse rounded" />
-    </div>
-  );
-}
-
-function MapSkeleton() {
-  return (
-    <div className="h-[600px] bg-muted animate-pulse flex items-center justify-center">
-      <div className="text-center">
-        <div className="text-4xl mb-4">🗺️</div>
-        <p className="text-muted-foreground">Loading map...</p>
-      </div>
-    </div>
-  );
+  return <div className="h-80 animate-pulse rounded-panel bg-muted" />;
 }
 
 function ListSkeleton() {
   return (
-    <div className="space-y-6">
-      {[1, 2, 3, 4, 5].map((i) => (
-        <div key={i} className="h-48 bg-muted animate-pulse rounded-xl" />
+    <div className="space-y-4">
+      {[1, 2, 3].map((item) => (
+        <div key={item} className="h-40 animate-pulse rounded-panel bg-muted" />
       ))}
     </div>
   );
