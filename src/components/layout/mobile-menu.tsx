@@ -65,7 +65,7 @@ export function MobileMenu({ session }: MobileMenuProps) {
       {/* Menu Button */}
       <button
         onClick={toggleMenu}
-        className="flex h-9 w-9 items-center justify-center rounded-full bg-muted text-foreground transition hover:bg-secondary"
+        className="flex h-11 w-11 items-center justify-center rounded-full bg-muted text-foreground transition hover:bg-secondary"
         aria-label={isOpen ? "Close menu" : "Open menu"}
         aria-expanded={isOpen}
       >
@@ -132,7 +132,7 @@ export function MobileMenu({ session }: MobileMenuProps) {
             </div>
             <button
               onClick={closeMenu}
-              className="flex h-10 w-10 items-center justify-center rounded-full transition hover:bg-muted"
+              className="flex h-11 w-11 items-center justify-center rounded-full transition hover:bg-muted"
               aria-label="Close navigation"
             >
               <svg
@@ -229,7 +229,7 @@ export function MobileMenu({ session }: MobileMenuProps) {
               )}
               {!session?.user && (
                 <Link
-                  href="/api/auth/signin"
+                  href="/auth/signin"
                   onClick={closeMenu}
                   className="block rounded-xl bg-primary px-4 py-3 text-center text-base font-semibold text-primary-foreground transition hover:bg-primary/90"
                 >

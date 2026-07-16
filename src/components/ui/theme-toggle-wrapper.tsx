@@ -12,7 +12,7 @@ export function ThemeToggleWrapper({ withLabel = false }: ThemeToggleWrapperProp
   const hasMounted = useHasMounted();
 
   if (!hasMounted) {
-    return <div className={withLabel ? "h-11 w-full" : "h-9 w-9"} aria-hidden />;
+    return <div className={withLabel ? "h-11 w-full" : "h-11 w-11"} aria-hidden />;
   }
 
   return withLabel ? <ThemeToggleWithLabel /> : <ThemeToggle />;

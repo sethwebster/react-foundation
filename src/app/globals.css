@@ -332,11 +332,6 @@ a:not(.inline-flex) {
   color: inherit;
 }
 
-/* Force button links to respect their own color classes */
-a.inline-flex {
-  color: currentColor;
-}
-
 .chat-scroll {
   scrollbar-width: none;
   -ms-overflow-style: none;

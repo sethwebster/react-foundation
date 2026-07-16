@@ -146,12 +146,12 @@ export function Header() {
             />
           ) : (
             <ButtonLink
-              href="/api/auth/signin"
+              href="/auth/signin"
               variant="tertiary"
               size="xs"
-              className="min-h-8 border px-3.5 font-medium"
+              className="border px-3.5 font-medium"
             >
-              Signin
+              Sign in
             </ButtonLink>
           )}
         </div>
@@ -181,12 +181,12 @@ export function Header() {
           <ThemeToggleWrapper />
           {!session?.user ? (
             <ButtonLink
-              href="/api/auth/signin"
+              href="/auth/signin"
               variant="tertiary"
               size="xs"
-              className="min-h-8 border px-3 font-medium"
+              className="border px-3 font-medium"
             >
-              Signin
+              Sign in
             </ButtonLink>
           ) : null}
           <MobileMenu session={session} />

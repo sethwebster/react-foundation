@@ -25,7 +25,7 @@ export function ThemeToggle() {
   return (
     <button
       onClick={toggleTheme}
-      className="group relative flex h-9 w-9 cursor-pointer items-center justify-center rounded-full text-foreground transition hover:bg-muted"
+      className="group relative flex h-11 w-11 cursor-pointer items-center justify-center rounded-full text-foreground transition hover:bg-muted"
       title={`Switch to ${theme === 'light' ? 'dark' : theme === 'dark' ? 'system' : 'light'} theme`}
       aria-label={`Toggle theme (currently ${getLabel()})`}
     >
@@ -120,6 +120,7 @@ export function ThemeToggleWithLabel() {
     <button
       onClick={toggleTheme}
       className="flex min-h-11 w-full items-center gap-3 rounded-xl px-4 text-sm text-muted-foreground hover:bg-muted hover:text-foreground"
+      aria-label={`Toggle theme (currently ${getLabel()})`}
     >
       {getIcon()}
       <span className="text-sm">{getLabel()}</span>

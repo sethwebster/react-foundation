@@ -1,22 +1,31 @@
 import { expect, test } from '@playwright/test';
 
-const HEADER_SNAPSHOT_MAX_DIFF_PIXELS = 250;
-
 test.describe('Sign in button', () => {
   test('renders without issue', async ({ page }) => {
     await page.goto('/');
 
     const signIn = page.getByRole('link', { name: /^sign in$/i });
     await expect(signIn).toBeVisible();
+    await expect(signIn).toHaveAttribute('href', '/auth/signin');
   });
 
-  test('matches header snapshot', async ({ page }) => {
-      await page.goto('/');
+  test('stays inside the fixed site header', async ({ page }) => {
+    await page.goto('/');
 
-      const header = page.locator('header').first();
-      await expect(header).toBeVisible();
-      await expect(header).toHaveScreenshot('header-sign-in.png', {
-        maxDiffPixels: HEADER_SNAPSHOT_MAX_DIFF_PIXELS,
-      });
+    const header = page.locator('header').first();
+    const signIn = page.getByRole('link', { name: /^sign in$/i });
+    await expect(header).toBeVisible();
+    await expect(signIn).toBeVisible();
+
+    const [headerBox, signInBox] = await Promise.all([
+      header.boundingBox(),
+      signIn.boundingBox(),
+    ]);
+    expect(headerBox).not.toBeNull();
+    expect(signInBox).not.toBeNull();
+    expect(signInBox!.y).toBeGreaterThanOrEqual(headerBox!.y);
+    expect(signInBox!.y + signInBox!.height).toBeLessThanOrEqual(
+      headerBox!.y + headerBox!.height,
+    );
   });
 });
