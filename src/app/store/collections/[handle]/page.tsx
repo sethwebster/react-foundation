@@ -49,6 +49,10 @@ export default async function CollectionPage({ params }: CollectionPageProps) {
   ]);
 
   const collection = collections.find((c) => c.handle === handle);
+  const fallbackTitle = handle
+    .split("-")
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
 
   if (!collection && products.length === 0) {
     notFound();
@@ -93,7 +97,7 @@ export default async function CollectionPage({ params }: CollectionPageProps) {
 
           <div className="space-y-4">
             <h1 className="text-4xl font-semibold text-foreground sm:text-5xl">
-              {collection?.dropTheme || collection?.title || 'Collection'}
+              {collection?.dropTheme || collection?.title || fallbackTitle}
             </h1>
             {collection?.description && (
               <p className="max-w-3xl text-base text-foreground/70">

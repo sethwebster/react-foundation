@@ -4,6 +4,23 @@ import Link from "next/link";
 
 import { getAllCollections, isShopifyEnabled } from "@/lib/shopify";
 
+const fallbackCollections = [
+  {
+    id: "current-drop",
+    handle: "current-drop",
+    title: "Current drop",
+    description: "The current React Foundation merchandise collection.",
+    image: null,
+  },
+  {
+    id: "past-drop",
+    handle: "past-drop",
+    title: "Archive",
+    description: "Previous React Foundation releases.",
+    image: null,
+  },
+];
+
 export const metadata: Metadata = {
   title: "Collections",
   description:
@@ -11,7 +28,9 @@ export const metadata: Metadata = {
 };
 
 export default async function CollectionsPage() {
-  const collections = isShopifyEnabled() ? await getAllCollections() : [];
+  const collections = isShopifyEnabled()
+    ? await getAllCollections()
+    : fallbackCollections;
 
   return (
     <div className="min-h-screen bg-background pt-24 text-muted-foreground">
@@ -44,7 +63,7 @@ export default async function CollectionsPage() {
               {collections.map((collection) => (
                 <Link
                   key={collection.id}
-                  href={`/collections/${collection.handle}`}
+                  href={`/store/collections/${collection.handle}`}
                   className="group flex flex-col gap-4 rounded-2xl border border-border/10 bg-muted/70 p-6 transition hover:border-border/25 hover:bg-muted"
                 >
                   {collection.image ? (
@@ -85,9 +104,7 @@ export default async function CollectionsPage() {
           ) : (
             <div className="rounded-2xl border border-border/10 bg-background/5 p-12 text-center">
               <p className="text-foreground/60">
-                {isShopifyEnabled()
-                  ? "No collections found. Add collections in your Shopify admin."
-                  : "Shopify is not configured. Please set up your Shopify credentials."}
+                No collections are available right now.
               </p>
             </div>
           )}

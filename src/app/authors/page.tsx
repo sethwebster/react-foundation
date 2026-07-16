@@ -63,31 +63,9 @@ export default function AuthorsPage() {
                     <p className="mt-2 text-center text-sm text-foreground/60">{author.title}</p>
                     <p className="mt-4 text-sm leading-relaxed text-foreground/70">{author.bio}</p>
 
-                    {/* Social Links */}
-                    <div className="mt-6 flex justify-center gap-4">
-                      {author.github && (
-                        <a
-                          href={author.github}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-foreground/60 transition hover:text-cyan-300"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          GitHub
-                        </a>
-                      )}
-                      {author.twitter && (
-                        <a
-                          href={author.twitter}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-foreground/60 transition hover:text-cyan-300"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          Twitter
-                        </a>
-                      )}
-                    </div>
+                    <p className="mt-6 text-center text-sm font-semibold text-primary">
+                      View profile →
+                    </p>
                   </Link>
                 </ScrollReveal>
               ))}
