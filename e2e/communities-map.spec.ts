@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-test('should open community detail modal when clicking View Details button in map popup', async ({ page }) => {
+test('opens the full community profile from a map popup', async ({ page }) => {
   await page.goto('/communities');
 
   const marker = page.getByRole('button', { name: /React Bangalore - platinum/i });
@@ -18,8 +18,27 @@ test('should open community detail modal when clicking View Details button in ma
     viewDetailsButton.click(),
   ]);
 
-  const modal = page.getByRole('dialog');
-  await expect(modal).toBeVisible({ timeout: 10_000 });
-  await expect(modal.getByRole('button', { name: 'Close' })).toBeVisible();
-  await expect(modal.getByRole('link', { name: /View Full Page/ })).toBeVisible();
+  await expect(
+    page.getByRole('heading', { level: 1, name: 'React Bangalore' }),
+  ).toBeVisible();
+  await expect(page.getByRole('link', { name: /Back to all communities/i })).toBeVisible();
+});
+
+test('keeps Leaflet controls below the fixed site header', async ({ page }) => {
+  await page.goto('/communities');
+
+  const header = page.locator('header').first();
+  const zoomControl = page.locator('.leaflet-control-zoom');
+
+  await expect(header).toBeVisible();
+  await expect(zoomControl).toBeVisible({ timeout: 20_000 });
+
+  const headerLayer = await header.evaluate((element) =>
+    Number.parseInt(getComputedStyle(element).zIndex, 10),
+  );
+  const mapLayer = await zoomControl.evaluate((element) =>
+    Number.parseInt(getComputedStyle(element).zIndex, 10),
+  );
+
+  expect(headerLayer).toBeGreaterThan(mapLayer);
 });

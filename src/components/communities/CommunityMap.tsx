@@ -101,7 +101,7 @@ export function CommunityMap({ communities }: { communities: Community[] }) {
               iconAnchor: [7, 7],
               popupAnchor: [0, -10],
             })}
-            title={community.name}
+            title={`${community.name} - ${community.cois_tier ?? community.status}`}
           >
             <Popup minWidth={240} maxWidth={280}>
               <div className="p-4">
@@ -124,7 +124,7 @@ export function CommunityMap({ communities }: { communities: Community[] }) {
                     href={`/communities/${community.slug}`}
                     className="text-xs font-semibold text-primary"
                   >
-                    View →
+                    View Details
                   </Link>
                 </div>
               </div>

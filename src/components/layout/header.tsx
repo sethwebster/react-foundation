@@ -44,7 +44,7 @@ export function Header() {
   }, [session?.user?.email]);
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 h-[var(--foundation-header-height)] border-b border-border/70 bg-background/92 backdrop-blur-xl supports-[backdrop-filter]:bg-background/82">
+    <header className="fixed inset-x-0 top-0 z-[1000] h-[var(--foundation-header-height)] border-b border-border/70 bg-background/92 backdrop-blur-xl supports-[backdrop-filter]:bg-background/82">
       <div
         className={`mx-auto flex h-full w-full items-center justify-between px-5 sm:px-6 ${
           isStorePage ? "max-w-6xl" : "max-w-[48rem]"

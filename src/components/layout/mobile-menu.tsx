@@ -106,7 +106,7 @@ export function MobileMenu({ session }: MobileMenuProps) {
       {/* Overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-40 bg-foreground/15 backdrop-blur-sm"
+          className="fixed inset-0 z-[1090] bg-foreground/15 backdrop-blur-sm"
           onClick={closeMenu}
         />
       )}
@@ -114,7 +114,7 @@ export function MobileMenu({ session }: MobileMenuProps) {
       {/* Menu Panel - Only render on mobile, slide from right */}
       {isOpen && (
         <div
-          className="fixed right-0 top-0 z-50 min-h-screen w-80 max-w-[90vw] animate-in slide-in-from-right border-l border-border bg-background shadow-soft md:hidden"
+          className="fixed right-0 top-0 z-[1100] min-h-screen w-80 max-w-[90vw] animate-in slide-in-from-right border-l border-border bg-background shadow-soft md:hidden"
         >
         <div className="flex flex-col bg-background">
           {/* Header */}
