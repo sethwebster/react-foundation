@@ -18,6 +18,7 @@ test('opens the full community profile from a map popup', async ({ page }) => {
     viewDetailsButton.click(),
   ]);
 
+  await expect(page.getByRole('dialog')).toHaveCount(0);
   await expect(
     page.getByRole('heading', { level: 1, name: 'React Bangalore' }),
   ).toBeVisible();
