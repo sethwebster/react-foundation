@@ -69,7 +69,7 @@ export function HomeCommunityCTA() {
           <p className="text-sm font-semibold text-primary dark:text-primary">
             Build the next chapter with us
           </p>
-          <h2 className="mt-4 text-3xl font-semibold leading-tight text-background sm:text-4xl">
+          <h2 className="mt-4 text-3xl font-semibold leading-tight !text-background sm:text-4xl">
             A stronger React ecosystem starts with participation.
           </h2>
           <p className="mt-4 text-sm leading-6 text-background/70">
