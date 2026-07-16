@@ -29,7 +29,7 @@ export default function FoundationHome() {
               width={76}
               height={68}
               priority
-              className="mx-auto h-auto w-[3.75rem] grayscale opacity-[0.18] dark:invert sm:w-[4.75rem]"
+              className="mx-auto h-auto w-[3.75rem] brightness-0 opacity-40 dark:invert dark:opacity-50 sm:w-[4.75rem]"
             />
             <h1 className="mx-auto mt-7 max-w-[36rem] text-[clamp(2.05rem,5vw,2.75rem)] font-semibold leading-[1.04] text-foreground">
               Building the future of React, together.
