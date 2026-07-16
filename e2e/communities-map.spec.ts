@@ -43,3 +43,26 @@ test('keeps Leaflet controls below the fixed site header', async ({ page }) => {
 
   expect(headerLayer).toBeGreaterThan(mapLayer);
 });
+
+test('aligns the map with the centered community directory column', async ({
+  page,
+}) => {
+  await page.goto('/communities');
+
+  const mapSection = page
+    .locator('.community-map')
+    .locator('xpath=ancestor::section[1]');
+  const directorySection = page.locator('#communities');
+
+  await expect(mapSection).toBeVisible({ timeout: 20_000 });
+  await expect(directorySection).toBeVisible();
+
+  const mapWidth = await mapSection.evaluate(
+    (element) => element.getBoundingClientRect().width,
+  );
+  const directoryWidth = await directorySection.evaluate(
+    (element) => element.getBoundingClientRect().width,
+  );
+
+  expect(Math.abs(mapWidth - directoryWidth)).toBeLessThan(1);
+});

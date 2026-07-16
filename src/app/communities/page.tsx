@@ -52,7 +52,7 @@ export default function CommunitiesPage() {
           <CommunityStats {...communityStats} />
         </Section>
 
-        <Section className="pt-4 sm:pt-6">
+        <Section className="pt-4 sm:pt-6" measure="standard">
           <div className="overflow-hidden rounded-panel border border-border bg-map-water/35 shadow-card">
             <CommunityMap communities={REACT_COMMUNITIES} />
           </div>
