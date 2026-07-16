@@ -19,9 +19,9 @@ const geistMono = Geist_Mono({
 });
 
 const siteName = "React Foundation";
-const siteUrl = "https://react.foundation"; 
+const siteUrl = "https://react.foundation";
 const description =
-  "Supporting the React ecosystem through community funding, transparent governance, and official merchandise. Every purchase funds maintainers of 54+ React libraries.";
+  "Independent stewardship for React, supporting maintainers, communities, and transparent ecosystem governance.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -60,9 +60,24 @@ export const metadata: Metadata = {
     { rel: "icon", url: "/favicon.svg", type: "image/svg+xml" },
     { rel: "icon", url: "/favicon-16.png", sizes: "16x16", type: "image/png" },
     { rel: "icon", url: "/favicon-32.png", sizes: "32x32", type: "image/png" },
-    { rel: "icon", url: "/favicon-96x96.png", sizes: "96x96", type: "image/png" },
-    { rel: "icon", url: "/favicon-192.png", sizes: "192x192", type: "image/png" },
-    { rel: "icon", url: "/favicon-256.png", sizes: "256x256", type: "image/png" },
+    {
+      rel: "icon",
+      url: "/favicon-96x96.png",
+      sizes: "96x96",
+      type: "image/png",
+    },
+    {
+      rel: "icon",
+      url: "/favicon-192.png",
+      sizes: "192x192",
+      type: "image/png",
+    },
+    {
+      rel: "icon",
+      url: "/favicon-256.png",
+      sizes: "256x256",
+      type: "image/png",
+    },
     { rel: "apple-touch-icon", url: "/apple-touch-icon.png", sizes: "180x180" },
   ],
 };
