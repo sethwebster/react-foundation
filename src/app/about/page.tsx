@@ -1,13 +1,17 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { BecomeContributor } from "@/components/home/become-contributor";
 import { ExecutiveMessage } from "@/components/home/executive-message";
 import { FoundingMembers } from "@/components/home/founding-members";
 import {
   PageIntro,
   PublicPageShell,
   Section,
+  Surface,
 } from "@/components/public-site/layout";
+import { ButtonLink } from "@/components/ui/button";
+import { ecosystemLibraries } from "@/lib/maintainer-tiers";
 
 export const metadata: Metadata = {
   title: "About",
@@ -27,6 +31,25 @@ const commitments = [
   {
     title: "Global participation",
     body: "Make it easier for more people and communities to shape what comes next.",
+  },
+];
+
+const governanceDetails = [
+  {
+    title: "Open financials",
+    body: "Funding decisions and program reporting should be published for community review when reportable funding activity exists.",
+  },
+  {
+    title: "Community input",
+    body: "Major decisions should be informed by maintainer feedback and the needs of the people building with React.",
+  },
+  {
+    title: "Quarterly reports",
+    body: "The foundation intends to publish periodic reports once funded work and distributions create public records.",
+  },
+  {
+    title: "Open source values",
+    body: "The foundation is grounded in transparency, durable stewardship, and participation across companies and communities.",
   },
 ];
 
@@ -79,7 +102,58 @@ export default function AboutPage() {
           <FoundingMembers />
         </Section>
 
-        <Section className="pb-8 sm:pb-14" measure="standard">
+        <Section className="pb-20 sm:pb-24" measure="standard">
+          <Surface className="grid gap-8 p-7 sm:p-10 md:grid-cols-[0.8fr_1.2fr]">
+            <div>
+              <p className="text-sm font-semibold text-primary">
+                Supported ecosystem
+              </p>
+              <h2 className="mt-3 text-2xl font-semibold text-foreground">
+                {ecosystemLibraries.length} tracked repositories across React.
+              </h2>
+            </div>
+            <div>
+              <p className="text-sm leading-6 text-muted-foreground">
+                The foundation tracks React infrastructure, libraries, frameworks,
+                testing tools, UI systems, and styling projects to make contribution
+                recognition and support methodology easier to inspect.
+              </p>
+              <ButtonLink href="/libraries" variant="secondary" className="mt-5">
+                Explore supported libraries
+              </ButtonLink>
+            </div>
+          </Surface>
+        </Section>
+
+        <Section className="pb-20 sm:pb-24" measure="standard">
+          <div className="grid gap-10 md:grid-cols-[0.75fr_1.25fr]">
+            <div>
+              <p className="text-sm font-semibold text-primary">Governance</p>
+              <h2 className="mt-4 text-3xl font-semibold leading-tight text-foreground">
+                Transparent governance
+              </h2>
+              <p className="mt-4 text-sm leading-6 text-muted-foreground">
+                Governance work combines formal leadership, technical direction, and
+                public accountability without claiming reports that have not yet
+                been published.
+              </p>
+            </div>
+            <div className="divide-y divide-border border-y border-border">
+              {governanceDetails.map((detail) => (
+                <article key={detail.title} className="py-6">
+                  <h3 className="text-lg font-semibold text-foreground">
+                    {detail.title}
+                  </h3>
+                  <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                    {detail.body}
+                  </p>
+                </article>
+              ))}
+            </div>
+          </div>
+        </Section>
+
+        <Section className="pb-20 sm:pb-24" measure="standard">
           <div className="grid gap-px overflow-hidden rounded-panel border border-border bg-border sm:grid-cols-2">
             <GovernanceLink
               href="/about/board-of-directors"
@@ -92,6 +166,10 @@ export default function AboutPage() {
               body="Technical direction grounded in the needs of React and its ecosystem."
             />
           </div>
+        </Section>
+
+        <Section className="pb-8 sm:pb-14" measure="standard">
+          <BecomeContributor />
         </Section>
       </main>
     </PublicPageShell>

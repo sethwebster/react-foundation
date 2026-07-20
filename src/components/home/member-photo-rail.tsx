@@ -60,7 +60,7 @@ export function MemberPhotoRail() {
           href="/become-a-member"
           className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-foreground hover:text-primary"
         >
-          Meet our members <span aria-hidden>→</span>
+          Membership enrollment <span aria-hidden>→</span>
         </Link>
       </div>
     </section>

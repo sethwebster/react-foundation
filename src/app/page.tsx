@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 
 import { ButtonLink } from "@/components/ui/button";
+import { BecomeContributor } from "@/components/home/become-contributor";
 import { FoundingMembers } from "@/components/home/founding-members";
 import { MemberPhotoRail } from "@/components/home/member-photo-rail";
 import {
@@ -56,6 +57,9 @@ export default function FoundationHome() {
 
         <HomeMission />
         <HomePillars />
+        <Section className="pb-20 sm:pb-28" measure="standard">
+          <BecomeContributor />
+        </Section>
         <HomeCommunityCTA />
       </main>
     </PublicPageShell>
