@@ -29,7 +29,7 @@ export function EcosystemLibraries({
   
   // Use dynamic count from ecosystemLibraries if description not provided
   const libraryCount = ecosystemLibraries.length;
-  const defaultDescription = `We track contributions across all ${libraryCount} critical React ecosystem libraries:`;
+  const defaultDescription = `We track contributions across ${libraryCount} React ecosystem repositories spanning core React, frameworks, routing, state, data, UI, testing, tooling, and styling.`;
   const displayDescription = description || defaultDescription;
   const issueTitle = encodeURIComponent("Missing library in Supported Ecosystem");
   const issueBody = encodeURIComponent(
@@ -99,25 +99,36 @@ owner/repo:
   ];
 
   return (
-    <ScrollReveal animation="scale">
+    <ScrollReveal animation="fade-up">
       <section
         id={id}
-        className="scroll-mt-32 space-y-8 rounded-3xl border border-border/10 bg-muted/60 p-12"
+        className="scroll-mt-32 space-y-10"
       >
-        <h2 className="text-3xl font-semibold text-foreground sm:text-4xl">{title}</h2>
-        <p className="max-w-3xl text-lg text-foreground/70">{displayDescription}</p>
+        <div className="grid gap-6 md:grid-cols-[0.75fr_1.25fr]">
+          <div>
+            <p className="text-sm font-semibold text-primary">
+              {libraryCount} tracked repositories
+            </p>
+            <h2 className="mt-4 text-3xl font-semibold leading-tight text-foreground sm:text-4xl">
+              {title}
+            </h2>
+          </div>
+          <p className="max-w-3xl text-sm leading-6 text-muted-foreground">
+            {displayDescription}
+          </p>
+        </div>
 
-        <div className="space-y-8 pt-6">
+        <div className="space-y-10">
           {categorizedLibraries.map((cat) => {
             const libs = ecosystemLibraries.filter((l) => l.category === cat.category);
             if (libs.length === 0) return null;
 
             return (
               <div key={cat.category}>
-                <h3 className="mb-4 text-sm font-semibold uppercase tracking-[0.2em] text-foreground/60">
+                <h3 className="text-sm font-semibold text-foreground">
                   {cat.name} · {libs.length} {libs.length === 1 ? "library" : "libraries"}
                 </h3>
-                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                <div className="mt-3 grid gap-x-8 sm:grid-cols-2 lg:grid-cols-3">
                   {libs.map((lib, idx) => (
                     <LibraryCard
                       key={lib.name}
@@ -135,19 +146,26 @@ owner/repo:
           })}
         </div>
 
-        <div className="pt-6 text-center">
-          <p className="text-sm text-foreground/60">
-            Total: {ecosystemLibraries.length} libraries tracked · All contributions
-            verified via GitHub
+        <div className="border-y border-border py-5">
+          <p className="text-sm text-muted-foreground">
+            Total: {ecosystemLibraries.length} libraries tracked. Contribution
+            tracking uses GitHub repository activity for supported projects.
           </p>
         </div>
 
         {showMissingLibraryIssue ? (
-          <div className="space-y-3 rounded-2xl border border-border/10 bg-background/50 p-6">
-            <p className="text-sm text-foreground/80">
+          <div className="border-t border-border pt-6">
+            <p className="text-sm text-muted-foreground">
               Don&apos;t see a library?
             </p>
-            <ButtonLink href={issueUrl} variant="secondary" size="md" target="_blank" rel="noopener noreferrer">
+            <ButtonLink
+              href={issueUrl}
+              variant="secondary"
+              size="md"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-3"
+            >
               Add a missing library
             </ButtonLink>
           </div>

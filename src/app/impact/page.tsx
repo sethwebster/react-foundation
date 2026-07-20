@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { EcosystemLibraries } from "@/components/home/ecosystem-libraries";
 import {
   PageIntro,
   PublicPageShell,
@@ -7,26 +8,36 @@ import {
   Surface,
 } from "@/components/public-site/layout";
 import { ButtonLink } from "@/components/ui/button";
+import { ecosystemLibraries } from "@/lib/maintainer-tiers";
 
 export const metadata: Metadata = {
   title: "Impact and Accountability",
   description:
-    "How the React Foundation plans to report funded work and ecosystem outcomes.",
+    "How the React Foundation tracks contribution activity, assesses ecosystem support, and reports funded work.",
 };
 
+const methodology = [
+  {
+    title: "Contribution tracking",
+    body: `The foundation tracks repository activity across ${ecosystemLibraries.length} supported React ecosystem repositories. GitHub activity is used for pull requests, issues, and commits where the API exposes reliable public signals.`,
+  },
+  {
+    title: "Score calculation",
+    body: "The current contribution formula is PRs × 8 + Issues × 3 + Commits × 1. The scoring page explains the limits of this model and where maintainer review remains necessary.",
+  },
+  {
+    title: "Distribution methodology",
+    body: "When funding is approved for a reporting period, available funds can be allocated against contribution scores, library impact, eligibility review, and published program constraints.",
+  },
+];
+
 const reportingAreas = [
-  {
-    title: "Funding",
-    body: "Amounts committed and paid, the programs they support, and the reporting period they belong to.",
-  },
-  {
-    title: "Recipients",
-    body: "Projects or initiatives receiving support, subject to appropriate privacy and contractual limits.",
-  },
-  {
-    title: "Outcomes",
-    body: "Concrete work completed, lessons learned, and follow-up actions rather than ungrounded reach estimates.",
-  },
+  "Revenue and approved funding sources",
+  "Maintainer and project support",
+  "Education initiatives",
+  "Accessibility and global participation work",
+  "Impact metrics and known limitations",
+  "Community feedback and follow-up actions",
 ];
 
 export default function ImpactPage() {
@@ -37,20 +48,33 @@ export default function ImpactPage() {
           <PageIntro
             eyebrow="Public accountability"
             title="Impact and accountability"
-            description="Impact reporting should describe real funded work, not sample dashboards or projected totals."
+            description="The React Foundation publishes how support is measured, how decisions are reviewed, and what will be reported once funded work is underway."
+            actions={
+              <>
+                <ButtonLink href="/libraries" variant="secondary">
+                  Browse tracked libraries
+                </ButtonLink>
+                <ButtonLink href="/scoring" variant="ghost">
+                  Read scoring methodology
+                </ButtonLink>
+              </>
+            }
           />
         </Section>
 
         <Section className="pt-12 sm:pt-16" measure="standard">
-          <Surface className="p-7 sm:p-10">
-            <p className="text-sm font-semibold text-primary">Reporting status</p>
-            <h2 className="mt-3 text-2xl font-semibold text-foreground">
-              Reporting begins with funded work
-            </h2>
-            <p className="mt-4 max-w-3xl text-sm leading-6 text-muted-foreground">
-              The foundation will publish impact reports after programs have
-              approved funding and reportable outcomes. Until then, this page
-              documents what readers should expect from that reporting.
+          <Surface className="grid gap-8 p-7 sm:p-10 md:grid-cols-[0.8fr_1.2fr]">
+            <div>
+              <p className="text-sm font-semibold text-primary">Reporting status</p>
+              <h2 className="mt-3 text-2xl font-semibold text-foreground">
+                First public report coming after funded work
+              </h2>
+            </div>
+            <p className="text-sm leading-6 text-muted-foreground">
+              The foundation has not published quarterly distribution reports yet.
+              Until funded programs produce reportable outcomes, this page separates
+              existing methodology from future reports and avoids sample allocation
+              totals.
             </p>
           </Surface>
         </Section>
@@ -58,30 +82,58 @@ export default function ImpactPage() {
         <Section className="py-20 sm:py-24" measure="standard">
           <div className="grid gap-10 md:grid-cols-[0.75fr_1.25fr]">
             <div>
-              <p className="text-sm font-semibold text-primary">What we will publish</p>
+              <p className="text-sm font-semibold text-primary">
+                Existing methodology
+              </p>
               <h2 className="mt-4 text-3xl font-semibold leading-tight text-foreground">
-                A record that can be checked.
+                Measurement starts with transparent inputs.
               </h2>
             </div>
             <div className="divide-y divide-border border-y border-border">
-              {reportingAreas.map((area) => (
-                <article key={area.title} className="py-6">
-                  <h3 className="text-lg font-semibold text-foreground">
-                    {area.title}
-                  </h3>
-                  <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                    {area.body}
+              {methodology.map((item, index) => (
+                <article key={item.title} className="grid gap-4 py-6 sm:grid-cols-[4rem_1fr]">
+                  <p className="text-xs font-semibold text-primary">
+                    0{index + 1}
                   </p>
+                  <div>
+                    <h3 className="text-lg font-semibold text-foreground">
+                      {item.title}
+                    </h3>
+                    <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                      {item.body}
+                    </p>
+                  </div>
                 </article>
               ))}
             </div>
           </div>
         </Section>
 
-        <Section className="pb-8 text-center" measure="standard">
-          <ButtonLink href="/about" variant="secondary">
-            Learn about the foundation
-          </ButtonLink>
+        <Section className="pb-20 sm:pb-24" measure="standard">
+          <div className="grid gap-10 md:grid-cols-[0.75fr_1.25fr]">
+            <div>
+              <p className="text-sm font-semibold text-primary">
+                Intended report categories
+              </p>
+              <h2 className="mt-4 text-3xl font-semibold leading-tight text-foreground">
+                Reports should be checkable records, not projections.
+              </h2>
+            </div>
+            <ul className="divide-y divide-border border-y border-border">
+              {reportingAreas.map((area) => (
+                <li key={area} className="py-5 text-sm font-medium text-foreground">
+                  {area}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </Section>
+
+        <Section className="pb-20 sm:pb-24" measure="standard">
+          <EcosystemLibraries
+            description={`These ${ecosystemLibraries.length} tracked repositories define the current public ecosystem surface for contribution tracking. The list includes libraries, tooling, documentation, and React infrastructure repositories.`}
+            showMissingLibraryIssue
+          />
         </Section>
       </main>
     </PublicPageShell>
