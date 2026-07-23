@@ -32,11 +32,11 @@ export default function UpdatesPage() {
               Follow
             </a>
             <Link
-              href="/#newsletter"
+              href="/updates/welcome-to-react-foundation"
               className="inline-flex min-h-10 items-center gap-2 rounded-full bg-muted px-4 text-xs font-semibold text-foreground hover:bg-secondary"
             >
               <MailIcon />
-              Subscribe
+              Read the latest
             </Link>
           </div>
         </div>
