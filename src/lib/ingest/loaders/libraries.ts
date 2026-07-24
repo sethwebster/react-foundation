@@ -42,12 +42,13 @@ export class LibrariesLoader implements ContentLoader {
     { repo: 'pmndrs/valtio', name: 'Valtio', category: 'State Management', tier: 'Tier 2' },
     { repo: 'statelyai/xstate', name: 'XState', category: 'State Management', tier: 'Tier 2' },
 
-    // Data Fetching (5 repositories)
+    // Data Fetching (6 repositories)
     { repo: 'TanStack/query', name: 'TanStack Query', category: 'Data Fetching', tier: 'Tier 1' },
     { repo: 'vercel/swr', name: 'SWR', category: 'Data Fetching', tier: 'Tier 1' },
     { repo: 'apollographql/apollo-client', name: 'Apollo Client', category: 'Data Fetching', tier: 'Tier 1' },
     { repo: 'trpc/trpc', name: 'tRPC', category: 'Data Fetching', tier: 'Tier 2' },
     { repo: 'urql-graphql/urql', name: 'urql', category: 'Data Fetching', tier: 'Tier 2' },
+    { repo: 'invertase/react-native-firebase', name: 'React Native Firebase', category: 'Data Fetching', tier: 'Tier 2' },
 
     // Routing (3 repositories)
     { repo: 'remix-run/react-router', name: 'React Router', category: 'Routing', tier: 'Tier 1' },
@@ -75,8 +76,9 @@ export class LibrariesLoader implements ContentLoader {
     { repo: 'microsoft/playwright', name: 'Playwright', category: 'Testing', tier: 'Tier 1' },
     { repo: 'testing-library/react-hooks-testing-library', name: 'React Hooks Testing Library', category: 'Testing', tier: 'Tier 2' },
 
-    // UI/Component Libraries (6 repositories)
+    // UI/Component Libraries (7 repositories)
     { repo: 'radix-ui/primitives', name: 'Radix UI', category: 'UI Libraries', tier: 'Tier 1' },
+    { repo: 'ant-design/ant-design', name: 'Ant Design', category: 'UI Libraries', tier: 'Tier 1' },
     { repo: 'tailwindlabs/headlessui', name: 'Headless UI', category: 'UI Libraries', tier: 'Tier 1' },
     { repo: 'mui/material-ui', name: 'Material-UI', category: 'UI Libraries', tier: 'Tier 1' },
     { repo: 'adobe/react-spectrum', name: 'React Spectrum', category: 'UI Libraries', tier: 'Tier 2' },
@@ -98,10 +100,12 @@ export class LibrariesLoader implements ContentLoader {
     // Data Tables (1 repository)
     { repo: 'TanStack/table', name: 'TanStack Table', category: 'Data Tables', tier: 'Tier 1' },
 
-    // Styling (3 repositories)
+    // Styling (5 repositories)
     { repo: 'styled-components/styled-components', name: 'styled-components', category: 'Styling', tier: 'Tier 1' },
     { repo: 'emotion-js/emotion', name: 'Emotion', category: 'Styling', tier: 'Tier 1' },
+    { repo: 'tailwindlabs/tailwindcss', name: 'Tailwind CSS', category: 'Styling', tier: 'Tier 1' },
     { repo: 'facebook/stylex', name: 'StyleX', category: 'Styling', tier: 'Tier 2' },
+    { repo: 'marklawlor/nativewind', name: 'NativeWind', category: 'Styling', tier: 'Tier 2' },
   ];
 
   async load(): Promise<RawRecord[]> {
