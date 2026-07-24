@@ -63,41 +63,59 @@ function createSection(type: string, records: RawRecord[]): ContentSection | nul
     return null;
   }
 
-  // Determine section title and base URL
-  const sectionConfig: Record<string, { title: string; url: string }> = {
-    'page': { title: 'Documentation', url: '/docs' },
-    'faq': { title: 'FAQ', url: '/faq' },
+  // Determine section title and base URL. A section only gets a `url` when its
+  // base path is a real public route. `page`, `faq` and `educator` have no
+  // matching route (there is no /docs, /faq or /educators page), so they are
+  // containers without a clickable url.
+  const sectionConfig: Record<string, { title: string; url?: string }> = {
+    'page': { title: 'Documentation' },
+    'faq': { title: 'FAQ' },
     'library': { title: 'Tracked Libraries', url: '/libraries' },
     'community': { title: 'Communities', url: '/communities' },
-    'educator': { title: 'Educators', url: '/educators' },
+    'educator': { title: 'Educators' },
     'organizer': { title: 'Community Organizers', url: '/communities' },
   };
 
   const config = sectionConfig[type] || { title: type, url: `/${type}` };
 
-  // Create child sections for each record
-  const children: ContentSection[] = records.map(record => {
-    const child: ContentSection = {
-      title: record.title,
-      url: record.url,
-    };
+  // Files under public-context/ are the chatbot knowledge base (see
+  // public-context/README.md). The MDX loader gives them a synthetic /docs/*
+  // url, but no /docs route exists, so those links 404 in production. Keep them
+  // out of the navigation map. They remain in the search index untouched.
+  const children: ContentSection[] = records
+    .filter(record => !record.url.startsWith('/docs'))
+    .map(record => {
+      const child: ContentSection = {
+        title: record.title,
+        url: record.url,
+      };
 
-    // Add anchors if available
-    if (record.anchors && record.anchors.length > 0) {
-      child.anchors = record.anchors;
-    }
+      // Add anchors if available
+      if (record.anchors && record.anchors.length > 0) {
+        child.anchors = record.anchors;
+      }
 
-    return child;
-  });
+      return child;
+    });
+
+  // A section whose entries were all knowledge-base docs has nothing to link to.
+  if (children.length === 0) {
+    return null;
+  }
 
   // Sort children alphabetically
   children.sort((a, b) => a.title.localeCompare(b.title));
 
-  return {
+  const section: ContentSection = {
     title: config.title,
-    url: config.url,
     children,
   };
+
+  if (config.url) {
+    section.url = config.url;
+  }
+
+  return section;
 }
 
 /**

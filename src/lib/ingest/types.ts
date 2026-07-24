@@ -58,7 +58,7 @@ export interface ContentMap {
 
 export interface ContentSection {
   title: string;
-  url: string;
+  url?: string; // Omitted for container sections that have no landing route of their own
   children?: ContentSection[];
   anchors?: Array<{ text: string; anchor: string }>;
 }
