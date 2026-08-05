@@ -77,6 +77,9 @@ export function Header() {
             <Link className="transition hover:text-foreground" href="/communities">
               Communities
             </Link>
+            <Link className="transition hover:text-foreground" href="/summit">
+              Summit
+            </Link>
             {isAdmin && (
               <Link
                 className="transition hover:text-foreground text-destructive font-medium"
