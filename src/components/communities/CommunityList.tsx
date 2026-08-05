@@ -93,7 +93,12 @@ function CommunityRow({ community }: { community: Community }) {
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
             <h3 className="text-lg font-semibold text-foreground">
-              {community.name}
+              <Link
+                href={`/communities/${community.slug}`}
+                className="hover:underline"
+              >
+                {community.name}
+              </Link>
             </h3>
             {community.verified ? (
               <span className="rounded-full bg-brand-soft px-2 py-0.5 text-[0.625rem] font-semibold text-accent-foreground">
