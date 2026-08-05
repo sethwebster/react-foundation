@@ -1,0 +1,140 @@
+.microsite {
+  isolation: isolate;
+}
+
+.gridBackdrop {
+  background-image:
+    linear-gradient(hsl(var(--border) / 0.28) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(var(--border) / 0.28) 1px, transparent 1px);
+  background-size: 52px 52px;
+  mask-image: linear-gradient(to bottom, hsl(var(--foreground)) 20%, transparent 92%);
+}
+
+.heroGlow {
+  animation: glow-drift 14s ease-in-out infinite alternate;
+  background:
+    radial-gradient(circle at 30% 50%, hsl(var(--primary) / 0.32), transparent 42%),
+    radial-gradient(circle at 72% 42%, hsl(var(--success) / 0.22), transparent 38%);
+  filter: blur(48px);
+}
+
+.orbital {
+  animation: float 7s ease-in-out infinite;
+}
+
+.orbitOne,
+.orbitTwo,
+.orbitThree {
+  border: 1px solid hsl(var(--primary) / 0.2);
+  border-radius: 9999px;
+  inset: 50%;
+  position: absolute;
+  transform: translate(-50%, -50%);
+}
+
+.orbitOne {
+  animation: orbit-spin 22s linear infinite;
+  height: 13rem;
+  width: 13rem;
+}
+
+.orbitTwo {
+  animation: orbit-spin-reverse 28s linear infinite;
+  border-color: hsl(var(--success) / 0.2);
+  height: 18rem;
+  width: 18rem;
+}
+
+.orbitThree {
+  animation: orbit-spin 34s linear infinite;
+  height: 23rem;
+  width: 23rem;
+}
+
+.orbitOne::after,
+.orbitTwo::after,
+.orbitThree::after {
+  background: hsl(var(--primary));
+  border-radius: 9999px;
+  box-shadow: 0 0 24px hsl(var(--primary) / 0.75);
+  content: "";
+  height: 0.55rem;
+  left: 50%;
+  position: absolute;
+  top: -0.3rem;
+  width: 0.55rem;
+}
+
+.orbitTwo::after {
+  background: hsl(var(--success));
+  box-shadow: 0 0 24px hsl(var(--success) / 0.75);
+}
+
+.orbitThree::after {
+  height: 0.35rem;
+  width: 0.35rem;
+}
+
+.reactMark {
+  filter: drop-shadow(0 0 22px hsl(var(--primary) / 0.6));
+}
+
+.dateNumber {
+  background: linear-gradient(135deg, hsl(var(--foreground)), hsl(var(--primary)));
+  background-clip: text;
+  color: transparent;
+}
+
+.agendaLine {
+  background: linear-gradient(to bottom, hsl(var(--primary)), hsl(var(--success) / 0.35));
+}
+
+.faq summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq[open] .faqIcon {
+  transform: rotate(45deg);
+}
+
+@keyframes glow-drift {
+  from {
+    opacity: 0.7;
+    transform: translate3d(-3%, -2%, 0) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(4%, 3%, 0) scale(1.08);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+@keyframes orbit-spin {
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+@keyframes orbit-spin-reverse {
+  to {
+    transform: translate(-50%, -50%) rotate(-360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .heroGlow,
+  .orbital,
+  .orbitOne,
+  .orbitTwo,
+  .orbitThree {
+    animation: none;
+  }
+}
