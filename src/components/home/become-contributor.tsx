@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { ButtonLink } from "@/components/ui/button";
+import { RfcPopover } from "@/components/home/rfc-popover";
 import { ecosystemLibraries } from "@/lib/maintainer-tiers";
 
 type Action = { href: string; label: string; external?: boolean };
@@ -22,11 +23,7 @@ const contributorData: {
       label: 'Browse React repositories',
       external: true,
     },
-    secondaryAction: {
-      href: 'https://github.com/reactjs/rfcs',
-      label: 'View RFCs',
-      external: true,
-    },
+    secondaryAction: null,
   },
   {
     variant: 'donate' as const,
@@ -101,7 +98,7 @@ export function BecomeContributor() {
                 <p className="mt-2 text-sm leading-6 text-muted-foreground">
                   {item.description}
                 </p>
-                <div className="mt-4 flex flex-wrap gap-3">
+                <div className="mt-4 flex flex-wrap items-center gap-3">
                   <ButtonLink
                     href={item.primaryAction.href}
                     variant={index === 0 ? "primary" : "secondary"}
@@ -112,7 +109,9 @@ export function BecomeContributor() {
                   >
                     {item.primaryAction.label}
                   </ButtonLink>
-                  {item.secondaryAction ? (
+                  {item.variant === 'code' ? (
+                    <RfcPopover />
+                  ) : item.secondaryAction ? (
                     <ButtonLink
                       href={item.secondaryAction.href}
                       variant="ghost"
