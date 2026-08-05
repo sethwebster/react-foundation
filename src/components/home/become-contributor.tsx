@@ -18,9 +18,8 @@ const contributorData: {
     description:
       'Submit code, RFCs, proposals, documentation, or bug reports to React and the tracked ecosystem repositories. Your contributions directly improve the tools millions of developers use.',
     primaryAction: {
-      href: 'https://github.com/facebook/react',
-      label: 'Browse React repositories',
-      external: true,
+      href: '/libraries',
+      label: 'Browse tracked repositories',
     },
     secondaryAction: {
       href: 'https://github.com/reactjs/rfcs',
