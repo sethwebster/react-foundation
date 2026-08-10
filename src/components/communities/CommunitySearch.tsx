@@ -6,15 +6,17 @@ import { Search } from 'lucide-react';
 import { cn } from '@/lib/cn';
 
 export function CommunitySearch() {
+  const searchParams = useSearchParams();
+  const search = searchParams.get('search') || '';
+
+  return <CommunitySearchInput key={search} initialValue={search} />;
+}
+
+function CommunitySearchInput({ initialValue }: { initialValue: string }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const [value, setValue] = useState(searchParams.get('search') || '');
-
-  // Sync with URL on mount / back-navigation
-  useEffect(() => {
-    setValue(searchParams.get('search') || '');
-  }, [searchParams]);
+  const [value, setValue] = useState(initialValue);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
