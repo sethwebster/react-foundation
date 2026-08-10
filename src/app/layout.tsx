@@ -6,7 +6,6 @@ import { AuthProvider } from "@/components/providers/auth-provider";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { Header } from "@/components/layout/header";
 import { getServerAuthSession } from "@/lib/auth";
-import { SupportChat } from "@/features/support-chat";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -88,7 +87,6 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const session = await getServerAuthSession();
-  const isChatEnabled = process.env.NEXT_PUBLIC_ENABLE_CHATBOT === "true";
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -129,7 +127,6 @@ export default async function RootLayout({
           <AuthProvider session={session}>
             <Header />
             {children}
-            {isChatEnabled ? <SupportChat /> : null}
           </AuthProvider>
         </ThemeProvider>
       </body>
