@@ -3,7 +3,8 @@ import Image from "next/image";
 type ImageMember = {
   name: string;
   src: string;
-  filter?: string;
+  darkSrc: string;
+  lightClassName?: string;
   /** Normalized max-width to balance visual weight across logos */
   maxWidth?: number;
   /** Override container height (px). Defaults to 40 (h-10). */
@@ -27,42 +28,51 @@ const FOUNDING_MEMBERS: Member[] = [
   {
     name: "Meta",
     src: "/assets/founding-members/meta.svg",
+    darkSrc: "/assets/founding-members/meta-dark.svg",
     maxWidth: 90,
   },
   {
     name: "Amazon Developer",
     src: "/assets/founding-members/amazon.svg",
+    darkSrc: "/assets/founding-members/amazon-dark.svg",
     maxWidth: 89,
   },
   {
     name: "Microsoft",
     src: "/assets/founding-members/microsoft.svg",
+    darkSrc: "/assets/founding-members/microsoft-dark.svg",
     maxWidth: 132,
     height: 58,
   },
   {
     name: "Huawei",
     src: "/assets/founding-members/huawei.svg",
+    darkSrc: "/assets/founding-members/huawei-dark.svg",
     maxWidth: 90,
   },
   {
     name: "Software Mansion",
     src: "/assets/founding-members/software-mansion.svg",
+    darkSrc: "/assets/founding-members/software-mansion.svg",
     maxWidth: 120,
   },
   {
     name: "Expo",
     src: "/assets/founding-members/expo.svg",
+    darkSrc: "/assets/founding-members/expo-dark.svg",
     maxWidth: 90,
   },
   {
     name: "Callstack",
     src: "/assets/founding-members/callstack.svg",
+    darkSrc: "/assets/founding-members/callstack.svg",
+    lightClassName: "brightness-0",
     maxWidth: 120,
   },
   {
     name: "Vercel",
     src: "/assets/founding-members/vercel.svg",
+    darkSrc: "/assets/founding-members/vercel-dark.svg",
     maxWidth: 90,
   },
 ];
@@ -113,11 +123,16 @@ function MemberLogo({ member, compact = false }: { member: Member; compact?: boo
             alt={`${member.name} logo`}
             fill
             sizes={compact ? "100px" : "160px"}
-            className={`object-contain dark:invert ${
-              member.name === "Callstack" ? "brightness-0" : ""
-            }`}
+            className={`object-contain dark:hidden ${member.lightClassName ?? ""}`}
             unoptimized
-            style={{ filter: member.filter }}
+          />
+          <Image
+            src={member.darkSrc}
+            alt={`${member.name} logo`}
+            fill
+            sizes={compact ? "100px" : "160px"}
+            className="hidden object-contain dark:block"
+            unoptimized
           />
         </div>
       )}

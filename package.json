@@ -98,6 +98,7 @@
     "@types/react-dom": "^19.2.2",
     "@vitest/browser-playwright": "^4.0.4",
     "@vitest/coverage-v8": "^4.0.4",
+    "baseline-browser-mapping": "^2.11.13",
     "eslint": "^9",
     "eslint-config-next": "^16.0.0",
     "eslint-plugin-storybook": "^10.0.0",
