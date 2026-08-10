@@ -230,7 +230,7 @@ export class NPMCollector {
       'tailwindlabs/tailwindcss': 'tailwindcss',
       'marklawlor/nativewind': 'nativewind',
       'react-navigation/react-navigation': '@react-navigation/native',
-      'react-native-community/react-native-releases': null, // Release notes repository (not a library)
+      'reactwg/react-native-releases': null, // Release notes repository (not a library)
     };
 
     const key = `${owner}/${repo}`;

@@ -32,7 +32,7 @@ export class LibrariesLoader implements ContentLoader {
     { repo: 'react-navigation/react-navigation', name: 'React Navigation', category: 'Core React', tier: 'Tier 1' },
     { repo: 'facebook/jest', name: 'Jest', category: 'Core React', tier: 'Tier 1' },
     { repo: 'facebook/relay', name: 'Relay', category: 'Core React', tier: 'Tier 1' },
-    { repo: 'react-native-community/react-native-releases', name: 'React Native Releases', category: 'Core React', tier: 'Tier 2' },
+    { repo: 'reactwg/react-native-releases', name: 'React Native Releases', category: 'Core React', tier: 'Tier 2' },
 
     // State Management (6 repositories)
     { repo: 'reduxjs/redux', name: 'Redux', category: 'State Management', tier: 'Tier 1' },
