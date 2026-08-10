@@ -7,7 +7,7 @@ import { ecosystemLibraries } from "@/lib/maintainer-tiers";
 type Action = { href: string; label: string; external?: boolean };
 
 const contributorData: {
-  variant: 'code' | 'donate' | 'sponsor' | 'member';
+  variant: 'code' | 'sponsor' | 'member';
   title: string;
   description: string;
   primaryAction: Action;
@@ -21,17 +21,6 @@ const contributorData: {
     primaryAction: {
       href: '/libraries',
       label: 'Browse tracked repositories',
-    },
-    secondaryAction: null,
-  },
-  {
-    variant: 'donate' as const,
-    title: 'Support Financially',
-    description:
-      'Financial support is one way to help fund maintainers, educational resources, and accessibility initiatives. The store remains a preview until checkout is operational.',
-    primaryAction: {
-      href: '/store',
-      label: 'Store status',
     },
     secondaryAction: null,
   },

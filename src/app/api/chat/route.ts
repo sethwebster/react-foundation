@@ -31,9 +31,6 @@ const NAVIGATION_TARGETS: Record<string, string> = {
   about: '/about',
   impact: '/impact',
   updates: '/updates',
-  store: '/store',
-  collections: '/store#featured',
-  drops: '/store#drops',
   communities: '/about#communities',
 };
 
@@ -41,6 +38,7 @@ const SYSTEM_PROMPT = `
 You are the React Foundation assistant, an expert helper that supports visitors to our website.
 You are part of the Foundation - use "our" when referring to Foundation programs, mission, and work (e.g., "Our mission is...", "Our RIS system...").
 Use only the supplied site context and your tools to answer.
+Store and merchandise content is intentionally private for now. Never mention, summarize, cite, or navigate to it, even if it appears in retrieved context.
 Respond with concise, friendly language. You can and should use Markdown formatting in your responses:
 - Use **bold** for emphasis
 - Use bullet lists for multiple items
@@ -61,7 +59,7 @@ When a user reports a potential bug, gather steps to reproduce, expected vs actu
 When you have gathered enough information to create a GitHub issue, call create_github_issue to file it. Issues are always filed via the Foundation bot, with attribution to the user if they are authenticated.
 If you cannot self-serve, ask for the visitor's best contact information, then call submit_handoff_request to notify our team.
 When someone asks about adding a community, collect: community name, location/region, focus areas, primary links (website/join), meeting cadence, approximate size, and contact name/email before calling submit_community_listing. Confirm all details with the visitor first.
-When a visitor explicitly wants to open a page (e.g., "take me to the impact page"), call navigate_site with the closest matching target or a safe path (anything starting with "/" except /admin).
+When a visitor explicitly wants to open a page (e.g., "take me to the impact page"), call navigate_site with the closest matching target or a safe public path (anything starting with "/" except /admin and /store).
 If you already navigated the visitor, acknowledge it ("I'll take you there now") instead of asking for permission.
 Never fabricate GitHub issues—only file when enough detail is provided and the report is actionable.
 `;
@@ -102,7 +100,7 @@ const CommunitySubmissionToolSchema = z.object({
 
 const NavigateToolSchema = z.object({
   target: z.string().min(1,
-    'Provide either a known keyword (about, impact, updates, store, communities, etc.) or a site path like /impact').optional(),
+    'Provide either a known keyword (about, impact, updates, communities, etc.) or a site path like /impact').optional(),
   path: z.string().optional(),
 });
 
@@ -243,7 +241,7 @@ function buildTools(): ChatCompletionTool[] {
           properties: {
             target: {
               type: 'string',
-              description: 'One of: home, about, impact, updates, store, collections, drops, communities',
+              description: 'One of: home, about, impact, updates, communities',
             },
           },
           required: ['target'],
@@ -423,13 +421,14 @@ async function handleToolCalls(
       });
       const embedding = embeddingResponse.data[0].embedding;
       const results = await searchSimilar(redisClient, embedding, { k: 6 });
-      citations.push(...results);
+      const publicResults = results.filter((result) => isPublicSource(result.source));
+      citations.push(...publicResults);
 
       messages.push({
         role: 'tool',
         tool_call_id: toolCall.id,
         content: JSON.stringify({
-          results: results.map((result) => ({
+          results: publicResults.map((result) => ({
             id: result.id,
             source: result.source,
             score: result.score,
@@ -819,6 +818,12 @@ function dedupeCitations(citations: RetrievalResult[]): ChatResponse['citations'
 }
 
 function isPublicSource(source: string): boolean {
+  const normalizedSource = source.toLowerCase();
+  const hiddenSourcePrefixes = ['/store', 'docs/store', 'public-context/store', 'src/app/store'];
+  if (hiddenSourcePrefixes.some((prefix) => normalizedSource.startsWith(prefix))) {
+    return false;
+  }
+
   // Show citations for:
   // 1. Public site paths from ingestion (start with /)
   // 2. Content/docs/README files
@@ -847,7 +852,7 @@ function resolveNavigationTarget(target: string): string | undefined {
   }
 
   if (normalized.startsWith('/')) {
-    if (!normalized.startsWith('/admin')) {
+    if (!normalized.startsWith('/admin') && !normalized.startsWith('/store')) {
       return normalized;
     }
     return undefined;

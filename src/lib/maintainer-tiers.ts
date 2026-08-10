@@ -215,7 +215,7 @@ export function computeContributionStatsFromGitHub(payload: GraphQLPayload): Con
       commits: 0,
       score: 9999,
       perRepository: [{
-        repository: 'react-foundation-store/created',
+        repository: 'react-foundation/created',
         pullRequests: 1250,
         issues: 0,
         commits: 0,

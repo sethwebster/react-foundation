@@ -28,32 +28,15 @@ vi.mock('@/lib/updates', () => ({
   ],
 }));
 
-vi.mock('@/lib/shopify', () => ({
-  getAllCollections: vi.fn(async () => [
-    {
-      handle: 'foundation-drop',
-      updatedAt: '2026-04-01T00:00:00.000Z',
-    },
-  ]),
-  getAllProducts: vi.fn(async () => [
-    {
-      handle: 'react-cap',
-    },
-  ]),
-}));
-
 describe('sitemap', () => {
-  it('excludes dead educators routes and includes the missing public static and dynamic routes', async () => {
+  it('excludes hidden routes and includes public static and dynamic routes', async () => {
     const { default: sitemap } = await import('./sitemap');
 
     const entries = await sitemap();
     const urls = entries.map((entry) => new URL(entry.url).pathname);
-    const collectionEntry = entries.find(
-      (entry) => new URL(entry.url).pathname === '/store/collections/foundation-drop',
-    );
-
     expect(urls).not.toContain('/educators');
     expect(urls).not.toContain('/educators/apply');
+    expect(urls.some((url) => url.startsWith('/store'))).toBe(false);
 
     expect(urls).toEqual(
       expect.arrayContaining([
@@ -71,16 +54,11 @@ describe('sitemap', () => {
         '/libraries',
         '/privacy',
         '/scoring',
-        '/store',
-        '/store/collections',
-        '/store/collections/foundation-drop',
-        '/store/products/react-cap',
         '/terms',
         '/updates',
         '/updates/spring-update',
       ]),
     );
 
-    expect(collectionEntry?.lastModified).toEqual(new Date('2026-04-01T00:00:00.000Z'));
   });
 });

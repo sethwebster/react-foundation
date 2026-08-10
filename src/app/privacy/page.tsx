@@ -136,7 +136,7 @@ export default function PrivacyPage() {
                 </h2>
 
                 <h3 className="mt-6 text-xl font-semibold text-foreground">
-                  5.1 Authentication
+                  Authentication
                 </h3>
                 <p className="mt-4 text-foreground/80">
                   We use GitHub and GitLab OAuth for authentication. When you
@@ -165,16 +165,6 @@ export default function PrivacyPage() {
                     </a>
                   </li>
                 </ul>
-
-                <h3 className="mt-6 text-xl font-semibold text-foreground">
-                  5.2 E-commerce
-                </h3>
-                <p className="mt-4 text-foreground/80">
-                  The store is currently a preview and does not collect payment
-                  or shipping information. If checkout is enabled in the future,
-                  this policy and the checkout experience will identify the
-                  commerce provider before personal information is submitted.
-                </p>
               </section>
 
               <section className="mb-8">

@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import type { Session } from "next-auth";
 import { ThemeToggleWrapper } from "@/components/ui/theme-toggle-wrapper";
@@ -16,12 +15,9 @@ export function MobileMenu({ session }: MobileMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [adminChecked, setAdminChecked] = useState(false);
-  const pathname = usePathname();
 
   const toggleMenu = () => setIsOpen(!isOpen);
   const closeMenu = () => setIsOpen(false);
-
-  const isStorePage = pathname?.startsWith("/store");
 
   // Check admin status only when menu is opened and hasn't been checked yet
   useEffect(() => {
@@ -47,18 +43,12 @@ export function MobileMenu({ session }: MobileMenuProps) {
     checkAdminStatus();
   }, [isOpen, adminChecked, session?.user?.email]);
 
-  const navigationLinks = isStorePage
-    ? [
-        { href: "/store/collections", label: "Collections" },
-        { href: "/about", label: "About" },
-        { href: "/impact", label: "Impact" },
-      ]
-    : [
-        { href: "/updates", label: "News" },
-        { href: "/about", label: "About" },
-        { href: "/impact", label: "Impact" },
-        { href: "/communities", label: "Communities" },
-      ];
+  const navigationLinks = [
+    { href: "/updates", label: "News" },
+    { href: "/about", label: "About" },
+    { href: "/impact", label: "Impact" },
+    { href: "/communities", label: "Communities" },
+  ];
 
   return (
     <>

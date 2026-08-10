@@ -49,7 +49,6 @@ export default function TermsPage() {
                 </p>
                 <ul className="mt-4 list-disc space-y-2 pl-6 text-foreground/80">
                   <li>Information about React Foundation and its mission</li>
-                  <li>A preview of planned React Foundation merchandise</li>
                   <li>User authentication via GitHub and GitLab</li>
                   <li>Contributor progress tracking and status information</li>
                   <li>Community updates and announcements</li>
@@ -111,19 +110,7 @@ export default function TermsPage() {
 
               <section className="mb-8">
                 <h2 className="text-2xl font-semibold text-foreground">
-                  6. Purchases and Payment
-                </h2>
-                <p className="mt-4 text-foreground/80">
-                  The store is currently a preview and does not accept orders or
-                  payments. If purchasing is enabled in the future, the checkout
-                  experience will identify the applicable payment processor and
-                  terms before you submit an order.
-                </p>
-              </section>
-
-              <section className="mb-8">
-                <h2 className="text-2xl font-semibold text-foreground">
-                  7. Limitation of Liability
+                  6. Limitation of Liability
                 </h2>
                 <p className="mt-4 text-foreground/80">
                   In no event shall React Foundation, nor its directors,
@@ -138,7 +125,7 @@ export default function TermsPage() {
 
               <section className="mb-8">
                 <h2 className="text-2xl font-semibold text-foreground">
-                  8. Disclaimer
+                  7. Disclaimer
                 </h2>
                 <p className="mt-4 text-foreground/80">
                   Your use of the Service is at your sole risk. The Service is
@@ -152,7 +139,7 @@ export default function TermsPage() {
 
               <section className="mb-8">
                 <h2 className="text-2xl font-semibold text-foreground">
-                  9. Changes to Terms
+                  8. Changes to Terms
                 </h2>
                 <p className="mt-4 text-foreground/80">
                   We reserve the right, at our sole discretion, to modify or
@@ -165,7 +152,7 @@ export default function TermsPage() {
 
               <section className="mb-8">
                 <h2 className="text-2xl font-semibold text-foreground">
-                  10. Contact Information
+                  9. Contact Information
                 </h2>
                 <p className="mt-4 text-foreground/80">
                   If you have any questions about these Terms of Service, please

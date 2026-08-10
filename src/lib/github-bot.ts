@@ -78,7 +78,7 @@ export async function fileIssue(params: FileIssueParams): Promise<FiledIssueResu
   let issueBody = '';
 
   if (params.filedBy) {
-    issueBody = `> **Filed by [@${params.filedBy.username}](https://github.com/${params.filedBy.username})** via [React Foundation Store](https://react.foundation)\n\n`;
+    issueBody = `> **Filed by [@${params.filedBy.username}](https://github.com/${params.filedBy.username})** via [React Foundation](https://react.foundation)\n\n`;
   }
 
   issueBody += params.body;
