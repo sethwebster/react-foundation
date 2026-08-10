@@ -21,8 +21,7 @@ const pillars = [
 export function HomeMission() {
   return (
     <Section className="border-t border-border py-20 sm:py-28">
-      <p className="text-sm font-semibold text-primary">Our mission</p>
-      <h2 className="mt-5 max-w-[39rem] text-[clamp(2rem,5vw,3.15rem)] font-semibold leading-[1.08] text-foreground">
+      <h2 className="max-w-[39rem] text-[clamp(2rem,5vw,3.15rem)] font-semibold leading-[1.08] text-foreground">
         We exist to ensure the React ecosystem thrives.
       </h2>
       <div className="mt-9 grid gap-7 text-base leading-7 text-muted-foreground sm:grid-cols-2">
@@ -66,10 +65,7 @@ export function HomeCommunityCTA() {
     <Section className="pb-10 sm:pb-16" measure="standard">
       <div className="rounded-panel bg-foreground px-7 py-10 text-background sm:flex sm:items-center sm:justify-between sm:px-10 sm:py-12">
         <div className="max-w-[31rem]">
-          <p className="text-sm font-semibold text-primary dark:text-primary">
-            Build the next chapter with us
-          </p>
-          <h2 className="mt-4 text-3xl font-semibold leading-tight !text-background sm:text-4xl">
+          <h2 className="text-3xl font-semibold leading-tight !text-background sm:text-4xl">
             A stronger React ecosystem starts with participation.
           </h2>
           <p className="mt-4 text-sm leading-6 text-background/70">

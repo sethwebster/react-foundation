@@ -80,9 +80,6 @@ const FOUNDING_MEMBERS: Member[] = [
 export function FoundingMembers() {
   return (
     <section className="scroll-mt-32 py-4">
-      <p className="hidden text-center text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground sm:block">
-        Founding members
-      </p>
       <div className="grid grid-cols-3 items-center gap-6 sm:hidden">
         {[FOUNDING_MEMBERS[0], FOUNDING_MEMBERS[3], FOUNDING_MEMBERS[2]].map(
           (member) => (
@@ -90,7 +87,7 @@ export function FoundingMembers() {
           ),
         )}
       </div>
-      <div className="mt-9 hidden grid-cols-4 items-center gap-x-8 gap-y-10 sm:grid">
+      <div className="hidden grid-cols-4 items-center gap-x-8 gap-y-10 sm:grid">
         {FOUNDING_MEMBERS.map((member) => (
           <MemberLogo key={member.name} member={member} />
         ))}

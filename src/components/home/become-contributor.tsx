@@ -74,8 +74,7 @@ export function BecomeContributor() {
     >
       <div className="grid gap-10 md:grid-cols-[0.75fr_1.25fr]">
         <div>
-          <p className="text-sm font-semibold text-primary">Get involved</p>
-          <h2 className="mt-4 text-3xl font-semibold leading-tight text-foreground sm:text-4xl">
+          <h2 className="text-3xl font-semibold leading-tight text-foreground sm:text-4xl">
             Become a contributor
           </h2>
           <p className="mt-4 text-sm leading-6 text-muted-foreground">
