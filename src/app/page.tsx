@@ -55,8 +55,8 @@ export default function FoundationHome() {
           <FoundingMembers />
         </Section>
 
-        <HomeMission />
         <HomePillars />
+        <HomeMission />
         <Section className="pb-20 sm:pb-28" measure="standard">
           <BecomeContributor />
         </Section>
