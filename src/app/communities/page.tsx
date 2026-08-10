@@ -7,6 +7,7 @@ import { CommunityList } from "@/components/communities/CommunityList";
 import { CommunityMap } from "@/components/communities/CommunityMap";
 import { CommunitySortDropdown } from "@/components/communities/CommunitySortDropdown";
 import { CommunityStats } from "@/components/communities/CommunityStats";
+import { CommunitySearch } from "@/components/communities/CommunitySearch";
 import {
   PageIntro,
   PublicPageShell,
@@ -66,7 +67,7 @@ export default function CommunitiesPage() {
           className="scroll-mt-24 border-t border-border pt-20 sm:pt-24"
           measure="standard"
         >
-          <div className="mb-10 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+          <div className="mb-8 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <p className="text-sm font-semibold text-primary">Community directory</p>
               <h2 className="mt-3 text-3xl font-semibold text-foreground">
@@ -76,7 +77,11 @@ export default function CommunitiesPage() {
             <CommunitySortDropdown />
           </div>
 
-          <div className="grid gap-10 lg:grid-cols-[14rem_minmax(0,1fr)]">
+          <Suspense fallback={null}>
+            <CommunitySearch />
+          </Suspense>
+
+          <div className="mt-8 grid gap-10 lg:grid-cols-[14rem_minmax(0,1fr)]">
             <aside>
               <Suspense fallback={<FiltersSkeleton />}>
                 <CommunityFilters />

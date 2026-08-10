@@ -168,19 +168,6 @@ export function CommunityFilters() {
         </div>
       </div>
 
-      {/* Search */}
-      <div>
-        <label className="block text-sm font-medium text-foreground mb-2">
-          Search
-        </label>
-        <RFDS.SearchInput
-          placeholder="City, country, or name..."
-          value={filters.search || ''}
-          onChange={(e) => updateFilter('search', e.target.value, true)}
-          className="w-full"
-        />
-      </div>
-
       {/* Event Types */}
       <div>
         <label className="block text-sm font-medium text-foreground mb-3">
