@@ -101,6 +101,10 @@ export function ExecutiveMessage() {
             </p>
           </div>
         </div>
+
+        <p className="mt-4 text-xs italic text-muted-foreground">
+          (emdashes are mine)
+        </p>
       </section>
     </ScrollReveal>
   );
