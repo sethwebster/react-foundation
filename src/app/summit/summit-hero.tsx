@@ -12,7 +12,7 @@ import styles from "./summit.module.css";
 
 const navigation = [
   { href: "#why", label: "Purpose" },
-  { href: "#programme", label: "Programme" },
+  { href: "#program", label: "Program" },
   { href: "#joining", label: "Joining" },
   { href: "#plan", label: "Plan" },
   { href: "#faq", label: "FAQ" },
@@ -38,8 +38,8 @@ export function SummitHero() {
             </p>
 
             <div className="mt-9 flex flex-wrap gap-3">
-              <RFDS.ButtonLink href="#programme" size="lg">
-                Explore the programme
+              <RFDS.ButtonLink href="#program" size="lg">
+                Explore the program
                 <ArrowDown className="h-4 w-4" aria-hidden="true" />
               </RFDS.ButtonLink>
               <SummitCalendarMenu variant="tertiary" />
