@@ -112,9 +112,10 @@ export const ecosystemLibraries: RepoTarget[] = [
   { owner: "chakra-ui", name: "chakra-ui", category: "ui", tier: 2 },
   { owner: "ant-design", name: "ant-design", category: "ui", tier: 1 },
 
-  // Animation (3 repos)
+  // Animation (4 repos)
   { owner: "framer", name: "motion", category: "animation", tier: 1 },
   { owner: "pmndrs", name: "react-spring", category: "animation", tier: 2 },
+  { owner: "pmndrs", name: "react-three-fiber", category: "animation", tier: 2 },
   { owner: "formkit", name: "auto-animate", category: "animation", tier: 3 },
 
   // Dev Tools & Bundling (5 repos)

@@ -120,6 +120,7 @@ export const libraryIcons: Record<string, IconComponent | null> = {
   // Animation
   motion: SiFramer,
   "react-spring": null,
+  "react-three-fiber": SiReact,
   "auto-animate": null,
 
   // Dev Tools & Bundling
@@ -192,6 +193,7 @@ export const libraryDisplayNames: Record<string, string> = {
   "ant-design": "Ant Design",
   motion: "Framer Motion",
   "react-spring": "React Spring",
+  "react-three-fiber": "React Three Fiber",
   "auto-animate": "AutoAnimate",
   storybook: "Storybook",
   vite: "Vite",

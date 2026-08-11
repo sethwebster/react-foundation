@@ -149,4 +149,22 @@ describe('ecosystemLibraries', () => {
       })
     );
   });
+
+  it('includes React Three Fiber in related library datasets', async () => {
+    expect(findLibrary('pmndrs', 'react-three-fiber')).toMatchObject({
+      category: 'animation',
+      tier: 2,
+    });
+    expect(NPMCollector.getPackageName('pmndrs', 'react-three-fiber')).toBe('@react-three/fiber');
+    expect(libraryDisplayNames['react-three-fiber']).toBe('React Three Fiber');
+
+    const loader = new LibrariesLoader();
+    const records = await loader.load();
+    expect(records).toContainEqual(
+      expect.objectContaining({
+        id: 'library-pmndrs-react-three-fiber',
+        title: 'React Three Fiber',
+      })
+    );
+  });
 });
