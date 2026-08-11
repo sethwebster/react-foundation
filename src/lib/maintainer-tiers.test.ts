@@ -106,6 +106,24 @@ describe('ecosystemLibraries', () => {
     );
   });
 
+  it('includes Base UI in related library datasets', async () => {
+    expect(findLibrary('mui', 'base-ui')).toMatchObject({
+      category: 'ui',
+      tier: 2,
+    });
+    expect(NPMCollector.getPackageName('mui', 'base-ui')).toBe('@base-ui/react');
+    expect(libraryDisplayNames['base-ui']).toBe('Base UI');
+
+    const loader = new LibrariesLoader();
+    const records = await loader.load();
+    expect(records).toContainEqual(
+      expect.objectContaining({
+        id: 'library-mui-base-ui',
+        title: 'Base UI',
+      })
+    );
+  });
+
   it('includes React Strict DOM in related library datasets', async () => {
     expect(findLibrary('facebook', 'react-strict-dom')).toMatchObject({
       category: 'core',
