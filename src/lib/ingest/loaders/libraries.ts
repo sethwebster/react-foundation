@@ -86,9 +86,10 @@ export class LibrariesLoader implements ContentLoader {
     { repo: 'ariakit/ariakit', name: 'Ariakit', category: 'UI Libraries', tier: 'Tier 2' },
     { repo: 'chakra-ui/chakra-ui', name: 'Chakra UI', category: 'UI Libraries', tier: 'Tier 2' },
 
-    // Animation (3 repositories)
+    // Animation (4 repositories)
     { repo: 'framer/motion', name: 'Framer Motion', category: 'Animation', tier: 'Tier 1' },
     { repo: 'pmndrs/react-spring', name: 'React Spring', category: 'Animation', tier: 'Tier 2' },
+    { repo: 'pmndrs/react-three-fiber', name: 'React Three Fiber', category: 'Animation', tier: 'Tier 2' },
     { repo: 'formkit/auto-animate', name: 'AutoAnimate', category: 'Animation', tier: 'Tier 3' },
 
     // Dev Tools & Bundling (5 repositories)
