@@ -8,6 +8,7 @@ describe('robots metadata route', () => {
       rules: {
         userAgent: '*',
         allow: '/',
+        disallow: ['/admin', '/api', '/auth', '/profile', '/sticky-test', '/theme-test'],
       },
       sitemap: 'https://react.foundation/sitemap.xml',
       host: 'https://react.foundation',
