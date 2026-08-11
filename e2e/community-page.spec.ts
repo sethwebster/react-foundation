@@ -8,10 +8,11 @@ test.describe('Community page', () => {
     await page.goto(`/communities/${community.slug}`);
   });
 
-  test('renders community stats with compact variant size', async ({ page }) => {
-    const statBox = page.getByText(community.meeting_frequency, { exact: true });
+  test('renders community frequency as a labeled detail', async ({ page }) => {
+    const details = page.getByText('Community details').locator('..');
+    const frequency = details.getByText(community.meeting_frequency, { exact: true });
 
-    await expect(statBox).toBeVisible();
-    await expect(statBox).toHaveClass('font-bold mb-1 text-2xl text-foreground');
+    await expect(details.getByText('Meets', { exact: true })).toBeVisible();
+    await expect(frequency).toBeVisible();
   });
 });

@@ -6,8 +6,7 @@ import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 
-import { Button } from "@/components/ui/button";
-import { RFDS } from "@/components/rfds";
+import { ButtonLink } from "@/components/ui/button";
 import { MobileMenu } from "@/components/layout/mobile-menu";
 import { UserAvatar } from "@/components/ui/user-avatar";
 import { ThemeToggleWrapper } from "@/components/ui/theme-toggle-wrapper";
@@ -16,7 +15,6 @@ export function Header() {
   const pathname = usePathname();
   const { data: session } = useSession();
   const [isAdmin, setIsAdmin] = useState(false);
-  const isStorePage = pathname?.startsWith("/store");
   const isComingSoonPage = pathname === "/coming-soon";
 
   // Check admin status when user session changes
@@ -45,99 +43,50 @@ export function Header() {
   }, [session?.user?.email]);
 
   return (
-    <header className="fixed left-0 right-0 top-0 z-50 bg-background/95 shadow-lg shadow-black/5 backdrop-blur-xl supports-[backdrop-filter]:bg-background/80">
-      <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4 sm:px-8 lg:px-12">
+    <header className="fixed inset-x-0 top-0 z-[1000] h-[var(--foundation-header-height)] border-b border-border/70 bg-background/92 backdrop-blur-xl supports-[backdrop-filter]:bg-background/82">
+      <div className="mx-auto flex h-full w-full max-w-[48rem] items-center justify-between px-5 sm:px-6">
         {/* Logo */}
-        <div className="flex items-center gap-3">
-          <div className="relative h-10 w-10 overflow-hidden">
-            <Link href="/">
+        <Link href="/" className="flex min-h-11 items-center gap-2.5">
+          <span className="relative h-6 w-6 shrink-0">
               <Image
                 src="/react-logo.svg"
                 alt="React Foundation logo"
                 fill
-                sizes="40px"
-                className="object-contain p-1.5"
+                sizes="24px"
+                className="object-contain brightness-0 dark:invert"
                 priority
               />
-            </Link>
-          </div>
-          <div>
-            <Link href="/">
-              <p className="text-sm uppercase tracking-[0.25em] text-muted-foreground">
-                React Foundation
-              </p>
-              <p className="text-base font-medium text-foreground">
-                {isStorePage ? "Official Store" : "Supporting the Ecosystem"}
-              </p>
-            </Link>
-          </div>
-        </div>
+          </span>
+          <span className="whitespace-nowrap text-[0.8125rem] font-semibold tracking-[-0.01em] text-foreground sm:text-sm">
+            The React Foundation
+          </span>
+        </Link>
 
         {/* Desktop Navigation (hidden on mobile) */}
-        <div className={`hidden items-center gap-4 text-sm text-muted-foreground md:flex transition ${isComingSoonPage ? 'blur-sm pointer-events-none' : ''}`}>
-          <nav className="flex items-center gap-6">
-            {isStorePage ? (
-              // Store navigation
-              <>
-                <Link className="transition hover:text-foreground" href="/store#featured">
-                  Collections
-                </Link>
-                <Link className="transition hover:text-foreground" href="/store#drops">
-                  Limited Drops
-                </Link>
-                <Link className="transition hover:text-foreground" href="/impact">
-                  Impact
-                </Link>
-              </>
-            ) : (
-              // Foundation navigation
-              <>
-                <Link className="transition hover:text-foreground" href="/about">
-                  About
-                </Link>
-                <Link className="transition hover:text-foreground" href="/updates">
-                  Updates
-                </Link>
-                <Link className="transition hover:text-foreground" href="/impact">
-                  Impact
-                </Link>
-                <Link className="transition hover:text-foreground" href="/communities">
-                  Communities
-                </Link>
-                {isAdmin && (
-                  <Link
-                    className="transition hover:text-foreground text-destructive font-medium"
-                    href="/admin"
-                    title="Admin Panel"
-                  >
-                    ⚙️
-                  </Link>
-                )}
-              </>
+        <div className={`hidden items-center gap-2.5 text-[0.8125rem] text-muted-foreground md:flex transition ${isComingSoonPage ? 'blur-sm pointer-events-none' : ''}`}>
+          <nav className="flex items-center gap-5">
+            <Link className="transition hover:text-foreground" href="/updates">
+              News
+            </Link>
+            <Link className="transition hover:text-foreground" href="/about">
+              About
+            </Link>
+            <Link className="transition hover:text-foreground" href="/impact">
+              Impact
+            </Link>
+            <Link className="transition hover:text-foreground" href="/communities">
+              Communities
+            </Link>
+            {isAdmin && (
+              <Link
+                className="transition hover:text-foreground text-destructive font-medium"
+                href="/admin"
+                title="Admin Panel"
+              >
+                ⚙️
+              </Link>
             )}
           </nav>
-
-          {/* Cart (store pages only) */}
-          {isStorePage && (
-            <Button variant="glass" size="sm" className="relative px-3" type="button">
-              <svg
-                className="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
-                />
-              </svg>
-              <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
-                0
-              </span>
-            </Button>
-          )}
 
           {/* Theme Toggle */}
           <ThemeToggleWrapper />
@@ -146,39 +95,35 @@ export function Header() {
           {session?.user ? (
             <UserAvatar
               user={session.user}
-              size={40}
+              size={34}
               href="/profile"
-              className="transition hover:border-primary/50 hover:shadow-lg hover:shadow-primary/20"
+              className="transition hover:border-primary/50"
             />
           ) : (
-            <RFDS.ButtonLink href="/api/auth/signin" size="sm">
+            <ButtonLink
+              href="/auth/signin"
+              variant="tertiary"
+              size="xs"
+              className="border px-3.5 font-medium"
+            >
               Sign in
-            </RFDS.ButtonLink>
+            </ButtonLink>
           )}
         </div>
 
         {/* Mobile Menu (shows on mobile only) */}
-        <div className="flex items-center gap-2 md:hidden">
-          {isStorePage && (
-            <Button variant="glass" size="sm" className="relative px-3" type="button">
-              <svg
-                className="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                strokeWidth={2}
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
-                />
-              </svg>
-              <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
-                0
-              </span>
-            </Button>
-          )}
+        <div className="flex items-center gap-1 md:hidden">
+          <ThemeToggleWrapper />
+          {!session?.user ? (
+            <ButtonLink
+              href="/auth/signin"
+              variant="tertiary"
+              size="xs"
+              className="border px-3 font-medium"
+            >
+              Sign in
+            </ButtonLink>
+          ) : null}
           <MobileMenu session={session} />
         </div>
       </div>

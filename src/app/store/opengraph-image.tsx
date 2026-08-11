@@ -1,34 +1,33 @@
-import { ImageResponse } from 'next/og';
+import { ImageResponse } from "next/og";
 
-export const runtime = 'edge';
-export const alt = 'React Foundation - Official Merchandise';
+export const runtime = "edge";
+export const alt = "React Foundation store preview";
 export const size = {
   width: 1200,
   height: 630,
 };
-export const contentType = 'image/png';
+export const contentType = "image/png";
 
 export default async function StoreOGImage() {
   return new ImageResponse(
     (
       <div
         style={{
-          height: '100%',
-          width: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          backgroundColor: '#0f172a',
-          backgroundImage: 'linear-gradient(135deg, rgba(34, 211, 238, 0.2) 0%, rgba(99, 102, 241, 0.2) 50%, rgba(168, 85, 247, 0.2) 100%)',
+          height: "100%",
+          width: "100%",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          backgroundColor: "#f4fbfd",
         }}
       >
         {/* React Logo */}
         <div
           style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
             marginBottom: 30,
           }}
         >
@@ -53,9 +52,9 @@ export default async function StoreOGImage() {
           style={{
             fontSize: 64,
             fontWeight: 700,
-            color: 'white',
+            color: "#18202b",
             marginBottom: 16,
-            textAlign: 'center',
+            textAlign: "center",
           }}
         >
           React Foundation
@@ -65,31 +64,31 @@ export default async function StoreOGImage() {
         <div
           style={{
             fontSize: 28,
-            color: 'rgba(255, 255, 255, 0.7)',
-            textAlign: 'center',
+            color: "#566173",
+            textAlign: "center",
             maxWidth: 800,
             lineHeight: 1.3,
             marginBottom: 50,
           }}
         >
-          Limited drops and official merch supporting React ecosystem maintainers
+          A preview of planned React Foundation merchandise
         </div>
 
         {/* Tag */}
         <div
           style={{
-            display: 'flex',
-            alignItems: 'center',
+            display: "flex",
+            alignItems: "center",
             gap: 12,
             paddingLeft: 24,
             paddingRight: 24,
             paddingTop: 12,
             paddingBottom: 12,
-            backgroundColor: 'rgba(255, 255, 255, 0.1)',
+            backgroundColor: "#ffffff",
             borderRadius: 999,
             fontSize: 18,
-            color: 'rgba(255, 255, 255, 0.9)',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
+            color: "#344054",
+            border: "1px solid #d8e1e8",
           }}
         >
           <div
@@ -97,15 +96,15 @@ export default async function StoreOGImage() {
               width: 6,
               height: 6,
               borderRadius: 3,
-              backgroundColor: '#34D399',
+              backgroundColor: "#61DAFB",
             }}
           />
-          <span>Every purchase funds open source</span>
+          <span>Store preview · Checkout unavailable</span>
         </div>
       </div>
     ),
     {
       ...size,
-    }
+    },
   );
 }

@@ -205,3 +205,20 @@ describe('forceSeed', () => {
     });
   });
 });
+
+describe('public community reads', () => {
+  beforeEach(async () => {
+    await redis.del('communities:index', 'communities:seeded', 'communities:all');
+    vi.resetModules();
+  });
+
+  it('falls back to the canonical community dataset when Redis is empty', async () => {
+    const { getCommunityBySlug } = await import('./redis-communities');
+
+    await expect(getCommunityBySlug('react-bangalore')).resolves.toMatchObject({
+      name: 'React Bangalore',
+      slug: 'react-bangalore',
+      status: 'active',
+    });
+  });
+});

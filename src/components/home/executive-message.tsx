@@ -4,26 +4,12 @@ import Image from "next/image";
 export function ExecutiveMessage() {
   return (
     <ScrollReveal animation="fade-up">
-      <section className="scroll-mt-32 space-y-8 rounded-3xl border border-border/10 bg-gradient-accent p-12">
-        <div className="space-y-6 text-center">
-          <div className="flex justify-center">
-            <div className="relative h-32 w-32 shrink-0 overflow-hidden rounded-full border-4 border-border/20 bg-muted shadow-2xl">
-              <Image
-                src="/seth-webster-headshot.jpeg"
-                alt="Seth Webster, Executive Director"
-                width={128}
-                height={128}
-                className="object-cover"
-                priority
-              />
-            </div>
-          </div>
-          <h2 className="text-3xl font-semibold text-foreground sm:text-4xl">
-            A Message from Our Executive Director
-          </h2>
-        </div>
+      <section className="scroll-mt-32 rounded-panel border border-border bg-surface-raised px-7 py-9 shadow-soft sm:px-12 sm:py-12">
+        <p className="text-sm font-semibold text-primary">
+          A Message from Our Executive Director
+        </p>
 
-        <div className="mx-auto max-w-3xl space-y-6 leading-relaxed text-foreground">
+        <div className="mt-7 space-y-5 text-[0.9375rem] leading-7 text-foreground/82">
           <p>
             You know, every so often, something comes along in software that changes not
             just how we build — but why we build.
@@ -63,7 +49,8 @@ export function ExecutiveMessage() {
 
           <p>
             We&apos;re doing that by working hand-in-hand with incredible partners —
-            Meta, Microsoft, Amazon, Vercel, Expo, Callstack, Software Mansion, and many
+            Meta, Microsoft, Amazon, Vercel, Expo, Callstack, Software Mansion, Huawei, and
+            many
             more — but more importantly, by working with you, the global community of
             developers who make React what it is.
           </p>
@@ -77,7 +64,7 @@ export function ExecutiveMessage() {
           </p>
 
           <p>
-            I&apos;ve had the privilege of leading React at Meta for  many years, and now,
+            I&apos;ve had the privilege of leading React at Meta for many years, and now,
             as the Executive Director of the React Foundation, I carry the same North Star
             that&apos;s guided me all along: helping others bring their ideas to life.
           </p>
@@ -98,12 +85,26 @@ export function ExecutiveMessage() {
           </p>
         </div>
 
-        <div className="border-t border-border/10 pt-8 text-center">
-          <div className="space-y-2">
-            <p className="text-lg font-semibold text-foreground">Seth Webster</p>
-            <p className="text-sm text-foreground/60">Executive Director, React Foundation</p>
+        <div className="mt-9 flex items-center gap-3 border-t border-border pt-7">
+          <Image
+            src="/seth-webster-headshot.jpeg"
+            alt=""
+            aria-hidden
+            width={40}
+            height={40}
+            className="h-10 w-10 rounded-full object-cover"
+          />
+          <div>
+            <p className="text-sm font-semibold text-foreground">Seth Webster</p>
+            <p className="mt-0.5 text-xs text-muted-foreground">
+              Executive Director, React Foundation
+            </p>
           </div>
         </div>
+
+        <p className="mt-4 text-xs italic text-muted-foreground">
+          (emdashes are mine)
+        </p>
       </section>
     </ScrollReveal>
   );

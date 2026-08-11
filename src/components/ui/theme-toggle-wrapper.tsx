@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { ThemeToggle } from './theme-toggle';
+import { ThemeToggle, ThemeToggleWithLabel } from './theme-toggle';
 import { useHasMounted } from '@/lib/hooks/use-has-mounted';
 
 interface ThemeToggleWrapperProps {
@@ -12,17 +12,8 @@ export function ThemeToggleWrapper({ withLabel = false }: ThemeToggleWrapperProp
   const hasMounted = useHasMounted();
 
   if (!hasMounted) {
-    // Return a placeholder during SSR
-    return (
-      <div className="inline-flex items-center rounded-lg bg-muted p-1 animate-pulse">
-        <div className="flex items-center gap-1">
-          <div className="h-4 w-4 rounded bg-muted-foreground/20"></div>
-          <div className="h-4 w-4 rounded bg-muted-foreground/20"></div>
-          <div className="h-4 w-4 rounded bg-muted-foreground/20"></div>
-        </div>
-      </div>
-    );
+    return <div className={withLabel ? "h-11 w-full" : "h-11 w-11"} aria-hidden />;
   }
 
-  return withLabel ? <ThemeToggle /> : <ThemeToggle />;
+  return withLabel ? <ThemeToggleWithLabel /> : <ThemeToggle />;
 }

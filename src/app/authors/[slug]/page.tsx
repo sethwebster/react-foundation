@@ -1,182 +1,129 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { Pill } from "@/components/ui/pill";
-import { Footer } from "@/components/layout/footer";
-import { getAuthorBySlug, getAllAuthors } from "@/lib/authors";
+import { notFound } from "next/navigation";
+
+import {
+  PublicPageShell,
+  Section,
+  Surface,
+} from "@/components/public-site/layout";
+import { getAllAuthors, getAuthorBySlug } from "@/lib/authors";
 import { getAllUpdates } from "@/lib/updates";
 
 type AuthorPageProps = {
-  params: Promise<{
-    slug: string;
-  }>;
+  params: Promise<{ slug: string }>;
 };
 
-export async function generateStaticParams() {
-  const authors = getAllAuthors();
-  return authors.map((author) => ({
-    slug: author.slug,
-  }));
+export function generateStaticParams() {
+  return getAllAuthors().map((author) => ({ slug: author.slug }));
 }
 
 export async function generateMetadata({
   params,
 }: AuthorPageProps): Promise<Metadata> {
-  const { slug } = await params;
-  const author = getAuthorBySlug(slug);
-
-  if (!author) {
-    return {
-      title: "Author not found",
-    };
-  }
-
-  return {
-    title: author.name,
-    description: `${author.title} - ${author.bio}`,
-  };
+  const author = getAuthorBySlug((await params).slug);
+  return author
+    ? { title: author.name, description: author.bio }
+    : { title: "Author not found" };
 }
 
 export default async function AuthorPage({ params }: AuthorPageProps) {
-  const { slug } = await params;
-  const author = getAuthorBySlug(slug);
+  const author = getAuthorBySlug((await params).slug);
+  if (!author) notFound();
 
-  if (!author) {
-    notFound();
-  }
-
-  // Get updates by this author
-  const authorUpdates = getAllUpdates().filter(
-    (update) => update.metadata.author === slug
+  const updates = getAllUpdates().filter(
+    (update) => update.metadata.author === author.slug,
   );
+  const socialLinks = [
+    ["GitHub", author.github],
+    ["X", author.twitter],
+    ["LinkedIn", author.linkedin],
+    ["Website", author.website],
+  ].filter((entry): entry is [string, string] => Boolean(entry[1]));
 
   return (
-    <div className="min-h-screen bg-background pt-24 text-muted-foreground">
-      <div className="absolute inset-x-0 top-[-6rem] -z-10 flex justify-center blur-3xl">
-        <div className="h-[24rem] w-[60rem] bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 opacity-30" />
-      </div>
+    <PublicPageShell>
+      <main>
+        <Section className="pt-16 sm:pt-24" measure="standard">
+          <Link
+            href="/authors"
+            className="text-sm text-muted-foreground transition hover:text-foreground"
+          >
+            <span aria-hidden>←</span> All authors
+          </Link>
 
-      <div className="mx-auto flex max-w-4xl flex-col px-6 pb-24 sm:px-8 lg:px-12">
-        <main className="flex flex-col gap-12 pt-12">
-          {/* Author Profile */}
-          <section className="space-y-8 rounded-3xl border border-border/10 bg-muted/60 p-12">
-            <div className="flex flex-col items-center gap-6 text-center">
-              {author.avatar && (
-                <div className="relative h-32 w-32 overflow-hidden rounded-full border-4 border-border/20 shadow-2xl">
-                  <Image
-                    src={author.avatar}
-                    alt={author.name}
-                    width={128}
-                    height={128}
-                    className="object-cover"
-                  />
-                </div>
-              )}
-              <div>
-                <h1 className="text-3xl font-bold text-foreground sm:text-4xl">
-                  {author.name}
-                </h1>
-                <p className="mt-2 text-lg text-foreground/70">{author.title}</p>
-              </div>
-              <p className="max-w-2xl text-base leading-relaxed text-foreground/80">
+          <div className="mt-10 grid gap-8 md:grid-cols-[10rem_minmax(0,1fr)] md:items-start">
+            {author.avatar ? (
+              <Image
+                src={author.avatar}
+                alt={author.name}
+                width={160}
+                height={160}
+                className="h-32 w-32 rounded-full object-cover md:h-40 md:w-40"
+              />
+            ) : null}
+            <div>
+              <h1 className="text-title font-semibold leading-tight text-foreground">
+                {author.name}
+              </h1>
+              <p className="mt-3 text-base text-muted-foreground">
+                {author.title}
+              </p>
+              <p className="mt-6 max-w-2xl text-base leading-7 text-muted-foreground">
                 {author.bio}
               </p>
-
-              {/* Social Links */}
-              <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
-                {author.github && (
-                  <a
-                    href={author.github}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="rounded-full border border-border/20 bg-background/5 px-4 py-2 text-sm text-foreground/80 transition hover:border-cyan-400/50 hover:bg-background/10 hover:text-cyan-300"
-                  >
-                    GitHub →
-                  </a>
-                )}
-                {author.twitter && (
-                  <a
-                    href={author.twitter}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="rounded-full border border-border/20 bg-background/5 px-4 py-2 text-sm text-foreground/80 transition hover:border-cyan-400/50 hover:bg-background/10 hover:text-cyan-300"
-                  >
-                    Twitter →
-                  </a>
-                )}
-                {author.linkedin && (
-                  <a
-                    href={author.linkedin}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="rounded-full border border-border/20 bg-background/5 px-4 py-2 text-sm text-foreground/80 transition hover:border-cyan-400/50 hover:bg-background/10 hover:text-cyan-300"
-                  >
-                    LinkedIn →
-                  </a>
-                )}
-                {author.website && (
-                  <a
-                    href={author.website}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="rounded-full border border-border/20 bg-background/5 px-4 py-2 text-sm text-foreground/80 transition hover:border-cyan-400/50 hover:bg-background/10 hover:text-cyan-300"
-                  >
-                    Website →
-                  </a>
-                )}
-              </div>
-            </div>
-          </section>
-
-          {/* Author's Updates */}
-          {authorUpdates.length > 0 && (
-            <section className="space-y-6">
-              <h2 className="text-2xl font-semibold text-foreground">
-                Updates by {author.name}
-              </h2>
-              <div className="space-y-4">
-                {authorUpdates.map((update) => (
-                  <Link
-                    key={update.slug}
-                    href={`/updates/${update.slug}`}
-                    className="block rounded-2xl border border-border/10 bg-muted/60 p-6 transition hover:border-border/20 hover:bg-muted/80"
-                  >
-                    <time
-                      dateTime={update.metadata.date}
-                      className="text-xs text-foreground/50"
+              {socialLinks.length ? (
+                <div className="mt-6 flex flex-wrap gap-4">
+                  {socialLinks.map(([label, href]) => (
+                    <a
+                      key={label}
+                      href={href}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-sm font-semibold text-primary hover:underline"
                     >
-                      {new Date(update.metadata.date).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      })}
-                    </time>
-                    <h3 className="mt-2 text-lg font-semibold text-foreground">
-                      {update.metadata.title}
-                    </h3>
-                    <p className="mt-2 text-sm text-foreground/70">
-                      {update.metadata.description}
-                    </p>
-                  </Link>
-                ))}
-              </div>
-            </section>
-          )}
-
-          {/* Back Link */}
-          <div className="border-t border-border/10 pt-8">
-            <Link
-              href="/authors"
-              className="text-sm text-cyan-400 transition hover:text-cyan-300"
-            >
-              ← All authors
-            </Link>
+                      {label} <span aria-hidden>↗</span>
+                    </a>
+                  ))}
+                </div>
+              ) : null}
+            </div>
           </div>
-        </main>
-      </div>
+        </Section>
 
-      <Footer />
-    </div>
+        {updates.length ? (
+          <Section className="py-20" measure="standard">
+            <h2 className="text-2xl font-semibold text-foreground">
+              Updates by {author.name}
+            </h2>
+            <div className="mt-7 space-y-4">
+              {updates.map((update) => (
+                <Surface key={update.slug} className="p-6">
+                  <time
+                    dateTime={update.metadata.date}
+                    className="text-xs text-muted-foreground"
+                  >
+                    {new Date(update.metadata.date).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
+                  </time>
+                  <h3 className="mt-2 text-lg font-semibold text-foreground">
+                    <Link href={`/updates/${update.slug}`}>
+                      {update.metadata.title}
+                    </Link>
+                  </h3>
+                  <p className="mt-2 text-sm leading-6 text-muted-foreground">
+                    {update.metadata.description}
+                  </p>
+                </Surface>
+              ))}
+            </div>
+          </Section>
+        ) : null}
+      </main>
+    </PublicPageShell>
   );
 }

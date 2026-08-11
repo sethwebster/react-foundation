@@ -6,19 +6,19 @@
 
 import { darkTheme } from '@/lib/theme-config';
 
-// Use dark theme colors for emails (better for most email clients)
+// Use static dark-theme values because email clients cannot resolve site CSS variables.
 export const emailColors = {
   // Base
-  background: darkTheme.background,          // #0a0a0a
-  foreground: darkTheme.foreground,          // #ededed
+  background: darkTheme.background,
+  foreground: darkTheme.foreground,
 
   // Surface
-  card: '#111111',                           // Slightly lighter than background for contrast
-  cardBorder: darkTheme.border,              // #27272a
+  card: darkTheme.card,
+  cardBorder: darkTheme.border,
 
   // Interactive
-  primary: darkTheme.primary,                // #0ea5e9
-  primaryForeground: darkTheme.primaryForeground, // #ffffff
+  primary: darkTheme.primary,
+  primaryForeground: darkTheme.primaryForeground,
 
   // Status
   success: darkTheme.success,                // #10b981
@@ -29,14 +29,14 @@ export const emailColors = {
   warningForeground: darkTheme.warningForeground, // #ffffff
 
   // Muted
-  muted: darkTheme.muted,                    // #1a1a1a
-  mutedForeground: darkTheme.mutedForeground, // #a1a1aa
+  muted: darkTheme.muted,
+  mutedForeground: darkTheme.mutedForeground,
 
   // Accent
-  accent: '#a855f7',                         // Purple for special highlights
+  accent: darkTheme.accentForeground,
 
   // Gradients
-  brandGradient: 'linear-gradient(135deg, #06b6d4 0%, #ec4899 100%)',
+  brandGradient: darkTheme.gradientPrimary,
 };
 
 export const emailSpacing = {

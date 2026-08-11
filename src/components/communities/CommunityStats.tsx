@@ -1,82 +1,35 @@
-/**
- * Community Stats Component
- * Dynamically calculates and displays stats from Redis data
- */
-
-'use client';
-
-import useSWR from 'swr';
-import { RFDS } from '@/components/rfds';
-
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
-
-export function CommunityStats() {
-  const { data, isLoading, error } = useSWR('/api/communities/stats', fetcher);
-
-  if (isLoading || !data) {
-    return (
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center max-w-5xl mx-auto">
-        {[1, 2, 3, 4].map((i) => (
-          <div key={i} className="space-y-2">
-            <div className="h-12 bg-muted animate-pulse rounded" />
-            <div className="h-4 bg-muted animate-pulse rounded w-24 mx-auto" />
-          </div>
-        ))}
-      </div>
-    );
-  }
-
-  if (error || !data.success) {
-    return (
-      <div className="text-center text-destructive">
-        Failed to load stats
-      </div>
-    );
-  }
-
-  const { stats } = data;
-
-  // Only show "Active" stat if >= 75% are active
-  const activePercentage = stats.active_communities / stats.total_communities;
-  const showActiveStat = activePercentage >= 0.75;
+export function CommunityStats({
+  communities,
+  countries,
+  members,
+}: {
+  communities: number;
+  countries: number;
+  members: number;
+}) {
+  const stats = [
+    { value: communities.toString(), label: "Communities" },
+    { value: countries.toString(), label: "Countries" },
+    { value: formatMembers(members), label: "Members" },
+  ];
 
   return (
-    <div className={`grid grid-cols-2 md:grid-cols-${showActiveStat ? '4' : '3'} gap-8 text-center max-w-5xl mx-auto`}>
-      <StatCard
-        number={stats.total_communities.toString()}
-        label="Communities"
-      />
-      <StatCard
-        number={stats.countries.toString()}
-        label="Countries"
-      />
-      <StatCard
-        number={formatNumber(stats.total_members)}
-        label="Total Members"
-      />
-      {showActiveStat && (
-        <StatCard
-          number={stats.active_communities.toString()}
-          label="Active"
-        />
-      )}
-    </div>
+    <dl className="grid grid-cols-3 py-3 text-center">
+      {stats.map((stat) => (
+        <div key={stat.label} className="px-2 sm:px-6">
+          <dd className="text-2xl font-semibold tracking-[-0.04em] text-foreground sm:text-3xl">
+            {stat.value}
+          </dd>
+          <dt className="mt-1 text-[0.6875rem] text-muted-foreground sm:text-xs">
+            {stat.label}
+          </dt>
+        </div>
+      ))}
+    </dl>
   );
 }
 
-function StatCard({ number, label }: { number: string; label: string }) {
-  return (
-    <RFDS.StatCard
-      label={label}
-      value={number}
-      color="primary"
-      variant="default"
-    />
-  );
-}
-
-function formatNumber(num: number): string {
-  if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
-  if (num >= 1000) return `${(num / 1000).toFixed(0)}K+`;
-  return num.toString();
+function formatMembers(value: number) {
+  if (value < 1000) return value.toString();
+  return `${Math.floor(value / 1000)}k+`;
 }

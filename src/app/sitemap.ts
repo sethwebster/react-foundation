@@ -7,7 +7,6 @@ import { MetadataRoute } from 'next';
 
 import { REACT_COMMUNITIES } from '@/data/communities';
 import { getAllAuthors } from '@/lib/authors';
-import { getAllCollections, getAllProducts } from '@/lib/shopify';
 import { getAllUpdates } from '@/lib/updates';
 
 const buildEntry = (
@@ -23,7 +22,7 @@ const buildEntry = (
   priority,
 });
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://react.foundation';
 
   const staticRoutes: MetadataRoute.Sitemap = [
@@ -38,8 +37,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     buildEntry(baseUrl, '/scoring', 'weekly', 0.8),
     buildEntry(baseUrl, '/privacy', 'yearly', 0.4),
     buildEntry(baseUrl, '/terms', 'yearly', 0.4),
-    buildEntry(baseUrl, '/store', 'daily', 0.9),
-    buildEntry(baseUrl, '/store/collections', 'weekly', 0.8),
     buildEntry(baseUrl, '/communities', 'weekly', 0.9),
     buildEntry(baseUrl, '/communities/start', 'monthly', 0.9),
     buildEntry(baseUrl, '/communities/add', 'monthly', 0.7),
@@ -63,39 +60,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     buildEntry(baseUrl, `/updates/${update.slug}`, 'monthly', 0.7, new Date(update.metadata.date)),
   );
 
-  let collectionRoutes: MetadataRoute.Sitemap = [];
-  let productRoutes: MetadataRoute.Sitemap = [];
-
-  try {
-    const collections = await getAllCollections();
-    collectionRoutes = collections.map((collection: { handle: string; updatedAt?: string }) =>
-      buildEntry(
-        baseUrl,
-        `/store/collections/${collection.handle}`,
-        'weekly',
-        0.8,
-        collection.updatedAt ? new Date(collection.updatedAt) : new Date(),
-      ),
-    );
-  } catch (error) {
-    console.error('Error fetching collections for sitemap:', error);
-  }
-
-  try {
-    const products = await getAllProducts();
-    productRoutes = products.map((product) =>
-      buildEntry(baseUrl, `/store/products/${product.handle}`, 'weekly', 0.7),
-    );
-  } catch (error) {
-    console.error('Error fetching products for sitemap:', error);
-  }
-
   return [
     ...staticRoutes,
     ...communityRoutes,
     ...authorRoutes,
     ...updateRoutes,
-    ...collectionRoutes,
-    ...productRoutes,
   ];
 }

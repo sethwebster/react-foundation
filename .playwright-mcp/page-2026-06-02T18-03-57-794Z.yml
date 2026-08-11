@@ -1,0 +1,107 @@
+- generic [active] [ref=e1]:
+  - button "Open Next.js Dev Tools" [ref=e7] [cursor=pointer]:
+    - img [ref=e8]
+  - alert [ref=e11]
+  - banner [ref=e12]:
+    - generic [ref=e13]:
+      - generic [ref=e14]:
+        - generic [ref=e15]:
+          - link "React Foundation logo":
+            - /url: /
+            - img "React Foundation logo" [ref=e16] [cursor=pointer]
+        - link "React Foundation Supporting the Ecosystem" [ref=e18] [cursor=pointer]:
+          - /url: /
+          - paragraph [ref=e19]: React Foundation
+          - paragraph [ref=e20]: Supporting the Ecosystem
+      - generic [ref=e21]:
+        - navigation [ref=e22]:
+          - link "About" [ref=e23] [cursor=pointer]:
+            - /url: /about
+          - link "Updates" [ref=e24] [cursor=pointer]:
+            - /url: /updates
+          - link "Impact" [ref=e25] [cursor=pointer]:
+            - /url: /impact
+          - link "Communities" [ref=e26] [cursor=pointer]:
+            - /url: /communities
+        - button "Toggle theme (currently System)" [ref=e27] [cursor=pointer]:
+          - generic [ref=e29]:
+            - img [ref=e31]
+            - img [ref=e34]
+            - img [ref=e37]
+        - link "Sign in" [ref=e43] [cursor=pointer]:
+          - /url: /api/auth/signin
+  - generic [ref=e44]:
+    - main [ref=e48]:
+      - generic [ref=e49]:
+        - generic [ref=e50]:
+          - generic [ref=e51]:
+            - heading "Help sustain the future of React." [level=1] [ref=e52]
+            - paragraph [ref=e53]: React is more than a library. It is an ecosystem of maintainers, educators, tools, frameworks, and community spaces that help teams build for the web and beyond. Members help keep that ecosystem healthy, independent, and durable.
+          - generic [ref=e54]:
+            - link "Join as a member" [ref=e55] [cursor=pointer]:
+              - /url: https://enrollment.lfx.linuxfoundation.org/?project=react-foundation
+            - link "See what membership supports" [ref=e56] [cursor=pointer]:
+              - /url: "#membership"
+        - complementary [ref=e57]:
+          - paragraph [ref=e58]: Direct enrollment
+          - heading "Ready to join?" [level=2] [ref=e59]
+          - paragraph [ref=e60]: Enrollment is handled through the Linux Foundation. The form opens with React Foundation selected so your organization can begin the membership process directly.
+          - link "Open enrollment form" [ref=e61] [cursor=pointer]:
+            - /url: https://enrollment.lfx.linuxfoundation.org/?project=react-foundation
+      - generic [ref=e63]:
+        - generic [ref=e64]:
+          - heading "Members fund the shared work behind React." [level=2] [ref=e65]
+          - paragraph [ref=e66]: Your support helps the foundation invest where individual projects and volunteer maintainers should not have to carry the burden alone.
+        - generic [ref=e67]:
+          - article [ref=e68]:
+            - heading "Sustain core infrastructure" [level=3] [ref=e69]
+            - paragraph [ref=e70]: Help fund the maintainers, tooling, and shared services that millions of developers and teams rely on every day.
+          - article [ref=e71]:
+            - heading "Invest in ecosystem health" [level=3] [ref=e72]
+            - paragraph [ref=e73]: Support programs that strengthen libraries, education, security, accessibility, and long-term project resilience.
+          - article [ref=e74]:
+            - heading "Shape responsible growth" [level=3] [ref=e75]
+            - paragraph [ref=e76]: Join a member community aligned around transparent governance and a healthy future for React across companies and communities.
+      - generic [ref=e78]:
+        - generic [ref=e79]:
+          - generic [ref=e82]: Member Value
+          - heading "Built for organizations that depend on React." [level=2] [ref=e83]
+          - paragraph [ref=e84]: Membership is for companies, platforms, agencies, and teams who want React to remain a strong open ecosystem with clear stewardship and practical support for the people doing the work.
+        - generic [ref=e85]:
+          - generic [ref=e86]: Visible support for React's independent ecosystem stewardship
+          - generic [ref=e87]: Participation in foundation member conversations and priorities
+          - generic [ref=e88]: Opportunities to collaborate on ecosystem sustainability programs
+          - generic [ref=e89]: Connection with maintainers, educators, tool authors, and platform teams
+      - generic [ref=e91]:
+        - generic [ref=e92]:
+          - heading "Practical support for a broad ecosystem." [level=2] [ref=e93]
+          - paragraph [ref=e94]: React Foundation membership helps create capacity for work that benefits the whole ecosystem, not just one product roadmap or one organization's priorities.
+        - generic [ref=e95]:
+          - generic [ref=e96]: Maintainer support
+          - generic [ref=e97]: Community education
+          - generic [ref=e98]: Ecosystem tooling
+          - generic [ref=e99]: Governance operations
+          - generic [ref=e100]: Accessibility and inclusion
+          - generic [ref=e101]: Long-term project resilience
+      - generic [ref=e103]:
+        - generic [ref=e106]: Start Membership
+        - heading "Join the organizations helping React stay healthy for everyone." [level=2] [ref=e107]
+        - paragraph [ref=e108]: Begin with the Linux Foundation enrollment form, or return to the foundation site to learn more about our mission and governance.
+        - generic [ref=e109]:
+          - link "Join now" [ref=e110] [cursor=pointer]:
+            - /url: https://enrollment.lfx.linuxfoundation.org/?project=react-foundation
+          - link "Learn about the foundation" [ref=e111] [cursor=pointer]:
+            - /url: /about
+    - contentinfo [ref=e112]:
+      - generic [ref=e114]:
+        - paragraph [ref=e115]:
+          - text: Copyright © The Linux Foundation®. All rights reserved. The Linux Foundation has registered trademarks and uses trademarks. For more information, including terms of use, privacy policy, and trademark usage, please see our
+          - link "Policies page" [ref=e116] [cursor=pointer]:
+            - /url: https://www.linuxfoundation.org/legal/policies?__hstc=262006610.e1a66f67cd0c0baa5c7b042e4f9911ce.1768952497248.1771462813100.1771610134177.3&__hssc=262006610.1.1771610134177&__hsfp=360811d5cbd407fc58d506f8b0aa3133
+          - text: .
+        - generic [ref=e117]:
+          - link "Privacy" [ref=e118] [cursor=pointer]:
+            - /url: /privacy
+          - link "Terms" [ref=e119] [cursor=pointer]:
+            - /url: /terms
+  - button "Need help?" [ref=e121] [cursor=pointer]

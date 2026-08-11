@@ -1,8 +1,9 @@
 /**
- * Comprehensive Theme Configuration
+ * Static theme values for non-CSS renderers.
  * 
- * This file defines all semantic colors and design tokens for the React Foundation Store.
- * All hardcoded colors should be replaced with these semantic tokens.
+ * The website's canonical theme contract lives in src/app/globals.css. Email
+ * rendering cannot resolve CSS custom properties, so it imports these matching
+ * literal values.
  */
 
 export interface ThemeColors {
@@ -74,29 +75,29 @@ export interface ThemeColors {
 export const lightTheme: ThemeColors = {
   // Base colors
   background: '#ffffff',
-  foreground: '#0f172a',
+  foreground: '#23272f',
   
   // Surface colors
   card: '#ffffff',
-  cardForeground: '#0f172a',
+  cardForeground: '#23272f',
   popover: '#ffffff',
-  popoverForeground: '#0f172a',
+  popoverForeground: '#23272f',
   
   // Interactive colors
-  primary: '#0ea5e9',
+  primary: '#087ea4',
   primaryForeground: '#ffffff',
-  secondary: '#f1f5f9',
-  secondaryForeground: '#0f172a',
-  accent: '#f1f5f9',
-  accentForeground: '#0f172a',
+  secondary: '#f1f3f5',
+  secondaryForeground: '#23272f',
+  accent: '#e0f7fb',
+  accentForeground: '#066985',
   
   // Muted colors
-  muted: '#f1f5f9',
-  mutedForeground: '#64748b',
+  muted: '#f5f6f7',
+  mutedForeground: '#525866',
   
   // Border and input
-  border: '#e2e8f0',
-  input: '#e2e8f0',
+  border: '#dfe2e6',
+  input: '#dfe2e6',
   
   // Status colors
   destructive: '#ef4444',
@@ -107,10 +108,10 @@ export const lightTheme: ThemeColors = {
   warningForeground: '#ffffff',
   
   // Special colors
-  ring: '#0ea5e9',
+  ring: '#087ea4',
   
   // Chart colors
-  chart1: '#0ea5e9',
+  chart1: '#087ea4',
   chart2: '#8b5cf6',
   chart3: '#10b981',
   chart4: '#f59e0b',
@@ -120,8 +121,8 @@ export const lightTheme: ThemeColors = {
   ratingsGold: '#f6c65b',
   
   // Gradients
-  gradientPrimary: 'linear-gradient(135deg, #0ea5e9 0%, #3b82f6 100%)',
-  gradientSecondary: 'linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%)',
+  gradientPrimary: 'linear-gradient(135deg, #087ea4 0%, #58c4dc 100%)',
+  gradientSecondary: 'linear-gradient(135deg, #f5f6f7 0%, #dfe2e6 100%)',
   gradientAccent: 'linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%)',
 
   // Icon gradients for contributor cards
@@ -132,37 +133,37 @@ export const lightTheme: ThemeColors = {
 
   // Shadows
   shadow: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
-  shadowColored: '0 4px 6px -1px rgb(14 165 233 / 0.1), 0 2px 4px -2px rgb(14 165 233 / 0.1)',
+  shadowColored: '0 4px 6px -1px rgb(8 126 164 / 0.1), 0 2px 4px -2px rgb(8 126 164 / 0.1)',
   shadowElevated: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
-  shadowGlow: '0 0 20px rgb(14 165 233 / 0.15), 0 0 40px rgb(14 165 233 / 0.1)',
+  shadowGlow: '0 0 20px rgb(8 126 164 / 0.15), 0 0 40px rgb(8 126 164 / 0.1)',
 };
 
 export const darkTheme: ThemeColors = {
   // Base colors
-  background: '#0a0a0a',
-  foreground: '#ededed',
+  background: '#16181d',
+  foreground: '#f5f6f7',
   
   // Surface colors
-  card: '#0a0a0a',
-  cardForeground: '#ededed',
-  popover: '#0a0a0a',
-  popoverForeground: '#ededed',
+  card: '#20232a',
+  cardForeground: '#f5f6f7',
+  popover: '#20232a',
+  popoverForeground: '#f5f6f7',
   
   // Interactive colors
-  primary: '#0ea5e9',
-  primaryForeground: '#ffffff',
-  secondary: '#1a1a1a',
-  secondaryForeground: '#ededed',
-  accent: '#1a1a1a',
-  accentForeground: '#ededed',
+  primary: '#58c4dc',
+  primaryForeground: '#16181d',
+  secondary: '#282c34',
+  secondaryForeground: '#f5f6f7',
+  accent: '#1b4653',
+  accentForeground: '#a9e8f4',
   
   // Muted colors
-  muted: '#1a1a1a',
-  mutedForeground: '#a1a1aa',
+  muted: '#282c34',
+  mutedForeground: '#b6bdc7',
   
   // Border and input
-  border: '#27272a',
-  input: '#27272a',
+  border: '#383d46',
+  input: '#383d46',
   
   // Status colors
   destructive: '#ef4444',
@@ -173,10 +174,10 @@ export const darkTheme: ThemeColors = {
   warningForeground: '#ffffff',
   
   // Special colors
-  ring: '#0ea5e9',
+  ring: '#58c4dc',
   
   // Chart colors
-  chart1: '#0ea5e9',
+  chart1: '#58c4dc',
   chart2: '#8b5cf6',
   chart3: '#10b981',
   chart4: '#f59e0b',
@@ -186,8 +187,8 @@ export const darkTheme: ThemeColors = {
   ratingsGold: '#f6c65b',
   
   // Gradients
-  gradientPrimary: 'linear-gradient(135deg, #0ea5e9 0%, #3b82f6 100%)',
-  gradientSecondary: 'linear-gradient(135deg, #1a1a1a 0%, #27272a 100%)',
+  gradientPrimary: 'linear-gradient(135deg, #58c4dc 0%, #087ea4 100%)',
+  gradientSecondary: 'linear-gradient(135deg, #20232a 0%, #383d46 100%)',
   gradientAccent: 'linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%)',
 
   // Icon gradients for contributor cards (brighter for dark mode)
@@ -198,9 +199,9 @@ export const darkTheme: ThemeColors = {
 
   // Shadows
   shadow: '0 1px 3px 0 rgb(0 0 0 / 0.3), 0 1px 2px -1px rgb(0 0 0 / 0.3)',
-  shadowColored: '0 4px 6px -1px rgb(14 165 233 / 0.2), 0 2px 4px -2px rgb(14 165 233 / 0.2)',
+  shadowColored: '0 4px 6px -1px rgb(88 196 220 / 0.2), 0 2px 4px -2px rgb(88 196 220 / 0.2)',
   shadowElevated: '0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.5)',
-  shadowGlow: '0 0 20px rgb(14 165 233 / 0.25), 0 0 40px rgb(14 165 233 / 0.15)',
+  shadowGlow: '0 0 20px rgb(88 196 220 / 0.25), 0 0 40px rgb(88 196 220 / 0.15)',
 };
 
 export const themes = {
@@ -228,4 +229,3 @@ export function applyThemeColors(colors: ThemeColors) {
     root.style.setProperty(`--color-${key}`, value);
   });
 }
-

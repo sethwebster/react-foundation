@@ -54,6 +54,10 @@ const BYPASS_COOKIE = '_rf_bypass';
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  if (pathname === '/store' || pathname.startsWith('/store/')) {
+    return new NextResponse(null, { status: 404 });
+  }
+
   // Site is fully public after launch
   if (Date.now() >= LAUNCH_DATE_MS) {
     return NextResponse.next();

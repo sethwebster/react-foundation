@@ -76,7 +76,7 @@ function mapShopifyToProduct(shopifyProduct: Awaited<ReturnType<typeof getAllPro
  */
 export async function getProducts(): Promise<localProducts.Product[]> {
   if (!isShopifyEnabled()) {
-    throw new Error('Shopify is not configured. Please set SHOPIFY_STORE_DOMAIN and SHOPIFY_STOREFRONT_TOKEN in .env');
+    return localProducts.products;
   }
 
   const shopifyProducts = await getAllProducts(50);
@@ -88,7 +88,7 @@ export async function getProducts(): Promise<localProducts.Product[]> {
  */
 export async function getProductBySlug(slug: string): Promise<localProducts.Product | null> {
   if (!isShopifyEnabled()) {
-    throw new Error('Shopify is not configured. Please set SHOPIFY_STORE_DOMAIN and SHOPIFY_STOREFRONT_TOKEN in .env');
+    return localProducts.getProductBySlug(slug);
   }
 
   const shopifyProduct = await getProductByHandle(slug);
@@ -101,7 +101,7 @@ export async function getProductBySlug(slug: string): Promise<localProducts.Prod
  */
 export async function getProductsByCollection(collection: localProducts.ProductCollection): Promise<localProducts.Product[]> {
   if (!isShopifyEnabled()) {
-    throw new Error('Shopify is not configured. Please set SHOPIFY_STORE_DOMAIN and SHOPIFY_STOREFRONT_TOKEN in .env');
+    return localProducts.getProductsByCollection(collection);
   }
 
   const shopifyProducts = await shopifyGetProductsByCollection(collection, 50);

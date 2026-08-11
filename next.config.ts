@@ -4,6 +4,10 @@ import createMDX from "@next/mdx";
 const nextConfig: NextConfig = {
   pageExtensions: ["js", "jsx", "md", "mdx", "ts", "tsx"],
   reactCompiler: true, // Enable React Compiler v1.0 (moved from experimental)
+  turbopack: {
+    // Multiple lockfiles exist above this worktree; keep tracing scoped here.
+    root: process.cwd(),
+  },
   images: {
     remotePatterns: [
       {

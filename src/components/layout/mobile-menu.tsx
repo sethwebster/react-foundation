@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import type { Session } from "next-auth";
 import { ThemeToggleWrapper } from "@/components/ui/theme-toggle-wrapper";
@@ -16,12 +15,9 @@ export function MobileMenu({ session }: MobileMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [adminChecked, setAdminChecked] = useState(false);
-  const pathname = usePathname();
 
   const toggleMenu = () => setIsOpen(!isOpen);
   const closeMenu = () => setIsOpen(false);
-
-  const isStorePage = pathname?.startsWith("/store");
 
   // Check admin status only when menu is opened and hasn't been checked yet
   useEffect(() => {
@@ -47,25 +43,19 @@ export function MobileMenu({ session }: MobileMenuProps) {
     checkAdminStatus();
   }, [isOpen, adminChecked, session?.user?.email]);
 
-  const navigationLinks = isStorePage
-    ? [
-        { href: "/store#featured", label: "Collections" },
-        { href: "/store#drops", label: "Limited Drops" },
-        { href: "/impact", label: "Impact" },
-      ]
-    : [
-        { href: "/about", label: "About" },
-        { href: "/updates", label: "Updates" },
-        { href: "/impact", label: "Impact" },
-        { href: "/communities", label: "Communities" },
-      ];
+  const navigationLinks = [
+    { href: "/updates", label: "News" },
+    { href: "/about", label: "About" },
+    { href: "/impact", label: "Impact" },
+    { href: "/communities", label: "Communities" },
+  ];
 
   return (
     <>
       {/* Menu Button */}
       <button
         onClick={toggleMenu}
-        className="flex h-10 w-10 items-center justify-center rounded-full transition hover:bg-muted"
+        className="flex h-11 w-11 items-center justify-center rounded-full bg-muted text-foreground transition hover:bg-secondary"
         aria-label={isOpen ? "Close menu" : "Open menu"}
         aria-expanded={isOpen}
       >
@@ -88,7 +78,7 @@ export function MobileMenu({ session }: MobileMenuProps) {
         ) : (
           // Hamburger icon
           <svg
-            className="h-6 w-6 text-foreground"
+            className="h-[1.125rem] w-[1.125rem] text-foreground"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -97,7 +87,7 @@ export function MobileMenu({ session }: MobileMenuProps) {
               strokeLinecap="round"
               strokeLinejoin="round"
               strokeWidth={2}
-              d={isOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"}
+              d={isOpen ? "M6 18L18 6M6 6l12 12" : "M5 7h14M5 12h14M5 17h14"}
             />
           </svg>
         )}
@@ -106,7 +96,7 @@ export function MobileMenu({ session }: MobileMenuProps) {
       {/* Overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-40 bg-background/50 backdrop-blur-sm"
+          className="fixed inset-0 z-[1090] bg-foreground/15 backdrop-blur-sm"
           onClick={closeMenu}
         />
       )}
@@ -114,26 +104,26 @@ export function MobileMenu({ session }: MobileMenuProps) {
       {/* Menu Panel - Only render on mobile, slide from right */}
       {isOpen && (
         <div
-          className="fixed right-0 top-0 z-50 min-h-screen w-80 max-w-[90vw] animate-in slide-in-from-right border-l border-border bg-background shadow-2xl md:hidden"
+          className="fixed right-0 top-0 z-[1100] min-h-screen w-80 max-w-[90vw] animate-in slide-in-from-right border-l border-border bg-background shadow-soft md:hidden"
         >
         <div className="flex flex-col bg-background">
           {/* Header */}
           <div className="flex items-center justify-between border-b border-border p-6 bg-background">
             <div className="flex items-center gap-3">
-              <div className="relative h-8 w-8 overflow-hidden rounded-full bg-muted ring-1 ring-border">
+              <div className="relative h-7 w-7 overflow-hidden">
                 <Image
                   src="/react-logo.svg"
                   alt="React Foundation"
                   fill
-                  className="object-contain p-1"
+                  className="object-contain brightness-0 dark:invert"
                 />
               </div>
-              <span className="text-sm font-semibold text-foreground">Menu</span>
+              <span className="text-sm font-semibold text-foreground">The React Foundation</span>
             </div>
             <button
               onClick={closeMenu}
-              className="flex h-10 w-10 items-center justify-center rounded-full transition hover:bg-muted"
-              aria-label="Close menu"
+              className="flex h-11 w-11 items-center justify-center rounded-full transition hover:bg-muted"
+              aria-label="Close navigation"
             >
               <svg
                 className="h-6 w-6 text-muted-foreground"
@@ -229,7 +219,7 @@ export function MobileMenu({ session }: MobileMenuProps) {
               )}
               {!session?.user && (
                 <Link
-                  href="/api/auth/signin"
+                  href="/auth/signin"
                   onClick={closeMenu}
                   className="block rounded-xl bg-primary px-4 py-3 text-center text-base font-semibold text-primary-foreground transition hover:bg-primary/90"
                 >

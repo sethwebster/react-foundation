@@ -2,6 +2,10 @@
 
 The React Foundation Store Design System is a layered component architecture designed for composability, maintainability, and scalability.
 
+The Figma-derived visual language, theme token contract, responsive composition
+rules, and public-page component inventory live in
+[`public-website-design-system.md`](./public-website-design-system.md).
+
 ## Philosophy
 
 **Core Principles:**

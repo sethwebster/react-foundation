@@ -25,14 +25,14 @@ export function LibraryCard({
         href={`https://github.com/${owner}/${name}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="group block rounded-xl border border-border/10 bg-background/[0.03] p-4 transition hover:border-cyan-400/30 hover:bg-background/[0.06]"
+        className="group block border-t border-border py-4 transition hover:border-border-strong"
       >
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-background/5">
-              <LibraryIcon libraryName={name} size={24} className="text-foreground/90 transition group-hover:text-cyan-300" />
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-border bg-surface-subtle">
+              <LibraryIcon libraryName={name} size={22} className="text-muted-foreground transition group-hover:text-primary" />
             </div>
-            <span className="text-sm font-medium text-foreground/80 transition group-hover:text-foreground">
+            <span className="text-sm font-medium text-foreground transition group-hover:text-primary">
               {displayName}
             </span>
           </div>

@@ -1,11 +1,13 @@
-@import "tailwindcss";
+@import "tailwindcss" source(none);
+@source "../**/*.{js,ts,jsx,tsx,mdx}";
+@source "../../content/**/*.{md,mdx}";
 @plugin "@tailwindcss/typography";
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* Community Guide Prose Styling - Must come after @plugin to override */
 /* Using multiple selectors for maximum specificity */
 
-/* Light mode - darker text on white */
+/* Light mode */
 html .prose h1,
 html .prose h2,
 html .prose h3,
@@ -18,25 +20,25 @@ html .prose h6,
 .prose h4,
 .prose h5,
 .prose h6 {
-  color: #0f172a !important; /* slate-900 */
+  color: hsl(var(--text-strong)) !important;
 }
 
 html .prose p,
 .prose p {
-  color: #334155 !important; /* slate-700 */
+  color: hsl(var(--text-subtle)) !important;
 }
 
 html .prose strong,
 .prose strong {
-  color: #0f172a !important; /* slate-900 */
+  color: hsl(var(--text-strong)) !important;
 }
 
 html .prose li,
 .prose li {
-  color: #334155 !important; /* slate-700 */
+  color: hsl(var(--text-subtle)) !important;
 }
 
-/* Dark mode - white/light text on dark */
+/* Dark mode */
 html.dark .prose h1,
 html.dark .prose h2,
 html.dark .prose h3,
@@ -49,53 +51,91 @@ html.dark .prose h6,
 .dark .prose h4,
 .dark .prose h5,
 .dark .prose h6 {
-  color: #ffffff !important; /* white */
+  color: hsl(var(--text-strong)) !important;
 }
 
 html.dark .prose p,
 .dark .prose p {
-  color: #e5e7eb !important; /* gray-200 */
+  color: hsl(var(--text-subtle)) !important;
 }
 
 html.dark .prose strong,
 .dark .prose strong {
-  color: #ffffff !important; /* white */
+  color: hsl(var(--text-strong)) !important;
 }
 
 html.dark .prose li,
 .dark .prose li {
-  color: #e5e7eb !important; /* gray-200 */
+  color: hsl(var(--text-subtle)) !important;
 }
 
 html {
   scroll-behavior: smooth;
-  color-scheme: light dark;
+  background-color: hsl(var(--background));
 }
 
-/* Define CSS variables for theming */
+/*
+ * React Foundation visual language
+ *
+ * The public-site theme is intentionally quiet: editorial typography, white
+ * space, human photography, and one React-teal accent. Semantic colors remain
+ * compatible with the existing RFDS API while the higher-order foundation
+ * tokens define page composition and surface hierarchy.
+ */
 :root {
-  /* Light theme colors - adjusted for better contrast */
-  --background: 0 0% 100%;          /* #ffffff white */
-  --foreground: 222 47% 11%;        /* #0f172a slate-900 - dark text */
-  --card: 0 0% 100%;                /* #ffffff */
-  --card-foreground: 222 47% 11%;   /* #0f172a */
-  --popover: 0 0% 100%;             /* #ffffff */
-  --popover-foreground: 222 47% 11%;/* #0f172a */
-  --primary: 199 89% 48%;           /* #0ea5e9 sky-500 */
-  --primary-foreground: 0 0% 100%;  /* #ffffff */
-  --secondary: 214 32% 95%;         /* #f1f5f9 slate-100 */
-  --secondary-foreground: 222 47% 11%;
-  --muted: 214 32% 95%;             /* #f1f5f9 slate-100 */
-  --muted-foreground: 215 20% 35%;  /* Darker for readability - was 47% */
-  --accent: 214 32% 95%;            /* #f1f5f9 */
-  --accent-foreground: 222 47% 11%;
-  --destructive: 0 84% 60%;         /* #ef4444 red-500 */
+  color-scheme: light;
+
+  /* Semantic color roles */
+  --background: 0 0% 100%;          /* #ffffff */
+  --foreground: 220 14.63% 16.08%;  /* #23272f */
+  --card: 0 0% 100%;
+  --card-foreground: 220 14.63% 16.08%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 220 14.63% 16.08%;
+  --primary: 194.62 90.7% 33.73%;   /* #087ea4 */
+  --primary-foreground: 0 0% 100%;
+  --secondary: 210 16.67% 95.29%;   /* #f1f3f5 */
+  --secondary-foreground: 220 14.63% 16.08%;
+  --muted: 210 11.11% 96.47%;       /* #f5f6f7 */
+  --muted-foreground: 222 10.87% 36.08%; /* #525866 */
+  --accent: 188.89 77.14% 93.14%;   /* #e0f7fb */
+  --accent-foreground: 193.23 91.37% 27.25%; /* #066985 */
+  --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 100%;
-  --success: 142 71% 45%;           /* #10b981 emerald-500 */
+  --success: 145 63% 42%;
   --success-foreground: 0 0% 100%;
-  --border: 214 32% 91%;            /* #e2e8f0 slate-200 */
-  --input: 214 32% 91%;             /* #e2e8f0 */
-  --ring: 199 89% 48%;              /* #0ea5e9 */
+  --border: 214.29 12.28% 88.82%;   /* #dfe2e6 */
+  --input: 214.29 12.28% 88.82%;
+  --ring: 194.62 90.7% 33.73%;
+
+  /* Higher-order visual roles */
+  --surface: 0 0% 100%;
+  --surface-subtle: 210 20% 98%;
+  --surface-raised: 0 0% 100%;
+  --text-strong: 220 14.63% 16.08%;
+  --text-subtle: 222 10.87% 36.08%;
+  --border-strong: 216 14% 80%;
+  --brand-soft: 193 68% 92%;
+  --map-water: 194 54% 76%;
+  --map-land: 43 20% 95%;
+
+  /* Layout, shape, and motion */
+  --foundation-header-height: 4.5rem;
+  --foundation-content-wide: 72rem;
+  --foundation-content-standard: 64rem;
+  --foundation-content-reading: 40.5rem;
+  --foundation-page-gutter: clamp(1.25rem, 4vw, 3rem);
+  --foundation-section-space: clamp(4.5rem, 9vw, 8rem);
+  --foundation-radius-control: 999px;
+  --foundation-radius-card: 1.25rem;
+  --foundation-radius-panel: 1.75rem;
+  --foundation-shadow-card: 0 8px 24px hsl(218 18% 20% / 0.06);
+  --foundation-shadow-soft:
+    0 18px 50px hsl(218 18% 20% / 0.08),
+    0 2px 8px hsl(218 18% 20% / 0.04);
+  --foundation-duration-fast: 160ms;
+  --foundation-duration-base: 240ms;
+  --foundation-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 
   /* Contributor icon gradients */
   --gradient-icon-code: linear-gradient(135deg, #34d399 0%, #06b6d4 100%);
@@ -105,28 +145,43 @@ html {
 }
 
 .dark {
-  /* Dark theme colors - slate-900 base */
-  --background: 222 47% 11%;        /* #0f172a slate-900 */
-  --foreground: 0 0% 100%;          /* #ffffff pure white - brighter */
-  --card: 217 33% 17%;              /* #1e293b slate-800 */
-  --card-foreground: 210 40% 98%;
-  --popover: 217 33% 17%;           /* #1e293b */
-  --popover-foreground: 210 40% 98%;
-  --primary: 199 89% 48%;           /* #0ea5e9 sky-500 */
-  --primary-foreground: 0 0% 100%;
-  --secondary: 215 25% 27%;         /* #334155 slate-700 */
-  --secondary-foreground: 210 40% 98%;
-  --muted: 217 33% 17%;             /* #1e293b slate-800 */
-  --muted-foreground: 215 20% 65%;  /* #94a3b8 slate-400 */
-  --accent: 215 25% 27%;            /* #334155 slate-700 */
-  --accent-foreground: 210 40% 98%;
-  --destructive: 0 84% 60%;         /* #ef4444 */
+  color-scheme: dark;
+
+  --background: 222.86 13.73% 10%;  /* #16181d */
+  --foreground: 210 11.11% 96.47%;  /* #f5f6f7 */
+  --card: 222 13.51% 14.51%;        /* #20232a */
+  --card-foreground: 210 11.11% 96.47%;
+  --popover: 222 13.51% 14.51%;
+  --popover-foreground: 210 11.11% 96.47%;
+  --primary: 190.91 65.35% 60.39%; /* #58c4dc */
+  --primary-foreground: 222.86 13.73% 10%;
+  --secondary: 220 13.04% 18.04%;  /* #282c34 */
+  --secondary-foreground: 210 11.11% 96.47%;
+  --muted: 220 13.04% 18.04%;
+  --muted-foreground: 215.29 13.18% 74.71%; /* #b6bdc7 */
+  --accent: 194 52% 22%;
+  --accent-foreground: 190 64% 80%;
+  --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 100%;
-  --success: 142 71% 45%;           /* #10b981 emerald-500 */
+  --success: 145 63% 50%;
   --success-foreground: 0 0% 100%;
-  --border: 215 25% 27%;            /* #334155 slate-700 - subtle border */
-  --input: 215 25% 27%;
-  --ring: 199 89% 48%;
+  --border: 218.57 11.11% 24.71%;  /* #383d46 */
+  --input: 218.57 11.11% 24.71%;
+  --ring: 190.91 65.35% 60.39%;
+
+  --surface: 222.86 13.73% 10%;
+  --surface-subtle: 220 12% 13%;
+  --surface-raised: 222 13.51% 14.51%;
+  --text-strong: 210 11.11% 96.47%;
+  --text-subtle: 215.29 13.18% 74.71%;
+  --border-strong: 218 12% 34%;
+  --brand-soft: 194 52% 18%;
+  --map-water: 194 35% 30%;
+  --map-land: 220 10% 20%;
+  --foundation-shadow-card: 0 8px 24px hsl(220 35% 3% / 0.24);
+  --foundation-shadow-soft:
+    0 18px 50px hsl(220 35% 3% / 0.32),
+    0 2px 8px hsl(220 35% 3% / 0.18);
 
   /* Contributor icon gradients (brighter for dark mode) */
   --gradient-icon-code: linear-gradient(135deg, #34d399 0%, #22d3ee 100%);
@@ -159,25 +214,55 @@ html {
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
+  --color-surface: hsl(var(--surface));
+  --color-surface-subtle: hsl(var(--surface-subtle));
+  --color-surface-raised: hsl(var(--surface-raised));
+  --color-text-strong: hsl(var(--text-strong));
+  --color-text-subtle: hsl(var(--text-subtle));
+  --color-border-strong: hsl(var(--border-strong));
+  --color-brand-soft: hsl(var(--brand-soft));
+  --color-map-water: hsl(var(--map-water));
+  --color-map-land: hsl(var(--map-land));
+  --radius-control: var(--foundation-radius-control);
+  --radius-card: var(--foundation-radius-card);
+  --radius-panel: var(--foundation-radius-panel);
+  --shadow-card: var(--foundation-shadow-card);
+  --shadow-soft: var(--foundation-shadow-soft);
+  --text-display: clamp(2.75rem, 6vw, 4.5rem);
+  --text-title: clamp(2.25rem, 4.5vw, 2.75rem);
+  --text-lead: clamp(1.0625rem, 2vw, 1.25rem);
 }
 
 body {
-  min-height: 100vh;
-  background:
-    linear-gradient(
-      135deg,
-      hsl(var(--background)) 0%,
-      hsl(var(--primary) / 0.03) 50%,
-      hsl(var(--background)) 100%
-    );
-  background-size: 200% 200%;
-  animation: subtleGradientShift 20s ease-in-out infinite;
+  min-block-size: 100dvb;
+  margin: 0;
+  background-color: hsl(var(--background));
   color: hsl(var(--foreground));
   font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
-  transition: color 0.3s ease-in-out;
+  transition:
+    background-color var(--foundation-duration-base) ease-in-out,
+    color var(--foundation-duration-base) ease-in-out;
+}
+
+.foundation-measure-reading {
+  max-width: calc(
+    var(--foundation-content-reading) + 2 * var(--foundation-page-gutter)
+  );
+}
+
+.foundation-measure-standard {
+  max-width: calc(
+    var(--foundation-content-standard) + 2 * var(--foundation-page-gutter)
+  );
+}
+
+.foundation-measure-wide {
+  max-width: calc(
+    var(--foundation-content-wide) + 2 * var(--foundation-page-gutter)
+  );
 }
 
 button {
@@ -186,9 +271,23 @@ button {
 
 @media (prefers-reduced-motion: reduce) {
   body {
-    animation: none;
-    background: hsl(var(--background));
+    transition: none;
   }
+}
+
+:where(h1, h2, h3) {
+  color: hsl(var(--text-strong));
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+
+:where(p, li) {
+  text-wrap: pretty;
+}
+
+::selection {
+  background: hsl(var(--brand-soft));
+  color: hsl(var(--text-strong));
 }
 
 *, *::before, *::after {
@@ -199,15 +298,22 @@ button {
 /* DO NOT use * selector - breaks animations and performance */
 :where(button, a, input, select, textarea, [class*="bg-"], [class*="text-"], [class*="border-"]) {
   transition-property: background-color, color, border-color, box-shadow, fill, stroke;
-  transition-duration: 0.3s;
-  transition-timing-function: ease-in-out;
+  transition-duration: var(--foundation-duration-base);
+  transition-timing-function: var(--foundation-ease-out);
 }
 
 /* Enhanced transitions for interactive elements */
 :where(button, a, input, select, textarea) {
   transition-property: background-color, color, border-color, box-shadow, transform, fill, stroke;
-  transition-duration: 0.3s, 0.3s, 0.3s, 0.3s, 0.2s, 0.3s, 0.3s;
-  transition-timing-function: ease-in-out;
+  transition-duration:
+    var(--foundation-duration-base),
+    var(--foundation-duration-base),
+    var(--foundation-duration-base),
+    var(--foundation-duration-base),
+    var(--foundation-duration-fast),
+    var(--foundation-duration-base),
+    var(--foundation-duration-base);
+  transition-timing-function: var(--foundation-ease-out);
 }
 
 /* Prevent transitions on page load */
@@ -224,11 +330,6 @@ a {
 /* Only inherit color for non-button links */
 a:not(.inline-flex) {
   color: inherit;
-}
-
-/* Force button links to respect their own color classes */
-a.inline-flex {
-  color: currentColor;
 }
 
 .chat-scroll {
@@ -320,18 +421,6 @@ a.inline-flex {
   50% {
     opacity: 0.85;
     transform: translate(-50%, -50%) scale(1.05);
-  }
-}
-
-@keyframes subtleGradientShift {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
   }
 }
 

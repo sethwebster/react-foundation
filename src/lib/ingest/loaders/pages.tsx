@@ -17,7 +17,6 @@ const PAGES: PageConfig[] = [
   { url: '/', title: 'Home' },
   { url: '/about', title: 'About' },
   { url: '/impact', title: 'Impact' },
-  { url: '/store', title: 'Store' },
   { url: '/scoring', title: 'How Scoring Works' },
   { url: '/libraries', title: 'Libraries' },
   { url: '/communities', title: 'Communities' },

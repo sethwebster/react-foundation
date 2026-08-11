@@ -15,6 +15,7 @@
  */
 
 import type { Community } from '@/types/community';
+import { REACT_COMMUNITIES } from '@/data/communities';
 
 const COMMUNITIES_INDEX_KEY = 'communities:index';
 const COMMUNITY_KEY_PREFIX = 'communities:';
@@ -230,9 +231,7 @@ export async function getCommunities(): Promise<Community[]> {
   const communities = await getCommunitiesFromRedis();
 
   if (!communities) {
-    console.warn('⚠️ No communities in Redis, returning empty array');
-    console.warn('⚠️ Run seed script or trigger auto-seed on startup');
-    return [];
+    return REACT_COMMUNITIES;
   }
 
   return communities;

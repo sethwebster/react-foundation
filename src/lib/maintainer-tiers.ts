@@ -57,7 +57,7 @@ export const ecosystemLibraries: RepoTarget[] = [
   { owner: "facebook", name: "hermes", category: "core", tier: 1, hasNpmPackage: false }, // JavaScript engine (C++ binary, not on NPM)
   { owner: "reactjs", name: "react.dev", category: "core", tier: 1, hasNpmPackage: false }, // Documentation website (not a library)
   { owner: "reactjs", name: "rfcs", category: "core", tier: 1, hasNpmPackage: false }, // RFC repository (not a library)
-  { owner: "react-native-community", name: "react-native-releases", category: "core", tier: 2, hasNpmPackage: false }, // Release notes repository (not a library)
+  { owner: "reactwg", name: "react-native-releases", category: "core", tier: 2, hasNpmPackage: false }, // Release notes repository (not a library)
   { owner: "react-navigation", name: "react-navigation", category: "routing", tier: 1 },
 
   // State Management (6 repos)
@@ -215,7 +215,7 @@ export function computeContributionStatsFromGitHub(payload: GraphQLPayload): Con
       commits: 0,
       score: 9999,
       perRepository: [{
-        repository: 'react-foundation-store/created',
+        repository: 'react-foundation/created',
         pullRequests: 1250,
         issues: 0,
         commits: 0,

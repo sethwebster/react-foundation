@@ -47,7 +47,7 @@ With 54 tracked libraries, tier thresholds have been calibrated to recognize mea
 - `facebook/relay` - GraphQL client for React
 
 **Tier 2:**
-- `react-native-community/react-native-releases` - React Native release coordination
+- `reactwg/react-native-releases` - React Native release coordination
 
 ---
 
