@@ -76,11 +76,12 @@ export class LibrariesLoader implements ContentLoader {
     { repo: 'microsoft/playwright', name: 'Playwright', category: 'Testing', tier: 'Tier 1' },
     { repo: 'testing-library/react-hooks-testing-library', name: 'React Hooks Testing Library', category: 'Testing', tier: 'Tier 2' },
 
-    // UI/Component Libraries (7 repositories)
+    // UI/Component Libraries (8 repositories)
     { repo: 'radix-ui/primitives', name: 'Radix UI', category: 'UI Libraries', tier: 'Tier 1' },
     { repo: 'ant-design/ant-design', name: 'Ant Design', category: 'UI Libraries', tier: 'Tier 1' },
     { repo: 'tailwindlabs/headlessui', name: 'Headless UI', category: 'UI Libraries', tier: 'Tier 1' },
     { repo: 'mui/material-ui', name: 'Material-UI', category: 'UI Libraries', tier: 'Tier 1' },
+    { repo: 'mui/base-ui', name: 'Base UI', category: 'UI Libraries', tier: 'Tier 2' },
     { repo: 'adobe/react-spectrum', name: 'React Spectrum', category: 'UI Libraries', tier: 'Tier 2' },
     { repo: 'ariakit/ariakit', name: 'Ariakit', category: 'UI Libraries', tier: 'Tier 2' },
     { repo: 'chakra-ui/chakra-ui', name: 'Chakra UI', category: 'UI Libraries', tier: 'Tier 2' },

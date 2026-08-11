@@ -102,12 +102,13 @@ export const ecosystemLibraries: RepoTarget[] = [
   { owner: "microsoft", name: "playwright", category: "testing", tier: 1 },
   { owner: "testing-library", name: "react-hooks-testing-library", category: "testing", tier: 2 },
 
-  // UI/Component Libraries (7 repos)
+  // UI/Component Libraries (8 repos)
   { owner: "radix-ui", name: "primitives", category: "ui", tier: 1 },
   { owner: "tailwindlabs", name: "headlessui", category: "ui", tier: 1 },
   { owner: "adobe", name: "react-spectrum", category: "ui", tier: 2 },
   { owner: "ariakit", name: "ariakit", category: "ui", tier: 2 },
   { owner: "mui", name: "material-ui", category: "ui", tier: 1 },
+  { owner: "mui", name: "base-ui", category: "ui", tier: 2 },
   { owner: "chakra-ui", name: "chakra-ui", category: "ui", tier: 2 },
   { owner: "ant-design", name: "ant-design", category: "ui", tier: 1 },
 
