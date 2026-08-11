@@ -219,6 +219,7 @@ export class NPMCollector {
       'adobe/react-spectrum': '@adobe/react-spectrum',
       'ariakit/ariakit': '@ariakit/react',
       'mui/material-ui': '@mui/material',
+      'mui/base-ui': '@base-ui/react',
       'chakra-ui/chakra-ui': '@chakra-ui/react',
       'ant-design/ant-design': 'antd',
       'framer/motion': 'framer-motion',
