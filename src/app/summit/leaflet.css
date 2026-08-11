@@ -1,0 +1,40 @@
+@import "leaflet/dist/leaflet.css";
+
+.summit-map .leaflet-container {
+  background: hsl(var(--muted));
+  font-family: var(--font-geist-sans), sans-serif;
+}
+
+.summit-map .leaflet-control-zoom {
+  overflow: hidden;
+  border: 1px solid hsl(var(--border)) !important;
+  border-radius: 0.75rem !important;
+  box-shadow: var(--foundation-shadow-card) !important;
+}
+
+.summit-map .leaflet-control-zoom a {
+  border: 0 !important;
+  background: hsl(var(--background) / 0.94) !important;
+  color: hsl(var(--foreground)) !important;
+}
+
+.summit-map .leaflet-control-attribution {
+  background: hsl(var(--background) / 0.82) !important;
+  color: hsl(var(--muted-foreground)) !important;
+  font-size: 8px;
+}
+
+.summit-map-marker {
+  border: 0 !important;
+  background: transparent !important;
+}
+
+.summit-map-marker span {
+  display: block;
+  width: 28px;
+  height: 28px;
+  border: 5px solid hsl(var(--background));
+  border-radius: 999px;
+  background: hsl(var(--primary));
+  box-shadow: var(--foundation-shadow-card);
+}
