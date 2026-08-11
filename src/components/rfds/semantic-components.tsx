@@ -371,16 +371,17 @@ export function ContributorCard({
       )}
       {...props}
     >
-      <div className="flex items-start gap-4">
-        {icon}
-        <div className="flex-1">
-          <h3 className="text-xl font-semibold text-foreground">
-            {title}
-          </h3>
-          <p className="mt-2 text-sm leading-relaxed text-foreground/70">
-            {description}
-          </p>
+      <div className="flex flex-col gap-4">
+        <div className="flex items-center gap-4">
+          {icon}
+          <div className="flex-1">
+            <h3 className="text-xl font-semibold text-foreground">{title}</h3>
+          </div>
         </div>
+
+        <p className="mt-2 text-sm leading-relaxed text-foreground/70">
+          {description}
+        </p>
       </div>
       <div className="flex flex-wrap gap-3 pt-2">
         {actions}
