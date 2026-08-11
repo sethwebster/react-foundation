@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { ButtonLink } from "@/components/ui/button";
 import { RfcPopover } from "@/components/home/rfc-popover";
+import { Eyebrow } from "@/components/public-site/layout";
 import { ecosystemLibraries } from "@/lib/maintainer-tiers";
 
 type Action = { href: string; label: string; external?: boolean };
@@ -61,9 +62,10 @@ export function BecomeContributor() {
       id="contribute"
       className="scroll-mt-32"
     >
-      <div className="grid gap-10 md:grid-cols-[0.75fr_1.25fr]">
+      <div className="grid gap-10 md:grid-cols-[0.8fr_1.2fr] md:gap-16">
         <div>
-          <h2 className="text-3xl font-semibold leading-tight text-foreground sm:text-4xl">
+          <Eyebrow className="mb-4">Ways to contribute</Eyebrow>
+          <h2 className="text-3xl font-semibold leading-tight tracking-[-0.02em] text-foreground sm:text-4xl">
             Become a contributor
           </h2>
           <p className="mt-4 text-sm leading-6 text-muted-foreground">
@@ -74,9 +76,9 @@ export function BecomeContributor() {
 
         <div className="divide-y divide-border border-y border-border">
           {contributorData.map((item, index) => (
-            <article key={item.variant} className="grid gap-5 py-6 sm:grid-cols-[4rem_1fr]">
-              <p className="text-xs font-semibold text-primary">
-                0{index + 1}
+            <article key={item.variant} className="grid gap-5 py-7 sm:grid-cols-[4rem_1fr]">
+              <p className="foundation-eyebrow pt-1 text-primary">
+                {String(index + 1).padStart(2, "0")}
               </p>
               <div>
                 <h3 className="text-lg font-semibold text-foreground">

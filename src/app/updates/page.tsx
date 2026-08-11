@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 
-import { Section } from "@/components/public-site/layout";
+import { Eyebrow, Section } from "@/components/public-site/layout";
 import { getAuthorBySlug } from "@/lib/authors";
 import { getAllUpdates } from "@/lib/updates";
 
@@ -17,23 +17,30 @@ export default function UpdatesPage() {
   return (
     <main>
       <Section className="pt-16 sm:pt-24">
-        <div className="animate-page-appear flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
-          <h1 className="text-[2.25rem] font-semibold leading-none text-foreground">
-            Latest news
-          </h1>
+        <div className="animate-page-appear flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <Eyebrow className="mb-4">News &amp; announcements</Eyebrow>
+            <h1 className="text-title font-semibold leading-[1.04] tracking-[-0.03em] text-foreground">
+              Latest news
+            </h1>
+            <p className="mt-4 max-w-[32rem] text-base leading-7 text-muted-foreground">
+              Announcements, milestones, and updates from across the React
+              Foundation and its communities.
+            </p>
+          </div>
           <div className="flex flex-wrap gap-2">
             <a
               href="https://x.com/reactjs"
               target="_blank"
               rel="noreferrer"
-              className="inline-flex min-h-10 items-center gap-2 rounded-full bg-muted px-4 text-xs font-semibold text-foreground hover:bg-secondary"
+              className="inline-flex min-h-10 items-center gap-2 rounded-full border border-border bg-background px-4 text-xs font-semibold text-foreground transition hover:border-border-strong hover:bg-muted"
             >
               <XIcon />
               Follow
             </a>
             <Link
               href="/updates/welcome-to-react-foundation"
-              className="inline-flex min-h-10 items-center gap-2 rounded-full bg-muted px-4 text-xs font-semibold text-foreground hover:bg-secondary"
+              className="inline-flex min-h-10 items-center gap-2 rounded-full border border-border bg-background px-4 text-xs font-semibold text-foreground transition hover:border-border-strong hover:bg-muted"
             >
               <MailIcon />
               Read the latest
@@ -49,18 +56,18 @@ export default function UpdatesPage() {
               <Link
                 key={update.slug}
                 href={`/updates/${update.slug}`}
-                className="group block rounded-panel border border-border bg-surface-raised p-6 shadow-card hover:border-border-strong hover:shadow-soft sm:px-7 sm:py-6"
+                className="group block rounded-card border border-border bg-surface-raised p-6 shadow-card transition hover:-translate-y-0.5 hover:border-border-strong hover:shadow-raised sm:px-8 sm:py-7"
               >
                 <time
                   dateTime={update.metadata.date}
-                  className="text-xs font-medium text-muted-foreground"
+                  className="foundation-eyebrow text-muted-foreground"
                 >
                   {formatUpdateDate(update.metadata.date)}
                 </time>
-                <h2 className="mt-4 text-lg font-semibold leading-tight text-foreground sm:text-xl">
+                <h2 className="mt-4 text-lg font-semibold leading-tight tracking-[-0.01em] text-foreground sm:text-xl">
                   {update.metadata.title}
                 </h2>
-                <p className="mt-2 max-w-[34rem] text-xs leading-5 text-muted-foreground">
+                <p className="mt-3 max-w-[36rem] text-sm leading-6 text-muted-foreground">
                   {update.metadata.description}
                 </p>
                 <div className="mt-4 flex items-center justify-between gap-4">

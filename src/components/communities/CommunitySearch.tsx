@@ -57,10 +57,9 @@ function CommunitySearchInput({ initialValue }: { initialValue: string }) {
         placeholder="Search by city, country, or community name..."
         aria-label="Search communities"
         className={cn(
-          'h-14 w-full rounded-panel border border-border bg-card pl-12 pr-4 text-base',
-          'text-foreground placeholder:text-muted-foreground',
-          'shadow-sm transition-shadow',
-          'focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary',
+          'h-14 w-full rounded-card border border-border bg-card pl-12 pr-4 text-base',
+          'text-foreground placeholder:text-muted-foreground shadow-card',
+          'transition focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary',
         )}
       />
     </div>
