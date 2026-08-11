@@ -12,6 +12,23 @@ const measureClasses: Record<Measure, string> = {
   full: "max-w-none",
 };
 
+/**
+ * Eyebrow — the single section-label voice across the site. Geist Mono, tracked
+ * uppercase caps in React teal. Replaces the ad-hoc `text-sm font-semibold
+ * text-primary` labels that were hand-written across pages.
+ */
+export function Eyebrow({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <p className={cn("foundation-eyebrow text-primary", className)}>{children}</p>
+  );
+}
+
 export function PublicPageShell({
   children,
   className,
@@ -86,12 +103,10 @@ export function PageIntro({
         className,
       )}
     >
-      {eyebrow ? (
-        <div className="mb-5 text-sm font-semibold text-primary">{eyebrow}</div>
-      ) : null}
+      {eyebrow ? <Eyebrow className="mb-5">{eyebrow}</Eyebrow> : null}
       <h1
         className={cn(
-          "text-title font-semibold leading-[1.04] text-foreground",
+          "text-title font-semibold leading-[1.04] tracking-[-0.03em] text-foreground",
           titleClassName,
         )}
       >
@@ -125,12 +140,25 @@ export function PageIntro({
 export function Surface({
   children,
   className,
+  tone = "raised",
+  radius = "panel",
+  elevation = "card",
   ...props
-}: HTMLAttributes<HTMLDivElement>) {
+}: HTMLAttributes<HTMLDivElement> & {
+  tone?: "raised" | "subtle" | "plain";
+  radius?: "card" | "panel";
+  elevation?: "none" | "card" | "soft";
+}) {
   return (
     <div
       className={cn(
-        "rounded-panel border border-border bg-surface-raised shadow-soft",
+        "border border-border",
+        radius === "card" ? "rounded-card" : "rounded-panel",
+        tone === "raised" && "bg-surface-raised",
+        tone === "subtle" && "bg-surface-subtle",
+        tone === "plain" && "bg-transparent",
+        elevation === "card" && "shadow-card",
+        elevation === "soft" && "shadow-soft",
         className,
       )}
       {...props}

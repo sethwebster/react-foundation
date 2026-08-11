@@ -40,7 +40,7 @@ export function MemberPhotoRail() {
           {PHOTOS.map((photo, index) => (
             <figure
               key={photo.src}
-              className={`relative h-[9.5rem] w-[10rem] shrink-0 overflow-hidden rounded-[1.15rem] border-[5px] border-background bg-muted shadow-soft sm:h-[12rem] sm:w-[17.5rem] sm:rounded-[1.5rem] ${photo.rotation} ${
+              className={`relative h-[9.5rem] w-[10rem] shrink-0 overflow-hidden rounded-card border-4 border-background bg-muted shadow-raised sm:h-[12rem] sm:w-[17.5rem] sm:rounded-panel ${photo.rotation} ${
                 index === 0 || index === PHOTOS.length - 1 ? "hidden sm:block" : ""
               }`}
             >

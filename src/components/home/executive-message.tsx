@@ -5,11 +5,11 @@ export function ExecutiveMessage() {
   return (
     <ScrollReveal animation="fade-up">
       <section className="scroll-mt-32 rounded-panel border border-border bg-surface-raised px-7 py-9 shadow-soft sm:px-12 sm:py-12">
-        <p className="text-sm font-semibold text-primary">
-          A Message from Our Executive Director
+        <p className="foundation-eyebrow text-primary">
+          A message from our Executive Director
         </p>
 
-        <div className="mt-7 space-y-5 text-[0.9375rem] leading-7 text-foreground/82">
+        <div className="mt-7 space-y-5 text-base leading-7 text-muted-foreground">
           <p>
             You know, every so often, something comes along in software that changes not
             just how we build — but why we build.

@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import { ButtonLink } from "@/components/ui/button";
-import { Section } from "@/components/public-site/layout";
+import { Eyebrow, Section } from "@/components/public-site/layout";
 
 const pillars = [
   {
@@ -20,11 +20,12 @@ const pillars = [
 
 export function HomeMission() {
   return (
-    <Section className="border-t border-border py-20 sm:py-28">
-      <h2 className="max-w-[39rem] text-[clamp(2rem,5vw,3.15rem)] font-semibold leading-[1.08] text-foreground">
+    <Section className="border-t border-border py-20 sm:py-28" measure="standard">
+      <Eyebrow className="mb-5">Our mission</Eyebrow>
+      <h2 className="max-w-[42rem] text-[clamp(2rem,4.6vw,2.9rem)] font-semibold leading-[1.08] tracking-[-0.03em] text-foreground">
         We exist to ensure the React ecosystem thrives.
       </h2>
-      <div className="mt-9 grid gap-7 text-base leading-7 text-muted-foreground sm:grid-cols-2">
+      <div className="mt-9 grid gap-8 text-base leading-7 text-muted-foreground sm:grid-cols-2 sm:gap-12">
         <p>
           We support React through independent stewardship, sustainable funding, and
           transparent governance—so the technology can remain open and accessible to
@@ -43,11 +44,14 @@ export function HomeMission() {
 export function HomePillars() {
   return (
     <Section className="pb-20 sm:pb-28" measure="standard">
+      <Eyebrow className="mb-8">What we stand for</Eyebrow>
       <div className="grid gap-10 md:grid-cols-3 md:gap-8">
         {pillars.map((pillar, index) => (
           <article key={pillar.title} className="border-t border-border pt-5">
-            <p className="text-xs font-semibold text-primary">0{index + 1}</p>
-            <h3 className="mt-5 text-xl font-semibold text-foreground">
+            <p className="foundation-eyebrow text-primary">
+              {String(index + 1).padStart(2, "0")}
+            </p>
+            <h3 className="mt-5 text-xl font-semibold tracking-[-0.01em] text-foreground">
               {pillar.title}
             </h3>
             <p className="mt-3 text-sm leading-6 text-muted-foreground">
@@ -62,10 +66,11 @@ export function HomePillars() {
 
 export function HomeCommunityCTA() {
   return (
-    <Section className="pb-10 sm:pb-16" measure="standard">
-      <div className="rounded-panel bg-foreground px-7 py-10 text-background sm:flex sm:items-center sm:justify-between sm:px-10 sm:py-12">
-        <div className="max-w-[31rem]">
-          <h2 className="text-3xl font-semibold leading-tight !text-background sm:text-4xl">
+    <Section className="pb-16 sm:pb-24" measure="standard">
+      <div className="overflow-hidden rounded-panel bg-foreground px-7 py-11 text-background shadow-soft sm:flex sm:items-center sm:justify-between sm:px-12 sm:py-14">
+        <div className="max-w-[34rem]">
+          <p className="foundation-eyebrow text-primary">Get involved</p>
+          <h2 className="mt-4 text-3xl font-semibold leading-tight tracking-[-0.02em] !text-background sm:text-[2.4rem]">
             A stronger React ecosystem starts with participation.
           </h2>
           <p className="mt-4 text-sm leading-6 text-background/70">
@@ -78,7 +83,7 @@ export function HomeCommunityCTA() {
           </ButtonLink>
           <Link
             href="/about"
-            className="inline-flex min-h-11 items-center px-3 text-sm font-semibold text-background hover:text-primary"
+            className="inline-flex min-h-11 items-center px-3 text-sm font-semibold text-background transition hover:text-primary"
           >
             Learn more <span className="ml-2" aria-hidden>→</span>
           </Link>

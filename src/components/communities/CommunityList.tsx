@@ -92,7 +92,7 @@ function CommunityRow({ community }: { community: Community }) {
       <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
-            <h3 className="text-lg font-semibold text-foreground">
+            <h3 className="text-lg font-semibold tracking-[-0.01em] text-foreground">
               <Link
                 href={`/communities/${community.slug}`}
                 className="hover:underline"
@@ -100,8 +100,21 @@ function CommunityRow({ community }: { community: Community }) {
                 {community.name}
               </Link>
             </h3>
+            {community.cois_tier ? (
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-border px-2 py-0.5 text-[0.6875rem] font-medium capitalize text-muted-foreground">
+                <span
+                  className="h-1.5 w-1.5 rounded-full"
+                  style={{ backgroundColor: `var(--map-tier-${community.cois_tier})` }}
+                  aria-hidden
+                />
+                {community.cois_tier}
+              </span>
+            ) : null}
             {community.verified ? (
-              <span className="rounded-full bg-brand-soft px-2 py-0.5 text-[0.625rem] font-semibold text-accent-foreground">
+              <span className="inline-flex items-center gap-1 rounded-full bg-brand-soft px-2 py-0.5 text-[0.6875rem] font-medium text-accent-foreground">
+                <svg viewBox="0 0 24 24" fill="currentColor" className="h-3 w-3" aria-hidden>
+                  <path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5l-8-3Zm-1.2 13.4-3.2-3.2 1.4-1.4 1.8 1.8 4.2-4.2 1.4 1.4-5.6 5.6Z" />
+                </svg>
                 Verified
               </span>
             ) : null}

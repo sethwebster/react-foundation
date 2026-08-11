@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import { EcosystemLibraries } from "@/components/home/ecosystem-libraries";
 import {
+  Eyebrow,
   PageIntro,
   PublicPageShell,
   Section,
@@ -65,8 +66,8 @@ export default function ImpactPage() {
         <Section className="pt-12 sm:pt-16" measure="standard">
           <Surface className="grid gap-8 p-7 sm:p-10 md:grid-cols-[0.8fr_1.2fr]">
             <div>
-              <p className="text-sm font-semibold text-primary">Reporting status</p>
-              <h2 className="mt-3 text-2xl font-semibold text-foreground">
+              <Eyebrow className="mb-3">Reporting status</Eyebrow>
+              <h2 className="text-2xl font-semibold tracking-[-0.02em] text-foreground">
                 First public report coming after funded work
               </h2>
             </div>
@@ -79,21 +80,19 @@ export default function ImpactPage() {
           </Surface>
         </Section>
 
-        <Section className="py-20 sm:py-24" measure="standard">
-          <div className="grid gap-10 md:grid-cols-[0.75fr_1.25fr]">
+        <Section className="py-20 sm:py-28" measure="standard">
+          <div className="grid gap-10 md:grid-cols-[0.8fr_1.2fr] md:gap-16">
             <div>
-              <p className="text-sm font-semibold text-primary">
-                Existing methodology
-              </p>
-              <h2 className="mt-4 text-3xl font-semibold leading-tight text-foreground">
+              <Eyebrow className="mb-4">Existing methodology</Eyebrow>
+              <h2 className="text-3xl font-semibold leading-tight tracking-[-0.02em] text-foreground sm:text-4xl">
                 Measurement starts with transparent inputs.
               </h2>
             </div>
             <div className="divide-y divide-border border-y border-border">
               {methodology.map((item, index) => (
-                <article key={item.title} className="grid gap-4 py-6 sm:grid-cols-[4rem_1fr]">
-                  <p className="text-xs font-semibold text-primary">
-                    0{index + 1}
+                <article key={item.title} className="grid gap-4 py-7 sm:grid-cols-[4rem_1fr]">
+                  <p className="foundation-eyebrow pt-1 text-primary">
+                    {String(index + 1).padStart(2, "0")}
                   </p>
                   <div>
                     <h3 className="text-lg font-semibold text-foreground">
@@ -110,18 +109,23 @@ export default function ImpactPage() {
         </Section>
 
         <Section className="pb-20 sm:pb-24" measure="standard">
-          <div className="grid gap-10 md:grid-cols-[0.75fr_1.25fr]">
+          <div className="grid gap-10 md:grid-cols-[0.8fr_1.2fr] md:gap-16">
             <div>
-              <p className="text-sm font-semibold text-primary">
-                Intended report categories
-              </p>
-              <h2 className="mt-4 text-3xl font-semibold leading-tight text-foreground">
+              <Eyebrow className="mb-4">Intended report categories</Eyebrow>
+              <h2 className="text-3xl font-semibold leading-tight tracking-[-0.02em] text-foreground sm:text-4xl">
                 Reports should be checkable records, not projections.
               </h2>
             </div>
             <ul className="divide-y divide-border border-y border-border">
               {reportingAreas.map((area) => (
-                <li key={area} className="py-5 text-sm font-medium text-foreground">
+                <li
+                  key={area}
+                  className="flex items-center gap-3 py-5 text-sm font-medium text-foreground"
+                >
+                  <span
+                    className="h-1.5 w-1.5 shrink-0 rounded-full bg-primary"
+                    aria-hidden
+                  />
                   {area}
                 </li>
               ))}

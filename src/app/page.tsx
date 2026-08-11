@@ -10,7 +10,7 @@ import {
   HomeMission,
   HomePillars,
 } from "@/components/home/home-sections";
-import { PublicPageShell, Section } from "@/components/public-site/layout";
+import { Eyebrow, PublicPageShell, Section } from "@/components/public-site/layout";
 
 export const metadata: Metadata = {
   title: "React Foundation",
@@ -21,8 +21,8 @@ export default function FoundationHome() {
   return (
     <PublicPageShell className="overflow-x-clip">
       <main>
-        <Section className="pt-10 text-center sm:pt-20">
-          <div className="animate-page-appear">
+        <Section className="relative pt-16 text-center sm:pt-24" measure="standard">
+          <div className="foundation-hero-glow animate-page-appear">
             <Image
               src="/react-logo.svg"
               alt=""
@@ -30,20 +30,24 @@ export default function FoundationHome() {
               width={76}
               height={68}
               priority
-              className="mx-auto h-auto w-[3.75rem] brightness-0 opacity-40 dark:invert dark:opacity-50 sm:w-[4.75rem]"
+              className="mx-auto h-auto w-[3.25rem] opacity-70 brightness-0 dark:opacity-80 dark:invert sm:w-[3.75rem]"
             />
-            <h1 className="mx-auto mt-7 max-w-[36rem] text-[clamp(2.05rem,5vw,2.75rem)] font-semibold leading-[1.04] text-foreground">
+            <Eyebrow className="mt-7">Independent · Community-driven · Open</Eyebrow>
+            <h1 className="mx-auto mt-6 max-w-[38rem] text-[clamp(2.25rem,5.4vw,3.25rem)] font-semibold leading-[1.03] tracking-[-0.03em] text-foreground">
               Building the future of React, together.
             </h1>
-            <p className="mx-auto mt-6 max-w-[32rem] text-[0.9375rem] leading-6 text-muted-foreground">
+            <p className="mx-auto mt-6 max-w-[34rem] text-lead leading-8 text-muted-foreground">
               The React Foundation is a community-driven initiative dedicated to
               sustaining and advancing the React ecosystem. Join thousands of
               contributors who code, teach, organize, and support the tools millions of
               developers rely on.
             </p>
-            <div className="mt-8">
-              <ButtonLink href="/become-a-member" size="md">
+            <div className="mt-9 flex flex-wrap items-center justify-center gap-3">
+              <ButtonLink href="/become-a-member" size="lg">
                 Get involved
+              </ButtonLink>
+              <ButtonLink href="/about" variant="tertiary" size="lg">
+                Learn more
               </ButtonLink>
             </div>
           </div>

@@ -9,6 +9,7 @@ import { CommunitySortDropdown } from "@/components/communities/CommunitySortDro
 import { CommunityStats } from "@/components/communities/CommunityStats";
 import { CommunitySearch } from "@/components/communities/CommunitySearch";
 import {
+  Eyebrow,
   PageIntro,
   PublicPageShell,
   Section,
@@ -37,19 +38,13 @@ export default function CommunitiesPage() {
       <main>
         <Section className="pt-16 sm:pt-24">
           <PageIntro
-            title={
-              <>
-                Find Your React
-                <br />
-                Community
-              </>
-            }
+            eyebrow="Global network"
+            title="Find your React community"
             description="Connect with React developers through meetups, conferences, and study groups around the world."
-            descriptionClassName="!mt-4 max-w-[27rem] text-[0.9375rem] leading-6"
           />
         </Section>
 
-        <Section className="pt-4 sm:pt-6">
+        <Section className="pt-10 sm:pt-12">
           <CommunityStats {...communityStats} />
         </Section>
 
@@ -69,8 +64,8 @@ export default function CommunitiesPage() {
         >
           <div className="mb-8 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <p className="text-sm font-semibold text-primary">Community directory</p>
-              <h2 className="mt-3 text-3xl font-semibold text-foreground">
+              <Eyebrow className="mb-3">Community directory</Eyebrow>
+              <h2 className="text-3xl font-semibold tracking-[-0.02em] text-foreground">
                 Find a community
               </h2>
             </div>

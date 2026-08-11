@@ -5,6 +5,7 @@ import { BecomeContributor } from "@/components/home/become-contributor";
 import { ExecutiveMessage } from "@/components/home/executive-message";
 import { FoundingMembers } from "@/components/home/founding-members";
 import {
+  Eyebrow,
   PageIntro,
   PublicPageShell,
   Section,
@@ -59,27 +60,21 @@ export default function AboutPage() {
       <main>
         <Section className="pt-16 sm:pt-24">
           <PageIntro
-            title={
-              <>
-                About The React
-                <br />
-                Foundation
-              </>
-            }
+            eyebrow="Who we are"
+            title="About The React Foundation"
             description="We're building a sustainable future for the React ecosystem through community funding, transparent governance, and unwavering support for the maintainers who make it all possible."
-            descriptionClassName="max-w-[26rem] text-[0.9375rem] leading-6"
           />
         </Section>
 
-        <Section className="pt-8 sm:pt-10">
+        <Section className="pt-10 sm:pt-14">
           <ExecutiveMessage />
         </Section>
 
         <Section className="py-20 sm:py-28" measure="standard">
           <div className="grid gap-12 md:grid-cols-[0.8fr_1.2fr] md:gap-20">
             <div>
-              <p className="text-sm font-semibold text-primary">What we are here to do</p>
-              <h2 className="mt-4 text-3xl font-semibold leading-tight text-foreground sm:text-4xl">
+              <Eyebrow className="mb-4">What we are here to do</Eyebrow>
+              <h2 className="text-3xl font-semibold leading-tight tracking-[-0.02em] text-foreground sm:text-4xl">
                 Keep React open, supported, and ready for what comes next.
               </h2>
             </div>
@@ -105,10 +100,8 @@ export default function AboutPage() {
         <Section className="pb-20 sm:pb-24" measure="standard">
           <Surface className="grid gap-8 p-7 sm:p-10 md:grid-cols-[0.8fr_1.2fr]">
             <div>
-              <p className="text-sm font-semibold text-primary">
-                Supported ecosystem
-              </p>
-              <h2 className="mt-3 text-2xl font-semibold text-foreground">
+              <Eyebrow className="mb-3">Supported ecosystem</Eyebrow>
+              <h2 className="text-2xl font-semibold tracking-[-0.02em] text-foreground">
                 {ecosystemLibraries.length} tracked repositories across React.
               </h2>
             </div>
@@ -126,10 +119,10 @@ export default function AboutPage() {
         </Section>
 
         <Section className="pb-20 sm:pb-24" measure="standard">
-          <div className="grid gap-10 md:grid-cols-[0.75fr_1.25fr]">
+          <div className="grid gap-10 md:grid-cols-[0.8fr_1.2fr] md:gap-16">
             <div>
-              <p className="text-sm font-semibold text-primary">Governance</p>
-              <h2 className="mt-4 text-3xl font-semibold leading-tight text-foreground">
+              <Eyebrow className="mb-4">Governance</Eyebrow>
+              <h2 className="text-3xl font-semibold leading-tight tracking-[-0.02em] text-foreground sm:text-4xl">
                 Transparent governance
               </h2>
               <p className="mt-4 text-sm leading-6 text-muted-foreground">

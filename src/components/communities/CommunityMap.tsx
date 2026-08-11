@@ -61,15 +61,13 @@ export function CommunityMap({ communities }: { communities: Community[] }) {
 
   return (
     <div className="community-map relative h-[28rem] w-full overflow-hidden bg-map-water/45 sm:h-[34rem]">
-      <div className="absolute right-4 top-4 z-[500] rounded-xl border border-border bg-background/92 px-3.5 py-3 shadow-card backdrop-blur">
-        <p className="mb-2.5 text-[0.625rem] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-          CoIS Tier
-        </p>
+      <div className="absolute right-4 top-4 z-[500] rounded-field border border-border bg-background/92 px-3.5 py-3 shadow-card backdrop-blur">
+        <p className="foundation-eyebrow mb-2.5 text-muted-foreground">CoIS Tier</p>
         <div className="space-y-1.5">
-          <LegendDot color="#22c7e6" label="Platinum" />
-          <LegendDot color="#f5bd23" label="Gold" />
-          <LegendDot color="#aab0b7" label="Silver" />
-          <LegendDot color="#ee8741" label="Bronze" />
+          <LegendDot color="var(--map-tier-platinum)" label="Platinum" />
+          <LegendDot color="var(--map-tier-gold)" label="Gold" />
+          <LegendDot color="var(--map-tier-silver)" label="Silver" />
+          <LegendDot color="var(--map-tier-bronze)" label="Bronze" />
         </div>
       </div>
 
@@ -137,12 +135,13 @@ export function CommunityMap({ communities }: { communities: Community[] }) {
 }
 
 function getMarkerColor(tier?: string, status?: string) {
-  if (status === "inactive" || status === "paused") return "#89929f";
-  if (tier === "platinum") return "#22c7e6";
-  if (tier === "gold") return "#f5bd23";
-  if (tier === "silver") return "#aab0b7";
-  if (tier === "bronze") return "#ee8741";
-  return "#087ea4";
+  if (status === "inactive" || status === "paused")
+    return "var(--map-tier-inactive)";
+  if (tier === "platinum") return "var(--map-tier-platinum)";
+  if (tier === "gold") return "var(--map-tier-gold)";
+  if (tier === "silver") return "var(--map-tier-silver)";
+  if (tier === "bronze") return "var(--map-tier-bronze)";
+  return "var(--map-tier-default)";
 }
 
 function LegendDot({ color, label }: { color: string; label: string }) {

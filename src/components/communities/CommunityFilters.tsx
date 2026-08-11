@@ -89,7 +89,6 @@ export function CommunityFilters() {
     // Add event types if any are selected
     if (newFilters.event_types && newFilters.event_types.length > 0) {
       params.set('types', newFilters.event_types.join(','));
-      console.log('🔍 Event types filter:', newFilters.event_types);
     }
 
     const queryString = params.toString();
@@ -196,34 +195,16 @@ export function CommunityFilters() {
         <SortDropdown
           label="CoIS Tier"
           options={[
-            { value: '', label: '🎯 All Tiers' },
-            { value: 'platinum', label: '💎 Platinum' },
-            { value: 'gold', label: '🏆 Gold' },
-            { value: 'silver', label: '🥈 Silver' },
-            { value: 'bronze', label: '🥉 Bronze' },
+            { value: '', label: 'All tiers' },
+            { value: 'platinum', label: 'Platinum' },
+            { value: 'gold', label: 'Gold' },
+            { value: 'silver', label: 'Silver' },
+            { value: 'bronze', label: 'Bronze' },
           ]}
           value={filters.cois_tier || ''}
           onChange={(value) => updateFilter('cois_tier', value as Filters['cois_tier'])}
         />
       </div>
-
-      {/* Toggles */}
-      {/* <div className="space-y-3 pt-2 border-t border-border">
-
-        <label className="flex items-center gap-2 cursor-pointer group">
-          <input
-            checked={filters.has_upcoming_events || false}
-            onChange={(e) => {
-              console.log('📅 Has upcoming events toggled:', e.target.checked);
-              updateFilter('has_upcoming_events', e.target.checked);
-            }}
-            className="w-4 h-4 rounded border-border text-primary focus:ring-2 focus:ring-primary"
-          />
-          <span className="text-sm text-foreground group-hover:text-primary transition">
-            Recent activity (last 6 months)
-          </span>
-        </label>
-      </div> */}
 
       {/* Apply button (for mobile) */}
       <RFDS.SemanticButton variant="primary" className="w-full lg:hidden">

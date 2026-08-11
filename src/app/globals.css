@@ -104,6 +104,8 @@ html {
   --destructive-foreground: 0 0% 100%;
   --success: 145 63% 42%;
   --success-foreground: 0 0% 100%;
+  --warning: 37 91% 55%;            /* #f59e0b */
+  --warning-foreground: 30 60% 12%;
   --border: 214.29 12.28% 88.82%;   /* #dfe2e6 */
   --input: 214.29 12.28% 88.82%;
   --ring: 194.62 90.7% 33.73%;
@@ -119,6 +121,14 @@ html {
   --map-water: 194 54% 76%;
   --map-land: 43 20% 95%;
 
+  /* CoIS tier marker colors — shared by the map markers, legend, and directory. */
+  --map-tier-platinum: #22c7e6;
+  --map-tier-gold: #f5bd23;
+  --map-tier-silver: #aab0b7;
+  --map-tier-bronze: #ee8741;
+  --map-tier-inactive: #89929f;
+  --map-tier-default: hsl(var(--primary));
+
   /* Layout, shape, and motion */
   --foundation-header-height: 4.5rem;
   --foundation-content-wide: 72rem;
@@ -126,13 +136,34 @@ html {
   --foundation-content-reading: 40.5rem;
   --foundation-page-gutter: clamp(1.25rem, 4vw, 3rem);
   --foundation-section-space: clamp(4.5rem, 9vw, 8rem);
+  /*
+   * One radius system. Four steps only:
+   * field (inputs, chips, small controls) · card (list + feature cards) ·
+   * panel (large editorial / map surfaces) · control (pills).
+   */
+  --foundation-radius-field: 0.625rem;   /* 10px */
+  --foundation-radius-card: 1rem;        /* 16px */
+  --foundation-radius-panel: 1.5rem;     /* 24px */
   --foundation-radius-control: 999px;
-  --foundation-radius-card: 1.25rem;
-  --foundation-radius-panel: 1.75rem;
-  --foundation-shadow-card: 0 8px 24px hsl(218 18% 20% / 0.06);
+
+  /*
+   * One elevation system. Every raised surface stacks a hairline inset ring
+   * (the crisp edge) with 1-2 soft, low-opacity offsets — surfaces sit on the
+   * page rather than floating on a single heavy drop shadow.
+   */
+  --foundation-hairline-shadow: 220 25% 18%;
+  --foundation-shadow-card:
+    inset 0 0 0 1px hsl(var(--foundation-hairline-shadow) / 0.05),
+    0 1px 2px hsl(var(--foundation-hairline-shadow) / 0.05),
+    0 4px 12px -6px hsl(var(--foundation-hairline-shadow) / 0.08);
+  --foundation-shadow-raised:
+    inset 0 0 0 1px hsl(var(--foundation-hairline-shadow) / 0.06),
+    0 2px 4px hsl(var(--foundation-hairline-shadow) / 0.05),
+    0 14px 30px -10px hsl(var(--foundation-hairline-shadow) / 0.12);
   --foundation-shadow-soft:
-    0 18px 50px hsl(218 18% 20% / 0.08),
-    0 2px 8px hsl(218 18% 20% / 0.04);
+    inset 0 0 0 1px hsl(var(--foundation-hairline-shadow) / 0.07),
+    0 2px 6px hsl(var(--foundation-hairline-shadow) / 0.06),
+    0 24px 48px -14px hsl(var(--foundation-hairline-shadow) / 0.16);
   --foundation-duration-fast: 160ms;
   --foundation-duration-base: 240ms;
   --foundation-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
@@ -165,6 +196,8 @@ html {
   --destructive-foreground: 0 0% 100%;
   --success: 145 63% 50%;
   --success-foreground: 0 0% 100%;
+  --warning: 37 91% 60%;
+  --warning-foreground: 30 60% 10%;
   --border: 218.57 11.11% 24.71%;  /* #383d46 */
   --input: 218.57 11.11% 24.71%;
   --ring: 190.91 65.35% 60.39%;
@@ -178,10 +211,19 @@ html {
   --brand-soft: 194 52% 18%;
   --map-water: 194 35% 30%;
   --map-land: 220 10% 20%;
-  --foundation-shadow-card: 0 8px 24px hsl(220 35% 3% / 0.24);
+  --foundation-hairline-shadow: 220 40% 2%;
+  --foundation-shadow-card:
+    inset 0 0 0 1px hsl(210 40% 98% / 0.04),
+    0 1px 2px hsl(var(--foundation-hairline-shadow) / 0.4),
+    0 4px 12px -6px hsl(var(--foundation-hairline-shadow) / 0.5);
+  --foundation-shadow-raised:
+    inset 0 0 0 1px hsl(210 40% 98% / 0.05),
+    0 2px 4px hsl(var(--foundation-hairline-shadow) / 0.4),
+    0 14px 30px -10px hsl(var(--foundation-hairline-shadow) / 0.55);
   --foundation-shadow-soft:
-    0 18px 50px hsl(220 35% 3% / 0.32),
-    0 2px 8px hsl(220 35% 3% / 0.18);
+    inset 0 0 0 1px hsl(210 40% 98% / 0.06),
+    0 2px 6px hsl(var(--foundation-hairline-shadow) / 0.5),
+    0 24px 48px -14px hsl(var(--foundation-hairline-shadow) / 0.6);
 
   /* Contributor icon gradients (brighter for dark mode) */
   --gradient-icon-code: linear-gradient(135deg, #34d399 0%, #22d3ee 100%);
@@ -211,6 +253,8 @@ html {
   --color-destructive-foreground: hsl(var(--destructive-foreground));
   --color-success: hsl(var(--success));
   --color-success-foreground: hsl(var(--success-foreground));
+  --color-warning: hsl(var(--warning));
+  --color-warning-foreground: hsl(var(--warning-foreground));
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
@@ -223,11 +267,17 @@ html {
   --color-brand-soft: hsl(var(--brand-soft));
   --color-map-water: hsl(var(--map-water));
   --color-map-land: hsl(var(--map-land));
+  --radius-field: var(--foundation-radius-field);
   --radius-control: var(--foundation-radius-control);
   --radius-card: var(--foundation-radius-card);
   --radius-panel: var(--foundation-radius-panel);
   --shadow-card: var(--foundation-shadow-card);
+  --shadow-raised: var(--foundation-shadow-raised);
   --shadow-soft: var(--foundation-shadow-soft);
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco,
+    monospace;
   --text-display: clamp(2.75rem, 6vw, 4.5rem);
   --text-title: clamp(2.25rem, 4.5vw, 2.75rem);
   --text-lead: clamp(1.0625rem, 2vw, 1.25rem);
@@ -288,6 +338,39 @@ button {
 ::selection {
   background: hsl(var(--brand-soft));
   color: hsl(var(--text-strong));
+}
+
+/*
+ * Hero atmosphere — the single decorative gradient in the system. A quiet
+ * React-teal glow, used only behind a hero band. Never miniaturized to a
+ * swatch, never repeated as section decoration.
+ */
+.foundation-hero-glow {
+  position: relative;
+  isolation: isolate;
+}
+
+.foundation-hero-glow::before {
+  content: "";
+  position: absolute;
+  inset: -8rem -20% auto -20%;
+  block-size: 34rem;
+  z-index: -1;
+  background:
+    radial-gradient(46% 60% at 50% 0%, hsl(var(--primary) / 0.13), transparent 72%),
+    radial-gradient(40% 55% at 15% 2%, hsl(var(--map-water) / 0.22), transparent 72%),
+    radial-gradient(42% 55% at 85% 0%, hsl(var(--brand-soft) / 0.55), transparent 74%);
+  pointer-events: none;
+}
+
+/* Mono eyebrow — the technical section label voice (Geist Mono, tracked caps). */
+.foundation-eyebrow {
+  font-family: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
 }
 
 *, *::before, *::after {
