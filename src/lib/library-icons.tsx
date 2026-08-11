@@ -113,6 +113,7 @@ export const libraryIcons: Record<string, IconComponent | null> = {
   "react-spectrum": null,
   ariakit: null,
   "material-ui": SiMui,
+  "base-ui": SiMui,
   "chakra-ui": SiChakraui,
   "ant-design": SiAntdesign,
 
@@ -187,6 +188,7 @@ export const libraryDisplayNames: Record<string, string> = {
   "react-spectrum": "React Spectrum",
   ariakit: "Ariakit",
   "material-ui": "Material UI",
+  "base-ui": "Base UI",
   "chakra-ui": "Chakra UI",
   "ant-design": "Ant Design",
   motion: "Framer Motion",
