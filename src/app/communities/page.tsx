@@ -100,9 +100,12 @@ function FiltersSkeleton() {
 
 function ListSkeleton() {
   return (
-    <div className="space-y-4">
-      {[1, 2, 3].map((item) => (
-        <div key={item} className="h-40 animate-pulse rounded-panel bg-muted" />
+    <div className="grid gap-4 sm:grid-cols-2">
+      {[1, 2, 3, 4].map((item) => (
+        <div
+          key={item}
+          className="h-52 animate-pulse rounded-card border border-border bg-muted"
+        />
       ))}
     </div>
   );
