@@ -32,6 +32,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     buildEntry(baseUrl, '/about/board-of-directors', 'monthly', 0.7),
     buildEntry(baseUrl, '/about/technical-steering-committee', 'monthly', 0.7),
     buildEntry(baseUrl, '/impact', 'weekly', 0.9),
+    buildEntry(baseUrl, '/summit', 'monthly', 0.9),
     buildEntry(baseUrl, '/authors', 'weekly', 0.8),
     buildEntry(baseUrl, '/updates', 'weekly', 0.8),
     buildEntry(baseUrl, '/libraries', 'weekly', 0.8),
