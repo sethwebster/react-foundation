@@ -87,12 +87,12 @@ export default function SummitPage() {
         </div>
       </section>
 
-      <section id="programme" className="scroll-mt-36 border-y border-border/60 bg-muted/35 py-24 sm:py-32">
+      <section id="program" className="scroll-mt-36 border-y border-border/60 bg-muted/35 py-24 sm:py-32">
         <div className="mx-auto max-w-7xl px-6 sm:px-8 lg:px-12">
           <RFDS.ScrollReveal animation="fade-up">
             <SectionHeading
-              eyebrow="Programme at a glance"
-              title="Programme"
+              eyebrow="Program at a glance"
+              title="Program"
               description="Travel days bookend three days together in London: one plenary day followed by two days dedicated to working groups."
             />
           </RFDS.ScrollReveal>
@@ -233,7 +233,7 @@ export default function SummitPage() {
           <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-muted-foreground">
             Bring your context and expertise to help build the future of React.
           </p>
-          <RFDS.ButtonLink href="#programme" size="lg" className="mt-9">Review the programme</RFDS.ButtonLink>
+          <RFDS.ButtonLink href="#program" size="lg" className="mt-9">Review the program</RFDS.ButtonLink>
         </RFDS.ScrollReveal>
       </section>
 
