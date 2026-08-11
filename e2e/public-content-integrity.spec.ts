@@ -1,5 +1,9 @@
 import { expect, test } from '@playwright/test';
 
+import { ecosystemLibraries } from '../src/lib/maintainer-tiers';
+
+const trackedRepositoryLabel = `${ecosystemLibraries.length} tracked repositories`;
+
 const editorialRoutes = [
   {
     path: '/about/board-of-directors',
@@ -19,7 +23,7 @@ const editorialRoutes = [
   {
     path: '/libraries',
     heading: 'Ecosystem support',
-    expected: '63 tracked repositories',
+    expected: trackedRepositoryLabel,
   },
   {
     path: '/scoring',
@@ -87,7 +91,7 @@ test('impact restores methodology and routes into library detail', async ({ page
 test('libraries and scoring publish the tracked ecosystem without stale counts', async ({ page }) => {
   await page.goto('/libraries');
 
-  await expect(page.getByText('63 tracked repositories', { exact: true }).first()).toBeVisible();
+  await expect(page.getByText(trackedRepositoryLabel, { exact: true }).first()).toBeVisible();
   await expect(page.getByText('Core React · 7 libraries')).toBeVisible();
   await expect(page.getByText('Styling · 5 libraries')).toBeVisible();
   await expect(page.getByRole('link', { name: /React Router/i })).toBeVisible();
