@@ -140,14 +140,6 @@ describe('ecosystemLibraries', () => {
     expect(NPMCollector.getPackageName('pmndrs', 'react-three-fiber')).toBe('@react-three/fiber');
     expect(libraryDisplayNames['react-three-fiber']).toBe('React Three Fiber');
 
-    expect(PROBE_REPOS).toContainEqual(
-      expect.objectContaining({
-        owner: 'pmndrs',
-        repo: 'react-three-fiber',
-        category: 'ui-library',
-      })
-    );
-
     const loader = new LibrariesLoader();
     const records = await loader.load();
     expect(records).toContainEqual(

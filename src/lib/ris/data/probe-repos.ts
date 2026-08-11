@@ -39,7 +39,6 @@ export const PROBE_REPOS: ProbeRepo[] = [
   { owner: 'tailwindlabs', repo: 'headlessui', stars: 26000, category: 'ui-library', description: 'Headless UI' },
   { owner: 'facebook', repo: 'stylex', stars: 8000, category: 'ui-library', description: 'StyleX styling system' },
   { owner: 'ariakit', repo: 'ariakit', stars: 8000, category: 'ui-library', description: 'Ariakit' },
-  { owner: 'pmndrs', repo: 'react-three-fiber', stars: 31000, category: 'ui-library', description: 'React Three Fiber 3D renderer' },
   { owner: 'mantine-dev', repo: 'mantine', stars: 27000, category: 'ui-library', description: 'Mantine' },
   { owner: 'palantir', repo: 'blueprint', stars: 21000, category: 'ui-library', description: 'Blueprint' },
   { owner: 'react-bootstrap', repo: 'react-bootstrap', stars: 22000, category: 'ui-library', description: 'React Bootstrap' },
