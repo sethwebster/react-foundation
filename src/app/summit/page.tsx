@@ -153,7 +153,7 @@ export default function SummitPage() {
                   Folks can self-nominate using the form below.
                 </p>
                 <RFDS.ButtonLink
-                  href="https://example.com"
+                  href="https://forms.gle/HwUngQcCnWhbuBoR6"
                   target="_blank"
                   rel="noreferrer"
                   variant="tertiary"
