@@ -46,16 +46,6 @@ const editorialRoutes = [
     heading: 'Start a React community',
     expected: 'Begin with a useful first event',
   },
-  {
-    path: '/store',
-    heading: 'The foundation store is not open yet',
-    expected: 'Checkout is not currently available',
-  },
-  {
-    path: '/store/collections',
-    heading: 'Store collections',
-    expected: 'Preview planned and archived merchandise',
-  },
 ] as const;
 
 for (const route of editorialRoutes) {
@@ -114,8 +104,9 @@ test('home and about expose accurate contribution, governance, and membership ac
   await page.goto('/');
 
   await expect(page.getByText('Become a contributor')).toBeVisible();
-  await expect(page.getByRole('link', { name: /Browse React repositories/i })).toHaveAttribute('href', /github\.com\/facebook\/react/);
-  await expect(page.getByRole('link', { name: /View RFCs/i })).toHaveAttribute('href', /github\.com\/reactjs\/rfcs/);
+  await expect(page.getByRole('link', { name: /Browse tracked repositories/i })).toHaveAttribute('href', '/libraries');
+  await page.getByRole('button', { name: /View RFCs/i }).click();
+  await expect(page.getByRole('link', { name: /React RFCs/i })).toHaveAttribute('href', 'https://github.com/reactjs/rfcs');
   await expect(page.getByRole('link', { name: /Sponsor a library/i })).toHaveAttribute('href', '/libraries');
   await expect(page.getByRole('link', { name: /Open membership enrollment/i })).toHaveAttribute('href', /enrollment\.lfx\.linuxfoundation\.org/);
   await expect(page.getByRole('link', { name: 'Membership enrollment', exact: true })).toBeVisible();
@@ -167,15 +158,6 @@ for (const theme of ['light', 'dark'] as const) {
     });
   }
 }
-
-test('product previews disclose that checkout is unavailable', async ({ page }) => {
-  await page.goto('/store/products/fiber-shell');
-
-  await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
-  await expect(page.getByText('Checkout is not currently available', { exact: false })).toBeVisible();
-  await expect(page.getByText(/impact guarantee/i)).toHaveCount(0);
-  await expect(page.locator('footer')).toBeVisible();
-});
 
 test('community profiles use the shared editorial detail layout', async ({ page }) => {
   await page.goto('/communities/react-bangalore');

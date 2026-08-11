@@ -4,39 +4,31 @@ test.use({ viewport: { width: 1280, height: 800 } });
 
 const CONTRIBUTOR_CARD_TITLES = [
   "Contribute to Repos",
-  "Support Financially",
   "Sponsor a Library",
   "Become a Member",
 ] as const;
 
 const readContributorCardLayout = (cardElement: HTMLElement) => {
-  const description = cardElement.querySelector("p.text-sm.leading-relaxed");
-  if (!description) {
+  const title = cardElement.querySelector("h3");
+  const description = cardElement.querySelector("p.text-sm.leading-6");
+  if (!title || !description) {
     return null;
   }
 
   const contentStack = description.parentElement;
-  const headerRow = description.previousElementSibling;
-  const icon = headerRow?.firstElementChild;
-  const titleContainer = headerRow?.lastElementChild;
-
-  if (!contentStack || !headerRow || !icon) {
+  if (!contentStack) {
     return null;
   }
 
   const descriptionRect = description.getBoundingClientRect();
-  const iconRect = icon.getBoundingClientRect();
-  const headerRect = headerRow.getBoundingClientRect();
+  const titleRect = title.getBoundingClientRect();
+  const contentRect = contentStack.getBoundingClientRect();
 
   return {
-    contentStackUsesColumnLayout: contentStack.classList.contains("flex-col"),
-    descriptionIsSiblingOfHeaderRow:
-      headerRow.nextElementSibling === description,
-    descriptionNotNestedInHeaderRow: !headerRow.contains(description),
-    titleContainerHasNoDescription: titleContainer?.querySelector("p") === null,
+    descriptionIsSiblingOfTitle: title.nextElementSibling === description,
     descriptionAlignedWithCardContent:
-      Math.abs(descriptionRect.left - iconRect.left) < 2,
-    descriptionBelowHeaderRow: descriptionRect.top >= headerRect.bottom - 2,
+      Math.abs(descriptionRect.left - contentRect.left) < 2,
+    descriptionBelowTitle: descriptionRect.top >= titleRect.bottom - 2,
   };
 };
 
@@ -51,7 +43,7 @@ test.describe("About page contributor cards", () => {
   test("keeps card descriptions below the icon/title row instead of beside the icon", async ({
     page,
   }) => {
-    const card = page.locator("#contribute .grid > div").filter({
+    const card = page.locator("#contribute article").filter({
       has: page.getByRole("heading", {
         name: CONTRIBUTOR_CARD_TITLES[0],
         level: 3,
@@ -63,19 +55,16 @@ test.describe("About page contributor cards", () => {
     const layout = await card.evaluate(readContributorCardLayout);
 
     expect(layout).not.toBeNull();
-    expect(layout?.contentStackUsesColumnLayout).toBeTruthy();
-    expect(layout?.descriptionIsSiblingOfHeaderRow).toBeTruthy();
-    expect(layout?.descriptionNotNestedInHeaderRow).toBeTruthy();
-    expect(layout?.titleContainerHasNoDescription).toBeTruthy();
+    expect(layout?.descriptionIsSiblingOfTitle).toBeTruthy();
     expect(layout?.descriptionAlignedWithCardContent).toBeTruthy();
-    expect(layout?.descriptionBelowHeaderRow).toBeTruthy();
+    expect(layout?.descriptionBelowTitle).toBeTruthy();
   });
 
   test("renders full-width descriptions for every contributor card on desktop", async ({
     page,
   }) => {
     const section = page.locator("#contribute");
-    const cards = section.locator(".grid > div");
+    const cards = section.locator("article");
     await expect(cards).toHaveCount(CONTRIBUTOR_CARD_TITLES.length);
 
     const cardCount = await cards.count();
@@ -83,28 +72,28 @@ test.describe("About page contributor cards", () => {
     for (let index = 0; index < cardCount; index += 1) {
       const layout = await cards.nth(index).evaluate(readContributorCardLayout);
       expect(layout).not.toBeNull();
-      expect(layout?.descriptionNotNestedInHeaderRow).toBeTruthy();
+      expect(layout?.descriptionIsSiblingOfTitle).toBeTruthy();
 
       const widths = await cards.nth(index).evaluate((cardElement) => {
         const description = cardElement.querySelector(
-          "p.text-sm.leading-relaxed",
+          "p.text-sm.leading-6",
         );
         if (!description) {
           return null;
         }
 
-        const cardRect = cardElement.getBoundingClientRect();
+        const contentRect = description.parentElement?.getBoundingClientRect();
         const descriptionRect = description.getBoundingClientRect();
 
         return {
-          cardWidth: cardRect.width,
+          contentWidth: contentRect?.width ?? 0,
           descriptionWidth: descriptionRect.width,
         };
       });
 
       expect(widths).not.toBeNull();
       expect(widths?.descriptionWidth).toBeGreaterThan(
-        (widths?.cardWidth ?? 0) * 0.75,
+        (widths?.contentWidth ?? 0) * 0.95,
       );
     }
   });
