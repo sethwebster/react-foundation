@@ -34,6 +34,18 @@ describe('ecosystemLibraries', () => {
     expect(new Set(repositoryKeys).size).toBe(repositoryKeys.length);
   });
 
+  it('exposes every tracked library to the chatbot knowledge base', async () => {
+    const loader = new LibrariesLoader();
+    const records = await loader.load();
+    const loadedIds = new Set(records.map((record) => record.id));
+
+    const missing = ecosystemLibraries
+      .filter((library) => !loadedIds.has(`library-${library.owner}-${library.name}`.toLowerCase()))
+      .map((library) => `${library.owner}/${library.name}`);
+
+    expect(missing).toEqual([]);
+  });
+
   it('maps requested repositories to their primary npm packages', () => {
     expect(NPMCollector.getPackageName('ant-design', 'ant-design')).toBe('antd');
     expect(NPMCollector.getPackageName('invertase', 'react-native-firebase')).toBe(
