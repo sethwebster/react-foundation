@@ -29,19 +29,14 @@ export const metadata: Metadata = {
 };
 
 function SectionHeading({
-  eyebrow,
   title,
   description,
 }: {
-  eyebrow: string;
   title: string;
   description: string;
 }) {
   return (
     <div className="max-w-3xl">
-      <p className="mb-4 font-mono text-xs font-semibold uppercase tracking-[0.24em] text-primary">
-        {eyebrow}
-      </p>
       <h2 className="text-3xl font-semibold tracking-tight text-foreground sm:text-5xl">
         {title}
       </h2>
@@ -61,7 +56,6 @@ export default function SummitPage() {
         <div className="mx-auto max-w-7xl px-6 sm:px-8 lg:px-12">
           <RFDS.ScrollReveal animation="fade-up">
             <SectionHeading
-              eyebrow="Why we’re gathering"
               title="A Foundation becomes real when its people meet."
               description="This is our first chance to meet in person, connect across groups, and decide what comes next."
             />
@@ -91,7 +85,6 @@ export default function SummitPage() {
         <div className="mx-auto max-w-7xl px-6 sm:px-8 lg:px-12">
           <RFDS.ScrollReveal animation="fade-up">
             <SectionHeading
-              eyebrow="Programme at a glance"
               title="Programme"
               description="Travel days bookend three days together in London: one plenary day followed by two days dedicated to working groups."
             />
@@ -132,7 +125,6 @@ export default function SummitPage() {
           <div className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-start lg:gap-20">
             <RFDS.ScrollReveal animation="slide-right">
               <SectionHeading
-                eyebrow="Joining the summit"
                 title="An invite-only working summit."
                 description="Attendance is invite only for members of the React Foundation working groups."
               />
@@ -143,10 +135,7 @@ export default function SummitPage() {
 
             <RFDS.ScrollReveal animation="slide-left" delay={100}>
               <RFDS.SemanticCard variant="outlined" className="p-7 sm:p-9">
-                <p className="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-primary">
-                  Self-nominations
-                </p>
-                <h3 className="mt-4 text-2xl font-semibold text-foreground">
+                <h3 className="text-2xl font-semibold text-foreground">
                   Interested in taking part?
                 </h3>
                 <p className="mt-4 text-base leading-7 text-muted-foreground">
@@ -171,7 +160,6 @@ export default function SummitPage() {
         <div className="mx-auto max-w-7xl px-6 sm:px-8 lg:px-12">
           <RFDS.ScrollReveal animation="fade-up">
             <SectionHeading
-              eyebrow="Plan your summit"
               title="Logistics"
               description="London and the dates are set. Venue, travel, accommodation, and catering details are still being coordinated and will be published here as they are confirmed."
             />
@@ -214,7 +202,6 @@ export default function SummitPage() {
           <div className="lg:sticky lg:top-40 lg:self-start">
             <RFDS.ScrollReveal animation="fade-up">
               <SectionHeading
-                eyebrow="Participant FAQ"
                 title="The details, in one place."
                 description="This is the source of truth for summit participants. Confirmed information is stated plainly; open logistics are marked as such."
               />
@@ -228,8 +215,7 @@ export default function SummitPage() {
 
       <section className="border-t border-border/60 bg-muted/35 py-24">
         <RFDS.ScrollReveal animation="scale" className="mx-auto max-w-4xl px-6 text-center sm:px-8">
-          <RFDS.SemanticBadge variant="outline" className="border-primary/30 bg-background/50">10–12 November · London</RFDS.SemanticBadge>
-          <h2 className="mt-7 text-4xl font-semibold tracking-tight text-foreground sm:text-6xl">Let’s shape what comes next.</h2>
+          <h2 className="text-4xl font-semibold tracking-tight text-foreground sm:text-6xl">Let’s shape what comes next.</h2>
           <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-muted-foreground">
             Bring your context and expertise to help build the future of React.
           </p>
