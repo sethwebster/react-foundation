@@ -121,7 +121,7 @@ export function BecomeContributor() {
         <p>
           Questions about contributing?{" "}
           <Link
-            href="mailto:hello@react.foundation"
+            href="mailto:info@react.foundation"
             className="font-medium text-primary underline-offset-4 hover:underline"
           >
             Get in touch

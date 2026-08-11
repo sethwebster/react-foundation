@@ -1,0 +1,29 @@
+/* Tailwind entry for the design-system bundle only. NOT used by the app.
+ *
+ * Wraps the app's real theme contract (src/app/globals.css) and adds a
+ * safelist. Why the safelist is necessary: Tailwind emits only the utilities it
+ * finds in scanned source, so the compiled stylesheet contains exactly what the
+ * website happens to use today. The design agent composing new screens in
+ * claude.ai/design is not in that scan, so a perfectly legitimate token with no
+ * current usage produces no utility — verified cases at time of writing:
+ * border-border-strong, font-sans, text-text-strong/text-text-subtle.
+ *
+ * Silent failure mode: the agent writes a real token name, the class resolves to
+ * nothing, and the design renders unstyled with no error anywhere.
+ *
+ * Scope note: dark mode needs no entries here. `.dark` swaps the underlying
+ * custom properties, so one `bg-card` utility is already correct in both themes.
+ */
+@import "../src/app/globals.css";
+
+/* Semantic colour surface. Listed per-variant rather than with an empty brace
+ * alternative ("{,hover:}") — Tailwind does not expand that form, which silently
+ * produced base utilities only. */
+@source inline("{bg,text,border,ring,divide}-{background,foreground,card,card-foreground,popover,popover-foreground,primary,primary-foreground,secondary,secondary-foreground,accent,accent-foreground,muted,muted-foreground,destructive,destructive-foreground,success,success-foreground,border,border-strong,input,ring,surface,surface-subtle,surface-raised,text-strong,text-subtle,brand-soft}");
+@source inline("hover:{bg,text,border}-{background,foreground,card,primary,primary-foreground,secondary,accent,muted,muted-foreground,destructive,success,border,border-strong,surface-subtle,surface-raised,brand-soft}");
+@source inline("focus-visible:{ring,border}-{ring,primary,destructive,border-strong}");
+
+/* Design-system radii and the semantic type scale. */
+@source inline("rounded-{none,sm,md,lg,xl,2xl,3xl,full,card,control,panel}");
+@source inline("text-{xs,sm,base,lg,xl,2xl,3xl,4xl,5xl,6xl,7xl,lead,title}");
+@source inline("font-{sans,mono,normal,medium,semibold,bold,extrabold,black}");
