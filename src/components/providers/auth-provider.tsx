@@ -8,7 +8,7 @@ export function AuthProvider({
   session,
   children,
 }: {
-  session: Session | null;
+  session?: Session | null;
   children: ReactNode;
 }) {
   return <SessionProvider session={session}>{children}</SessionProvider>;

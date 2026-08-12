@@ -9,9 +9,10 @@ import { ThemeToggleWrapper } from "@/components/ui/theme-toggle-wrapper";
 
 interface MobileMenuProps {
   session: Session | null;
+  status: "authenticated" | "loading" | "unauthenticated";
 }
 
-export function MobileMenu({ session }: MobileMenuProps) {
+export function MobileMenu({ session, status }: MobileMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [adminChecked, setAdminChecked] = useState(false);
@@ -217,7 +218,7 @@ export function MobileMenu({ session }: MobileMenuProps) {
                   Sign Out
                 </button>
               )}
-              {!session?.user && (
+              {status === "unauthenticated" && (
                 <Link
                   href="/auth/signin"
                   onClick={closeMenu}

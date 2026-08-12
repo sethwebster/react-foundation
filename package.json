@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build --turbopack",
+    "build": "next build --turbopack && node --test scripts/static-routes.test.mjs",
     "start": "next start",
     "lint": "eslint",
     "test:e2e": "playwright test",

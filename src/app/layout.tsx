@@ -5,7 +5,6 @@ import "./globals.css";
 import { AuthProvider } from "@/components/providers/auth-provider";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { Header } from "@/components/layout/header";
-import { getServerAuthSession } from "@/lib/auth";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -81,12 +80,11 @@ export const metadata: Metadata = {
   ],
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await getServerAuthSession();
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -124,7 +122,7 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ThemeProvider defaultTheme="system">
-          <AuthProvider session={session}>
+          <AuthProvider>
             <Header />
             {children}
           </AuthProvider>

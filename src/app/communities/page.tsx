@@ -74,7 +74,9 @@ export default function CommunitiesPage() {
                 Find a community
               </h2>
             </div>
-            <CommunitySortDropdown />
+            <Suspense fallback={<SortDropdownSkeleton />}>
+              <CommunitySortDropdown />
+            </Suspense>
           </div>
 
           <Suspense fallback={null}>
@@ -101,6 +103,10 @@ export default function CommunitiesPage() {
 
 function FiltersSkeleton() {
   return <div className="h-80 animate-pulse rounded-panel bg-muted" />;
+}
+
+function SortDropdownSkeleton() {
+  return <div aria-hidden className="h-10 w-40 animate-pulse rounded-lg bg-muted" />;
 }
 
 function ListSkeleton() {
