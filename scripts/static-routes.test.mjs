@@ -20,3 +20,11 @@ test('authenticated routes remain dynamic', () => {
     assert.equal(manifest.routes[route], undefined, `${route} should not be prerendered`);
   }
 });
+
+test('disabled store routes remain dynamic', () => {
+  assert.equal(
+    manifest.routes['/store/collections'],
+    undefined,
+    '/store/collections should not be prerendered',
+  );
+});
