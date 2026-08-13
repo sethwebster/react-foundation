@@ -24,10 +24,7 @@ export function SummitHero() {
       <section className="relative flex min-h-[calc(100svh-5rem)] items-center pt-28">
         <div className="mx-auto grid w-full max-w-7xl gap-14 px-6 py-16 sm:px-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:px-12 lg:py-24">
           <div>
-            <RFDS.Pill tone="sky" className="border-primary/30 bg-primary/5 text-foreground">
-              November 2026 · London
-            </RFDS.Pill>
-            <h1 className="mt-8 text-5xl font-semibold leading-[0.95] tracking-[-0.055em] text-foreground sm:text-7xl lg:text-[5.6rem]">
+            <h1 className="text-5xl font-semibold leading-[0.95] tracking-[-0.055em] text-foreground sm:text-7xl lg:text-[5.6rem]">
               Contributors
               <span className="block text-primary">
                 Summit 2026
