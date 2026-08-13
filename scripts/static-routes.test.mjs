@@ -5,11 +5,15 @@ import test from 'node:test';
 const manifestPath = new URL('../.next/prerender-manifest.json', import.meta.url);
 const manifest = JSON.parse(await readFile(manifestPath, 'utf8'));
 
-test('public content routes are prerendered', () => {
+test('routes with a personalized header are server-rendered', () => {
   const publicRoutes = ['/', '/about', '/communities', '/libraries', '/updates'];
 
   for (const route of publicRoutes) {
-    assert.ok(manifest.routes[route], `${route} should be present in the prerender manifest`);
+    assert.equal(
+      manifest.routes[route],
+      undefined,
+      `${route} should resolve the header session at request time`,
+    );
   }
 });
 
