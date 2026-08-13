@@ -61,7 +61,7 @@ export const summitDays: readonly SummitDay[] = [
     date: "November",
     label: "Travel day",
     audience: "Arrivals",
-    focus: "Travel to London and settle in ahead of the summit.",
+    focus: "Travel to London and settle in ahead of the Summit.",
     isTravel: true,
   },
   {
@@ -94,15 +94,15 @@ export const summitDays: readonly SummitDay[] = [
     date: "November",
     label: "Travel day",
     audience: "Departures",
-    focus: "Depart London after three days of summit sessions.",
+    focus: "Depart London after three days of Summit sessions.",
     isTravel: true,
   },
 ];
 
 export const faqItems: readonly FaqItem[] = [
   {
-    question: "When and where is the summit?",
-    answer: "The summit sessions take place in London from Tuesday 10 to Thursday 12 November 2026. Monday 9 and Friday 13 November are travel days. The exact London venue is still to be confirmed.",
+    question: "When and where is the Summit?",
+    answer: "The Summit sessions take place in London from Tuesday 10 to Thursday 12 November 2026. Monday 9 and Friday 13 November are travel days. The exact London venue is still to be confirmed.",
   },
   {
     question: "Who is invited?",
@@ -110,7 +110,7 @@ export const faqItems: readonly FaqItem[] = [
   },
   {
     question: "Is this a public conference?",
-    answer: "No. The current format is a working summit, not a public conference. Non-members of the React Foundation can",
+    answer: "No. The current format is a working Summit, not a public conference. Non-members of the React Foundation can",
     link: {
       href: "#joining",
       label: "self-nominate using the form.",
@@ -130,7 +130,7 @@ export const faqItems: readonly FaqItem[] = [
   },
   {
     question: "Are travel and accommodation arranged?",
-    answer: "Travel coordination, accommodation guidance, and reimbursement details will be shared with participants. If you have special travel needs, please include them in the registration form sent to participants by email.",
+    answer: "The React Foundation will not be able to sponsor travel for every participant. Where possible, we hope participants’ employers will cover their travel and accommodation costs as a way of supporting the Foundation. If you need additional support to attend, however, please reach out to the Foundation directly.",
   },
   {
     question: "Will meals be provided?",

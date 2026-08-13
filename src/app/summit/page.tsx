@@ -132,8 +132,8 @@ export default function SummitPage() {
           <div className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-start lg:gap-20">
             <RFDS.ScrollReveal animation="slide-right">
               <SectionHeading
-                eyebrow="Joining the summit"
-                title="An invite-only working summit."
+                eyebrow="Joining the Summit"
+                title="An invite-only working Summit."
                 description="Attendance is invite only for members of the React Foundation working groups."
               />
               <RFDS.SemanticBadge variant="outline" className="mt-7 border-primary/30">
@@ -171,9 +171,9 @@ export default function SummitPage() {
         <div className="mx-auto max-w-7xl px-6 sm:px-8 lg:px-12">
           <RFDS.ScrollReveal animation="fade-up">
             <SectionHeading
-              eyebrow="Plan your summit"
+              eyebrow="Plan your Summit"
               title="Logistics"
-              description="London and the dates are set. Venue, travel, accommodation, and catering details are still being coordinated and will be published here as they are confirmed."
+              description="London and the dates are set. Venue details will be published here once confirmed."
             />
           </RFDS.ScrollReveal>
 
@@ -200,7 +200,7 @@ export default function SummitPage() {
               <Clock3 className="h-6 w-6 text-primary" aria-hidden="true" />
               <h3 className="mt-6 text-xl font-semibold text-foreground">Before you book</h3>
               <p className="mt-3 text-sm leading-6 text-muted-foreground">
-                Plan to arrive on Monday 9 November and depart on Friday 13 November. Wait for the logistics update before booking non-refundable travel or accommodation.
+                Plan to arrive on Monday 9 November and depart on Friday 13 November. More information about the venue will be shared once it has been confirmed.
               </p>
               <SummitCalendarMenu variant="secondary" size="sm" className="mt-6" />
             </RFDS.SemanticCard>
@@ -216,7 +216,7 @@ export default function SummitPage() {
               <SectionHeading
                 eyebrow="Participant FAQ"
                 title="The details, in one place."
-                description="This is the source of truth for summit participants. Confirmed information is stated plainly; open logistics are marked as such."
+                description="This is the source of truth for Summit participants. Confirmed information is stated plainly; open logistics are marked as such."
               />
               <p className="mt-6 text-xs text-muted-foreground">Last updated 22 July 2026</p>
             </RFDS.ScrollReveal>
