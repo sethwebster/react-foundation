@@ -1,0 +1,89 @@
+.microsite {
+  isolation: isolate;
+}
+
+.orbital {
+  animation: float 7s ease-in-out infinite;
+}
+
+.orbitOne,
+.orbitTwo,
+.orbitThree {
+  border: 1px solid hsl(var(--primary) / 0.2);
+  border-radius: 9999px;
+  inset: 50%;
+  position: absolute;
+  transform: translate(-50%, -50%);
+}
+
+.orbitOne {
+  animation: orbit-spin 22s linear infinite;
+  height: 13rem;
+  width: 13rem;
+}
+
+.orbitTwo {
+  animation: orbit-spin-reverse 28s linear infinite;
+  border-color: hsl(var(--success) / 0.2);
+  height: 18rem;
+  width: 18rem;
+}
+
+.orbitThree {
+  animation: orbit-spin 34s linear infinite;
+  height: 23rem;
+  width: 23rem;
+}
+
+.orbitOne::after,
+.orbitTwo::after,
+.orbitThree::after {
+  background: hsl(var(--primary));
+  border-radius: 9999px;
+  content: "";
+  height: 0.55rem;
+  left: 50%;
+  position: absolute;
+  top: -0.3rem;
+  width: 0.55rem;
+}
+
+.orbitTwo::after {
+  background: hsl(var(--success));
+}
+
+.orbitThree::after {
+  height: 0.35rem;
+  width: 0.35rem;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-12px);
+  }
+}
+
+@keyframes orbit-spin {
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+@keyframes orbit-spin-reverse {
+  to {
+    transform: translate(-50%, -50%) rotate(-360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orbital,
+  .orbitOne,
+  .orbitTwo,
+  .orbitThree {
+    animation: none;
+  }
+
+}

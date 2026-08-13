@@ -37,6 +37,7 @@ describe('sitemap', () => {
     expect(urls).not.toContain('/educators');
     expect(urls).not.toContain('/educators/apply');
     expect(urls.some((url) => url.startsWith('/store'))).toBe(false);
+    expect(urls).toContain('/summit');
 
     expect(urls).toEqual(
       expect.arrayContaining([

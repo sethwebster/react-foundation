@@ -13,7 +13,7 @@ import { ThemeToggleWrapper } from "@/components/ui/theme-toggle-wrapper";
 
 export function Header() {
   const pathname = usePathname();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const [isAdmin, setIsAdmin] = useState(false);
   const isComingSoonPage = pathname === "/coming-soon";
 
@@ -77,6 +77,9 @@ export function Header() {
             <Link className="transition hover:text-foreground" href="/communities">
               Communities
             </Link>
+            <Link className="transition hover:text-foreground" href="/summit">
+              Summit
+            </Link>
             {isAdmin && (
               <Link
                 className="transition hover:text-foreground text-destructive font-medium"
@@ -92,14 +95,14 @@ export function Header() {
           <ThemeToggleWrapper />
 
           {/* Profile Icon or Sign In */}
-          {session?.user ? (
+          {status === "authenticated" && session?.user ? (
             <UserAvatar
               user={session.user}
               size={34}
               href="/profile"
               className="transition hover:border-primary/50"
             />
-          ) : (
+          ) : status === "unauthenticated" ? (
             <ButtonLink
               href="/auth/signin"
               variant="tertiary"
@@ -108,13 +111,13 @@ export function Header() {
             >
               Sign in
             </ButtonLink>
-          )}
+          ) : null}
         </div>
 
         {/* Mobile Menu (shows on mobile only) */}
         <div className="flex items-center gap-1 md:hidden">
           <ThemeToggleWrapper />
-          {!session?.user ? (
+          {status === "unauthenticated" ? (
             <ButtonLink
               href="/auth/signin"
               variant="tertiary"
@@ -124,7 +127,7 @@ export function Header() {
               Sign in
             </ButtonLink>
           ) : null}
-          <MobileMenu session={session} />
+          <MobileMenu session={session} status={status} />
         </div>
       </div>
     </header>

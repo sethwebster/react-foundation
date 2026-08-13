@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
 import {
   PageIntro,
@@ -12,9 +13,21 @@ import {
 } from "@/components/public-site/layout";
 
 export default function SignInPage() {
+  return (
+    <Suspense fallback={<SignInShell callbackUrl={null} />}>
+      <SignInContent />
+    </Suspense>
+  );
+}
+
+function SignInContent() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams?.get("callbackUrl") || "/";
 
+  return <SignInShell callbackUrl={callbackUrl} />;
+}
+
+function SignInShell({ callbackUrl }: { callbackUrl: string | null }) {
   return (
     <PublicPageShell>
       <main>
@@ -28,8 +41,9 @@ export default function SignInPage() {
           <Surface className="mx-auto mt-10 max-w-[28rem] p-6 sm:p-8">
             <button
               type="button"
-              onClick={() => signIn("github", { callbackUrl })}
-              className="flex min-h-12 w-full items-center justify-center gap-3 rounded-control bg-[#24292f] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#32383f] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+              disabled={!callbackUrl}
+              onClick={callbackUrl ? () => signIn("github", { callbackUrl }) : undefined}
+              className="flex min-h-12 w-full items-center justify-center gap-3 rounded-control bg-[#24292f] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#32383f] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-wait disabled:opacity-70"
             >
               <GitHubMark />
               Continue with GitHub
