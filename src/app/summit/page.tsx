@@ -218,7 +218,7 @@ export default function SummitPage() {
                 title="The details, in one place."
                 description="This is the source of truth for Summit participants. Confirmed information is stated plainly; open logistics are marked as such."
               />
-              <p className="mt-6 text-xs text-muted-foreground">Last updated 22 July 2026</p>
+              <p className="mt-6 text-xs text-muted-foreground">Last updated 13 August 2026</p>
             </RFDS.ScrollReveal>
           </div>
 

@@ -143,6 +143,6 @@ export const faqItems: readonly FaqItem[] = [
   {
     question: "Where will updates be published?",
     answer: "This page is the participant source of truth and will be updated as venue, logistics, travel, and detailed scheduling decisions are finalized.",
-    updatedAt: "22 July 2026",
+    updatedAt: "13 August 2026",
   },
 ];
