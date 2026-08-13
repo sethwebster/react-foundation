@@ -96,11 +96,12 @@ export const ecosystemLibraries: RepoTarget[] = [
   { owner: "jquense", name: "yup", category: "forms", tier: 2 },
   { owner: "final-form", name: "react-final-form", category: "forms", tier: 3 },
 
-  // Testing (4 repos)
+  // Testing (5 repos)
   { owner: "testing-library", name: "react-testing-library", category: "testing", tier: 1 },
   { owner: "vitest-dev", name: "vitest", category: "testing", tier: 1 },
   { owner: "microsoft", name: "playwright", category: "testing", tier: 1 },
   { owner: "testing-library", name: "react-hooks-testing-library", category: "testing", tier: 2 },
+  { owner: "callstack", name: "react-native-testing-library", category: "testing", tier: 2 },
 
   // UI/Component Libraries (8 repos)
   { owner: "radix-ui", name: "primitives", category: "ui", tier: 1 },

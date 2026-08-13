@@ -167,4 +167,24 @@ describe('ecosystemLibraries', () => {
       })
     );
   });
+
+  it('includes React Native Testing Library in related library datasets', async () => {
+    expect(findLibrary('callstack', 'react-native-testing-library')).toMatchObject({
+      category: 'testing',
+      tier: 2,
+    });
+    expect(NPMCollector.getPackageName('callstack', 'react-native-testing-library')).toBe(
+      '@testing-library/react-native'
+    );
+    expect(libraryDisplayNames['react-native-testing-library']).toBe('React Native Testing Library');
+
+    const loader = new LibrariesLoader();
+    const records = await loader.load();
+    expect(records).toContainEqual(
+      expect.objectContaining({
+        id: 'library-callstack-react-native-testing-library',
+        title: 'React Native Testing Library',
+      })
+    );
+  });
 });

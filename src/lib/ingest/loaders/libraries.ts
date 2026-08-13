@@ -70,11 +70,12 @@ export class LibrariesLoader implements ContentLoader {
     { repo: 'jquense/yup', name: 'Yup', category: 'Forms & Validation', tier: 'Tier 2' },
     { repo: 'final-form/react-final-form', name: 'React Final Form', category: 'Forms & Validation', tier: 'Tier 3' },
 
-    // Testing (4 repositories)
+    // Testing (5 repositories)
     { repo: 'testing-library/react-testing-library', name: 'React Testing Library', category: 'Testing', tier: 'Tier 1' },
     { repo: 'vitest-dev/vitest', name: 'Vitest', category: 'Testing', tier: 'Tier 1' },
     { repo: 'microsoft/playwright', name: 'Playwright', category: 'Testing', tier: 'Tier 1' },
     { repo: 'testing-library/react-hooks-testing-library', name: 'React Hooks Testing Library', category: 'Testing', tier: 'Tier 2' },
+    { repo: 'callstack/react-native-testing-library', name: 'React Native Testing Library', category: 'Testing', tier: 'Tier 2' },
 
     // UI/Component Libraries (8 repositories)
     { repo: 'radix-ui/primitives', name: 'Radix UI', category: 'UI Libraries', tier: 'Tier 1' },
