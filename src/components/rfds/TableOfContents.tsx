@@ -13,7 +13,7 @@
 
 'use client';
 
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ListTree, ChevronRight, Search, PanelRightOpen, PanelRightClose, ArrowUp } from 'lucide-react';
 
@@ -53,12 +53,12 @@ function useScrollSpy(ids: string[], rootMargin = '-40% 0px -55% 0px') {
         if (visible.length > 0) {
           setActiveId(visible[0].target.id);
         } else {
-          // Fallback: choose the one nearest to top
+          // IntersectionObserver already measured these rectangles. Re-reading
+          // layout here can force synchronous style/layout work while scrolling.
           const above = entries
-            .map((e) => e.target)
-            .filter((el) => el.getBoundingClientRect().top <= 100)
-            .sort((a, b) => b.getBoundingClientRect().top - a.getBoundingClientRect().top);
-          if (above[0]) setActiveId(above[0].id);
+            .filter((entry) => entry.boundingClientRect.top <= 100)
+            .sort((a, b) => b.boundingClientRect.top - a.boundingClientRect.top);
+          if (above[0]) setActiveId(above[0].target.id);
         }
       },
       { rootMargin, threshold: [0, 0.25, 0.5, 0.75, 1] }
