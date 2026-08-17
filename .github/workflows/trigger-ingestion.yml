@@ -12,15 +12,6 @@ on:
         options:
           - production
           - preview
-      max_pages:
-        description: 'Maximum pages to crawl (0 = unlimited)'
-        required: false
-        default: '100'
-      use_sitemap:
-        description: 'Use sitemap.xml for discovery'
-        required: false
-        default: 'true'
-        type: boolean
 
   # Option 2: Scheduled (daily at 2 AM UTC)
   schedule:
@@ -37,28 +28,22 @@ jobs:
       - name: Trigger ingestion API
         run: |
           ENVIRONMENT="${{ github.event.inputs.environment || 'production' }}"
-          MAX_PAGES="${{ github.event.inputs.max_pages || '100' }}"
-          USE_SITEMAP="${{ github.event.inputs.use_sitemap || 'true' }}"
 
           if [ "$ENVIRONMENT" = "production" ]; then
-            URL="https://react.foundation/api/admin/ingest"
+            BASE_URL="https://react.foundation"
           else
-            URL="https://preview.react.foundation/api/admin/ingest"
+            BASE_URL="https://preview.react.foundation"
           fi
+
+          # /api/ingest/full is the only route that runs the loaders and stores
+          # the content map. It reads no request body.
+          URL="$BASE_URL/api/ingest/full"
 
           echo "🚀 Triggering ingestion for $ENVIRONMENT..."
           echo "   URL: $URL"
-          echo "   Max pages: $MAX_PAGES"
-          echo "   Use sitemap: $USE_SITEMAP"
 
           RESPONSE=$(curl -X POST "$URL" \
             -H "Authorization: Bearer ${{ secrets.INGESTION_API_TOKEN }}" \
-            -H "Content-Type: application/json" \
-            -d "{
-              \"maxPages\": $MAX_PAGES,
-              \"useSitemap\": $USE_SITEMAP,
-              \"clearExisting\": false
-            }" \
             -w "\n%{http_code}" \
             -s)
 
@@ -68,18 +53,41 @@ jobs:
           echo "Response:"
           echo "$BODY" | jq '.'
 
-          if [ "$HTTP_CODE" = "200" ]; then
-            echo "✅ Ingestion started successfully"
-            INGESTION_ID=$(echo "$BODY" | jq -r '.ingestionId')
-            echo "   Ingestion ID: $INGESTION_ID"
-          else
+          if [ "$HTTP_CODE" != "200" ]; then
             echo "❌ Failed with HTTP $HTTP_CODE"
             exit 1
           fi
 
-      - name: Wait for completion (optional)
-        if: github.event_name == 'workflow_dispatch'
+          INGESTION_ID=$(echo "$BODY" | jq -r '.ingestionId')
+          echo "✅ Ingestion started: $INGESTION_ID"
+
+          echo "BASE_URL=$BASE_URL" >> "$GITHUB_ENV"
+          echo "INGESTION_ID=$INGESTION_ID" >> "$GITHUB_ENV"
+
+      - name: Wait for the ingestion to finish
         run: |
-          echo "⏳ Waiting for ingestion to complete..."
-          echo "   Check status at: https://react.foundation/admin/data"
-          sleep 10
+          # The POST above only starts the run. Without this check the job stays
+          # green even when no new content map is stored.
+          STATUS_URL="$BASE_URL/api/ingest/full?ingestionId=$INGESTION_ID"
+          DEADLINE=$((SECONDS + 900))
+
+          while [ "$SECONDS" -lt "$DEADLINE" ]; do
+            STATUS=$(curl -s "$STATUS_URL" | jq -r '.status // "unknown"')
+            echo "   status: $STATUS"
+
+            if [ "$STATUS" = "completed" ]; then
+              echo "✅ Ingestion completed"
+              exit 0
+            fi
+
+            if [ "$STATUS" = "failed" ]; then
+              echo "❌ Ingestion failed"
+              curl -s "$STATUS_URL" | jq -r '.error // empty, .logs[-10:][]?'
+              exit 1
+            fi
+
+            sleep 15
+          done
+
+          echo "❌ Ingestion did not reach completion within 15 minutes"
+          exit 1
